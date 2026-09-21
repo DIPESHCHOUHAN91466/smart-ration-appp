@@ -23,6 +23,14 @@ public class SmartRationDbContext : DbContext
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
+
+    public DbSet<RationItem> RationItems => Set<RationItem>();
+
+    public DbSet<TokenItem> TokenItems => Set<TokenItem>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -89,5 +97,35 @@ public class SmartRationDbContext : DbContext
                 x.RationType
             })
             .IsUnique();
+
+        // Token → TokenItems
+        modelBuilder.Entity<TokenItem>()
+            .HasOne(x => x.Token)
+            .WithMany(x => x.Items)
+            .HasForeignKey(x => x.TokenId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // RationItem catalog uniqueness
+        modelBuilder.Entity<RationItem>()
+            .HasIndex(x => x.RationType)
+            .IsUnique();
+
+        // User → RefreshTokens
+        modelBuilder.Entity<RefreshToken>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.RefreshTokens)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(x => x.TokenHash)
+            .IsUnique();
+
+        // User → Notifications
+        modelBuilder.Entity<Notification>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Notifications)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

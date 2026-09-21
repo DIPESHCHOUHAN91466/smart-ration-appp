@@ -34,4 +34,6 @@ public class Token
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? CollectedAt { get; set; }
+
+    public ICollection<TokenItem> Items { get; set; } = new List<TokenItem>();
 }

@@ -15,6 +15,9 @@ obj/
 .vs/
 TestResults/
 coverage/
+*.db
+*.db-shm
+*.db-wal
 
 # Logs
 *.log
