@@ -1,0 +1,31 @@
+# Frontend build
+dist/
+build/
+node_modules/
+.vite/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# .NET
+bin/
+obj/
+.vs/
+TestResults/
+coverage/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
