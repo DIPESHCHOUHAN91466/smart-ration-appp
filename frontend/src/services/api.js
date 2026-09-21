@@ -1,77 +1,68 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5188/api";
+import axios from "axios";
+import { useAuthStore } from "../store/authStore";
 
-/**
- * Common API request helper.
- *
- * React components should call functions from this service
- * instead of directly using fetch() everywhere.
- */
-export async function request(endpoint, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5188/api";
 
-  if (!response.ok) {
-    const errorText = await response.text();
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { "Content-Type": "application/json" },
+});
 
-    throw new Error(
-      errorText || `API request failed with status ${response.status}`,
-    );
+apiClient.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().accessToken;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  // Some DELETE/204 responses may have no body.
-  if (response.status === 204) {
-    return null;
-  }
+let refreshInFlight = null;
 
-  return response.json();
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    const status = error.response?.status;
+    const isAuthRoute = originalRequest?.url?.includes("/auth/");
+
+    if (status === 401 && originalRequest && !originalRequest._retry && !isAuthRoute) {
+      originalRequest._retry = true;
+
+      try {
+        if (!refreshInFlight) {
+          refreshInFlight = useAuthStore.getState().refreshAccessToken();
+        }
+        const newAccessToken = await refreshInFlight;
+        refreshInFlight = null;
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        refreshInFlight = null;
+        useAuthStore.getState().clearSession();
+        if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+          window.location.href = "/login";
+        }
+        return Promise.reject(normalizeError(refreshError));
+      }
+    }
+
+    return Promise.reject(normalizeError(error));
+  },
+);
+
+function normalizeError(error) {
+  const data = error.response?.data;
+  const message = data?.message || error.message || "Something went wrong. Please try again.";
+  const normalized = new Error(message);
+  normalized.status = error.response?.status;
+  normalized.errors = data?.errors ?? null;
+  return normalized;
 }
 
-/**
- * GET request
- */
-export function get(endpoint) {
-  return request(endpoint);
+// Unwraps the backend's { success, message, data } envelope into just `data`.
+export function unwrap(axiosPromise) {
+  return axiosPromise.then((response) => response.data?.data);
 }
 
-/**
- * POST request
- */
-export function post(endpoint, data) {
-  return request(endpoint, {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-}
-
-/**
- * PUT request
- */
-export function put(endpoint, data) {
-  return request(endpoint, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
-}
-
-/**
- * DELETE request
- */
-export function remove(endpoint) {
-  return request(endpoint, {
-    method: "DELETE",
-  });
-}
-
-export default {
-  request,
-  get,
-  post,
-  put,
-  remove,
-};
+export default apiClient;
