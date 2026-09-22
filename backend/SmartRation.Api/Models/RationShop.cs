@@ -14,6 +14,11 @@ public class RationShop
 
     public string State { get; set; } = string.Empty;
 
+    // Optional finer-grained administrative area, used by the map filters.
+    public string? Taluka { get; set; }
+
+    public string? Village { get; set; }
+
     public double Latitude { get; set; }
 
     public double Longitude { get; set; }
@@ -29,4 +34,6 @@ public class RationShop
     public ICollection<Token> Tokens { get; set; } = new List<Token>();
 
     public ICollection<Inventory> InventoryItems { get; set; } = new List<Inventory>();
+
+    public ICollection<Family> Families { get; set; } = new List<Family>();
 }

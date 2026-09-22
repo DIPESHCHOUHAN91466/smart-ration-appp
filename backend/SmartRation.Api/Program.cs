@@ -8,6 +8,7 @@ using SmartRation.Api.Configuration;
 using SmartRation.Api.Data;
 using SmartRation.Api.Middleware;
 using SmartRation.Api.Services;
+using SmartRation.Api.Services.Verification;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,8 @@ if (string.IsNullOrWhiteSpace(qrOptions.Secret))
     throw new InvalidOperationException(
         "Qr:Secret is not set. In production, set it via the Qr__Secret environment variable.");
 }
+
+builder.Services.Configure<DemoModeOptions>(builder.Configuration.GetSection(DemoModeOptions.SectionName));
 
 // --------------------------------------------------
 // AUTHENTICATION / AUTHORIZATION
@@ -119,6 +122,18 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<IGovernmentService, GovernmentService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Beneficiary verification / entitlement (synthetic/demo providers — see
+// Services/Verification/*.cs for the swap-in-a-real-provider architecture).
+builder.Services.AddScoped<IAadhaarVerificationService, SyntheticAadhaarVerificationService>();
+builder.Services.AddScoped<IPassbookVerificationService, SyntheticPassbookVerificationService>();
+builder.Services.AddScoped<IOtpService, SyntheticOtpService>();
+builder.Services.AddScoped<IEntitlementService, EntitlementService>();
+builder.Services.AddScoped<IBeneficiaryProvisioningService, BeneficiaryProvisioningService>();
+builder.Services.AddScoped<IBeneficiaryVerificationService, BeneficiaryVerificationService>();
+builder.Services.AddScoped<IRationCollectionService, RationCollectionService>();
+builder.Services.AddScoped<IVerificationAuditService, VerificationAuditService>();
+builder.Services.AddScoped<IMapService, MapService>();
 
 // --------------------------------------------------
 // CONTROLLERS
@@ -196,7 +211,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<SmartRationDbContext>();
-    await DbInitializer.InitializeAsync(db);
+    await DbInitializer.InitializeAsync(db, qrOptions.Secret);
 }
 
 // --------------------------------------------------

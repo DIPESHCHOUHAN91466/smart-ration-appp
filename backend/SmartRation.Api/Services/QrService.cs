@@ -49,6 +49,23 @@ public class QrService(
 
     public async Task<TokenDto> VerifyAsync(string qrValue)
     {
+        var token = await ResolveTokenForVerificationAsync(qrValue);
+
+        if (token.Status == TokenStatus.Completed)
+        {
+            throw new ConflictException("This QR code has already been used for collection.");
+        }
+
+        if (token.Status == TokenStatus.Cancelled)
+        {
+            throw new ConflictException("This booking was cancelled.");
+        }
+
+        return token.ToDto();
+    }
+
+    public async Task<Token> ResolveTokenForVerificationAsync(string qrValue)
+    {
         var parts = qrValue.Split('-');
         if (parts.Length != 3 || parts[0] != "SRQR" || !int.TryParse(parts[1], out var tokenId))
         {
@@ -74,16 +91,6 @@ public class QrService(
             throw new ForbiddenException("This booking belongs to a different ration shop.");
         }
 
-        if (token.Status == TokenStatus.Completed)
-        {
-            throw new ConflictException("This QR code has already been used for collection.");
-        }
-
-        if (token.Status == TokenStatus.Cancelled)
-        {
-            throw new ConflictException("This booking was cancelled.");
-        }
-
-        return token.ToDto();
+        return token;
     }
 }

@@ -1,31 +1,54 @@
 import { useEffect, useRef, useState } from "react";
-import { AlertCircle, CheckCircle2, QrCode } from "lucide-react";
+import { AlertCircle, QrCode, Smartphone } from "lucide-react";
 import { Html5Qrcode } from "html5-qrcode";
 import PageHeader from "../../components/PageHeader";
-import { EmptyState } from "../../components/EmptyState";
-import { verifyQr } from "../../services/qrService";
-import { completeCollection } from "../../services/shopService";
+import BeneficiaryVerificationPanel from "../../components/verification/BeneficiaryVerificationPanel";
+import OtpModal from "../../components/verification/OtpModal";
+import CollectionReceipt from "../../components/verification/CollectionReceipt";
+import { verifyByQr } from "../../services/verificationService";
+import { confirmCollection } from "../../services/collectionService";
 import { useToast } from "../../context/ToastContext";
+
+const VERIFYING_STEPS = [
+  "Token verified",
+  "Beneficiary verified",
+  "Aadhaar status checked",
+  "Passbook status checked",
+  "Family eligibility checked",
+  "Entitlement calculated",
+];
 
 export default function Scanner() {
   const [manualValue, setManualValue] = useState("");
-  const [result, setResult] = useState(null);
   const [verifying, setVerifying] = useState(false);
-  const [completing, setCompleting] = useState(false);
+  const [verifyError, setVerifyError] = useState(null);
+  const [verification, setVerification] = useState(null);
+  const [verificationMethod, setVerificationMethod] = useState("QR");
+  const [receipt, setReceipt] = useState(null);
+  const [confirming, setConfirming] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const scannerRef = useRef(null);
   const notify = useToast();
 
-  const verify = async (value) => {
-    if (!value) return;
+  const reset = () => {
+    setVerification(null);
+    setVerifyError(null);
+    setReceipt(null);
+    setManualValue("");
+  };
+
+  const runVerify = async (value) => {
+    setVerifyError(null);
+    setVerification(null);
     setVerifying(true);
-    setResult(null);
     try {
-      const token = await verifyQr(value);
-      setResult(token);
+      const result = await verifyByQr(value);
+      setVerification(result);
+      setVerificationMethod("QR");
     } catch (err) {
-      setResult({ error: true, message: err.message, code: value });
+      setVerifyError({ message: err.message, code: value });
     } finally {
       setVerifying(false);
     }
@@ -37,7 +60,7 @@ export default function Scanner() {
         await scannerRef.current.stop();
         await scannerRef.current.clear();
       } catch {
-        // scanner may already be stopped
+        // already stopped
       }
       scannerRef.current = null;
     }
@@ -56,14 +79,12 @@ export default function Scanner() {
         (decodedText) => {
           setManualValue(decodedText);
           stopCamera();
-          verify(decodedText);
+          runVerify(decodedText);
         },
-        () => {
-          // per-frame scan miss — ignore, this fires continuously while scanning
-        },
+        () => {},
       );
     } catch {
-      setCameraError("Could not access the camera. Use manual entry instead.");
+      setCameraError("Could not access the camera. Use manual entry or Mobile OTP instead.");
       setCameraActive(false);
     }
   };
@@ -75,22 +96,51 @@ export default function Scanner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onComplete = async () => {
-    setCompleting(true);
+  const onOtpVerified = (result) => {
+    setShowOtpModal(false);
+    setVerification(result);
+    setVerificationMethod("OTP");
+    setVerifyError(null);
+  };
+
+  const onConfirm = async () => {
+    setConfirming(true);
     try {
-      await completeCollection(result.id);
-      notify(`Collection completed for ${result.tokenNumber}`);
-      setResult((r) => ({ ...r, status: "Completed" }));
+      const result = await confirmCollection(verification.booking.tokenId, verificationMethod);
+      setReceipt(result);
+      notify(`Collection confirmed: ${result.collectionCode}`);
     } catch (err) {
-      notify(err.message || "Could not complete collection", "error");
+      notify(err.message || "Could not confirm collection", "error");
+      // Re-fetch so the blocked-reason banner reflects the latest state.
+      if (verificationMethod === "QR" && manualValue) {
+        runVerify(manualValue);
+      }
     } finally {
-      setCompleting(false);
+      setConfirming(false);
     }
   };
 
+  if (receipt) {
+    return (
+      <>
+        <PageHeader title="Beneficiary Verification" subtitle="Ration issuance receipt." />
+        <CollectionReceipt receipt={receipt} onDone={reset} />
+      </>
+    );
+  }
+
+  if (verification) {
+    return (
+      <>
+        <PageHeader title="Beneficiary Verification" subtitle="Review verification and entitlement before issuing ration." />
+        <BeneficiaryVerificationPanel verification={verification} onConfirm={onConfirm} onCancel={reset} confirming={confirming} />
+      </>
+    );
+  }
+
   return (
     <section className="scanner-page">
-      <PageHeader title="QR Verification" subtitle="Scan the customer's Smart Ration token or enter its reference manually." />
+      <PageHeader title="Scan Beneficiary QR" subtitle="Scan the beneficiary's Smart Ration token or enter its reference manually." />
       <div className="scanner-layout">
         <section className="panel">
           <div className="scanner-frame">
@@ -127,61 +177,55 @@ export default function Scanner() {
             Enter QR reference
             <input placeholder="SRQR-..." value={manualValue} onChange={(e) => setManualValue(e.target.value)} />
           </label>
-          <button className="secondary-btn wide" disabled={!manualValue || verifying} onClick={() => verify(manualValue)}>
+          <button className="secondary-btn wide" disabled={!manualValue || verifying} onClick={() => runVerify(manualValue)}>
             {verifying ? "Verifying..." : "Verify manually"}
+          </button>
+
+          <div className="or">
+            <span>OR</span>
+          </div>
+          <button className="secondary-btn wide" onClick={() => setShowOtpModal(true)}>
+            <Smartphone size={16} /> Can't Scan QR? Use Mobile OTP
           </button>
         </section>
 
         <section className="panel">
-          {!result && <EmptyState title="Ready to verify" text="Scan a QR code or enter its reference to display customer and ration details here." />}
-
-          {result?.error && (
-            <div className="result error">
-              <AlertCircle size={48} />
-              <h2>QR verification failed</h2>
-              <p>{result.message}</p>
-              <code>{result.code}</code>
+          {verifying && (
+            <div className="result">
+              <div className="success-circle">
+                <QrCode size={30} />
+              </div>
+              <h2>Verifying beneficiary...</h2>
+              <ul style={{ textAlign: "left", listStyle: "none", padding: 0, marginTop: 18 }}>
+                {VERIFYING_STEPS.map((step) => (
+                  <li key={step} style={{ padding: "6px 0", fontSize: 12, color: "var(--muted)" }}>
+                    ⏳ {step}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
-          {result && !result.error && (
-            <div className="result success-result">
-              <div className="success-circle">
-                <CheckCircle2 size={42} />
-              </div>
-              <h2>Customer Verified</h2>
-              <p>Token and booking are valid for this shop.</p>
-              <div className="summary">
-                <div>
-                  <span>Customer</span>
-                  <b>{result.userName}</b>
-                </div>
-                <div>
-                  <span>Token</span>
-                  <b>{result.tokenNumber}</b>
-                </div>
-                <div>
-                  <span>Arrival</span>
-                  <b>{result.startTime.slice(0, 5)}</b>
-                </div>
-                <div>
-                  <span>Ration</span>
-                  <b>{result.items.map((i) => `${i.rationType} ${i.quantity}`).join(" • ")}</b>
-                </div>
-              </div>
-              {result.status !== "Completed" ? (
-                <button className="primary-btn wide" onClick={onComplete} disabled={completing}>
-                  <CheckCircle2 /> {completing ? "Completing..." : "Mark Collection Complete"}
-                </button>
-              ) : (
-                <p className="muted" style={{ color: "var(--green)" }}>
-                  Collection already completed for this token.
-                </p>
-              )}
+          {!verifying && verifyError && (
+            <div className="result error">
+              <AlertCircle size={48} />
+              <h2>QR verification failed</h2>
+              <p>{verifyError.message}</p>
+              <code>{verifyError.code}</code>
+            </div>
+          )}
+
+          {!verifying && !verifyError && (
+            <div className="empty">
+              <QrCode size={42} />
+              <h2>Ready to verify</h2>
+              <p>Scan a QR code, enter its reference, or use Mobile OTP to display beneficiary and entitlement details here.</p>
             </div>
           )}
         </section>
       </div>
+
+      {showOtpModal && <OtpModal onClose={() => setShowOtpModal(false)} onVerified={onOtpVerified} />}
     </section>
   );
 }

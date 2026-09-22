@@ -31,6 +31,30 @@ public class SmartRationDbContext : DbContext
 
     public DbSet<TokenItem> TokenItems => Set<TokenItem>();
 
+    public DbSet<Beneficiary> Beneficiaries => Set<Beneficiary>();
+
+    public DbSet<Family> Families => Set<Family>();
+
+    public DbSet<FamilyMember> FamilyMembers => Set<FamilyMember>();
+
+    public DbSet<AadhaarVerification> AadhaarVerifications => Set<AadhaarVerification>();
+
+    public DbSet<PassbookVerification> PassbookVerifications => Set<PassbookVerification>();
+
+    public DbSet<MobileVerification> MobileVerifications => Set<MobileVerification>();
+
+    public DbSet<RationScheme> RationSchemes => Set<RationScheme>();
+
+    public DbSet<SchemeEntitlementItem> SchemeEntitlementItems => Set<SchemeEntitlementItem>();
+
+    public DbSet<RationCollection> RationCollections => Set<RationCollection>();
+
+    public DbSet<RationCollectionItem> RationCollectionItems => Set<RationCollectionItem>();
+
+    public DbSet<VerificationAuditLog> VerificationAuditLogs => Set<VerificationAuditLog>();
+
+    public DbSet<OtpVerification> OtpVerifications => Set<OtpVerification>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -126,6 +150,137 @@ public class SmartRationDbContext : DbContext
             .HasOne(x => x.User)
             .WithMany(x => x.Notifications)
             .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // RationScheme
+        modelBuilder.Entity<RationScheme>()
+            .HasIndex(x => x.SchemeCode)
+            .IsUnique();
+
+        modelBuilder.Entity<SchemeEntitlementItem>()
+            .HasOne(x => x.RationScheme)
+            .WithMany(x => x.EntitlementItems)
+            .HasForeignKey(x => x.RationSchemeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SchemeEntitlementItem>()
+            .HasIndex(x => new { x.RationSchemeId, x.RationType })
+            .IsUnique();
+
+        // Family
+        modelBuilder.Entity<Family>()
+            .HasIndex(x => x.FamilyCode)
+            .IsUnique();
+
+        modelBuilder.Entity<Family>()
+            .HasOne(x => x.RationShop)
+            .WithMany(x => x.Families)
+            .HasForeignKey(x => x.RationShopId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Family>()
+            .HasOne(x => x.RationScheme)
+            .WithMany(x => x.Families)
+            .HasForeignKey(x => x.RationSchemeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Family → FamilyMembers
+        modelBuilder.Entity<FamilyMember>()
+            .HasOne(x => x.Family)
+            .WithMany(x => x.Members)
+            .HasForeignKey(x => x.FamilyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Beneficiary
+        modelBuilder.Entity<Beneficiary>()
+            .HasIndex(x => x.BeneficiaryCode)
+            .IsUnique();
+
+        modelBuilder.Entity<Beneficiary>()
+            .HasIndex(x => x.UserId)
+            .IsUnique();
+
+        modelBuilder.Entity<Beneficiary>()
+            .HasOne(x => x.User)
+            .WithOne(x => x.Beneficiary)
+            .HasForeignKey<Beneficiary>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Beneficiary>()
+            .HasOne(x => x.Family)
+            .WithMany(x => x.Beneficiaries)
+            .HasForeignKey(x => x.FamilyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Beneficiary → verification records (each optional 1:1)
+        modelBuilder.Entity<AadhaarVerification>()
+            .HasIndex(x => x.BeneficiaryId)
+            .IsUnique();
+
+        modelBuilder.Entity<AadhaarVerification>()
+            .HasOne(x => x.Beneficiary)
+            .WithOne(x => x.AadhaarVerification)
+            .HasForeignKey<AadhaarVerification>(x => x.BeneficiaryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<PassbookVerification>()
+            .HasIndex(x => x.BeneficiaryId)
+            .IsUnique();
+
+        modelBuilder.Entity<PassbookVerification>()
+            .HasOne(x => x.Beneficiary)
+            .WithOne(x => x.PassbookVerification)
+            .HasForeignKey<PassbookVerification>(x => x.BeneficiaryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MobileVerification>()
+            .HasIndex(x => x.BeneficiaryId)
+            .IsUnique();
+
+        modelBuilder.Entity<MobileVerification>()
+            .HasOne(x => x.Beneficiary)
+            .WithOne(x => x.MobileVerification)
+            .HasForeignKey<MobileVerification>(x => x.BeneficiaryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // RationCollection
+        modelBuilder.Entity<RationCollection>()
+            .HasIndex(x => x.CollectionCode)
+            .IsUnique();
+
+        modelBuilder.Entity<RationCollection>()
+            .HasIndex(x => x.TokenId)
+            .IsUnique();
+
+        modelBuilder.Entity<RationCollection>()
+            .HasOne(x => x.Token)
+            .WithOne(x => x.Collection)
+            .HasForeignKey<RationCollection>(x => x.TokenId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<RationCollection>()
+            .HasOne(x => x.Beneficiary)
+            .WithMany()
+            .HasForeignKey(x => x.BeneficiaryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<RationCollection>()
+            .HasOne(x => x.RationShop)
+            .WithMany()
+            .HasForeignKey(x => x.RationShopId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<RationCollectionItem>()
+            .HasOne(x => x.RationCollection)
+            .WithMany(x => x.Items)
+            .HasForeignKey(x => x.RationCollectionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // OtpVerification
+        modelBuilder.Entity<OtpVerification>()
+            .HasOne(x => x.Beneficiary)
+            .WithMany()
+            .HasForeignKey(x => x.BeneficiaryId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

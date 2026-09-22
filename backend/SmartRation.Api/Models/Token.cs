@@ -36,4 +36,6 @@ public class Token
     public DateTime? CollectedAt { get; set; }
 
     public ICollection<TokenItem> Items { get; set; } = new List<TokenItem>();
+
+    public RationCollection? Collection { get; set; }
 }

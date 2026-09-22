@@ -4,6 +4,7 @@ using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.Auth;
 using SmartRation.Api.Mapping;
 using SmartRation.Api.Models;
+using SmartRation.Api.Services.Verification;
 
 namespace SmartRation.Api.Services;
 
@@ -11,6 +12,7 @@ public class AuthService(
     SmartRationDbContext db,
     IJwtService jwtService,
     IAuditLogService auditLog,
+    IBeneficiaryProvisioningService beneficiaryProvisioning,
     ILogger<AuthService> logger) : IAuthService
 {
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request)
@@ -42,7 +44,9 @@ public class AuthService(
         db.Users.Add(user);
         await db.SaveChangesAsync();
 
-        logger.LogInformation("New user registered: {UserId} ({Email})", user.Id, user.Email);
+        var beneficiary = await beneficiaryProvisioning.ProvisionAsync(user);
+
+        logger.LogInformation("New user registered: {UserId} ({Email}), beneficiary {BeneficiaryCode}", user.Id, user.Email, beneficiary.BeneficiaryCode);
         await auditLog.LogAsync(user.Id, "REGISTER", nameof(User), user.Id.ToString());
 
         return await IssueTokensAsync(user);

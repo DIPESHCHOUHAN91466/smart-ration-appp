@@ -16,6 +16,7 @@ import RuralDashboard from "./pages/rural/RuralDashboard";
 import BookRation from "./pages/rural/BookRation";
 import MyToken from "./pages/rural/MyToken";
 import BookingHistory from "./pages/rural/BookingHistory";
+import MyVerification from "./pages/rural/MyVerification";
 
 import ShopDashboard from "./pages/shop/ShopDashboard";
 import Queue from "./pages/shop/Queue";
@@ -31,6 +32,10 @@ import GovBookings from "./pages/government/Bookings";
 import GovInventory from "./pages/government/Inventory";
 import Statistics from "./pages/government/Statistics";
 import Reports from "./pages/government/Reports";
+import Audit from "./pages/government/Audit";
+
+// Lazy-loaded: pulls in Leaflet, only needed on the map route.
+const GovernmentMap = lazy(() => import("./pages/government/Map"));
 
 import "./styles.css";
 
@@ -59,6 +64,7 @@ export default function App() {
               <Route path="/rural/book" element={<BookRation />} />
               <Route path="/rural/token/:id" element={<MyToken />} />
               <Route path="/rural/history" element={<BookingHistory />} />
+              <Route path="/rural/verification" element={<MyVerification />} />
               <Route path="/rural/notifications" element={<NotificationsPage />} />
             </Route>
           </Route>
@@ -89,6 +95,15 @@ export default function App() {
               <Route path="/gov/inventory" element={<GovInventory />} />
               <Route path="/gov/statistics" element={<Statistics />} />
               <Route path="/gov/reports" element={<Reports />} />
+              <Route path="/gov/audit" element={<Audit />} />
+              <Route
+                path="/gov/map"
+                element={
+                  <Suspense fallback={<LoadingState text="Loading map..." />}>
+                    <GovernmentMap />
+                  </Suspense>
+                }
+              />
               <Route path="/gov/notifications" element={<NotificationsPage />} />
             </Route>
           </Route>

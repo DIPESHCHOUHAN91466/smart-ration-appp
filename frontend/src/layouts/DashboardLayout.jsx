@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Bell, Globe2, Home, LogOut, Menu, Package, QrCode, Search, ClipboardList,
-  Ticket, Users, Store, FileText, TrendingUp, ChevronDown,
+  Ticket, Users, Store, FileText, TrendingUp, ChevronDown, ShieldCheck, MapPin, History,
 } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { getNotifications } from "../services/notificationsService";
+import { useTranslation } from "../i18n/useTranslation";
+import { LANGUAGE_OPTIONS } from "../i18n/translations";
 
 const NAV_BY_ROLE = {
   RuralUser: [
     ["/rural/dashboard", "Dashboard", Home],
     ["/rural/book", "Book Ration", Ticket],
     ["/rural/history", "Booking History", ClipboardList],
+    ["/rural/verification", "My Verification", ShieldCheck],
     ["/rural/notifications", "Notifications", Bell],
   ],
   ShopOwner: [
@@ -28,6 +31,8 @@ const NAV_BY_ROLE = {
     ["/gov/shops", "Shops", Store],
     ["/gov/users", "Beneficiaries", Users],
     ["/gov/inventory", "Inventory", Package],
+    ["/gov/map", "Smart Ration Map", MapPin],
+    ["/gov/audit", "Audit Log", History],
     ["/gov/reports", "Reports", FileText],
     ["/gov/notifications", "Notifications", Bell],
   ],
@@ -47,6 +52,7 @@ export default function DashboardLayout() {
   const logout = useAuthStore((state) => state.logout);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { language, setLanguage } = useTranslation();
 
   const nav = NAV_BY_ROLE[user?.role] || [];
 
@@ -111,10 +117,12 @@ export default function DashboardLayout() {
             </button>
             <div className="language">
               <Globe2 size={16} />
-              <select defaultValue="English">
-                <option>English</option>
-                <option>मराठी</option>
-                <option>हिन्दी</option>
+              <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+                {LANGUAGE_OPTIONS.map((opt) => (
+                  <option key={opt.code} value={opt.code}>
+                    {opt.label}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="profile">

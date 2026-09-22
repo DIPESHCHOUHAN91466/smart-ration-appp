@@ -17,6 +17,45 @@ namespace SmartRation.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
+            modelBuilder.Entity("SmartRation.Api.Models.AadhaarVerification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AadhaarMasked")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AadhaarReferenceId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("BeneficiaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("VerificationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VerificationMode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VerificationSource")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeneficiaryId")
+                        .IsUnique();
+
+                    b.ToTable("AadhaarVerifications");
+                });
+
             modelBuilder.Entity("SmartRation.Api.Models.AuditLog", b =>
                 {
                     b.Property<long>("Id")
@@ -51,6 +90,120 @@ namespace SmartRation.Api.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("SmartRation.Api.Models.Beneficiary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BeneficiaryCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DataSource")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FamilyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeneficiaryCode")
+                        .IsUnique();
+
+                    b.HasIndex("FamilyId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Beneficiaries");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.Family", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DataSource")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FamilyCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RationSchemeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RationShopId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyCode")
+                        .IsUnique();
+
+                    b.HasIndex("RationSchemeId");
+
+                    b.HasIndex("RationShopId");
+
+                    b.ToTable("Families");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.FamilyMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DataSource")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Eligibility")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FamilyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Relationship")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.ToTable("FamilyMembers");
+                });
+
             modelBuilder.Entity("SmartRation.Api.Models.Inventory", b =>
                 {
                     b.Property<int>("Id")
@@ -81,6 +234,37 @@ namespace SmartRation.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Inventory");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.MobileVerification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BeneficiaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MobileMasked")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("VerificationSource")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeneficiaryId")
+                        .IsUnique();
+
+                    b.ToTable("MobileVerifications");
                 });
 
             modelBuilder.Entity("SmartRation.Api.Models.Notification", b =>
@@ -116,6 +300,148 @@ namespace SmartRation.Api.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("SmartRation.Api.Models.OtpVerification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BeneficiaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MaxAttempts")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("OtpHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RequestedByUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeneficiaryId");
+
+                    b.ToTable("OtpVerifications");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.PassbookVerification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BeneficiaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PassbookNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VerificationSource")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("VerificationStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeneficiaryId")
+                        .IsUnique();
+
+                    b.ToTable("PassbookVerifications");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.RationCollection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BeneficiaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CollectedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CollectionCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OperatorUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RationShopId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TokenId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("VerificationMethod")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeneficiaryId");
+
+                    b.HasIndex("CollectionCode")
+                        .IsUnique();
+
+                    b.HasIndex("RationShopId");
+
+                    b.HasIndex("TokenId")
+                        .IsUnique();
+
+                    b.ToTable("RationCollections");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.RationCollectionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RationCollectionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RationType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RationCollectionId");
+
+                    b.ToTable("RationCollectionItems");
+                });
+
             modelBuilder.Entity("SmartRation.Api.Models.RationItem", b =>
                 {
                     b.Property<int>("Id")
@@ -149,6 +475,35 @@ namespace SmartRation.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("RationItems");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.RationScheme", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SchemeCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchemeCode")
+                        .IsUnique();
+
+                    b.ToTable("RationSchemes");
                 });
 
             modelBuilder.Entity("SmartRation.Api.Models.RationShop", b =>
@@ -187,6 +542,12 @@ namespace SmartRation.Api.Migrations
 
                     b.Property<string>("State")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Taluka")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Village")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -230,6 +591,29 @@ namespace SmartRation.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.SchemeEntitlementItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("QuotaPerEligibleMemberPerMonth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RationSchemeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RationType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RationSchemeId", "RationType")
+                        .IsUnique();
+
+                    b.ToTable("SchemeEntitlementItems");
                 });
 
             modelBuilder.Entity("SmartRation.Api.Models.TimeSlot", b =>
@@ -378,6 +762,115 @@ namespace SmartRation.Api.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("SmartRation.Api.Models.VerificationAuditLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("BeneficiaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DeviceInfo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("OperatorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ShopId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TokenNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VerificationMethod")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VerificationReference")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VerificationAuditLogs");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.AadhaarVerification", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.Beneficiary", "Beneficiary")
+                        .WithOne("AadhaarVerification")
+                        .HasForeignKey("SmartRation.Api.Models.AadhaarVerification", "BeneficiaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Beneficiary");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.Beneficiary", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.Family", "Family")
+                        .WithMany("Beneficiaries")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartRation.Api.Models.User", "User")
+                        .WithOne("Beneficiary")
+                        .HasForeignKey("SmartRation.Api.Models.Beneficiary", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.Family", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.RationScheme", "RationScheme")
+                        .WithMany("Families")
+                        .HasForeignKey("RationSchemeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartRation.Api.Models.RationShop", "RationShop")
+                        .WithMany("Families")
+                        .HasForeignKey("RationShopId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("RationScheme");
+
+                    b.Navigation("RationShop");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.FamilyMember", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.Family", "Family")
+                        .WithMany("Members")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+                });
+
             modelBuilder.Entity("SmartRation.Api.Models.Inventory", b =>
                 {
                     b.HasOne("SmartRation.Api.Models.RationShop", "RationShop")
@@ -387,6 +880,17 @@ namespace SmartRation.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("RationShop");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.MobileVerification", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.Beneficiary", "Beneficiary")
+                        .WithOne("MobileVerification")
+                        .HasForeignKey("SmartRation.Api.Models.MobileVerification", "BeneficiaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Beneficiary");
                 });
 
             modelBuilder.Entity("SmartRation.Api.Models.Notification", b =>
@@ -400,6 +904,66 @@ namespace SmartRation.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SmartRation.Api.Models.OtpVerification", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.Beneficiary", "Beneficiary")
+                        .WithMany()
+                        .HasForeignKey("BeneficiaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Beneficiary");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.PassbookVerification", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.Beneficiary", "Beneficiary")
+                        .WithOne("PassbookVerification")
+                        .HasForeignKey("SmartRation.Api.Models.PassbookVerification", "BeneficiaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Beneficiary");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.RationCollection", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.Beneficiary", "Beneficiary")
+                        .WithMany()
+                        .HasForeignKey("BeneficiaryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartRation.Api.Models.RationShop", "RationShop")
+                        .WithMany()
+                        .HasForeignKey("RationShopId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartRation.Api.Models.Token", "Token")
+                        .WithOne("Collection")
+                        .HasForeignKey("SmartRation.Api.Models.RationCollection", "TokenId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Beneficiary");
+
+                    b.Navigation("RationShop");
+
+                    b.Navigation("Token");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.RationCollectionItem", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.RationCollection", "RationCollection")
+                        .WithMany("Items")
+                        .HasForeignKey("RationCollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RationCollection");
+                });
+
             modelBuilder.Entity("SmartRation.Api.Models.RefreshToken", b =>
                 {
                     b.HasOne("SmartRation.Api.Models.User", "User")
@@ -409,6 +973,17 @@ namespace SmartRation.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.SchemeEntitlementItem", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.RationScheme", "RationScheme")
+                        .WithMany("EntitlementItems")
+                        .HasForeignKey("RationSchemeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RationScheme");
                 });
 
             modelBuilder.Entity("SmartRation.Api.Models.TimeSlot", b =>
@@ -470,8 +1045,38 @@ namespace SmartRation.Api.Migrations
                     b.Navigation("RationShop");
                 });
 
+            modelBuilder.Entity("SmartRation.Api.Models.Beneficiary", b =>
+                {
+                    b.Navigation("AadhaarVerification");
+
+                    b.Navigation("MobileVerification");
+
+                    b.Navigation("PassbookVerification");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.Family", b =>
+                {
+                    b.Navigation("Beneficiaries");
+
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.RationCollection", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.RationScheme", b =>
+                {
+                    b.Navigation("EntitlementItems");
+
+                    b.Navigation("Families");
+                });
+
             modelBuilder.Entity("SmartRation.Api.Models.RationShop", b =>
                 {
+                    b.Navigation("Families");
+
                     b.Navigation("InventoryItems");
 
                     b.Navigation("TimeSlots");
@@ -483,11 +1088,15 @@ namespace SmartRation.Api.Migrations
 
             modelBuilder.Entity("SmartRation.Api.Models.Token", b =>
                 {
+                    b.Navigation("Collection");
+
                     b.Navigation("Items");
                 });
 
             modelBuilder.Entity("SmartRation.Api.Models.User", b =>
                 {
+                    b.Navigation("Beneficiary");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("RefreshTokens");

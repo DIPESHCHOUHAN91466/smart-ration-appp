@@ -37,4 +37,6 @@ public class User
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    public Beneficiary? Beneficiary { get; set; }
 }
