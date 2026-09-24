@@ -22,4 +22,7 @@ public class DemoModeOptions
     public int OtpExpiryMinutes { get; set; } = 5;
 
     public int OtpMaxAttempts { get; set; } = 3;
+
+    // Minimum wait before another OTP can be requested for the same beneficiary.
+    public int OtpResendCooldownSeconds { get; set; } = 30;
 }

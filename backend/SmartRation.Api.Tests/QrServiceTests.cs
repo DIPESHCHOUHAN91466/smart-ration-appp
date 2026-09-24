@@ -135,4 +135,60 @@ public class QrServiceTests
             Assert.Equal(scenario.Token.Id, token.Id);
         }
     }
+
+    // Fixed demo-showcase aliases (SRQR-DEMO-001/002/003) resolve by exact
+    // QRCodeValue match rather than signature recomputation, scoped only to
+    // tokens that were seeded with that literal alias.
+    [Fact]
+    public async Task ResolveTokenForVerificationAsync_DemoAliasMatchingSeededToken_Resolves()
+    {
+        var (db, connection) = TestDbFactory.CreateContext();
+        using (connection)
+        using (db)
+        {
+            var scenario = ScenarioBuilder.SeedBasicScenario(db);
+            scenario.Token.QRCodeValue = "SRQR-DEMO-001";
+            db.SaveChanges();
+
+            var currentUser = new FakeCurrentUserService { UserId = 999, Role = UserRole.GovernmentOfficial };
+            var qr = BuildService(db, currentUser);
+
+            var token = await qr.ResolveTokenForVerificationAsync("SRQR-DEMO-001");
+
+            Assert.Equal(scenario.Token.Id, token.Id);
+        }
+    }
+
+    [Fact]
+    public async Task ResolveTokenForVerificationAsync_DemoAliasWithNoMatchingToken_ThrowsNotFound()
+    {
+        var (db, connection) = TestDbFactory.CreateContext();
+        using (connection)
+        using (db)
+        {
+            ScenarioBuilder.SeedBasicScenario(db);
+            var currentUser = new FakeCurrentUserService { UserId = 999, Role = UserRole.GovernmentOfficial };
+            var qr = BuildService(db, currentUser);
+
+            await Assert.ThrowsAsync<NotFoundException>(() => qr.ResolveTokenForVerificationAsync("SRQR-DEMO-999"));
+        }
+    }
+
+    // The fixed "invalid" showcase code is deliberately never seeded — it
+    // must fall through to the generic not-recognized error, not a NotFound
+    // on a fabricated demo alias lookup.
+    [Fact]
+    public async Task ResolveTokenForVerificationAsync_InvalidDemoShowcaseCode_ThrowsBadRequest()
+    {
+        var (db, connection) = TestDbFactory.CreateContext();
+        using (connection)
+        using (db)
+        {
+            ScenarioBuilder.SeedBasicScenario(db);
+            var currentUser = new FakeCurrentUserService { UserId = 999, Role = UserRole.GovernmentOfficial };
+            var qr = BuildService(db, currentUser);
+
+            await Assert.ThrowsAsync<BadRequestException>(() => qr.ResolveTokenForVerificationAsync("SRQR-INVALID-999"));
+        }
+    }
 }

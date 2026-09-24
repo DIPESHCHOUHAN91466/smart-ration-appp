@@ -4,5 +4,6 @@ namespace SmartRation.Api.Services.Verification;
 
 public interface IRationCollectionService
 {
-    Task<CollectionReceiptDto> ConfirmCollectionAsync(int tokenId, string verificationMethod);
+    // idempotencyKey: optional client key; a retry with the same key returns the original receipt.
+    Task<CollectionReceiptDto> ConfirmCollectionAsync(int tokenId, string verificationMethod, string? idempotencyKey = null);
 }

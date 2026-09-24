@@ -59,7 +59,7 @@ public class AuthService(
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
-            await auditLog.LogAsync(user?.Id, "LOGIN_FAILED", nameof(User), details: $"email={normalizedEmail}");
+            await auditLog.LogAsync(user?.Id, "LOGIN_FAILED", nameof(User), details: $"email={MaskEmail(normalizedEmail)}", result: "FAILED");
             throw new UnauthorizedApiException("Invalid email or password.");
         }
 
@@ -69,7 +69,7 @@ public class AuthService(
         }
 
         logger.LogInformation("User logged in: {UserId} ({Role})", user.Id, user.Role);
-        await auditLog.LogAsync(user.Id, "LOGIN", nameof(User), user.Id.ToString());
+        await auditLog.LogAsync(user.Id, "LOGIN", nameof(User), user.Id.ToString(), role: user.Role.ToString());
 
         return await IssueTokensAsync(user);
     }
@@ -146,5 +146,12 @@ public class AuthService(
             AccessTokenExpiresAt = accessExpiresAt,
             User = user.ToSummaryDto()
         };
+    }
+
+    // "rahul@example.com" -> "r***@example.com"
+    private static string MaskEmail(string email)
+    {
+        var at = email.IndexOf('@');
+        return at <= 0 ? "***" : $"{email[0]}***{email[at..]}";
     }
 }

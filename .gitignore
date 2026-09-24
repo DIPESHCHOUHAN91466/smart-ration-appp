@@ -32,3 +32,10 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/tasks.json
+# Local-only SQL containing real credentials
+*.local.sql
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/

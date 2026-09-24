@@ -1,12 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AlertCircle, QrCode, Smartphone } from "lucide-react";
-import { Html5Qrcode } from "html5-qrcode";
 import PageHeader from "../../components/PageHeader";
 import BeneficiaryVerificationPanel from "../../components/verification/BeneficiaryVerificationPanel";
 import OtpModal from "../../components/verification/OtpModal";
 import CollectionReceipt from "../../components/verification/CollectionReceipt";
-import { verifyByQr } from "../../services/verificationService";
+import { scanQr } from "../../services/qrService";
+import { precheckQr } from "../../services/qr/qrValidation";
+import { QR_STATUS_META } from "../../qr/qrContract";
 import { confirmCollection } from "../../services/collectionService";
+import { openGlobalQrScanner } from "../../store/qrScannerStore";
+import { useTranslation } from "../../i18n/useTranslation";
 import { useToast } from "../../context/ToastContext";
 
 const VERIFYING_STEPS = [
@@ -27,10 +31,24 @@ export default function Scanner() {
   const [receipt, setReceipt] = useState(null);
   const [confirming, setConfirming] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
-  const [cameraActive, setCameraActive] = useState(false);
-  const [cameraError, setCameraError] = useState("");
-  const scannerRef = useRef(null);
   const notify = useToast();
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Arriving from the global scanner's "Continue Distribution": show the
+  // verification it already fetched, then clear the history state so a
+  // refresh doesn't resurrect a stale result.
+  useEffect(() => {
+    const incoming = location.state?.verification;
+    if (!incoming) return;
+    setVerification(incoming);
+    setVerificationMethod("QR");
+    setVerifyError(null);
+    setReceipt(null);
+    setManualValue(location.state.qrValue || "");
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const reset = () => {
     setVerification(null);
@@ -43,58 +61,27 @@ export default function Scanner() {
     setVerifyError(null);
     setVerification(null);
     setVerifying(true);
+    const check = precheckQr(value);
+    if (!check.ok) {
+      setVerifyError({ message: t(QR_STATUS_META[check.status].descKey), code: value });
+      setVerifying(false);
+      return;
+    }
     try {
-      const result = await verifyByQr(value);
-      setVerification(result);
-      setVerificationMethod("QR");
+      // Same pipeline as the camera scanner (signed envelope or SRQR reference).
+      const result = await scanQr(check.value);
+      if (result.verification) {
+        setVerification(result.verification);
+        setVerificationMethod("QR");
+      } else {
+        setVerifyError({ message: result.message, code: value });
+      }
     } catch (err) {
       setVerifyError({ message: err.message, code: value });
     } finally {
       setVerifying(false);
     }
   };
-
-  const stopCamera = async () => {
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.stop();
-        await scannerRef.current.clear();
-      } catch {
-        // already stopped
-      }
-      scannerRef.current = null;
-    }
-    setCameraActive(false);
-  };
-
-  const startCamera = async () => {
-    setCameraError("");
-    try {
-      const scanner = new Html5Qrcode("qr-reader");
-      scannerRef.current = scanner;
-      setCameraActive(true);
-      await scanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 220 },
-        (decodedText) => {
-          setManualValue(decodedText);
-          stopCamera();
-          runVerify(decodedText);
-        },
-        () => {},
-      );
-    } catch {
-      setCameraError("Could not access the camera. Use manual entry or Mobile OTP instead.");
-      setCameraActive(false);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const onOtpVerified = (result) => {
     setShowOtpModal(false);
@@ -144,31 +131,14 @@ export default function Scanner() {
       <div className="scanner-layout">
         <section className="panel">
           <div className="scanner-frame">
-            {cameraActive ? (
-              <div id="qr-reader" style={{ width: "100%", height: "100%" }} />
-            ) : (
-              <>
-                <QrCode size={48} />
-                <p>Camera scanner</p>
-                <small>Point the camera at the QR code</small>
-              </>
-            )}
+            <QrCode size={48} />
+            <p>{t("scan_customer_qr")}</p>
+            <small>{t("align_qr")}</small>
           </div>
 
-          {!cameraActive ? (
-            <button className="primary-btn wide" onClick={startCamera}>
-              <QrCode /> Start Camera Scanner
-            </button>
-          ) : (
-            <button className="secondary-btn wide" onClick={stopCamera}>
-              Stop Camera
-            </button>
-          )}
-          {cameraError && (
-            <p className="muted" style={{ color: "var(--red)" }}>
-              {cameraError}
-            </p>
-          )}
+          <button className="primary-btn wide" onClick={openGlobalQrScanner} aria-label={t("open_qr_scanner")}>
+            <QrCode /> {t("open_camera")}
+          </button>
 
           <div className="or">
             <span>OR</span>

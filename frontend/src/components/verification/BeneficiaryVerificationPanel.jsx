@@ -1,4 +1,5 @@
-import { CheckCircle2, Clock3, MapPin, ShieldCheck, XCircle } from "lucide-react";
+import { CheckCircle2, Clock3, MapPin, ShieldCheck, User, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import VerificationStatusCard from "./VerificationStatusCard";
 import FamilyMembersTable from "./FamilyMembersTable";
 import EntitlementTable from "./EntitlementTable";
@@ -24,6 +25,11 @@ export default function BeneficiaryVerificationPanel({ verification, onConfirm, 
             <h2>Token: {booking.tokenNumber}</h2>
           </div>
           <span className={`status ${booking.status === "Confirmed" ? "success" : "danger"}`}>{booking.status}</span>
+        </div>
+        <div className="actions" style={{ marginBottom: 14 }}>
+          <Link className="secondary-btn" to={`/beneficiary/${beneficiary.id}`}>
+            <User size={16} /> View Full 360° Profile
+          </Link>
         </div>
         <div className="booking-meta">
           <div>

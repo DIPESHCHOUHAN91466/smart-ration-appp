@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ public class VerificationController(
     }
 
     [HttpPost("otp/request")]
+    [EnableRateLimiting("otp")]
     public async Task<ActionResult<ApiResponse<OtpRequestResponseDto>>> RequestOtp(OtpRequestRequestDto request)
     {
         var beneficiaryId = await db.Beneficiaries
@@ -52,6 +54,7 @@ public class VerificationController(
     }
 
     [HttpPost("otp/verify")]
+    [EnableRateLimiting("otp")]
     public async Task<ActionResult<ApiResponse<BeneficiaryVerificationResponseDto>>> VerifyOtp(OtpVerifyRequestDto request)
     {
         var otp = await otpService.VerifyOtpAsync(request.OtpVerificationId, request.Code);

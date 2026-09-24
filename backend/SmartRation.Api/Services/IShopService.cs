@@ -7,5 +7,5 @@ public interface IShopService
 {
     Task<ShopDashboardDto> GetDashboardAsync();
 
-    Task<TokenDto> CompleteCollectionAsync(int tokenId);
+    Task<TokenDto> CompleteCollectionAsync(int tokenId, string? idempotencyKey = null);
 }

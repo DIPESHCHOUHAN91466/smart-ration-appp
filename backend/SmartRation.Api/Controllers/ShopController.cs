@@ -28,9 +28,11 @@ public class ShopController(IShopService shopService, IBookingService bookingSer
     }
 
     [HttpPost("collection/complete")]
-    public async Task<ActionResult<ApiResponse<TokenDto>>> CompleteCollection(CompleteCollectionRequestDto request)
+    public async Task<ActionResult<ApiResponse<TokenDto>>> CompleteCollection(
+        CompleteCollectionRequestDto request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey)
     {
-        var result = await shopService.CompleteCollectionAsync(request.TokenId);
+        var result = await shopService.CompleteCollectionAsync(request.TokenId, idempotencyKey is { Length: > 0 and <= 64 } ? idempotencyKey : null);
         return Ok(ApiResponse<TokenDto>.Ok(result, "Collection marked complete"));
     }
 }

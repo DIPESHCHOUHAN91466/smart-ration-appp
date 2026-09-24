@@ -12,6 +12,10 @@ public class ApiResponse<T>
 
     public IReadOnlyList<string>? Errors { get; set; }
 
+    // Stable machine-readable reason on failures (e.g. ENTITLEMENT_EXCEEDED); null otherwise.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? ErrorCode { get; set; }
+
     public static ApiResponse<T> Ok(T data, string message = "Success") =>
         new() { Success = true, Message = message, Data = data };
 

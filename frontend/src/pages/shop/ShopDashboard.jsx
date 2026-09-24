@@ -4,6 +4,7 @@ import { CheckCircle2, Clock3, Package, QrCode, Ticket, XCircle } from "lucide-r
 import PageHeader from "../../components/PageHeader";
 import { ErrorState, LoadingState } from "../../components/EmptyState";
 import { getShopDashboard } from "../../services/shopService";
+import { openGlobalQrScanner } from "../../store/qrScannerStore";
 
 export default function ShopDashboard() {
   const navigate = useNavigate();
@@ -78,7 +79,7 @@ export default function ShopDashboard() {
             </div>
             <h3>Verify a customer token</h3>
             <p>Scan or enter the customer's QR reference to verify their booking.</p>
-            <button className="primary-btn" onClick={() => navigate("/shop/scanner")}>
+            <button className="primary-btn" onClick={openGlobalQrScanner} aria-label="Open QR Scanner">
               <QrCode /> Open QR Scanner
             </button>
           </div>

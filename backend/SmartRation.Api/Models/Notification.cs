@@ -7,7 +7,10 @@ public enum NotificationType
     SlotReminder = 3,
     CollectionCompleted = 4,
     BookingCancelled = 5,
-    LowInventory = 6
+    LowInventory = 6,
+    VerificationResult = 7,
+    AIAlert = 8,
+    SystemAnnouncement = 9
 }
 
 public class Notification

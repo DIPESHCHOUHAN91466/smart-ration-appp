@@ -4,11 +4,14 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { useToast } from "../context/ToastContext";
 import { homePathForRole } from "../routes/roleHome";
+import { useTranslation } from "../i18n/useTranslation";
+import BrandMark from "../components/BrandMark";
 
 export default function Register() {
   const navigate = useNavigate();
   const register = useAuthStore((state) => state.register);
   const notify = useToast();
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({ fullName: "", email: "", mobileNumber: "", password: "", confirmPassword: "" });
   const [errors, setErrors] = useState([]);
@@ -21,7 +24,7 @@ export default function Register() {
     setErrors([]);
 
     if (form.password !== form.confirmPassword) {
-      setErrors(["Passwords do not match."]);
+      setErrors([t("passwords_mismatch")]);
       return;
     }
 
@@ -33,11 +36,11 @@ export default function Register() {
         mobileNumber: form.mobileNumber.trim(),
         password: form.password,
       });
-      notify("Account created — welcome to Smart Ration");
+      notify(t("registration_success"));
       navigate(homePathForRole(result.user.role), { replace: true });
     } catch (err) {
-      setErrors(err.errors?.length ? err.errors : [err.message || "Registration failed."]);
-      notify(err.message || "Registration failed", "error");
+      setErrors(err.errors?.length ? err.errors : [err.message || t("registration_failed")]);
+      notify(err.message || t("registration_failed"), "error");
     } finally {
       setSubmitting(false);
     }
@@ -47,41 +50,41 @@ export default function Register() {
     <div className="login-page">
       <div className="login-art">
         <div className="login-brand">
-          <div className="brand-mark light">SR</div>
+          <BrandMark variant="light" />
           <div>
-            <b>Smart Ration</b>
-            <small>HSD2C Distribution Platform</small>
+            <b>{t("app_name")}</b>
+            <small>{t("app_subtitle")}</small>
           </div>
         </div>
         <div className="art-content">
-          <span className="eyebrow">DIGITAL INDIA • SECURE • TRANSPARENT</span>
+          <span className="eyebrow">{t("login_eyebrow")}</span>
           <h1>
-            Join as a <em>Rural User</em>
+            {t("register_join_prefix")} <em>{t("register_join_role")}</em>
           </h1>
-          <p>Register to book your ration collection slot, generate a token and track your history online.</p>
+          <p>{t("register_tagline")}</p>
         </div>
       </div>
 
       <div className="login-card-wrap">
         <form className="login-card" onSubmit={onSubmit}>
-          <span className="eyebrow blue">PUBLIC SERVICE PLATFORM</span>
-          <h2>Create your account</h2>
-          <p>Self-registration creates a Rural User account. Shop and government accounts are provisioned by administrators.</p>
+          <span className="eyebrow blue">{t("public_service_platform")}</span>
+          <h2>{t("register_heading")}</h2>
+          <p>{t("register_subtitle")}</p>
 
           <label>
-            Full name
+            {t("full_name")}
             <input required value={form.fullName} onChange={update("fullName")} />
           </label>
           <label>
-            Email
+            {t("email")}
             <input type="email" required value={form.email} onChange={update("email")} autoComplete="username" />
           </label>
           <label>
-            Mobile number
+            {t("mobile_number")}
             <input required value={form.mobileNumber} onChange={update("mobileNumber")} placeholder="9876543210" />
           </label>
           <label>
-            Password
+            {t("password")}
             <input
               type="password"
               required
@@ -92,7 +95,7 @@ export default function Register() {
             />
           </label>
           <label>
-            Confirm password
+            {t("confirm_password")}
             <input
               type="password"
               required
@@ -112,15 +115,15 @@ export default function Register() {
           )}
 
           <button className="primary-btn" type="submit" disabled={submitting}>
-            {submitting ? "Creating account..." : "Create account"} <ArrowRight size={17} />
+            {submitting ? t("creating_account") : t("create_account")} <ArrowRight size={17} />
           </button>
 
           <p className="muted" style={{ marginTop: 14 }}>
-            Already registered? <Link to="/login">Sign in</Link>
+            {t("already_registered")} <Link to="/login">{t("sign_in")}</Link>
           </p>
 
           <div className="login-trust">
-            <ShieldCheck /> HSD2C Compliant <span /> 🔒 Data Encrypted
+            <ShieldCheck /> {t("hsd2c_compliant")} <span /> 🔒 {t("data_encrypted")}
           </div>
         </form>
       </div>

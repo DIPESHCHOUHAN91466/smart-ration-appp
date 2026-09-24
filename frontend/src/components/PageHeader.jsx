@@ -1,10 +1,15 @@
+import { usePreferencesStore } from "../store/preferencesStore";
+
 export default function PageHeader({ title, subtitle, action }) {
+  const showBreadcrumbs = usePreferencesStore((s) => s.showBreadcrumbs);
+  const showHelp = usePreferencesStore((s) => s.showHelp);
+
   return (
     <div className="page-header">
       <div>
-        <div className="eyebrow blue">SMART RATION • HSD2C</div>
+        {showBreadcrumbs && <div className="eyebrow blue">SMART RATION • HSD2C</div>}
         <h1>{title}</h1>
-        {subtitle && <p>{subtitle}</p>}
+        {subtitle && showHelp && <p>{subtitle}</p>}
       </div>
       {action}
     </div>

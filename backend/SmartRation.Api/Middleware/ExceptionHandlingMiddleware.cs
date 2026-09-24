@@ -20,7 +20,7 @@ public class ExceptionHandlingMiddleware(
         catch (ApiException apiException)
         {
             logger.LogWarning(apiException, "Handled API exception: {Message}", apiException.Message);
-            await WriteResponseAsync(context, apiException.StatusCode, apiException.Message, null);
+            await WriteResponseAsync(context, apiException.StatusCode, apiException.Message, null, apiException.ErrorCode);
         }
         catch (Exception ex)
         {
@@ -38,12 +38,13 @@ public class ExceptionHandlingMiddleware(
         }
     }
 
-    private static async Task WriteResponseAsync(HttpContext context, int statusCode, string message, string[]? errors)
+    private static async Task WriteResponseAsync(HttpContext context, int statusCode, string message, string[]? errors, string? errorCode = null)
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = statusCode;
 
         var response = ApiResponse.Fail(message, errors);
+        response.ErrorCode = errorCode;
         await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase

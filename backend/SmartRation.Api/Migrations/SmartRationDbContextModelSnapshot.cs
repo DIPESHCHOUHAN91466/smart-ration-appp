@@ -17,6 +17,128 @@ namespace SmartRation.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
+            modelBuilder.Entity("SmartRation.Api.Models.AIAlert", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AlertType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("BeneficiaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DedupKey")
+                        .HasMaxLength(128)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DetectedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastSeenAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MetadataJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("RationType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RecommendedAction")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ResolutionNote")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ResolvedByUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("Score")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ShopId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("RULES");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DedupKey", "Status");
+
+                    b.HasIndex("ShopId", "Status");
+
+                    b.ToTable("AIAlerts");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.AIInsight", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("EntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InsightType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Recommendation")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RiskLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AIInsights");
+                });
+
             modelBuilder.Entity("SmartRation.Api.Models.AadhaarVerification", b =>
                 {
                     b.Property<int>("Id")
@@ -82,6 +204,14 @@ namespace SmartRation.Api.Migrations
                     b.Property<string>("IpAddress")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Result")
+                        .HasMaxLength(16)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
@@ -111,7 +241,17 @@ namespace SmartRation.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("FamilyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Gender")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsActive")
@@ -120,8 +260,23 @@ namespace SmartRation.Api.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Pincode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProfilePhotoUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Village")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -214,6 +369,7 @@ namespace SmartRation.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("AvailableQuantity")
+                        .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("MinimumStockLevel")
@@ -234,6 +390,48 @@ namespace SmartRation.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Inventory");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.InventoryMovement", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("BalanceAfter")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MovementType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RationShopId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RationType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("RecordedByUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RationShopId", "RationType", "CreatedAt");
+
+                    b.ToTable("InventoryMovements");
                 });
 
             modelBuilder.Entity("SmartRation.Api.Models.MobileVerification", b =>
@@ -392,6 +590,10 @@ namespace SmartRation.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("IdempotencyKey")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("OperatorUserId")
                         .HasColumnType("INTEGER");
 
@@ -410,6 +612,9 @@ namespace SmartRation.Api.Migrations
                     b.HasIndex("BeneficiaryId");
 
                     b.HasIndex("CollectionCode")
+                        .IsUnique();
+
+                    b.HasIndex("IdempotencyKey")
                         .IsUnique();
 
                     b.HasIndex("RationShopId");
@@ -877,6 +1082,17 @@ namespace SmartRation.Api.Migrations
                         .WithMany("InventoryItems")
                         .HasForeignKey("RationShopId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RationShop");
+                });
+
+            modelBuilder.Entity("SmartRation.Api.Models.InventoryMovement", b =>
+                {
+                    b.HasOne("SmartRation.Api.Models.RationShop", "RationShop")
+                        .WithMany()
+                        .HasForeignKey("RationShopId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("RationShop");

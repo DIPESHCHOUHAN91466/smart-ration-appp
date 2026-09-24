@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using SmartRation.Api.Common;
 using SmartRation.Api.DTOs.Auth;
@@ -10,6 +11,7 @@ namespace SmartRation.Api.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult<ApiResponse<AuthResponseDto>>> Register(RegisterRequestDto request)
     {
         var result = await authService.RegisterAsync(request);
@@ -17,6 +19,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult<ApiResponse<AuthResponseDto>>> Login(LoginRequestDto request)
     {
         var result = await authService.LoginAsync(request);

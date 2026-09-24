@@ -11,6 +11,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import NotificationsPage from "./pages/shared/NotificationsPage";
+import BeneficiaryProfile from "./pages/shared/BeneficiaryProfile";
+import Settings from "./pages/shared/Settings";
+import PublicProfile from "./pages/PublicProfile";
 
 import RuralDashboard from "./pages/rural/RuralDashboard";
 import BookRation from "./pages/rural/BookRation";
@@ -33,6 +36,9 @@ import GovInventory from "./pages/government/Inventory";
 import Statistics from "./pages/government/Statistics";
 import Reports from "./pages/government/Reports";
 import Audit from "./pages/government/Audit";
+import AIIntelligenceCenter from "./pages/government/AIIntelligenceCenter";
+import SyntheticData from "./pages/government/SyntheticData";
+import AdminDatabase from "./pages/government/AdminDatabase";
 
 // Lazy-loaded: pulls in Leaflet, only needed on the map route.
 const GovernmentMap = lazy(() => import("./pages/government/Map"));
@@ -56,7 +62,15 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile/:publicReference" element={<PublicProfile />} />
           <Route path="/" element={<HomeRedirect />} />
+
+          <Route element={<ProtectedRoute roles={["RuralUser", "ShopOwner", "GovernmentOfficial", "Admin"]} />}>
+            <Route element={<DashboardLayout />}>
+              <Route path="/beneficiary/:id" element={<BeneficiaryProfile />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Route>
 
           <Route element={<ProtectedRoute roles={["RuralUser"]} />}>
             <Route element={<DashboardLayout />}>
@@ -96,6 +110,9 @@ export default function App() {
               <Route path="/gov/statistics" element={<Statistics />} />
               <Route path="/gov/reports" element={<Reports />} />
               <Route path="/gov/audit" element={<Audit />} />
+              <Route path="/gov/ai" element={<AIIntelligenceCenter />} />
+              <Route path="/gov/synthetic-data" element={<SyntheticData />} />
+              <Route path="/gov/database" element={<AdminDatabase />} />
               <Route
                 path="/gov/map"
                 element={

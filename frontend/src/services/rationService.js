@@ -1,7 +1,7 @@
 import apiClient, { unwrap } from "./api";
 
-export function getRationItems() {
-  return unwrap(apiClient.get("/ration/items"));
+export function getRationItems(shopId) {
+  return unwrap(apiClient.get("/ration/items", { params: shopId ? { shopId } : {} }));
 }
 
 export function createBooking(payload) {

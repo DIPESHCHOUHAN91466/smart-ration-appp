@@ -7,6 +7,7 @@ import StatusBadge from "../../components/StatusBadge";
 import { ErrorState, LoadingState } from "../../components/EmptyState";
 import { getToken } from "../../services/tokensService";
 import { cancelBooking } from "../../services/rationService";
+import { getQrPayload } from "../../services/qrService";
 import { useToast } from "../../context/ToastContext";
 
 export default function MyToken() {
@@ -17,6 +18,7 @@ export default function MyToken() {
   const [token, setToken] = useState(null);
   const [error, setError] = useState("");
   const [cancelling, setCancelling] = useState(false);
+  const [qrPayload, setQrPayload] = useState(null);
 
   const load = () => {
     setError("");
@@ -27,6 +29,19 @@ export default function MyToken() {
   };
 
   useEffect(load, [id]);
+
+  // Signed JSON envelope for the scanner; falls back to the bare SRQR
+  // reference (still scannable) if it can't be fetched.
+  useEffect(() => {
+    let cancelled = false;
+    setQrPayload(null);
+    getQrPayload(id)
+      .then((payload) => !cancelled && setQrPayload(payload))
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const onCancel = async () => {
     if (!window.confirm("Cancel this booking? This cannot be undone.")) return;
@@ -59,7 +74,7 @@ export default function MyToken() {
           <span className="eyebrow blue">YOUR TOKEN NUMBER</span>
           <div className="token-number">{token.tokenNumber}</div>
           <div className="qr-preview">
-            <QRCodeCanvas value={token.qrCodeValue} />
+            <QRCodeCanvas value={qrPayload || token.qrCodeValue} size={210} errorCorrectionLevel={qrPayload ? "M" : "H"} />
           </div>
           <b className="qr-ref">{token.qrCodeValue}</b>
           <button className="secondary-btn wide" onClick={() => window.print()}>

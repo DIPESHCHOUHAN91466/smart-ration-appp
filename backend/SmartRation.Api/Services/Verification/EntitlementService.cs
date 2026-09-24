@@ -67,4 +67,23 @@ public class EntitlementService(SmartRationDbContext db) : IEntitlementService
             Items = items
         };
     }
+
+    public void EnsureRequestWithinEntitlement(EntitlementSummaryDto entitlement, IEnumerable<(RationType Type, decimal Quantity)> requested)
+    {
+        var allowed = entitlement.Items.ToDictionary(i => i.RationType, i => i.TodayAllocation);
+
+        foreach (var (type, quantity) in requested)
+        {
+            if (quantity < 0)
+            {
+                throw new BadRequestException("Requested quantity cannot be negative.") { ErrorCode = "INVALID_QUANTITY" };
+            }
+
+            // An item outside the scheme has an allowance of zero.
+            if (quantity > allowed.GetValueOrDefault(type.ToString(), 0m))
+            {
+                throw new BadRequestException("Requested quantity exceeds the beneficiary entitlement.") { ErrorCode = "ENTITLEMENT_EXCEEDED" };
+            }
+        }
+    }
 }

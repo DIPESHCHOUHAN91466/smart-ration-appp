@@ -16,14 +16,38 @@ namespace SmartRation.Api.Services.Verification;
 public class RationCollectionService(
     SmartRationDbContext db,
     IBeneficiaryVerificationService verificationService,
+    IEntitlementService entitlementService,
     ICurrentUserService currentUser,
     IAuditLogService auditLog,
     IVerificationAuditService verificationAudit,
     INotificationService notificationService,
     ILogger<RationCollectionService> logger) : IRationCollectionService
 {
-    public async Task<CollectionReceiptDto> ConfirmCollectionAsync(int tokenId, string verificationMethod)
+    public async Task<CollectionReceiptDto> ConfirmCollectionAsync(int tokenId, string verificationMethod, string? idempotencyKey = null)
     {
+        // Low-bandwidth retry: the same key means "the request I already sent".
+        // Return the original receipt instead of a confusing "already used" error.
+        if (!string.IsNullOrEmpty(idempotencyKey))
+        {
+            var previous = await db.RationCollections
+                .Include(c => c.Items)
+                .Include(c => c.RationShop)
+                .Include(c => c.Token)
+                .Include(c => c.Beneficiary).ThenInclude(b => b.Family).ThenInclude(f => f.RationScheme)
+                .Include(c => c.Beneficiary).ThenInclude(b => b.Family).ThenInclude(f => f.Members)
+                .Include(c => c.Beneficiary).ThenInclude(b => b.User)
+                .FirstOrDefaultAsync(c => c.IdempotencyKey == idempotencyKey);
+
+            if (previous is not null)
+            {
+                if (previous.TokenId != tokenId || previous.OperatorUserId != currentUser.UserId)
+                {
+                    throw new ConflictException("This request key was already used for a different collection.") { ErrorCode = "IDEMPOTENCY_KEY_REUSED" };
+                }
+                return ToReceipt(previous);
+            }
+        }
+
         // Re-runs every check (Aadhaar/passbook/mobile/token/family/entitlement)
         // fresh — this is the authoritative gate, not the earlier GET call.
         var verification = await verificationService.BuildResponseForTokenAsync(tokenId, verificationMethod);
@@ -49,46 +73,55 @@ public class RationCollectionService(
             throw new ConflictException(verification.VerificationSummary.BlockedReason ?? "Collection is blocked.");
         }
 
-        var entitlementByType = verification.Entitlement.Items.ToDictionary(i => i.RationType, i => i.TodayAllocation);
-
-        await using var transaction = await db.Database.BeginTransactionAsync();
-
-        var issuedItems = new List<RationCollectionItem>();
-
-        foreach (var tokenItem in token.Items)
+        var requested = token.Items.Where(i => i.Quantity > 0).ToList();
+        if (requested.Count == 0)
         {
-            var rationTypeName = tokenItem.RationType.ToString();
-            var entitlementCap = entitlementByType.GetValueOrDefault(rationTypeName, 0m);
-
-            var inventory = await db.Inventory.FirstOrDefaultAsync(i => i.RationShopId == token.RationShopId && i.RationType == tokenItem.RationType);
-            var inventoryCap = inventory?.AvailableQuantity ?? 0m;
-
-            var issueQuantity = new[] { tokenItem.Quantity, entitlementCap, inventoryCap }.Min();
-            if (issueQuantity <= 0)
-            {
-                continue;
-            }
-
-            if (inventory is null)
-            {
-                throw new ConflictException($"Insufficient {tokenItem.RationType} stock to complete this collection.");
-            }
-
-            inventory.AvailableQuantity -= issueQuantity;
-            inventory.AllocatedQuantity += issueQuantity;
-            inventory.UpdatedAt = DateTime.UtcNow;
-
-            issuedItems.Add(new RationCollectionItem { RationType = tokenItem.RationType, Quantity = issueQuantity });
+            throw new BadRequestException("This booking has no items to issue.") { ErrorCode = "NO_ITEMS" };
         }
 
-        if (issuedItems.Count == 0)
+        // Entitlement: the booked quantities must fit today's allowance in full.
+        // Rejected outright (400) rather than silently issuing less.
+        try
+        {
+            entitlementService.EnsureRequestWithinEntitlement(verification.Entitlement, requested.Select(i => (i.RationType, i.Quantity)));
+        }
+        catch (BadRequestException ex)
         {
             await verificationAudit.LogAsync(
                 VerificationAction.CollectionRejected, "BLOCKED", verificationMethod,
                 tokenNumber: token.TokenNumber, beneficiaryId: verification.Beneficiary.Id, shopId: token.RationShopId,
-                reason: "Insufficient shop inventory.");
+                reason: ex.Message);
+            throw;
+        }
 
-            throw new ConflictException("Insufficient shop inventory to complete this collection.");
+        // Inventory: all-or-nothing. Every item must be fully in stock before
+        // anything is deducted — no partial issue, never a negative balance.
+        var stock = await db.Inventory
+            .Where(i => i.RationShopId == token.RationShopId)
+            .ToDictionaryAsync(i => i.RationType);
+        var shortItem = requested.FirstOrDefault(i => !stock.TryGetValue(i.RationType, out var inv) || inv.AvailableQuantity < i.Quantity);
+        if (shortItem is not null)
+        {
+            await verificationAudit.LogAsync(
+                VerificationAction.CollectionRejected, "BLOCKED", verificationMethod,
+                tokenNumber: token.TokenNumber, beneficiaryId: verification.Beneficiary.Id, shopId: token.RationShopId,
+                reason: $"Insufficient {shortItem.RationType} stock.");
+            throw new ConflictException($"Insufficient {shortItem.RationType} stock to complete this collection.") { ErrorCode = "INSUFFICIENT_STOCK" };
+        }
+
+        // Collection + stock deduction + ledger + audit commit together or not at all.
+        await using var transaction = await db.Database.BeginTransactionAsync();
+
+        var issuedItems = new List<RationCollectionItem>();
+        foreach (var item in requested)
+        {
+            var inventory = stock[item.RationType];
+            inventory.AvailableQuantity -= item.Quantity;
+            inventory.AllocatedQuantity += item.Quantity;
+            inventory.UpdatedAt = DateTime.UtcNow;
+            InventoryLedger.Record(db, inventory, InventoryMovementType.Distributed, item.Quantity, currentUser.UserId, token.TokenNumber);
+
+            issuedItems.Add(new RationCollectionItem { RationType = item.RationType, Quantity = item.Quantity });
         }
 
         token.Status = TokenStatus.Completed;
@@ -102,6 +135,7 @@ public class RationCollectionService(
             RationShopId = token.RationShopId,
             OperatorUserId = currentUser.UserId,
             VerificationMethod = verificationMethod,
+            IdempotencyKey = string.IsNullOrEmpty(idempotencyKey) ? null : idempotencyKey,
             CollectedAt = DateTime.UtcNow,
             Items = issuedItems
         };
@@ -111,23 +145,26 @@ public class RationCollectionService(
         {
             await db.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch (DbUpdateException ex)
         {
-            logger.LogError(ex, "Collection confirmation failed for token {TokenId}; inventory will not be decremented.", tokenId);
-            throw new ConflictException("Could not complete the collection due to a stock update conflict. Please try again.");
+            // Unique TokenId / IdempotencyKey, or Inventory's concurrency check:
+            // someone else changed this token or this stock at the same moment.
+            // Disposing the transaction rolls every change back.
+            logger.LogWarning(ex, "Collection confirmation for token {TokenId} lost a concurrent update; rolled back.", tokenId);
+            throw new ConflictException("Could not complete the collection due to a concurrent update. Please try again.") { ErrorCode = "CONCURRENT_UPDATE" };
         }
 
         collection.CollectionCode = $"COL-DEMO-{collection.Id:D6}";
         await db.SaveChangesAsync();
 
-        await transaction.CommitAsync();
-
-        logger.LogInformation("Collection confirmed: {CollectionCode} for token {TokenNumber} via {Method}", collection.CollectionCode, token.TokenNumber, verificationMethod);
-
-        await auditLog.LogAsync(currentUser.UserId, "COLLECTION_COMPLETED", nameof(Token), token.Id.ToString(), token.TokenNumber);
+        await auditLog.LogAsync(currentUser.UserId, "COLLECTION_COMPLETED", nameof(Token), token.Id.ToString(), $"{token.TokenNumber} {collection.CollectionCode} via {verificationMethod}");
         await verificationAudit.LogAsync(
             VerificationAction.CollectionConfirmed, "SUCCESS", verificationMethod,
             tokenNumber: token.TokenNumber, beneficiaryId: verification.Beneficiary.Id, shopId: token.RationShopId);
+
+        await transaction.CommitAsync();
+
+        logger.LogInformation("Collection confirmed: {CollectionCode} for token {TokenNumber} via {Method}", collection.CollectionCode, token.TokenNumber, verificationMethod);
 
         await notificationService.CreateAsync(
             token.UserId,
@@ -148,4 +185,17 @@ public class RationCollectionService(
             CollectedAt = collection.CollectedAt.ToString("yyyy-MM-dd HH:mm")
         };
     }
+
+    private static CollectionReceiptDto ToReceipt(RationCollection c) => new()
+    {
+        CollectionCode = c.CollectionCode,
+        TokenNumber = c.Token.TokenNumber,
+        BeneficiaryName = c.Beneficiary.User?.FullName ?? string.Empty,
+        FamilySize = c.Beneficiary.Family?.Members.Count ?? 0,
+        SchemeCode = c.Beneficiary.Family?.RationScheme?.SchemeCode ?? string.Empty,
+        IssuedItems = c.Items.Select(i => new CollectedItemDto { RationType = i.RationType.ToString(), Quantity = i.Quantity }).ToList(),
+        TotalQuantityKg = c.Items.Sum(i => i.Quantity),
+        ShopName = c.RationShop.ShopName,
+        CollectedAt = c.CollectedAt.ToString("yyyy-MM-dd HH:mm")
+    };
 }

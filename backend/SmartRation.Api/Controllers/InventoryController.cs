@@ -32,4 +32,18 @@ public class InventoryController(IInventoryService inventoryService) : Controlle
         var result = await inventoryService.UpdateInventoryAsync(id, request);
         return Ok(ApiResponse<InventoryDto>.Ok(result, "Inventory updated"));
     }
+
+    [HttpPost("{id:int}/receive")]
+    public async Task<ActionResult<ApiResponse<InventoryDto>>> ReceiveStock(int id, StockMovementRequestDto request)
+    {
+        var result = await inventoryService.ReceiveStockAsync(id, request);
+        return Ok(ApiResponse<InventoryDto>.Ok(result, "Stock received"));
+    }
+
+    [HttpPost("{id:int}/damage")]
+    public async Task<ActionResult<ApiResponse<InventoryDto>>> RecordDamage(int id, StockMovementRequestDto request)
+    {
+        var result = await inventoryService.RecordDamageAsync(id, request);
+        return Ok(ApiResponse<InventoryDto>.Ok(result, "Damaged stock recorded"));
+    }
 }

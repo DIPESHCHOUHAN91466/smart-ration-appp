@@ -6,16 +6,26 @@ using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.Ration;
 using SmartRation.Api.Models;
 using SmartRation.Api.Services;
+using SmartRation.Api.Services.Verification;
 
 namespace SmartRation.Api.Controllers;
 
 [ApiController]
 [Route("api/ration")]
 [Authorize]
-public class RationController(SmartRationDbContext db, IBookingService bookingService) : ControllerBase
+public class RationController(
+    SmartRationDbContext db,
+    IBookingService bookingService,
+    IEntitlementService entitlementService,
+    ICurrentUserService currentUser) : ControllerBase
 {
+    // shopId (optional): includes each item's current available shop stock —
+    // read-only, never the shop's minimum-stock-level or other management fields.
+    // For a RuralUser caller, also includes their own family's remaining
+    // entitlement per item this month (scheme/family-size driven, never a
+    // hardcoded universal quota).
     [HttpGet("items")]
-    public async Task<ActionResult<ApiResponse<List<RationItemDto>>>> GetItems()
+    public async Task<ActionResult<ApiResponse<List<RationItemDto>>>> GetItems([FromQuery] int? shopId)
     {
         var items = await db.RationItems
             .Where(r => r.IsActive)
@@ -29,6 +39,43 @@ public class RationController(SmartRationDbContext db, IBookingService bookingSe
                 StandardQuotaPerBooking = r.StandardQuotaPerBooking
             })
             .ToListAsync();
+
+        if (shopId.HasValue)
+        {
+            var stock = await db.Inventory
+                .Where(i => i.RationShopId == shopId.Value)
+                .ToDictionaryAsync(i => i.RationType.ToString(), i => i.AvailableQuantity);
+
+            foreach (var item in items)
+            {
+                if (stock.TryGetValue(item.RationType, out var available))
+                {
+                    item.AvailableQuantity = available;
+                }
+            }
+        }
+
+        if (currentUser.Role == UserRole.RuralUser)
+        {
+            var familyId = await db.Beneficiaries
+                .Where(b => b.UserId == currentUser.UserId)
+                .Select(b => (int?)b.FamilyId)
+                .FirstOrDefaultAsync();
+
+            if (familyId.HasValue)
+            {
+                var entitlement = await entitlementService.GetEntitlementAsync(familyId.Value);
+                var remaining = entitlement.Items.ToDictionary(i => i.RationType, i => i.Remaining);
+
+                foreach (var item in items)
+                {
+                    if (remaining.TryGetValue(item.RationType, out var eligible))
+                    {
+                        item.EligibleQuantity = eligible;
+                    }
+                }
+            }
+        }
 
         return Ok(ApiResponse<List<RationItemDto>>.Ok(items));
     }

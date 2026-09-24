@@ -11,6 +11,13 @@ public class SmartRationDbContext : DbContext
     {
     }
 
+    // For provider-specific subclasses (MySqlSmartRationDbContext), which keep
+    // their own migration history alongside the SQLite one.
+    protected SmartRationDbContext(DbContextOptions options)
+        : base(options)
+    {
+    }
+
     public DbSet<User> Users => Set<User>();
 
     public DbSet<RationShop> RationShops => Set<RationShop>();
@@ -53,7 +60,13 @@ public class SmartRationDbContext : DbContext
 
     public DbSet<VerificationAuditLog> VerificationAuditLogs => Set<VerificationAuditLog>();
 
+    public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
+
     public DbSet<OtpVerification> OtpVerifications => Set<OtpVerification>();
+
+    public DbSet<AIInsight> AIInsights => Set<AIInsight>();
+
+    public DbSet<AIAlert> AIAlerts => Set<AIAlert>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -251,6 +264,51 @@ public class SmartRationDbContext : DbContext
         modelBuilder.Entity<RationCollection>()
             .HasIndex(x => x.TokenId)
             .IsUnique();
+
+        // A client retrying a confirm over a flaky network sends the same key;
+        // the unique index makes a duplicate insert impossible even under a race.
+        modelBuilder.Entity<RationCollection>()
+            .Property(x => x.IdempotencyKey)
+            .HasMaxLength(64);
+
+        modelBuilder.Entity<RationCollection>()
+            .HasIndex(x => x.IdempotencyKey)
+            .IsUnique();
+
+        modelBuilder.Entity<InventoryMovement>()
+            .HasOne(x => x.RationShop)
+            .WithMany()
+            .HasForeignKey(x => x.RationShopId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<InventoryMovement>()
+            .HasIndex(x => new { x.RationShopId, x.RationType, x.CreatedAt });
+
+        modelBuilder.Entity<AIAlert>(e =>
+        {
+            e.Property(x => x.Source).HasMaxLength(32).HasDefaultValue("RULES");
+            e.Property(x => x.AlertType).HasMaxLength(64);
+            e.Property(x => x.Title).HasMaxLength(200);
+            e.Property(x => x.DedupKey).HasMaxLength(128);
+            e.Property(x => x.RecommendedAction).HasMaxLength(500);
+            e.Property(x => x.ResolutionNote).HasMaxLength(500);
+            e.HasIndex(x => new { x.DedupKey, x.Status });
+            e.HasIndex(x => new { x.ShopId, x.Status });
+        });
+
+        modelBuilder.Entity<AuditLog>(e =>
+        {
+            e.Property(x => x.Role).HasMaxLength(32);
+            e.Property(x => x.Result).HasMaxLength(16);
+        });
+
+        modelBuilder.Entity<InventoryMovement>()
+            .Property(x => x.Reference)
+            .HasMaxLength(64);
+
+        modelBuilder.Entity<InventoryMovement>()
+            .Property(x => x.Note)
+            .HasMaxLength(256);
 
         modelBuilder.Entity<RationCollection>()
             .HasOne(x => x.Token)

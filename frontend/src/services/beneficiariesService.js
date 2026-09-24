@@ -19,3 +19,7 @@ export function getEntitlement(id) {
 export function getCollectionHistory(id) {
   return unwrap(apiClient.get(`/beneficiaries/${id}/collections`));
 }
+
+export function getFullProfile(id) {
+  return unwrap(apiClient.get(`/beneficiaries/${id}/full-profile`));
+}

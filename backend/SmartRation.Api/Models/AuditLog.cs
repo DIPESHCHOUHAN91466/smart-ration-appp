@@ -16,5 +16,11 @@ public class AuditLog
 
     public string? Details { get; set; }
 
+    // Actor's role at the time (RuralUser / ShopOwner / ...), from the JWT.
+    public string? Role { get; set; }
+
+    // SUCCESS / FAILED / BLOCKED.
+    public string? Result { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

@@ -5,14 +5,14 @@ using SmartRation.Api.DTOs.Ration;
 using SmartRation.Api.DTOs.Shop;
 using SmartRation.Api.Mapping;
 using SmartRation.Api.Models;
+using SmartRation.Api.Services.Verification;
 
 namespace SmartRation.Api.Services;
 
 public class ShopService(
     SmartRationDbContext db,
     ICurrentUserService currentUser,
-    IAuditLogService auditLog,
-    INotificationService notificationService) : IShopService
+    IRationCollectionService collectionService) : IShopService
 {
     public async Task<ShopDashboardDto> GetDashboardAsync()
     {
@@ -45,7 +45,7 @@ public class ShopService(
         };
     }
 
-    public async Task<TokenDto> CompleteCollectionAsync(int tokenId)
+    public async Task<TokenDto> CompleteCollectionAsync(int tokenId, string? idempotencyKey = null)
     {
         var shopId = RequireShopId();
 
@@ -62,37 +62,22 @@ public class ShopService(
             throw new ForbiddenException("This token belongs to a different ration shop.");
         }
 
-        if (token.Status != TokenStatus.Confirmed)
-        {
-            throw new BadRequestException($"Cannot complete collection for a token in {token.Status} status.");
-        }
+        // Token status (used / cancelled / expired) is checked by the shared
+        // pipeline, AFTER it honours an idempotent replay of this same request.
 
-        foreach (var item in token.Items)
-        {
-            var inventory = await db.Inventory.FirstOrDefaultAsync(i => i.RationShopId == token.RationShopId && i.RationType == item.RationType);
-            if (inventory is null || inventory.AvailableQuantity < item.Quantity)
-            {
-                throw new ConflictException($"Insufficient {item.RationType} stock to complete this collection. Please reconcile inventory first.");
-            }
+        // Kept for API compatibility, but no longer a separate, weaker path:
+        // it runs the exact same authoritative pipeline as QR verification
+        // (eligibility, entitlement, token validity, all-or-nothing stock,
+        // ledger, audit, receipt) inside one transaction.
+        await collectionService.ConfirmCollectionAsync(token.Id, "QUEUE", idempotencyKey);
 
-            inventory.AvailableQuantity -= item.Quantity;
-            inventory.AllocatedQuantity += item.Quantity;
-            inventory.UpdatedAt = DateTime.UtcNow;
-        }
-
-        token.Status = TokenStatus.Completed;
-        token.CollectedAt = DateTime.UtcNow;
-
-        await db.SaveChangesAsync();
-
-        await auditLog.LogAsync(currentUser.UserId, "COLLECTION_COMPLETED", nameof(Token), token.Id.ToString(), token.TokenNumber);
-        await notificationService.CreateAsync(
-            token.UserId,
-            NotificationType.CollectionCompleted,
-            "Ration collected",
-            $"Your ration for token {token.TokenNumber} has been marked as collected. Thank you.");
-
-        return token.ToDto();
+        var completed = await db.Tokens
+            .Include(t => t.User)
+            .Include(t => t.RationShop)
+            .Include(t => t.TimeSlot)
+            .Include(t => t.Items)
+            .FirstAsync(t => t.Id == tokenId);
+        return completed.ToDto();
     }
 
     private int RequireShopId()

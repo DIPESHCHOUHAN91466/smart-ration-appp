@@ -33,5 +33,5 @@ public class TestServiceGraph(SmartRationDbContext db, FakeCurrentUserService cu
         new BeneficiaryVerificationService(db, Qr, Aadhaar, Passbook, Entitlement, VerificationAudit);
 
     public IRationCollectionService BuildCollectionService() =>
-        new RationCollectionService(db, BuildVerificationService(), CurrentUser, AuditLog, VerificationAudit, Notifications, NullLogger<RationCollectionService>.Instance);
+        new RationCollectionService(db, BuildVerificationService(), Entitlement, CurrentUser, AuditLog, VerificationAudit, Notifications, NullLogger<RationCollectionService>.Instance);
 }

@@ -20,9 +20,16 @@ public class RationCollectionController(
 {
     [HttpPost("confirm")]
     [Authorize(Roles = nameof(UserRole.ShopOwner))]
-    public async Task<ActionResult<ApiResponse<CollectionReceiptDto>>> Confirm(ConfirmCollectionRequestDto request)
+    public async Task<ActionResult<ApiResponse<CollectionReceiptDto>>> Confirm(
+        ConfirmCollectionRequestDto request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey)
     {
-        var result = await collectionService.ConfirmCollectionAsync(request.TokenId, request.VerificationMethod);
+        if (idempotencyKey is { Length: > 64 })
+        {
+            throw new BadRequestException("Idempotency-Key must be at most 64 characters.") { ErrorCode = "INVALID_IDEMPOTENCY_KEY" };
+        }
+
+        var result = await collectionService.ConfirmCollectionAsync(request.TokenId, request.VerificationMethod, idempotencyKey);
         return Ok(ApiResponse<CollectionReceiptDto>.Ok(result, "Ration collection confirmed"));
     }
 

@@ -57,6 +57,12 @@ public class InventoryService(
         db.Inventory.Add(inventory);
         await db.SaveChangesAsync();
 
+        if (inventory.AvailableQuantity > 0)
+        {
+            InventoryLedger.Record(db, inventory, InventoryMovementType.Received, inventory.AvailableQuantity, currentUser.UserId, note: "Opening stock");
+            await db.SaveChangesAsync();
+        }
+
         return inventory.ToDto();
     }
 
@@ -67,9 +73,17 @@ public class InventoryService(
 
         EnsureCanManage(inventory.RationShopId);
 
+        var delta = request.AvailableQuantity - inventory.AvailableQuantity;
+
         inventory.AvailableQuantity = request.AvailableQuantity;
         inventory.MinimumStockLevel = request.MinimumStockLevel;
         inventory.UpdatedAt = DateTime.UtcNow;
+
+        // A direct balance edit is a manual correction — keep it visible in the ledger.
+        if (delta != 0)
+        {
+            InventoryLedger.Record(db, inventory, InventoryMovementType.Adjustment, delta, currentUser.UserId, note: "Manual stock correction");
+        }
 
         await db.SaveChangesAsync();
 
@@ -90,6 +104,43 @@ public class InventoryService(
         }
 
         return inventory.ToDto();
+    }
+
+    public async Task<InventoryDto> ReceiveStockAsync(int id, StockMovementRequestDto request)
+    {
+        var inventory = await LoadManagedAsync(id);
+
+        inventory.AvailableQuantity += request.Quantity;
+        inventory.UpdatedAt = DateTime.UtcNow;
+        InventoryLedger.Record(db, inventory, InventoryMovementType.Received, request.Quantity, currentUser.UserId, request.Reference, request.Note);
+
+        await db.SaveChangesAsync();
+        return inventory.ToDto();
+    }
+
+    public async Task<InventoryDto> RecordDamageAsync(int id, StockMovementRequestDto request)
+    {
+        var inventory = await LoadManagedAsync(id);
+
+        if (request.Quantity > inventory.AvailableQuantity)
+        {
+            throw new BadRequestException($"Cannot write off {request.Quantity} — only {inventory.AvailableQuantity} in stock.") { ErrorCode = "INSUFFICIENT_STOCK" };
+        }
+
+        inventory.AvailableQuantity -= request.Quantity;
+        inventory.UpdatedAt = DateTime.UtcNow;
+        InventoryLedger.Record(db, inventory, InventoryMovementType.Damaged, request.Quantity, currentUser.UserId, request.Reference, request.Note);
+
+        await db.SaveChangesAsync();
+        return inventory.ToDto();
+    }
+
+    private async Task<Inventory> LoadManagedAsync(int id)
+    {
+        var inventory = await db.Inventory.FirstOrDefaultAsync(i => i.Id == id)
+            ?? throw new NotFoundException("Inventory record not found.");
+        EnsureCanManage(inventory.RationShopId);
+        return inventory;
     }
 
     private int? ResolveShopIdForRead(int? requestedShopId)

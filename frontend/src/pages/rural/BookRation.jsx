@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock3, Store } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { ErrorState, LoadingState } from "../../components/EmptyState";
+import RationItemCard from "../../components/RationItemCard";
 import { getShops } from "../../services/shopsService";
 import { getSlots } from "../../services/slotsService";
 import { getRationItems, createBooking } from "../../services/rationService";
 import { useToast } from "../../context/ToastContext";
+import { useTranslation } from "../../i18n/useTranslation";
+import { usePreferencesStore } from "../../store/preferencesStore";
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -15,6 +18,8 @@ function today() {
 export default function BookRation() {
   const navigate = useNavigate();
   const notify = useToast();
+  const { t } = useTranslation();
+  const showAvailability = usePreferencesStore((s) => s.showAvailability);
 
   const [step, setStep] = useState(1);
 
@@ -48,16 +53,23 @@ export default function BookRation() {
   }, [shopId, date, step]);
 
   useEffect(() => {
-    if (step !== 3) return;
-    getRationItems()
+    if (step !== 3 || !shopId) return;
+    getRationItems(shopId)
       .then((items) => {
         setCatalog(items);
         setSelections(
-          Object.fromEntries(items.map((item) => [item.rationType, { checked: true, quantity: item.standardQuotaPerBooking }])),
+          Object.fromEntries(
+            items.map((item) => {
+              const eligible = item.eligibleQuantity ?? item.standardQuotaPerBooking;
+              const cap = item.availableQuantity != null ? Math.min(eligible, item.availableQuantity) : eligible;
+              const initialQty = Math.min(item.standardQuotaPerBooking, cap);
+              return [item.rationType, { checked: cap > 0, quantity: cap > 0 ? initialQty : 0 }];
+            }),
+          ),
         );
       })
       .catch((err) => setCatalogError(err.message));
-  }, [step]);
+  }, [step, shopId]);
 
   const selectedShop = shops?.find((s) => s.id === shopId);
   const selectedSlot = slots?.find((s) => s.id === timeSlotId);
@@ -75,18 +87,18 @@ export default function BookRation() {
       .map(([rationType, v]) => ({ rationType, quantity: Number(v.quantity) }));
 
     if (items.length === 0) {
-      setSubmitError("Select at least one ration item.");
+      setSubmitError(t("select_at_least_one_item"));
       return;
     }
 
     setSubmitting(true);
     try {
       const token = await createBooking({ rationShopId: shopId, timeSlotId, items });
-      notify("Token and QR generated successfully");
+      notify(t("token_qr_generated"));
       navigate(`/rural/token/${token.id}`, { replace: true });
     } catch (err) {
-      setSubmitError(err.errors?.join(" ") || err.message || "Could not create booking.");
-      notify(err.message || "Booking failed", "error");
+      setSubmitError(err.errors?.join(" ") || err.message || t("could_not_create_booking"));
+      notify(err.message || t("booking_failed"), "error");
     } finally {
       setSubmitting(false);
     }
@@ -94,9 +106,9 @@ export default function BookRation() {
 
   return (
     <>
-      <PageHeader title="Book Ration" subtitle="Select a shop, a 5-minute collection slot, and your ration items." />
+      <PageHeader title={t("book_ration_title")} subtitle={t("book_ration_subtitle")} />
       <div className="stepper">
-        {["Select Shop & Slot", "Select Slot", "Select Items", "Confirm"].map((label, i) => (
+        {[t("step_select_shop"), t("step_select_slot"), t("step_select_items"), t("step_confirm")].map((label, i) => (
           <div key={label} className={step === i + 1 ? "current" : step > i + 1 ? "done" : ""}>
             <span>{step > i + 1 ? "✓" : i + 1}</span>
             {label}
@@ -106,9 +118,9 @@ export default function BookRation() {
 
       {step === 1 && (
         <section className="panel form-panel">
-          <h2>Choose your ration shop</h2>
+          <h2>{t("choose_shop_heading")}</h2>
           {shopsError && <ErrorState text={shopsError} />}
-          {!shopsError && shops === null && <LoadingState text="Loading shops..." />}
+          {!shopsError && shops === null && <LoadingState text={t("loading")} />}
           {shops && (
             <div className="item-grid">
               {shops.map((shop) => (
@@ -130,28 +142,28 @@ export default function BookRation() {
             </div>
           )}
           <button className="primary-btn wide" disabled={!shopId} onClick={() => setStep(2)}>
-            Continue to Time Slot <ArrowRight />
+            {t("continue_to_slot")} <ArrowRight />
           </button>
         </section>
       )}
 
       {step === 2 && (
         <section className="panel form-panel">
-          <h2>Choose collection slot</h2>
+          <h2>{t("choose_slot_heading")}</h2>
           <div className="form-grid">
             <label>
-              Ration Shop
+              {t("ration_shop_label")}
               <input value={selectedShop?.shopName || ""} disabled />
             </label>
             <label>
-              Date
+              {t("date_label")}
               <input type="date" min={today()} value={date} onChange={(e) => setDate(e.target.value)} />
             </label>
           </div>
 
           {slotsError && <ErrorState text={slotsError} />}
-          {!slotsError && slots === null && <LoadingState text="Loading slots..." />}
-          {slots && slots.length === 0 && <ErrorState title="No slots" text="No slots configured for this date." />}
+          {!slotsError && slots === null && <LoadingState text={t("loading")} />}
+          {slots && slots.length === 0 && <ErrorState title={t("no_slots_title")} text={t("no_slots_text")} />}
 
           {slots && slots.length > 0 && (
             <div className="slot-grid">
@@ -165,9 +177,11 @@ export default function BookRation() {
                 >
                   <Clock3 size={15} />
                   {slot.startTime.slice(0, 5)}
-                  <small style={{ color: slot.status === "Full" ? "var(--red)" : slot.status === "Limited" ? "var(--orange)" : "var(--green)" }}>
-                    {slot.status} ({slot.capacity - slot.bookedCount} left)
-                  </small>
+                  {showAvailability && (
+                    <small style={{ color: slot.status === "Full" ? "var(--red)" : slot.status === "Limited" ? "var(--orange)" : "var(--green)" }}>
+                      {slot.status} ({slot.capacity - slot.bookedCount} left)
+                    </small>
+                  )}
                 </button>
               ))}
             </div>
@@ -175,10 +189,10 @@ export default function BookRation() {
 
           <div className="actions">
             <button className="secondary-btn" onClick={() => setStep(1)}>
-              <ArrowLeft /> Back
+              <ArrowLeft /> {t("back")}
             </button>
             <button className="primary-btn" disabled={!timeSlotId} onClick={() => setStep(3)}>
-              Continue to Items <ArrowRight />
+              {t("continue_to_items")} <ArrowRight />
             </button>
           </div>
         </section>
@@ -186,40 +200,25 @@ export default function BookRation() {
 
       {step === 3 && (
         <section className="panel form-panel">
-          <h2>Select ration items</h2>
-          <p className="muted">Choose the items you want to collect and the quantity, up to your standard quota.</p>
+          <h2>{t("select_items_heading")}</h2>
+          <p className="muted">{t("select_items_subtitle")}</p>
 
           {catalogError && <ErrorState text={catalogError} />}
-          {!catalogError && catalog === null && <LoadingState text="Loading ration items..." />}
+          {!catalogError && catalog === null && <LoadingState text={t("loading")} />}
 
           {catalog && (
             <div className="item-grid">
               {catalog.map((item) => {
                 const selection = selections[item.rationType] || { checked: false, quantity: 0 };
                 return (
-                  <div key={item.rationType} className={`item-card ${selection.checked ? "chosen" : ""}`} style={{ cursor: "default" }}>
-                    <span className="item-icon">🌾</span>
-                    <div style={{ flex: 1 }}>
-                      <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                        <input type="checkbox" checked={selection.checked} onChange={() => toggleItem(item.rationType)} style={{ width: "auto" }} />
-                        <b>
-                          {item.name} <small>({item.vernacularName})</small>
-                        </b>
-                      </label>
-                      <span>Quota: {item.standardQuotaPerBooking} {item.unit}</span>
-                      {selection.checked && (
-                        <input
-                          type="number"
-                          min={0.1}
-                          max={item.standardQuotaPerBooking}
-                          step={0.1}
-                          value={selection.quantity}
-                          onChange={(e) => setQuantity(item.rationType, e.target.value)}
-                          style={{ marginTop: 8 }}
-                        />
-                      )}
-                    </div>
-                  </div>
+                  <RationItemCard
+                    key={item.rationType}
+                    item={item}
+                    selected={selection.checked}
+                    quantity={selection.quantity}
+                    onToggle={() => toggleItem(item.rationType)}
+                    onQuantityChange={(qty) => setQuantity(item.rationType, qty)}
+                  />
                 );
               })}
             </div>
@@ -227,10 +226,10 @@ export default function BookRation() {
 
           <div className="actions">
             <button className="secondary-btn" onClick={() => setStep(2)}>
-              <ArrowLeft /> Back
+              <ArrowLeft /> {t("back")}
             </button>
             <button className="primary-btn" onClick={() => setStep(4)}>
-              Review Booking <ArrowRight />
+              {t("review_confirm_heading")} <ArrowRight />
             </button>
           </div>
         </section>
@@ -241,21 +240,21 @@ export default function BookRation() {
           <div className="success-circle">
             <CheckCircle2 size={42} />
           </div>
-          <h2>Review &amp; Confirm</h2>
-          <p className="muted">Your token will be generated after confirmation.</p>
+          <h2>{t("review_confirm_heading")}</h2>
+          <p className="muted">{t("review_confirm_subtitle")}</p>
           <div className="summary">
             <div>
-              <span>Shop</span>
+              <span>{t("shop_label")}</span>
               <b>{selectedShop?.shopName}</b>
             </div>
             <div>
-              <span>Date &amp; Time</span>
+              <span>{t("date_time_label")}</span>
               <b>
                 {date} • {selectedSlot?.startTime.slice(0, 5)}
               </b>
             </div>
             <div>
-              <span>Items</span>
+              <span>{t("items_label")}</span>
               <b>
                 {Object.entries(selections)
                   .filter(([, v]) => v.checked)
@@ -273,10 +272,10 @@ export default function BookRation() {
 
           <div className="actions">
             <button className="secondary-btn" onClick={() => setStep(3)}>
-              <ArrowLeft /> Change
+              <ArrowLeft /> {t("change")}
             </button>
             <button className="primary-btn" onClick={submit} disabled={submitting}>
-              <CheckCircle2 /> {submitting ? "Confirming..." : "Confirm & Generate Token"}
+              <CheckCircle2 /> {submitting ? t("confirming") : t("confirm_generate_token")}
             </button>
           </div>
         </section>

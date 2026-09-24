@@ -15,6 +15,12 @@ namespace SmartRation.Api.Data;
 // beneficiary data exists anywhere in this system.
 public static class DbInitializer
 {
+    // People who can book the same 5-minute collection slot.
+    private const int DefaultSlotCapacity = 2;
+
+    // Capacity used by earlier seeds; migrated to DefaultSlotCapacity on startup.
+    private const int LegacySlotCapacity = 5;
+
     private static readonly string[] FirstNames =
     [
         "Ramesh", "Suresh", "Mahesh", "Ganesh", "Rajesh", "Dinesh", "Sanjay", "Vijay", "Ajay", "Prakash",
@@ -50,7 +56,10 @@ public static class DbInitializer
             db.RationItems.AddRange(
                 new RationItem { RationType = RationType.Rice, Name = "Rice", VernacularName = "Tandul", Unit = "kg", StandardQuotaPerBooking = 5 },
                 new RationItem { RationType = RationType.Wheat, Name = "Wheat", VernacularName = "Gahu", Unit = "kg", StandardQuotaPerBooking = 5 },
-                new RationItem { RationType = RationType.Sugar, Name = "Sugar", VernacularName = "Sakhar", Unit = "kg", StandardQuotaPerBooking = 1 }
+                new RationItem { RationType = RationType.Sugar, Name = "Sugar", VernacularName = "Sakhar", Unit = "kg", StandardQuotaPerBooking = 1 },
+                new RationItem { RationType = RationType.Pulses, Name = "Pulses", VernacularName = "Daal", Unit = "kg", StandardQuotaPerBooking = 2 },
+                new RationItem { RationType = RationType.EdibleOil, Name = "Edible Oil", VernacularName = "Tel", Unit = "L", StandardQuotaPerBooking = 1 },
+                new RationItem { RationType = RationType.Salt, Name = "Salt", VernacularName = "Mith", Unit = "kg", StandardQuotaPerBooking = 1 }
             );
             await db.SaveChangesAsync();
         }
@@ -138,9 +147,15 @@ public static class DbInitializer
                 new SchemeEntitlementItem { RationSchemeId = nfsa.Id, RationType = RationType.Rice, QuotaPerEligibleMemberPerMonth = 5 },
                 new SchemeEntitlementItem { RationSchemeId = nfsa.Id, RationType = RationType.Wheat, QuotaPerEligibleMemberPerMonth = 3 },
                 new SchemeEntitlementItem { RationSchemeId = nfsa.Id, RationType = RationType.Sugar, QuotaPerEligibleMemberPerMonth = 1 },
+                new SchemeEntitlementItem { RationSchemeId = nfsa.Id, RationType = RationType.Pulses, QuotaPerEligibleMemberPerMonth = 1 },
+                new SchemeEntitlementItem { RationSchemeId = nfsa.Id, RationType = RationType.EdibleOil, QuotaPerEligibleMemberPerMonth = 0.5m },
+                new SchemeEntitlementItem { RationSchemeId = nfsa.Id, RationType = RationType.Salt, QuotaPerEligibleMemberPerMonth = 0.25m },
                 new SchemeEntitlementItem { RationSchemeId = aay.Id, RationType = RationType.Rice, QuotaPerEligibleMemberPerMonth = 7 },
                 new SchemeEntitlementItem { RationSchemeId = aay.Id, RationType = RationType.Wheat, QuotaPerEligibleMemberPerMonth = 4 },
-                new SchemeEntitlementItem { RationSchemeId = aay.Id, RationType = RationType.Sugar, QuotaPerEligibleMemberPerMonth = 1.5m }
+                new SchemeEntitlementItem { RationSchemeId = aay.Id, RationType = RationType.Sugar, QuotaPerEligibleMemberPerMonth = 1.5m },
+                new SchemeEntitlementItem { RationSchemeId = aay.Id, RationType = RationType.Pulses, QuotaPerEligibleMemberPerMonth = 1.5m },
+                new SchemeEntitlementItem { RationSchemeId = aay.Id, RationType = RationType.EdibleOil, QuotaPerEligibleMemberPerMonth = 1 },
+                new SchemeEntitlementItem { RationSchemeId = aay.Id, RationType = RationType.Salt, QuotaPerEligibleMemberPerMonth = 0.5m }
             );
             await db.SaveChangesAsync();
         }
@@ -199,11 +214,23 @@ public static class DbInitializer
                 db.Inventory.AddRange(
                     new Inventory { RationShopId = shop.Id, RationType = RationType.Rice, AvailableQuantity = Scale(300), AllocatedQuantity = 0, MinimumStockLevel = 300 },
                     new Inventory { RationShopId = shop.Id, RationType = RationType.Wheat, AvailableQuantity = Scale(300), AllocatedQuantity = 0, MinimumStockLevel = 300 },
-                    new Inventory { RationShopId = shop.Id, RationType = RationType.Sugar, AvailableQuantity = Scale(200), AllocatedQuantity = 0, MinimumStockLevel = 200 }
+                    new Inventory { RationShopId = shop.Id, RationType = RationType.Sugar, AvailableQuantity = Scale(200), AllocatedQuantity = 0, MinimumStockLevel = 200 },
+                    new Inventory { RationShopId = shop.Id, RationType = RationType.Pulses, AvailableQuantity = Scale(150), AllocatedQuantity = 0, MinimumStockLevel = 150 },
+                    new Inventory { RationShopId = shop.Id, RationType = RationType.EdibleOil, AvailableQuantity = Scale(100), AllocatedQuantity = 0, MinimumStockLevel = 100 },
+                    new Inventory { RationShopId = shop.Id, RationType = RationType.Salt, AvailableQuantity = Scale(80), AllocatedQuantity = 0, MinimumStockLevel = 80 }
                 );
             }
             await db.SaveChangesAsync();
         }
+
+        // Databases seeded before the per-slot capacity became 2 still hold the
+        // old default of 5. Bring them in line, but never below what's already
+        // booked in a slot.
+        await db.TimeSlots
+            .Where(s => s.Capacity == LegacySlotCapacity)
+            .ExecuteUpdateAsync(u => u.SetProperty(
+                s => s.Capacity,
+                s => s.BookedCount > DefaultSlotCapacity ? s.BookedCount : DefaultSlotCapacity));
 
         if (!await db.TimeSlots.AnyAsync())
         {
@@ -225,7 +252,7 @@ public static class DbInitializer
                             SlotDate = slotDate,
                             StartTime = TimeSpan.FromMinutes(minutes),
                             EndTime = TimeSpan.FromMinutes(minutes + 5),
-                            Capacity = 5,
+                            Capacity = DefaultSlotCapacity,
                             BookedCount = 0
                         });
                     }
@@ -276,6 +303,7 @@ public static class DbInitializer
             var shop = allShops[(i - 1) % allShops.Count];
             var scheme = i % 5 == 0 ? aayScheme : nfsaScheme;
             var village = shop.Village ?? shop.District;
+            var headAge = 28 + (i % 20);
 
             var family = new Family
             {
@@ -293,7 +321,7 @@ public static class DbInitializer
             {
                 FamilyId = family.Id,
                 FullName = user.FullName,
-                Age = 28 + (i % 20),
+                Age = headAge,
                 Relationship = FamilyRelationship.Head,
                 Eligibility = EligibilityStatus.Eligible,
                 DataSource = "SYNTHETIC_DEMO"
@@ -331,6 +359,12 @@ public static class DbInitializer
             {
                 BeneficiaryCode = string.Empty,
                 Address = village,
+                Gender = i % 29 == 0 ? Gender.Other : i % 2 == 0 ? Gender.Female : Gender.Male,
+                DateOfBirth = DateTime.UtcNow.AddYears(-headAge).AddDays(i * 3 % 365),
+                Village = village,
+                District = shop.District,
+                State = shop.State,
+                Pincode = $"4410{i % 90:D2}",
                 UserId = user.Id,
                 FamilyId = family.Id,
                 IsActive = true,
@@ -491,6 +525,70 @@ public static class DbInitializer
                 }
             }
         }
+
+        // ---- /qr-demo showcase tokens — fixed, human-readable QR aliases so
+        // they can be printed/displayed and physically scanned with a camera.
+        // SRQR-INVALID-999 is deliberately NOT seeded here: it has no matching
+        // token, so QrService naturally rejects it as "not recognized". ----
+        await SeedDemoQrShowcaseAsync(db, rahul, satnavariShop.Id, todayDate);
+    }
+
+    private static async Task SeedDemoQrShowcaseAsync(SmartRationDbContext db, User rahul, int shopId, DateTime todayDate)
+    {
+        var slots = await db.TimeSlots
+            .Where(s => s.RationShopId == shopId && s.BookedCount < s.Capacity)
+            .ToListAsync();
+
+        TimeSlot? PickSlot(DateTime date) => slots.FirstOrDefault(s => s.SlotDate == date && s.BookedCount < s.Capacity);
+
+        async Task<Token> CreateShowcaseTokenAsync(string qrAlias, DateTime slotDate, TokenStatus status, DateTime? collectedAt)
+        {
+            var slot = PickSlot(slotDate) ?? slots.First(s => s.BookedCount < s.Capacity);
+            slot.BookedCount += 1;
+
+            var token = new Token
+            {
+                TokenNumber = string.Empty,
+                UserId = rahul.Id,
+                RationShopId = shopId,
+                TimeSlotId = slot.Id,
+                Status = status,
+                CreatedAt = DateTime.UtcNow,
+                CollectedAt = collectedAt
+            };
+            db.Tokens.Add(token);
+            await db.SaveChangesAsync();
+
+            token.TokenNumber = $"SR-DEMO-{token.Id:D6}";
+            token.QRCodeValue = qrAlias;
+            db.TokenItems.Add(new TokenItem { TokenId = token.Id, RationType = RationType.Rice, Quantity = 5 });
+            db.TokenItems.Add(new TokenItem { TokenId = token.Id, RationType = RationType.Wheat, Quantity = 3 });
+            await db.SaveChangesAsync();
+
+            return token;
+        }
+
+        // DEMO-001: valid, ready to scan today.
+        await CreateShowcaseTokenAsync("SRQR-DEMO-001", todayDate, TokenStatus.Confirmed, null);
+
+        // DEMO-002: expired — booked for a date that has already passed.
+        await CreateShowcaseTokenAsync("SRQR-DEMO-002", todayDate.AddDays(-3), TokenStatus.Confirmed, null);
+
+        // DEMO-003: already used — completed with a real collection record.
+        var usedToken = await CreateShowcaseTokenAsync("SRQR-DEMO-003", todayDate.AddDays(-1), TokenStatus.Completed, todayDate.AddDays(-1).AddHours(11));
+        var beneficiary = await db.Beneficiaries.FirstAsync(b => b.UserId == rahul.Id);
+        db.RationCollections.Add(new RationCollection
+        {
+            CollectionCode = "COL-DEMO-SHOWCASE",
+            TokenId = usedToken.Id,
+            BeneficiaryId = beneficiary.Id,
+            RationShopId = shopId,
+            OperatorUserId = rahul.Id,
+            VerificationMethod = "QR",
+            CollectedAt = usedToken.CollectedAt!.Value,
+            Items = [new RationCollectionItem { RationType = RationType.Rice, Quantity = 5 }, new RationCollectionItem { RationType = RationType.Wheat, Quantity = 3 }]
+        });
+        await db.SaveChangesAsync();
     }
 
     private static string ComputeQrValue(string secret, int tokenId, string tokenNumber)

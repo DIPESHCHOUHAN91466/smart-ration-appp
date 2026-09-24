@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { User } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { ErrorState, LoadingState } from "../../components/EmptyState";
 import VerificationStatusCard from "../../components/verification/VerificationStatusCard";
@@ -30,7 +32,15 @@ export default function MyVerification() {
 
   return (
     <>
-      <PageHeader title="My Verification" subtitle="Your Aadhaar, passbook, mobile verification and ration entitlement status." />
+      <PageHeader
+        title="My Verification"
+        subtitle="Your Aadhaar, passbook, mobile verification and ration entitlement status."
+        action={
+          <Link className="secondary-btn" to={`/beneficiary/${profile.beneficiary.id}`}>
+            <User size={16} /> View Full 360° Profile
+          </Link>
+        }
+      />
 
       <div className="demo-box" style={{ marginBottom: 18 }}>
         <b>SYNTHETIC / DEMO VERIFICATION MODE</b> — this is demo verification data, not real Aadhaar/government

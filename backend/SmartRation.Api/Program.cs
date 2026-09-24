@@ -1,4 +1,6 @@
 using System.Text;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,9 @@ using SmartRation.Api.Data;
 using SmartRation.Api.Middleware;
 using SmartRation.Api.Services;
 using SmartRation.Api.Services.Verification;
+using SmartRation.Api.Services.AI;
+using SmartRation.Api.Services.Qr;
+using SmartRation.Api.Services.Sms;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +21,35 @@ var builder = WebApplication.CreateBuilder(args);
 // DATABASE
 // --------------------------------------------------
 
-builder.Services.AddDbContext<SmartRationDbContext>(options =>
-    options.UseSqlite(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+// Database:Provider selects the engine: "Sqlite" (default, zero setup) or
+// "MySql". MySQL's connection string comes from ConnectionStrings:MySql —
+// set it via user-secrets or the ConnectionStrings__MySql environment
+// variable, never in a committed appsettings file.
+var databaseProvider = builder.Configuration["Database:Provider"] ?? "Sqlite";
+
+if (string.Equals(databaseProvider, "MySql", StringComparison.OrdinalIgnoreCase))
+{
+    var mySqlConnection = builder.Configuration.GetConnectionString("MySql");
+    if (string.IsNullOrWhiteSpace(mySqlConnection))
+    {
+        throw new InvalidOperationException(
+            "Database:Provider is MySql but ConnectionStrings:MySql is not set. Set it with " +
+            "`dotnet user-secrets set ConnectionStrings:MySql \"Server=localhost;Database=smartration;User=...;Password=...\"` " +
+            "or the ConnectionStrings__MySql environment variable.");
+    }
+
+    // No EnableRetryOnFailure: RationCollectionService opens its own
+    // transaction, which a retrying execution strategy doesn't allow.
+    builder.Services.AddDbContext<SmartRationDbContext, MySqlSmartRationDbContext>(options =>
+        options.UseMySql(mySqlConnection, MySqlSmartRationDbContext.ServerVersion));
+}
+else
+{
+    builder.Services.AddDbContext<SmartRationDbContext>(options =>
+        options.UseSqlite(
+            builder.Configuration.GetConnectionString("DefaultConnection")
+        ));
+}
 
 // --------------------------------------------------
 // JWT CONFIGURATION
@@ -60,6 +90,24 @@ if (string.IsNullOrWhiteSpace(qrOptions.Secret))
 }
 
 builder.Services.Configure<DemoModeOptions>(builder.Configuration.GetSection(DemoModeOptions.SectionName));
+builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection(SmsOptions.SectionName));
+
+var demoOptions = builder.Configuration.GetSection(DemoModeOptions.SectionName).Get<DemoModeOptions>() ?? new DemoModeOptions();
+var smsOptions = builder.Configuration.GetSection(SmsOptions.SectionName).Get<SmsOptions>() ?? new SmsOptions();
+
+// Production must never silently fall back to a fixed demo OTP or a mock SMS
+// provider that sends nothing. Fail fast at startup instead.
+if (!builder.Environment.IsDevelopment())
+{
+    if (demoOptions.DemoOtpEnabled)
+    {
+        throw new InvalidOperationException("Demo:DemoOtpEnabled must be false outside Development (set Demo__DemoOtpEnabled=false).");
+    }
+    if (!string.Equals(smsOptions.Provider, "Http", StringComparison.OrdinalIgnoreCase))
+    {
+        throw new InvalidOperationException("Sms:Provider must be 'Http' (a real gateway) outside Development.");
+    }
+}
 
 // --------------------------------------------------
 // AUTHENTICATION / AUTHORIZATION
@@ -118,6 +166,20 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ISlotService, SlotService>();
 builder.Services.AddScoped<IQrService, QrService>();
+
+// Optional Python AI analytics service. Short timeout: the core PDS never waits on it.
+builder.Services.Configure<AiServiceOptions>(builder.Configuration.GetSection(AiServiceOptions.SectionName));
+builder.Services.AddHttpClient<IPythonAiClient, PythonAiClient>((sp, client) =>
+{
+    var ai = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AiServiceOptions>>().Value;
+    if (!string.IsNullOrWhiteSpace(ai.BaseUrl))
+    {
+        client.BaseAddress = new Uri(ai.BaseUrl);
+    }
+    client.Timeout = TimeSpan.FromSeconds(Math.Clamp(ai.TimeoutSeconds, 1, 30));
+});
+builder.Services.AddScoped<IQrScanService, QrScanService>();
+builder.Services.AddScoped<IAiAlertService, AiAlertService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<IGovernmentService, GovernmentService>();
@@ -128,12 +190,29 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAadhaarVerificationService, SyntheticAadhaarVerificationService>();
 builder.Services.AddScoped<IPassbookVerificationService, SyntheticPassbookVerificationService>();
 builder.Services.AddScoped<IOtpService, SyntheticOtpService>();
+if (string.Equals(smsOptions.Provider, "Http", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddHttpClient<ISmsProvider, HttpSmsProvider>(c => c.Timeout = TimeSpan.FromSeconds(10));
+}
+else
+{
+    builder.Services.AddSingleton<ISmsProvider, MockSmsProvider>();
+}
 builder.Services.AddScoped<IEntitlementService, EntitlementService>();
 builder.Services.AddScoped<IBeneficiaryProvisioningService, BeneficiaryProvisioningService>();
 builder.Services.AddScoped<IBeneficiaryVerificationService, BeneficiaryVerificationService>();
 builder.Services.AddScoped<IRationCollectionService, RationCollectionService>();
 builder.Services.AddScoped<IVerificationAuditService, VerificationAuditService>();
 builder.Services.AddScoped<IMapService, MapService>();
+
+// AI Intelligence Center — rule-based statistical services (see Services/AI/*.cs).
+builder.Services.AddScoped<IDemandForecastService, DemandForecastService>();
+builder.Services.AddScoped<IInventoryRiskService, InventoryRiskService>();
+builder.Services.AddScoped<IQueuePredictionService, QueuePredictionService>();
+builder.Services.AddScoped<IAnomalyDetectionService, AnomalyDetectionService>();
+builder.Services.AddScoped<IShopInsightService, ShopInsightService>();
+builder.Services.AddScoped<IBeneficiaryInsightService, BeneficiaryInsightService>();
+builder.Services.AddScoped<IAIIntelligenceService, AIIntelligenceService>();
 
 // --------------------------------------------------
 // CONTROLLERS
@@ -202,6 +281,32 @@ builder.Services.AddCors(options =>
     });
 });
 
+// --------------------------------------------------
+// RATE LIMITING (per client IP)
+// --------------------------------------------------
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, ct) =>
+    {
+        context.HttpContext.Response.ContentType = "application/json";
+        await context.HttpContext.Response.WriteAsJsonAsync(
+            ApiResponse.Fail("Too many requests. Please wait a moment and try again."), ct);
+    };
+
+    RateLimitPartition<string> PerIp(HttpContext http, int permits, TimeSpan window) =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions { PermitLimit = permits, Window = window, QueueLimit = 0 });
+
+    // Brute-force protection for credentials and OTP codes.
+    options.AddPolicy("auth", http => PerIp(http, 10, TimeSpan.FromMinutes(1)));
+    options.AddPolicy("otp", http => PerIp(http, 6, TimeSpan.FromMinutes(1)));
+    // A busy counter scans often; this only stops scripted probing.
+    options.AddPolicy("scan", http => PerIp(http, 120, TimeSpan.FromMinutes(1)));
+});
+
 var app = builder.Build();
 
 // --------------------------------------------------
@@ -233,6 +338,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseCors("FrontendPolicy");
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

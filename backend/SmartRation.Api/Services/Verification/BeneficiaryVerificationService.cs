@@ -29,7 +29,8 @@ public class BeneficiaryVerificationService(
             throw;
         }
 
-        await verificationAudit.LogAsync(VerificationAction.QrScanned, "SUCCESS", "QR", verificationReference: qrValue, tokenNumber: token.TokenNumber);
+        // Log the opaque reference, never the raw scanned payload.
+        await verificationAudit.LogAsync(VerificationAction.QrScanned, "SUCCESS", "QR", verificationReference: qrService.ParseScannedQr(qrValue).Reference, tokenNumber: token.TokenNumber);
 
         return await BuildResponseAsync(token, "QR");
     }
@@ -176,7 +177,8 @@ public class BeneficiaryVerificationService(
         var aadhaarVerified = aadhaar.Status == AadhaarVerificationStatus.Verified;
         var passbookVerified = passbook.VerificationStatus == PassbookVerificationStatus.Verified;
         var mobileVerified = mobile.Status == MobileVerificationStatus.Verified;
-        var tokenValid = token.Status == TokenStatus.Confirmed;
+        var isPastCollectionWindow = token.TimeSlot.SlotDate.Date < DateTime.UtcNow.Date;
+        var tokenValid = token.Status == TokenStatus.Confirmed && !isPastCollectionWindow;
         var familyEligible = entitlement.EligibleMemberCount > 0;
         var entitlementAvailable = entitlement.Items.Any(i => i.TodayAllocation > 0);
 
@@ -196,6 +198,7 @@ public class BeneficiaryVerificationService(
             { IsActive: false } => "This beneficiary account is not active.",
             _ when token.Status == TokenStatus.Completed => "This token has already been used for collection.",
             _ when token.Status == TokenStatus.Cancelled => "This booking was cancelled.",
+            _ when isPastCollectionWindow => "This token has expired — the booked collection date has passed.",
             _ when !tokenValid => $"Token is not valid for collection (status: {token.Status}).",
             _ when aadhaar.Status == AadhaarVerificationStatus.Failed => "Aadhaar verification failed.",
             _ when aadhaar.Status == AadhaarVerificationStatus.Expired => "Aadhaar verification has expired.",

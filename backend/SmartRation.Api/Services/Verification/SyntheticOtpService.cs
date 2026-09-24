@@ -6,6 +6,7 @@ using SmartRation.Api.Common;
 using SmartRation.Api.Configuration;
 using SmartRation.Api.Data;
 using SmartRation.Api.Models;
+using SmartRation.Api.Services.Sms;
 
 namespace SmartRation.Api.Services.Verification;
 
@@ -13,18 +14,38 @@ namespace SmartRation.Api.Services.Verification;
 // configured fixed demo code (never in production). Otherwise generates a
 // random 6-digit code; either way only a hash is ever stored, matching the
 // refresh-token pattern already used elsewhere in this codebase.
-public class SyntheticOtpService(SmartRationDbContext db, IOptions<DemoModeOptions> options) : IOtpService
+// Delivery goes through ISmsProvider (Mock in development). `sms` is optional
+// so the OTP rules can be unit-tested without a provider.
+public class SyntheticOtpService(SmartRationDbContext db, IOptions<DemoModeOptions> options, ISmsProvider? sms = null) : IOtpService
 {
     private readonly DemoModeOptions _options = options.Value;
 
     public async Task<OtpVerification> RequestOtpAsync(int beneficiaryId, int requestedByUserId)
     {
-        var beneficiary = await db.Beneficiaries.FirstOrDefaultAsync(b => b.Id == beneficiaryId)
+        var beneficiary = await db.Beneficiaries.Include(b => b.User).FirstOrDefaultAsync(b => b.Id == beneficiaryId)
             ?? throw new NotFoundException("Beneficiary not found.");
 
         if (!beneficiary.IsActive || beneficiary.IsBlocked)
         {
             throw new ForbiddenException("This beneficiary account is not active.");
+        }
+
+        // Resend cooldown, then retire any still-pending code: only the newest OTP is valid.
+        var pending = await db.OtpVerifications
+            .Where(o => o.BeneficiaryId == beneficiaryId && o.Status == OtpStatus.Pending)
+            .ToListAsync();
+        var newest = pending.OrderByDescending(o => o.CreatedAt).FirstOrDefault();
+        if (newest is not null)
+        {
+            var wait = _options.OtpResendCooldownSeconds - (int)(DateTime.UtcNow - newest.CreatedAt).TotalSeconds;
+            if (wait > 0)
+            {
+                throw new BadRequestException($"Please wait {wait} seconds before requesting another OTP.") { ErrorCode = "OTP_COOLDOWN" };
+            }
+        }
+        foreach (var old in pending)
+        {
+            old.Status = OtpStatus.Expired;
         }
 
         var code = _options.DemoOtpEnabled
@@ -45,6 +66,20 @@ public class SyntheticOtpService(SmartRationDbContext db, IOptions<DemoModeOptio
 
         db.OtpVerifications.Add(record);
         await db.SaveChangesAsync();
+
+        if (sms is not null)
+        {
+            var sent = await sms.SendAsync(beneficiary.User.MobileNumber,
+                $"Your Smart Ration verification code is {code}. Valid for {_options.OtpExpiryMinutes} minutes. Do not share it.");
+            if (!sent.Sent)
+            {
+                // An undeliverable code must not stay usable.
+                record.Status = OtpStatus.Failed;
+                await db.SaveChangesAsync();
+                throw new ServiceUnavailableException("Could not send the OTP right now. Please try again or use QR verification.") { ErrorCode = "SMS_UNAVAILABLE" };
+            }
+        }
+
         return record;
     }
 

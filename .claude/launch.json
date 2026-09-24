@@ -4,8 +4,42 @@
     {
       "name": "frontend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "frontend"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "frontend"
+      ],
       "port": 5173
+    },
+    {
+      "name": "backend",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": [
+        "run",
+        "--project",
+        "backend/SmartRation.Api",
+        "--launch-profile",
+        "http"
+      ],
+      "port": 5188
+    },
+    {
+      "name": "ai",
+      "runtimeExecutable": "backend/SmartRation.AI/.venv/Scripts/python.exe",
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "smartration_ai.main:create_app",
+        "--factory",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8001",
+        "--app-dir",
+        "backend/SmartRation.AI"
+      ],
+      "port": 8001
     }
   ]
 }

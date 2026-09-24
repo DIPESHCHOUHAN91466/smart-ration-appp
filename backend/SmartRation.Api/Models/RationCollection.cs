@@ -30,6 +30,10 @@ public class RationCollection
 
     public DateTime CollectedAt { get; set; } = DateTime.UtcNow;
 
+    // Client-generated key (Idempotency-Key header) so a retried confirm
+    // returns the original receipt instead of failing or double-issuing.
+    public string? IdempotencyKey { get; set; }
+
     public ICollection<RationCollectionItem> Items { get; set; } = new List<RationCollectionItem>();
 }
 
