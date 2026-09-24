@@ -1,0 +1,68 @@
+# Security
+
+## Secrets
+
+| Secret | Where it lives | Never in |
+|---|---|---|
+| MySQL app password | `backend/SmartRation.Python/.env` (`DATABASE_URL`), .NET user-secrets, `backend/SmartRation.AI/.env` | git, logs, error messages, URLs printed by scripts (shown as `***`) |
+| JWT signing key | `.env` `JWT_SECRET_KEY` = .NET user-secret `Jwt:Key` (same value, so tokens work on both) | git, logs |
+| QR HMAC secret | .NET user-secret `Qr:Secret`; `.env` `QR_SECRET` when QR moves to Python | git, logs |
+| Seed passwords | env vars `SEED_DEMO_PASSWORD`, `SEED_ADMIN_PASSWORD` at seed time only | source code |
+
+`.env`, `.env.*` (except `.env.example`) and `database/mysql/backups/` are git-ignored. Docker images
+contain no `.env` (see `.dockerignore`; CI asserts it); secrets are passed at run time. The Python
+app refuses to start without `JWT_SECRET_KEY` and has no default for any secret.
+
+**History:** before commit `4c983e2` the JWT key and QR secret were in the tracked
+`appsettings.Development.json`, so they remain in git history. The QR secret was deliberately **not**
+rotated (rotating it would invalidate every issued QR code). Before any public or production
+deployment: rotate the JWT key (only effect: users log in again) and plan a QR secret rotation that
+accepts the old secret for verification during a transition window.
+
+## Authentication and authorisation
+
+- JWT HS256, 15-minute access tokens, issuer `SmartRationHSD2C`, audience `SmartRationHSD2C.Clients`,
+  role claim; validated for signature, expiry, issuer and audience.
+- Refresh tokens: 64 random bytes, only the SHA-256 hash stored, rotated on every use (old one revoked
+  and linked to its replacement), 7-day expiry, revoked on logout.
+- Passwords: Argon2id for new hashes; legacy BCrypt hashes are verified and upgraded to Argon2id on
+  the next successful login. Login failures give one generic message (no account enumeration) and
+  are audited with a masked email.
+- Rate limiting: login + register share 10 requests/minute per client IP (as in C#).
+  Known gap: requests the Python proxy forwards reach the C# limiter from 127.0.0.1; the per-client
+  limit applies only to routes Python serves. Resolved as areas move to Python.
+- Roles: `RuralUser`, `ShopOwner`, `GovernmentOfficial`, `Admin`, enforced per route with
+  `require_roles(...)`, and ownership checks inside services (a user sees only their own data).
+
+## Data protection
+
+- No real Aadhaar or passbook data exists or is fetched; development data is synthetic, and Aadhaar
+  values are masked references (`XXXX-XXXX-####`). Mobile numbers are shown masked (`******1234`).
+- OTPs are stored hashed with attempt limits and expiry.
+- QR codes carry an HMAC-signed reference (`SRQR-{tokenId}-{16 hex}`), not personal data.
+- Ration collection is transactional and idempotent (unique idempotency key and one collection per token).
+- Administrative actions and verification events are written to `AuditLogs` / `VerificationAuditLogs`.
+
+## Logging and errors
+
+JSON log lines contain request id, method, path **without the query string**, status, duration and
+serving backend. Passwords, OTPs, tokens, JWTs, database credentials and raw identifiers are never
+logged. Error responses use the standard envelope and never include stack traces, SQL or file paths.
+
+## Transport and input
+
+- CORS allow-list from `CORS_ORIGINS` (default `http://localhost:5173`).
+- Request bodies above `MAX_REQUEST_BYTES` (6 MB) are rejected with 413.
+- All SQL goes through SQLAlchemy with bound parameters.
+- In production, run behind TLS (reverse proxy) and set `ENVIRONMENT=production`; `reset_database.py`
+  refuses to run in production.
+
+## Database account
+
+The app uses `smartration_app`, limited to the `smartration` schema; it cannot create databases or
+read other schemas. Use root only for provisioning. Backups read credentials from environment
+variables into a temporary option file that is deleted afterwards (never on the command line).
+
+## Reporting
+
+Report suspected vulnerabilities privately to the maintainer rather than in a public issue.

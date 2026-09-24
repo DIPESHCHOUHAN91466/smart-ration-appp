@@ -2,6 +2,25 @@
 
 A production-style React/Vite frontend prototype for the Smart Ration HSD2C distribution workflow.
 
+## Backend and documentation
+
+The backend is being migrated from ASP.NET Core 8 (`backend/SmartRation.Api`, port 5188) to
+Python/FastAPI (`backend/SmartRation.Python`, port 8000), side by side on the same MySQL 8
+database. Routes not yet migrated are proxied from Python to C#.
+
+| Doc | Contents |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | components, request flow, decisions |
+| [docs/DATABASE.md](docs/DATABASE.md) | schema, Alembic, setup/verify/seed/reset scripts |
+| [docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md) | how each area moves to Python; rollback |
+| [docs/API.md](docs/API.md) | conventions and every endpoint |
+| [docs/SECURITY.md](docs/SECURITY.md) | secrets, auth, data protection |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | local run, Docker, env vars, CI |
+| [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md) | MySQL backup and restore |
+| [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md) | compiled packages (there is no C code) |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | common errors and fixes |
+| [MIGRATION_AUDIT.md](MIGRATION_AUDIT.md) | Phase 0 audit of the C# system |
+
 ## Included
 
 - Three role-based login experiences: Rural User, Ration Shop Owner, Government Official

@@ -1,0 +1,63 @@
+# Deployment
+
+## Local development (Windows, what runs today)
+
+| Service | Port | Start |
+|---|---|---|
+| MySQL 8 | 3306 | Windows service `MySQL80` |
+| C# API (legacy) | 5188 | `dotnet run --project backend/SmartRation.Api --launch-profile http` |
+| Python API | 8000 | `cd backend\SmartRation.Python` → `.venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000` |
+| AI service | 8001 | `cd backend\SmartRation.AI` → `.venv\Scripts\python -m uvicorn smartration_ai.main:create_app --factory --port 8001` |
+| Frontend | 5173 | `cd frontend` → `npm run dev` |
+
+`start-dev.bat` starts the C# API and frontend. First-time Python setup:
+[backend/SmartRation.Python/README.md](../backend/SmartRation.Python/README.md).
+
+## Docker (MySQL + Python API)
+
+```
+copy deployment\docker\compose.env.example .env     # fill in every value; .env is git-ignored
+docker compose up --build
+```
+
+- `mysql`: MySQL 8.0, named volume `mysql-data`, healthcheck; published on `127.0.0.1:3307` so
+  it doesn't clash with a host MySQL. This is a **separate** database from the host's `smartration`.
+- `api`: built from `backend/SmartRation.Python/Dockerfile` (non-root user, no secrets in the image,
+  healthcheck on `/health/live`). It waits for MySQL to be healthy, then runs
+  `scripts/setup_database.py` (creates/adopts/upgrades; never drops), optionally seeds, and starts uvicorn.
+- The C# API isn't containerised; `LEGACY_API_URL` points at the host (`host.docker.internal:5188`).
+- `docker compose down` keeps data; `docker compose down -v` **deletes the database volume**.
+
+Probes: liveness `GET /health/live`; readiness `GET /ready` (database, migration version, legacy API).
+
+## Environment variables (Python API)
+
+| Variable | Required | Default | Notes |
+|---|---|---|---|
+| `DATABASE_URL` | yes | — | `mysql+pymysql://USER:PASS@HOST:3306/smartration?charset=utf8mb4` |
+| `JWT_SECRET_KEY` | yes | — | same as C# `Jwt:Key` |
+| `ENVIRONMENT` | no | `development` | `production` disables reset |
+| `LEGACY_API_URL` | no | `http://localhost:5188` | empty disables the proxy |
+| `LEGACY_API_TIMEOUT_SECONDS` | no | 30 | |
+| `CORS_ORIGINS` | no | `http://localhost:5173` | comma-separated |
+| `MAX_REQUEST_BYTES` | no | 6291456 | |
+| `LOG_LEVEL` | no | `INFO` | |
+| `JWT_ISSUER` / `JWT_AUDIENCE` | no | `SmartRationHSD2C` / `SmartRationHSD2C.Clients` | change only with C# |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` / `REFRESH_TOKEN_EXPIRE_DAYS` | no | 15 / 7 | |
+| `PASSWORD_UPGRADE_TO_ARGON2` | no | true | |
+| `AUTH_RATE_LIMIT_PER_MINUTE` | no | 10 | |
+| `RUN_DB_SETUP` / `RUN_DB_SEED` | no | false / false | container entrypoint only |
+| `SEED_DEMO_PASSWORD`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | no | — | seeding only |
+| `RESET_DATABASE`, `CONFIRM_RESET` | no | — | reset script only |
+
+## CI
+
+`.github/workflows/ci.yml` runs on pushes to `main` and `feature/**` and on pull requests:
+Python (3.13 and 3.14) lint + type check + schema setup/seed/verify against a MySQL 8 service
+container + pytest; C# tests; frontend build; Docker image build, content check and start-up smoke test.
+
+## Production checklist
+
+TLS reverse proxy in front of :8000 · `ENVIRONMENT=production` · rotated JWT key (see SECURITY.md) ·
+least-privilege DB account · scheduled backups with an off-machine copy and a tested restore ·
+`/ready` wired to the load balancer · logs shipped somewhere searchable · C# API retired or firewalled.
