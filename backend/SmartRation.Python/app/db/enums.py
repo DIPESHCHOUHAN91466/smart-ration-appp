@@ -56,3 +56,12 @@ class MobileVerificationStatus(IntEnum):
     Pending = 2
     Verified = 3
     Failed = 4
+
+
+class RationType(IntEnum):
+    Rice = 1
+    Wheat = 2
+    Sugar = 3
+    Pulses = 4
+    EdibleOil = 5
+    Salt = 6

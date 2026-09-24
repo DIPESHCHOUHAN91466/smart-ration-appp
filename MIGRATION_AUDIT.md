@@ -42,7 +42,7 @@ Python AI service (backend/SmartRation.AI, :8001, read-only DB account) — call
 ### Python
 - `backend/SmartRation.Python` (the migration target): FastAPI app factory, pydantic-settings, JSON logging with request
   ids, C#-compatible error envelope, `/health`, 25 SQLAlchemy models mirroring the live schema (verified by Alembic
-  comparison), Alembic baseline (not stamped), fallback proxy, **auth migrated** (JWT/refresh/Argon2, rate limit,
+  comparison), Alembic `0001_initial` (live DB stamped after this audit), fallback proxy, **auth migrated** (JWT/refresh/Argon2, rate limit,
   provisioning, audit). 38 pytest tests + live contract scripts.
 - `backend/SmartRation.AI`: analytics (forecasting, inventory, queue, risk, shop monitoring, alerts), optional OCR,
   synthetic history generator. 46 pytest tests. Planned to merge into the Python backend (Step 12).

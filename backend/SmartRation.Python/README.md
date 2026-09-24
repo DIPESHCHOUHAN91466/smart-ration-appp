@@ -65,6 +65,19 @@ defaults, keys, foreign keys or indexes.
 
 Models in `app/db/models.py` mirror the existing schema (generated from `information_schema`,
 PascalCase table names as EF created them; Windows MySQL's lowercase storage is handled).
-The EF Core migrations still own the schema during the migration. Alembic has a no-op
-`baseline` revision; the database is **not** stamped yet. When Python takes over schema
-ownership: back up (`mysqldump`), run the schema test, then `alembic stamp baseline`.
+
+**Alembic owns the schema.** Revision `0001_initial` creates all 25 tables exactly as EF Core did
+(same names, types, indexes and `FK_<Table>_<Principal>_<Column>` constraint names). The existing
+database was adopted with `alembic stamp 0001_initial` after verifying zero drift; no table or
+row was changed. Do not add EF Core migrations any more: every schema change is an Alembic
+revision. (The C# API's startup `Migrate()` has nothing to apply, so it leaves the schema alone.)
+
+```
+.venv\Scripts\python scripts\setup_database.py [--seed]   # empty DB: create; EF DB: verify + adopt; then verify
+.venv\Scripts\python scripts\verify_database.py           # read-only: tables, columns, FKs, indexes, version, seed data
+.venv\Scripts\python scripts\seed_database.py             # synthetic data, inserted only into empty tables
+.venv\Scripts\python scripts\reset_database.py            # DEV ONLY; see docs/DATABASE.md for the confirmations
+```
+
+Seed users need `SEED_DEMO_PASSWORD` and/or `SEED_ADMIN_EMAIL` + `SEED_ADMIN_PASSWORD`
+(never stored in source). Backups: `database/mysql/backup.ps1` / `restore.ps1`.

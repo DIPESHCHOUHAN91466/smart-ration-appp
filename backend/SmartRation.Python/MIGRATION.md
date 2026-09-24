@@ -14,7 +14,7 @@ area is migrated and end-to-end testing passes.
 | Services | `app/services/` |
 | EF entities | SQLAlchemy models (`app/db/models.py`) |
 | DTOs + DataAnnotations | Pydantic schemas (`app/schemas/`) |
-| EF Core migrations | Alembic (`app/db/migrations/`, baseline = current schema) |
+| EF Core migrations | Alembic (`app/db/migrations/`; `0001_initial` = the existing schema, live DB stamped) |
 | appsettings + user-secrets | `.env` + pydantic-settings (`app/core/config.py`) |
 | ExceptionHandlingMiddleware / ApiException | exception handlers / `ApiError` (`app/core/errors.py`) |
 | JWT bearer + BCrypt | PyJWT (same claims) + bcrypt verify, Argon2id rehash on login (`app/core/security.py`) |
@@ -30,7 +30,8 @@ area is migrated and end-to-end testing passes.
 |---|---|---|---|
 | 0 | Checkpoint + branch | — | done (`3148b9d`) |
 | 1a | Secrets out of tracked config | — | done (`4c983e2`) |
-| 1b | Foundation: app, config, logging, errors, `/health`, docs, models, Alembic baseline, fallback proxy | — | done |
+| 1b | Foundation: app, config, logging, errors, `/health`, docs, models, fallback proxy | — | done |
+| 2b | Ops: Alembic owns the schema (`0001_initial`, live DB stamped), setup/verify/seed/reset scripts, backup/restore, `/ready`, Docker, CI, docs | — | done |
 | 2 | Auth (register, login, refresh, logout) | 4 | **Python** |
 | 3 | Users, ration items, slots | 8 | proxied |
 | 4 | Bookings + tokens | 9 | proxied |

@@ -1,10 +1,10 @@
 """Alembic environment.
 
-Schema ownership during the side-by-side migration: the C# API's EF Core
-migrations still own the schema. Alembic starts from a BASELINE revision that
-matches the existing tables and creates nothing. Only once Python takes over
-schema changes is the database stamped (`alembic stamp baseline`), and from
-then on new changes are Alembic revisions. See MIGRATION.md.
+Alembic owns the schema. Revision 0001_initial creates the 25 tables exactly
+as the C# API's EF Core migrations did; an existing EF-created database is
+adopted with `alembic stamp 0001_initial` (scripts/setup_database.py verifies
+it matches first). Every later schema change is a new Alembic revision.
+See docs/MIGRATION_GUIDE.md.
 """
 
 from logging.config import fileConfig
@@ -48,11 +48,15 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     connectable = engine_from_config(config.get_section(config.config_ini_section, {}), prefix="sqlalchemy.", poolclass=pool.NullPool)
     with connectable.connect() as connection:
+        # Lowercase copy on case-folding (Windows) MySQL, so autogenerate
+        # doesn't mistake "tokens" for a missing "Tokens" table.
+        metadata = comparable_metadata(connection, target_metadata)
+        # That lookup auto-began a transaction; end it, or Alembic treats it as
+        # an outer transaction and never commits (stamps/migrations silently lost).
+        connection.commit()
         context.configure(
             connection=connection,
-            # Lowercase copy on case-folding (Windows) MySQL, so autogenerate
-            # doesn't mistake "tokens" for a missing "Tokens" table.
-            target_metadata=comparable_metadata(connection, target_metadata),
+            target_metadata=metadata,
             include_object=include_object,
             compare_type=True,
             compare_server_default=True,

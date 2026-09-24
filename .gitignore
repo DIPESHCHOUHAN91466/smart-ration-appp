@@ -39,3 +39,6 @@ Thumbs.db
 __pycache__/
 .pytest_cache/
 .venv/
+
+# Database backups (contain personal data)
+database/mysql/backups/

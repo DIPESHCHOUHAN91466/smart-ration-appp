@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from sqlalchemy import create_engine, text
+from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
@@ -12,7 +12,9 @@ from app.core.config import get_settings
 
 
 class Base(DeclarativeBase):
-    pass
+    # Same constraint names EF Core used (FK_<Table>_<PrincipalTable>_<Column>),
+    # so a database created by Alembic is identical to the existing one.
+    metadata = MetaData(naming_convention={"fk": "FK_%(table_name)s_%(referred_table_name)s_%(column_0_name)s"})
 
 
 _engine: Engine | None = None
