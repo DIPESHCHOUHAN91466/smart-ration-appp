@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from sqlalchemy import MetaData, create_engine, text
+from functools import lru_cache
+from pathlib import Path
+
+from sqlalchemy import MetaData, create_engine, inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
@@ -33,12 +36,14 @@ def configure_database(database_url: str) -> None:
 def get_engine() -> Engine:
     if _engine is None:
         configure_database(get_settings().database_url)
+    assert _engine is not None
     return _engine
 
 
 def get_session_factory() -> sessionmaker[Session]:
     if _session_factory is None:
         configure_database(get_settings().database_url)
+    assert _session_factory is not None
     return _session_factory
 
 
@@ -67,3 +72,28 @@ def database_is_reachable() -> bool:
         return True
     except SQLAlchemyError:
         return False
+
+
+MIGRATIONS_DIR = Path(__file__).resolve().parent / "migrations"
+
+
+@lru_cache
+def alembic_head() -> str | None:
+    """The newest Alembic revision shipped with this code."""
+    from alembic.config import Config
+    from alembic.script import ScriptDirectory
+
+    cfg = Config()
+    cfg.set_main_option("script_location", str(MIGRATIONS_DIR))
+    return ScriptDirectory.from_config(cfg).get_current_head()
+
+
+def current_revision() -> str | None:
+    """The revision the database is at; None if it isn't managed by Alembic (or is unreachable)."""
+    try:
+        with get_engine().connect() as conn:
+            if "alembic_version" not in {t.lower() for t in inspect(conn).get_table_names()}:
+                return None
+            return conn.execute(text("SELECT version_num FROM alembic_version")).scalar()
+    except SQLAlchemyError:
+        return None

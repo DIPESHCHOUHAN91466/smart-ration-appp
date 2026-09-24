@@ -20,7 +20,7 @@ import hashlib
 import secrets
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import bcrypt
 import jwt
@@ -38,7 +38,7 @@ _argon2 = PasswordHasher()  # argon2id, library defaults (m=64 MiB, t=3, p=4)
 
 def utc_now() -> datetime:
     """Naive UTC, the way EF Core stores DateTime in this database."""
-    return datetime.now(timezone.utc).replace(tzinfo=None)
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
 def format_utc(value: datetime) -> str:
@@ -89,7 +89,7 @@ class TokenUser:
 
 def create_access_token(user: TokenUser, settings: Settings) -> tuple[str, datetime]:
     expires_at = utc_now() + timedelta(minutes=settings.access_token_expire_minutes)
-    claims = {
+    claims: dict[str, str | int] = {
         "sub": str(user.id),
         "email": user.email,
         NAME_CLAIM: user.full_name,
@@ -99,7 +99,7 @@ def create_access_token(user: TokenUser, settings: Settings) -> tuple[str, datet
     if user.ration_shop_id is not None:
         claims["rationShopId"] = str(user.ration_shop_id)
     claims |= {
-        "exp": int(expires_at.replace(tzinfo=timezone.utc).timestamp()),
+        "exp": int(expires_at.replace(tzinfo=UTC).timestamp()),
         "iss": settings.jwt_issuer,
         "aud": settings.jwt_audience,
     }

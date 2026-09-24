@@ -12,7 +12,16 @@ from app.core.errors import ok
 from app.core.rate_limit import rate_limit
 from app.core.validation import ValidationFailed, validate
 from app.db.database import get_db
-from app.schemas.auth import LOGIN_RULES, REFRESH_RULES, REGISTER_RULES, AuthEnvelope, EmptyEnvelope, LoginRequest, RefreshRequest, RegisterRequest
+from app.schemas.auth import (
+    LOGIN_RULES,
+    REFRESH_RULES,
+    REGISTER_RULES,
+    AuthEnvelope,
+    EmptyEnvelope,
+    LoginRequest,
+    RefreshRequest,
+    RegisterRequest,
+)
 from app.services import auth_service
 from app.services.auth_service import RequestContext
 

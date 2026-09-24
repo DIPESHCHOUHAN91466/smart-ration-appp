@@ -10,7 +10,7 @@ field is evaluated independently (an empty email yields both "required" and
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Mapping, Sequence
 
 from app.core.errors import ApiError
 
@@ -68,7 +68,7 @@ def string_length(maximum: int, minimum: int = 0) -> Rule:
     return rule
 
 
-def validate(body: dict | None, schema: dict[str, list[Rule]]) -> dict[str, str]:
+def validate(body: dict | None, schema: Mapping[str, Sequence[Rule]]) -> dict[str, str]:
     """Validate a JSON object against {FieldName: [rules]} (C# property names,
     matched case-insensitively like MVC model binding). Returns clean strings."""
     if not isinstance(body, dict):

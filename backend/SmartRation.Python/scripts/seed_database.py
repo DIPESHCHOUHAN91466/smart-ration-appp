@@ -17,12 +17,11 @@ Usage (from backend/SmartRation.Python):
 
 from __future__ import annotations
 
-import math
 import os
 import sys
 from datetime import datetime, time, timedelta
 
-from _common import engine, safe_url, database_url
+from _common import database_url, engine, safe_url
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -103,7 +102,7 @@ def seed(db: Session) -> list[str]:
             db.add(scheme)
             db.flush()
             db.add_all(SchemeEntitlementItem(RationSchemeId=scheme.Id, RationType=int(t), QuotaPerEligibleMemberPerMonth=q)
-                       for t, q in zip(RationType, quotas))
+                       for t, q in zip(RationType, quotas, strict=True))
         done.append(f"{len(SCHEMES)} schemes with entitlements")
 
     if _is_empty(db, Inventory):
@@ -112,7 +111,7 @@ def seed(db: Session) -> list[str]:
             factor = 0.3 if tier == 0 else 0.8 if tier == 1 else 3.0 + i * 0.15
             db.add_all(Inventory(RationShopId=shop.Id, RationType=int(t), AvailableQuantity=_round_half_even(m * factor),
                                  AllocatedQuantity=0, MinimumStockLevel=m, UpdatedAt=now)
-                       for t, m in zip(RationType, MINIMUM_STOCK))
+                       for t, m in zip(RationType, MINIMUM_STOCK, strict=True))
         done.append(f"inventory for {len(shops)} shops")
 
     if _is_empty(db, TimeSlot):

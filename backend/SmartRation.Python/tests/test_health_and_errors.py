@@ -71,3 +71,41 @@ def test_error_envelopes_match_the_csharp_api():
 
     r = c.get("/boom")
     assert r.status_code == 500 and "secret" not in r.text and "internal" not in r.text
+
+
+def _migrate(url: str) -> None:
+    from alembic import command
+    from alembic.config import Config
+
+    from app.db.database import MIGRATIONS_DIR
+
+    cfg = Config()
+    cfg.set_main_option("script_location", str(MIGRATIONS_DIR))
+    cfg.attributes["database_url"] = url  # never fall back to the .env (live) database
+    command.upgrade(cfg, "head")
+
+
+def test_ready_when_database_migrated_and_legacy_up(make_client, tmp_path):
+    url = f"sqlite:///{(tmp_path / 'unit.db').as_posix()}"
+    _migrate(url)
+    r = make_client(healthy_legacy).get("/ready")
+    assert r.status_code == 200
+    assert r.json() == {"ready": True, "checks": {"database": "ok", "migrations": "ok", "legacyApi": "ok"}}
+
+
+def test_not_ready_when_schema_not_migrated(make_client):
+    r = make_client(healthy_legacy).get("/ready")
+    assert r.status_code == 503
+    body = r.json()
+    assert body["ready"] is False and body["checks"]["migrations"].startswith("failing")
+
+
+def test_not_ready_when_legacy_down(make_client, tmp_path):
+    url = f"sqlite:///{(tmp_path / 'unit.db').as_posix()}"
+    _migrate(url)
+
+    def down(request):
+        raise httpx.ConnectError("refused")
+
+    r = make_client(down).get("/ready")
+    assert r.status_code == 503 and r.json()["checks"]["legacyApi"] == "failing"

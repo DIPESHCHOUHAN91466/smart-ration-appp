@@ -10,7 +10,11 @@ Enums are stored as integers, exactly as the C# API stores them.
 
 from __future__ import annotations
 
-from sqlalchemy import Boolean, Column, Double, ForeignKey, Index, Integer, String
+from datetime import datetime, time
+from decimal import Decimal
+
+from sqlalchemy import Boolean, Double, ForeignKey, Index, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
 from app.db.types import BigId, DateTime6, LongText, Money, Time6
@@ -18,26 +22,26 @@ from app.db.types import BigId, DateTime6, LongText, Money, Time6
 
 class AIAlert(Base):
     __tablename__ = "AIAlerts"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    ShopId = Column(Integer, nullable=True)
-    BeneficiaryId = Column(Integer, nullable=True)
-    AlertType = Column(String(64), nullable=False)
-    Severity = Column(Integer, nullable=False)
-    Description = Column(LongText, nullable=False)
-    Status = Column(Integer, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
-    ResolvedAt = Column(DateTime6, nullable=True)
-    Source = Column(String(32), nullable=False, server_default="RULES")
-    Title = Column(String(200), nullable=True)
-    RationType = Column(Integer, nullable=True)
-    Score = Column(Double, nullable=True)
-    RecommendedAction = Column(String(500), nullable=True)
-    DedupKey = Column(String(128), nullable=True)
-    MetadataJson = Column(LongText, nullable=True)
-    DetectedAt = Column(DateTime6, nullable=True)
-    LastSeenAt = Column(DateTime6, nullable=True)
-    ResolvedByUserId = Column(Integer, nullable=True)
-    ResolutionNote = Column(String(500), nullable=True)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ShopId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    BeneficiaryId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    AlertType: Mapped[str] = mapped_column(String(64), nullable=False)
+    Severity: Mapped[int] = mapped_column(Integer, nullable=False)
+    Description: Mapped[str] = mapped_column(LongText, nullable=False)
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    ResolvedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+    Source: Mapped[str] = mapped_column(String(32), nullable=False, server_default="RULES")
+    Title: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    RationType: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    Score: Mapped[float | None] = mapped_column(Double, nullable=True)
+    RecommendedAction: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    DedupKey: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    MetadataJson: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    DetectedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+    LastSeenAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+    ResolvedByUserId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    ResolutionNote: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     __table_args__ = (
         Index("IX_AIAlerts_DedupKey_Status", "DedupKey", "Status"),
@@ -47,27 +51,27 @@ class AIAlert(Base):
 
 class AIInsight(Base):
     __tablename__ = "AIInsights"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    EntityType = Column(LongText, nullable=False)
-    EntityId = Column(Integer, nullable=True)
-    InsightType = Column(LongText, nullable=False)
-    RiskLevel = Column(Integer, nullable=False)
-    Score = Column(Double, nullable=False)
-    Explanation = Column(LongText, nullable=False)
-    Recommendation = Column(LongText, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    EntityType: Mapped[str] = mapped_column(LongText, nullable=False)
+    EntityId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    InsightType: Mapped[str] = mapped_column(LongText, nullable=False)
+    RiskLevel: Mapped[int] = mapped_column(Integer, nullable=False)
+    Score: Mapped[float] = mapped_column(Double, nullable=False)
+    Explanation: Mapped[str] = mapped_column(LongText, nullable=False)
+    Recommendation: Mapped[str] = mapped_column(LongText, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
 
 class AadhaarVerification(Base):
     __tablename__ = "AadhaarVerifications"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    BeneficiaryId = Column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
-    AadhaarReferenceId = Column(LongText, nullable=False)
-    AadhaarMasked = Column(LongText, nullable=False)
-    Status = Column(Integer, nullable=False)
-    VerificationDate = Column(DateTime6, nullable=True)
-    VerificationSource = Column(LongText, nullable=False)
-    VerificationMode = Column(LongText, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    BeneficiaryId: Mapped[int] = mapped_column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
+    AadhaarReferenceId: Mapped[str] = mapped_column(LongText, nullable=False)
+    AadhaarMasked: Mapped[str] = mapped_column(LongText, nullable=False)
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)
+    VerificationDate: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+    VerificationSource: Mapped[str] = mapped_column(LongText, nullable=False)
+    VerificationMode: Mapped[str] = mapped_column(LongText, nullable=False)
 
     __table_args__ = (
         Index("IX_AadhaarVerifications_BeneficiaryId", "BeneficiaryId", unique=True),
@@ -76,36 +80,36 @@ class AadhaarVerification(Base):
 
 class AuditLog(Base):
     __tablename__ = "AuditLogs"
-    Id = Column(BigId, primary_key=True, autoincrement=True)
-    UserId = Column(Integer, nullable=True)
-    Action = Column(LongText, nullable=False)
-    EntityName = Column(LongText, nullable=False)
-    EntityId = Column(LongText, nullable=True)
-    IpAddress = Column(LongText, nullable=True)
-    Details = Column(LongText, nullable=True)
-    Role = Column(String(32), nullable=True)
-    Result = Column(String(16), nullable=True)
-    CreatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(BigId, primary_key=True, autoincrement=True)
+    UserId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    Action: Mapped[str] = mapped_column(LongText, nullable=False)
+    EntityName: Mapped[str] = mapped_column(LongText, nullable=False)
+    EntityId: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    IpAddress: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    Details: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    Role: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    Result: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
 
 class Beneficiary(Base):
     __tablename__ = "Beneficiaries"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    BeneficiaryCode = Column(String(255), nullable=False)
-    Address = Column(LongText, nullable=False)
-    Gender = Column(Integer, nullable=False)
-    DateOfBirth = Column(DateTime6, nullable=False)
-    Village = Column(LongText, nullable=False)
-    District = Column(LongText, nullable=False)
-    State = Column(LongText, nullable=False)
-    Pincode = Column(LongText, nullable=False)
-    ProfilePhotoUrl = Column(LongText, nullable=True)
-    UserId = Column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
-    FamilyId = Column(Integer, ForeignKey("Families.Id", ondelete="RESTRICT"), nullable=False)
-    IsActive = Column(Boolean, nullable=False)
-    IsBlocked = Column(Boolean, nullable=False)
-    DataSource = Column(LongText, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    BeneficiaryCode: Mapped[str] = mapped_column(String(255), nullable=False)
+    Address: Mapped[str] = mapped_column(LongText, nullable=False)
+    Gender: Mapped[int] = mapped_column(Integer, nullable=False)
+    DateOfBirth: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    Village: Mapped[str] = mapped_column(LongText, nullable=False)
+    District: Mapped[str] = mapped_column(LongText, nullable=False)
+    State: Mapped[str] = mapped_column(LongText, nullable=False)
+    Pincode: Mapped[str] = mapped_column(LongText, nullable=False)
+    ProfilePhotoUrl: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    UserId: Mapped[int] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
+    FamilyId: Mapped[int] = mapped_column(Integer, ForeignKey("Families.Id", ondelete="RESTRICT"), nullable=False)
+    IsActive: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    IsBlocked: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    DataSource: Mapped[str] = mapped_column(LongText, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
     __table_args__ = (
         Index("IX_Beneficiaries_BeneficiaryCode", "BeneficiaryCode", unique=True),
@@ -116,12 +120,12 @@ class Beneficiary(Base):
 
 class Family(Base):
     __tablename__ = "Families"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    FamilyCode = Column(String(255), nullable=False)
-    RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
-    RationSchemeId = Column(Integer, ForeignKey("RationSchemes.Id", ondelete="RESTRICT"), nullable=False)
-    DataSource = Column(LongText, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    FamilyCode: Mapped[str] = mapped_column(String(255), nullable=False)
+    RationShopId: Mapped[int] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
+    RationSchemeId: Mapped[int] = mapped_column(Integer, ForeignKey("RationSchemes.Id", ondelete="RESTRICT"), nullable=False)
+    DataSource: Mapped[str] = mapped_column(LongText, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
     __table_args__ = (
         Index("IX_Families_FamilyCode", "FamilyCode", unique=True),
@@ -132,13 +136,13 @@ class Family(Base):
 
 class FamilyMember(Base):
     __tablename__ = "FamilyMembers"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    FamilyId = Column(Integer, ForeignKey("Families.Id", ondelete="CASCADE"), nullable=False)
-    FullName = Column(LongText, nullable=False)
-    Age = Column(Integer, nullable=False)
-    Relationship = Column(Integer, nullable=False)
-    Eligibility = Column(Integer, nullable=False)
-    DataSource = Column(LongText, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    FamilyId: Mapped[int] = mapped_column(Integer, ForeignKey("Families.Id", ondelete="CASCADE"), nullable=False)
+    FullName: Mapped[str] = mapped_column(LongText, nullable=False)
+    Age: Mapped[int] = mapped_column(Integer, nullable=False)
+    Relationship: Mapped[int] = mapped_column(Integer, nullable=False)
+    Eligibility: Mapped[int] = mapped_column(Integer, nullable=False)
+    DataSource: Mapped[str] = mapped_column(LongText, nullable=False)
 
     __table_args__ = (
         Index("IX_FamilyMembers_FamilyId", "FamilyId"),
@@ -147,13 +151,13 @@ class FamilyMember(Base):
 
 class Inventory(Base):
     __tablename__ = "Inventory"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="CASCADE"), nullable=False)
-    RationType = Column(Integer, nullable=False)
-    AvailableQuantity = Column(Money, nullable=False)
-    AllocatedQuantity = Column(Money, nullable=False)
-    MinimumStockLevel = Column(Money, nullable=False)
-    UpdatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    RationShopId: Mapped[int] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="CASCADE"), nullable=False)
+    RationType: Mapped[int] = mapped_column(Integer, nullable=False)
+    AvailableQuantity: Mapped[Decimal] = mapped_column(Money, nullable=False)
+    AllocatedQuantity: Mapped[Decimal] = mapped_column(Money, nullable=False)
+    MinimumStockLevel: Mapped[Decimal] = mapped_column(Money, nullable=False)
+    UpdatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
     __table_args__ = (
         Index("IX_Inventory_RationShopId_RationType", "RationShopId", "RationType", unique=True),
@@ -162,16 +166,16 @@ class Inventory(Base):
 
 class InventoryMovement(Base):
     __tablename__ = "InventoryMovements"
-    Id = Column(BigId, primary_key=True, autoincrement=True)
-    RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
-    RationType = Column(Integer, nullable=False)
-    MovementType = Column(Integer, nullable=False)
-    Quantity = Column(Money, nullable=False)
-    BalanceAfter = Column(Money, nullable=False)
-    Reference = Column(String(64), nullable=True)
-    Note = Column(String(256), nullable=True)
-    RecordedByUserId = Column(Integer, nullable=True)
-    CreatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(BigId, primary_key=True, autoincrement=True)
+    RationShopId: Mapped[int] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
+    RationType: Mapped[int] = mapped_column(Integer, nullable=False)
+    MovementType: Mapped[int] = mapped_column(Integer, nullable=False)
+    Quantity: Mapped[Decimal] = mapped_column(Money, nullable=False)
+    BalanceAfter: Mapped[Decimal] = mapped_column(Money, nullable=False)
+    Reference: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    Note: Mapped[str | None] = mapped_column(String(256), nullable=True)
+    RecordedByUserId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
     __table_args__ = (
         Index("IX_InventoryMovements_RationShopId_RationType_CreatedAt", "RationShopId", "RationType", "CreatedAt"),
@@ -180,12 +184,12 @@ class InventoryMovement(Base):
 
 class MobileVerification(Base):
     __tablename__ = "MobileVerifications"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    BeneficiaryId = Column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
-    MobileMasked = Column(LongText, nullable=False)
-    Status = Column(Integer, nullable=False)
-    VerifiedAt = Column(DateTime6, nullable=True)
-    VerificationSource = Column(LongText, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    BeneficiaryId: Mapped[int] = mapped_column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
+    MobileMasked: Mapped[str] = mapped_column(LongText, nullable=False)
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)
+    VerifiedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+    VerificationSource: Mapped[str] = mapped_column(LongText, nullable=False)
 
     __table_args__ = (
         Index("IX_MobileVerifications_BeneficiaryId", "BeneficiaryId", unique=True),
@@ -194,13 +198,13 @@ class MobileVerification(Base):
 
 class Notification(Base):
     __tablename__ = "Notifications"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    UserId = Column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
-    Type = Column(Integer, nullable=False)
-    Title = Column(LongText, nullable=False)
-    Message = Column(LongText, nullable=False)
-    IsRead = Column(Boolean, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    UserId: Mapped[int] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
+    Type: Mapped[int] = mapped_column(Integer, nullable=False)
+    Title: Mapped[str] = mapped_column(LongText, nullable=False)
+    Message: Mapped[str] = mapped_column(LongText, nullable=False)
+    IsRead: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
     __table_args__ = (
         Index("IX_Notifications_UserId", "UserId"),
@@ -209,16 +213,16 @@ class Notification(Base):
 
 class OtpVerification(Base):
     __tablename__ = "OtpVerifications"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    BeneficiaryId = Column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
-    RequestedByUserId = Column(Integer, nullable=False)
-    OtpHash = Column(LongText, nullable=False)
-    AttemptCount = Column(Integer, nullable=False)
-    MaxAttempts = Column(Integer, nullable=False)
-    Status = Column(Integer, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
-    ExpiresAt = Column(DateTime6, nullable=False)
-    VerifiedAt = Column(DateTime6, nullable=True)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    BeneficiaryId: Mapped[int] = mapped_column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
+    RequestedByUserId: Mapped[int] = mapped_column(Integer, nullable=False)
+    OtpHash: Mapped[str] = mapped_column(LongText, nullable=False)
+    AttemptCount: Mapped[int] = mapped_column(Integer, nullable=False)
+    MaxAttempts: Mapped[int] = mapped_column(Integer, nullable=False)
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    ExpiresAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    VerifiedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
 
     __table_args__ = (
         Index("IX_OtpVerifications_BeneficiaryId", "BeneficiaryId"),
@@ -227,13 +231,13 @@ class OtpVerification(Base):
 
 class PassbookVerification(Base):
     __tablename__ = "PassbookVerifications"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    BeneficiaryId = Column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
-    PassbookNumber = Column(LongText, nullable=False)
-    Status = Column(LongText, nullable=False)
-    VerificationStatus = Column(Integer, nullable=False)
-    LastUpdated = Column(DateTime6, nullable=False)
-    VerificationSource = Column(LongText, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    BeneficiaryId: Mapped[int] = mapped_column(Integer, ForeignKey("Beneficiaries.Id", ondelete="CASCADE"), nullable=False)
+    PassbookNumber: Mapped[str] = mapped_column(LongText, nullable=False)
+    Status: Mapped[str] = mapped_column(LongText, nullable=False)
+    VerificationStatus: Mapped[int] = mapped_column(Integer, nullable=False)
+    LastUpdated: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    VerificationSource: Mapped[str] = mapped_column(LongText, nullable=False)
 
     __table_args__ = (
         Index("IX_PassbookVerifications_BeneficiaryId", "BeneficiaryId", unique=True),
@@ -242,15 +246,15 @@ class PassbookVerification(Base):
 
 class RationCollection(Base):
     __tablename__ = "RationCollections"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    CollectionCode = Column(String(255), nullable=False)
-    TokenId = Column(Integer, ForeignKey("Tokens.Id", ondelete="RESTRICT"), nullable=False)
-    BeneficiaryId = Column(Integer, ForeignKey("Beneficiaries.Id", ondelete="RESTRICT"), nullable=False)
-    RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
-    OperatorUserId = Column(Integer, nullable=False)
-    VerificationMethod = Column(LongText, nullable=False)
-    CollectedAt = Column(DateTime6, nullable=False)
-    IdempotencyKey = Column(String(64), nullable=True)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    CollectionCode: Mapped[str] = mapped_column(String(255), nullable=False)
+    TokenId: Mapped[int] = mapped_column(Integer, ForeignKey("Tokens.Id", ondelete="RESTRICT"), nullable=False)
+    BeneficiaryId: Mapped[int] = mapped_column(Integer, ForeignKey("Beneficiaries.Id", ondelete="RESTRICT"), nullable=False)
+    RationShopId: Mapped[int] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
+    OperatorUserId: Mapped[int] = mapped_column(Integer, nullable=False)
+    VerificationMethod: Mapped[str] = mapped_column(LongText, nullable=False)
+    CollectedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    IdempotencyKey: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
     __table_args__ = (
         Index("IX_RationCollections_BeneficiaryId", "BeneficiaryId"),
@@ -263,10 +267,10 @@ class RationCollection(Base):
 
 class RationCollectionItem(Base):
     __tablename__ = "RationCollectionItems"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    RationCollectionId = Column(Integer, ForeignKey("RationCollections.Id", ondelete="CASCADE"), nullable=False)
-    RationType = Column(Integer, nullable=False)
-    Quantity = Column(Money, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    RationCollectionId: Mapped[int] = mapped_column(Integer, ForeignKey("RationCollections.Id", ondelete="CASCADE"), nullable=False)
+    RationType: Mapped[int] = mapped_column(Integer, nullable=False)
+    Quantity: Mapped[Decimal] = mapped_column(Money, nullable=False)
 
     __table_args__ = (
         Index("IX_RationCollectionItems_RationCollectionId", "RationCollectionId"),
@@ -275,13 +279,13 @@ class RationCollectionItem(Base):
 
 class RationItem(Base):
     __tablename__ = "RationItems"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    RationType = Column(Integer, nullable=False)
-    Name = Column(LongText, nullable=False)
-    VernacularName = Column(LongText, nullable=False)
-    Unit = Column(LongText, nullable=False)
-    StandardQuotaPerBooking = Column(Money, nullable=False)
-    IsActive = Column(Boolean, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    RationType: Mapped[int] = mapped_column(Integer, nullable=False)
+    Name: Mapped[str] = mapped_column(LongText, nullable=False)
+    VernacularName: Mapped[str] = mapped_column(LongText, nullable=False)
+    Unit: Mapped[str] = mapped_column(LongText, nullable=False)
+    StandardQuotaPerBooking: Mapped[Decimal] = mapped_column(Money, nullable=False)
+    IsActive: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     __table_args__ = (
         Index("IX_RationItems_RationType", "RationType", unique=True),
@@ -290,11 +294,11 @@ class RationItem(Base):
 
 class RationScheme(Base):
     __tablename__ = "RationSchemes"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    SchemeCode = Column(String(255), nullable=False)
-    Name = Column(LongText, nullable=False)
-    Description = Column(LongText, nullable=False)
-    IsActive = Column(Boolean, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    SchemeCode: Mapped[str] = mapped_column(String(255), nullable=False)
+    Name: Mapped[str] = mapped_column(LongText, nullable=False)
+    Description: Mapped[str] = mapped_column(LongText, nullable=False)
+    IsActive: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     __table_args__ = (
         Index("IX_RationSchemes_SchemeCode", "SchemeCode", unique=True),
@@ -303,18 +307,18 @@ class RationScheme(Base):
 
 class RationShop(Base):
     __tablename__ = "RationShops"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    ShopName = Column(LongText, nullable=False)
-    ShopCode = Column(String(255), nullable=False)
-    Address = Column(LongText, nullable=False)
-    District = Column(LongText, nullable=False)
-    State = Column(LongText, nullable=False)
-    Taluka = Column(LongText, nullable=True)
-    Village = Column(LongText, nullable=True)
-    Latitude = Column(Double, nullable=False)
-    Longitude = Column(Double, nullable=False)
-    IsActive = Column(Boolean, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ShopName: Mapped[str] = mapped_column(LongText, nullable=False)
+    ShopCode: Mapped[str] = mapped_column(String(255), nullable=False)
+    Address: Mapped[str] = mapped_column(LongText, nullable=False)
+    District: Mapped[str] = mapped_column(LongText, nullable=False)
+    State: Mapped[str] = mapped_column(LongText, nullable=False)
+    Taluka: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    Village: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    Latitude: Mapped[float] = mapped_column(Double, nullable=False)
+    Longitude: Mapped[float] = mapped_column(Double, nullable=False)
+    IsActive: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
     __table_args__ = (
         Index("IX_RationShops_ShopCode", "ShopCode", unique=True),
@@ -323,13 +327,13 @@ class RationShop(Base):
 
 class RefreshToken(Base):
     __tablename__ = "RefreshTokens"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    UserId = Column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
-    TokenHash = Column(String(255), nullable=False)
-    ExpiresAt = Column(DateTime6, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
-    RevokedAt = Column(DateTime6, nullable=True)
-    ReplacedByTokenHash = Column(LongText, nullable=True)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    UserId: Mapped[int] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
+    TokenHash: Mapped[str] = mapped_column(String(255), nullable=False)
+    ExpiresAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    RevokedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+    ReplacedByTokenHash: Mapped[str | None] = mapped_column(LongText, nullable=True)
 
     __table_args__ = (
         Index("IX_RefreshTokens_TokenHash", "TokenHash", unique=True),
@@ -339,10 +343,10 @@ class RefreshToken(Base):
 
 class SchemeEntitlementItem(Base):
     __tablename__ = "SchemeEntitlementItems"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    RationSchemeId = Column(Integer, ForeignKey("RationSchemes.Id", ondelete="CASCADE"), nullable=False)
-    RationType = Column(Integer, nullable=False)
-    QuotaPerEligibleMemberPerMonth = Column(Money, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    RationSchemeId: Mapped[int] = mapped_column(Integer, ForeignKey("RationSchemes.Id", ondelete="CASCADE"), nullable=False)
+    RationType: Mapped[int] = mapped_column(Integer, nullable=False)
+    QuotaPerEligibleMemberPerMonth: Mapped[Decimal] = mapped_column(Money, nullable=False)
 
     __table_args__ = (
         Index("IX_SchemeEntitlementItems_RationSchemeId_RationType", "RationSchemeId", "RationType", unique=True),
@@ -351,13 +355,13 @@ class SchemeEntitlementItem(Base):
 
 class TimeSlot(Base):
     __tablename__ = "TimeSlots"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="CASCADE"), nullable=False)
-    SlotDate = Column(DateTime6, nullable=False)
-    StartTime = Column(Time6, nullable=False)
-    EndTime = Column(Time6, nullable=False)
-    Capacity = Column(Integer, nullable=False)
-    BookedCount = Column(Integer, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    RationShopId: Mapped[int] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="CASCADE"), nullable=False)
+    SlotDate: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    StartTime: Mapped[time] = mapped_column(Time6, nullable=False)
+    EndTime: Mapped[time] = mapped_column(Time6, nullable=False)
+    Capacity: Mapped[int] = mapped_column(Integer, nullable=False)
+    BookedCount: Mapped[int] = mapped_column(Integer, nullable=False)
 
     __table_args__ = (
         Index("IX_TimeSlots_RationShopId", "RationShopId"),
@@ -366,15 +370,15 @@ class TimeSlot(Base):
 
 class Token(Base):
     __tablename__ = "Tokens"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    TokenNumber = Column(String(255), nullable=False)
-    UserId = Column(Integer, ForeignKey("Users.Id", ondelete="RESTRICT"), nullable=False)
-    RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
-    TimeSlotId = Column(Integer, ForeignKey("TimeSlots.Id", ondelete="RESTRICT"), nullable=False)
-    Status = Column(Integer, nullable=False)
-    QRCodeValue = Column(LongText, nullable=True)
-    CreatedAt = Column(DateTime6, nullable=False)
-    CollectedAt = Column(DateTime6, nullable=True)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    TokenNumber: Mapped[str] = mapped_column(String(255), nullable=False)
+    UserId: Mapped[int] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="RESTRICT"), nullable=False)
+    RationShopId: Mapped[int] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
+    TimeSlotId: Mapped[int] = mapped_column(Integer, ForeignKey("TimeSlots.Id", ondelete="RESTRICT"), nullable=False)
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)
+    QRCodeValue: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    CollectedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
 
     __table_args__ = (
         Index("IX_Tokens_RationShopId", "RationShopId"),
@@ -386,10 +390,10 @@ class Token(Base):
 
 class TokenItem(Base):
     __tablename__ = "TokenItems"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    TokenId = Column(Integer, ForeignKey("Tokens.Id", ondelete="CASCADE"), nullable=False)
-    RationType = Column(Integer, nullable=False)
-    Quantity = Column(Money, nullable=False)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    TokenId: Mapped[int] = mapped_column(Integer, ForeignKey("Tokens.Id", ondelete="CASCADE"), nullable=False)
+    RationType: Mapped[int] = mapped_column(Integer, nullable=False)
+    Quantity: Mapped[Decimal] = mapped_column(Money, nullable=False)
 
     __table_args__ = (
         Index("IX_TokenItems_TokenId", "TokenId"),
@@ -398,15 +402,15 @@ class TokenItem(Base):
 
 class User(Base):
     __tablename__ = "Users"
-    Id = Column(Integer, primary_key=True, autoincrement=True)
-    FullName = Column(LongText, nullable=False)
-    Email = Column(String(255), nullable=False)
-    MobileNumber = Column(String(255), nullable=False)
-    PasswordHash = Column(LongText, nullable=False)
-    Role = Column(Integer, nullable=False)
-    IsActive = Column(Boolean, nullable=False)
-    CreatedAt = Column(DateTime6, nullable=False)
-    RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="SET NULL"), nullable=True)
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    FullName: Mapped[str] = mapped_column(LongText, nullable=False)
+    Email: Mapped[str] = mapped_column(String(255), nullable=False)
+    MobileNumber: Mapped[str] = mapped_column(String(255), nullable=False)
+    PasswordHash: Mapped[str] = mapped_column(LongText, nullable=False)
+    Role: Mapped[int] = mapped_column(Integer, nullable=False)
+    IsActive: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    RationShopId: Mapped[int | None] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="SET NULL"), nullable=True)
 
     __table_args__ = (
         Index("IX_Users_Email", "Email", unique=True),
@@ -417,16 +421,16 @@ class User(Base):
 
 class VerificationAuditLog(Base):
     __tablename__ = "VerificationAuditLogs"
-    Id = Column(BigId, primary_key=True, autoincrement=True)
-    VerificationReference = Column(LongText, nullable=True)
-    TokenNumber = Column(LongText, nullable=True)
-    BeneficiaryId = Column(Integer, nullable=True)
-    ShopId = Column(Integer, nullable=True)
-    Action = Column(Integer, nullable=False)
-    VerificationMethod = Column(LongText, nullable=False)
-    Status = Column(LongText, nullable=False)
-    Reason = Column(LongText, nullable=True)
-    OperatorId = Column(Integer, nullable=True)
-    DeviceInfo = Column(LongText, nullable=True)
-    IpAddress = Column(LongText, nullable=True)
-    Timestamp = Column(DateTime6, nullable=False)
+    Id: Mapped[int] = mapped_column(BigId, primary_key=True, autoincrement=True)
+    VerificationReference: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    TokenNumber: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    BeneficiaryId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    ShopId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    Action: Mapped[int] = mapped_column(Integer, nullable=False)
+    VerificationMethod: Mapped[str] = mapped_column(LongText, nullable=False)
+    Status: Mapped[str] = mapped_column(LongText, nullable=False)
+    Reason: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    OperatorId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    DeviceInfo: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    IpAddress: Mapped[str | None] = mapped_column(LongText, nullable=True)
+    Timestamp: Mapped[datetime] = mapped_column(DateTime6, nullable=False)

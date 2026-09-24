@@ -53,7 +53,7 @@ def build_router(client: httpx.AsyncClient) -> APIRouter:
         upstream = client.build_request(
             request.method,
             f"/api/{path}",
-            params=request.query_params.multi_items(),
+            params=request.url.query,  # raw query string, forwarded unchanged
             headers=headers,
             content=await request.body(),
         )

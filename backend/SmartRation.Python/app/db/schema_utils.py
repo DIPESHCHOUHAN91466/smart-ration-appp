@@ -30,7 +30,7 @@ def lowercase_clone(metadata: MetaData) -> MetaData:
                 primary_key=col.primary_key,
                 nullable=col.nullable,
                 autoincrement=col.autoincrement,
-                server_default=col.server_default.arg if col.server_default is not None else None,
+                server_default=getattr(col.server_default, "arg", None),
             ))
         indexes = [Index(i.name, *[c.name for c in i.columns], unique=i.unique) for i in table.indexes]
         Table(table.name.lower(), clone, *columns, *indexes)

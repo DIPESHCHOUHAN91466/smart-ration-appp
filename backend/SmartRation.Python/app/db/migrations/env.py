@@ -21,7 +21,9 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", get_settings().database_url.replace("%", "%%"))
+# Callers (tests, scripts) may pass an explicit URL; otherwise use the app settings.
+_url = config.attributes.get("database_url") or get_settings().database_url
+config.set_main_option("sqlalchemy.url", _url.replace("%", "%%"))
 target_metadata = Base.metadata
 
 # EF Core's bookkeeping table is not part of our model; never touch it.

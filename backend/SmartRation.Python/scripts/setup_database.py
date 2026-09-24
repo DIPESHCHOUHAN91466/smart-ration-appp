@@ -20,6 +20,8 @@ from __future__ import annotations
 import argparse
 import sys
 
+import seed_database
+import verify_database
 from _common import (
     EXPECTED_DATABASE,
     LEGACY_MARKER_TABLE,
@@ -38,8 +40,6 @@ from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
 from sqlalchemy.exc import SQLAlchemyError
 
-import seed_database
-import verify_database
 from app.db.database import Base
 from app.db.schema_utils import comparable_metadata
 

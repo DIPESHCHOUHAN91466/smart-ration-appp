@@ -21,13 +21,12 @@ import os
 import subprocess
 import sys
 
+import seed_database
+import verify_database
 from _common import ROOT, alembic_config, database_name, database_url, safe_url
 from alembic import command
 
 from app.core.config import get_settings
-
-import seed_database
-import verify_database
 
 BACKUP_SCRIPT = ROOT.parents[1] / "database" / "mysql" / "backup.ps1"
 

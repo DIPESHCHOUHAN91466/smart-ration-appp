@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 from app.core.config import Settings
 from app.core.errors import Conflict, Forbidden, Unauthorized
 from app.core.security import (
+    PasswordCheck,
     TokenUser,
     create_access_token,
     format_utc,
@@ -92,7 +93,7 @@ def register(db: Session, settings: Settings, ctx: RequestContext, full_name: st
 def login(db: Session, settings: Settings, ctx: RequestContext, email: str, password: str) -> dict:
     email = email.strip().lower()
     user = db.scalar(select(User).where(User.Email == email))
-    check = verify_password(password, user.PasswordHash) if user else None
+    check = verify_password(password, user.PasswordHash) if user else PasswordCheck(valid=False, needs_upgrade=False)
 
     if user is None or not check.valid:
         audit_service.record(db, user.Id if user else None, "LOGIN_FAILED", "User",
@@ -122,6 +123,9 @@ def refresh(db: Session, settings: Settings, raw_refresh_token: str) -> dict:
         raise Unauthorized("Refresh token is invalid or has expired. Please log in again.")
 
     user = db.get(User, token.UserId)
+    if user is None:  # unreachable while the FK holds; never issue a token for a missing user
+        db.rollback()
+        raise Unauthorized("Refresh token is invalid or has expired. Please log in again.")
     raw_new, new_hash, new_expires = generate_refresh_token(settings)
     token.RevokedAt = now
     token.ReplacedByTokenHash = new_hash

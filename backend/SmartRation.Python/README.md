@@ -15,9 +15,10 @@ Both ──► the same MySQL database (smartration)
 ```
 cd backend\SmartRation.Python
 python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python -m pip install -r requirements-dev.txt   # runtime + test/lint tools
 copy .env.example .env        # fill DATABASE_URL (smartration_app account) and JWT_SECRET_KEY
                               # (= the C# user-secret Jwt:Key); never commit .env
+.venv\Scripts\python scripts\setup_database.py               # create/adopt the schema, then verify
 ```
 
 ## Run
@@ -28,6 +29,8 @@ copy .env.example .env        # fill DATABASE_URL (smartration_app account) and 
 
 - Health: http://127.0.0.1:8000/health → `{status, database, legacyApi}` (503 if the database is down)
 - Liveness: http://127.0.0.1:8000/health/live
+- Readiness: http://127.0.0.1:8000/ready → 200 only if the database is reachable, at the Alembic
+  head this code expects, and the C# API (still needed for proxied routes) is up; 503 otherwise
 - Swagger: http://127.0.0.1:8000/docs · ReDoc: http://127.0.0.1:8000/redoc
   (proxied C# routes are not listed there until they are migrated)
 
@@ -46,6 +49,8 @@ Protect a Python route with `Depends(get_current_user)` or `Depends(require_role
 
 ```
 .venv\Scripts\python -m pytest                            # unit + live schema check (MySQL from .env)
+.venv\Scripts\python -m ruff check .                      # lint (config in pyproject.toml)
+.venv\Scripts\python -m mypy                              # type check (app/)
 .venv\Scripts\python tests\contract\compare_proxy.py      # live: C# direct vs through Python (both servers running)
 .venv\Scripts\python tests\contract\auth_interop.py       # live: tokens/hashes across both backends (creates 2 test accounts)
 ```
