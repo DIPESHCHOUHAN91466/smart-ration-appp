@@ -65,7 +65,7 @@ if (string.IsNullOrWhiteSpace(jwtOptions.Key))
     if (builder.Environment.IsDevelopment())
     {
         throw new InvalidOperationException(
-            "Jwt:Key is not set. Add it to appsettings.Development.json for local development.");
+            "Jwt:Key is not set. For local development run: dotnet user-secrets set \"Jwt:Key\" \"<64+ random chars>\" (see README).");
     }
 
     throw new InvalidOperationException(
@@ -82,7 +82,7 @@ if (string.IsNullOrWhiteSpace(qrOptions.Secret))
     if (builder.Environment.IsDevelopment())
     {
         throw new InvalidOperationException(
-            "Qr:Secret is not set. Add it to appsettings.Development.json for local development.");
+            "Qr:Secret is not set. For local development run: dotnet user-secrets set \"Qr:Secret\" \"<64+ random chars>\" (see README). Changing it invalidates every issued QR code.");
     }
 
     throw new InvalidOperationException(

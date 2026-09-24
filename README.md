@@ -111,7 +111,11 @@ panels say "AI analytics temporarily unavailable".
    dotnet user-secrets set "Database:Provider" "MySql"
    dotnet user-secrets set "ConnectionStrings:MySql" "Server=localhost;Port=3306;Database=smartration;User=smartration_app;Password=<app password>"
    dotnet user-secrets set "AiService:ApiKey" "<random key, same as the AI service .env>"
+   dotnet user-secrets set "Jwt:Key" "<64+ random characters>"
+   dotnet user-secrets set "Qr:Secret" "<64+ random characters>"
    ```
+   `Jwt:Key` and `Qr:Secret` are no longer in `appsettings.Development.json`. On an existing
+   install, keep the SAME `Qr:Secret` value: changing it invalidates every QR code already issued.
    Remove `Database:Provider` (or set it to `Sqlite`) to go back to the local SQLite file.
 3. Start the API once: it applies the MySQL migrations (`Migrations/MySql`) and seeds demo data.
    SQLite keeps its own migration history (`Migrations/`); both stay supported.
