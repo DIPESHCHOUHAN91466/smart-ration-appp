@@ -18,6 +18,7 @@ database. Routes not yet migrated are proxied from Python to C#.
 | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | local run, Docker, env vars, CI |
 | [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md) | MySQL backup and restore |
 | [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md) | compiled packages (there is no C code) |
+| [docs/DB_TESTING.md](docs/DB_TESTING.md) | step-by-step MySQL test plan (100 records: CRUD, security, performance, concurrency, errors, integrity) |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | common errors and fixes |
 | [MIGRATION_AUDIT.md](MIGRATION_AUDIT.md) | Phase 0 audit of the C# system |
 
