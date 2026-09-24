@@ -16,11 +16,12 @@ import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import health, legacy_proxy
+from app.api import auth, health, legacy_proxy
 from app.core.config import Settings, get_settings
 from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import install_middleware
+from app.core.rate_limit import FixedWindowLimiter
 from app.db.database import configure_database
 
 API_DESCRIPTION = """
@@ -34,6 +35,8 @@ Python backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET A
 
 def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBaseTransport | None = None) -> FastAPI:
     settings = settings or get_settings()
+    if not settings.jwt_secret_key:
+        raise RuntimeError("JWT_SECRET_KEY is not set (it must equal the C# API's user-secret Jwt:Key). See .env.example.")
     configure_logging(settings.log_level)
     configure_database(settings.database_url)
 
@@ -64,6 +67,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     )
     app.state.settings = settings
     app.state.legacy_client = legacy_client
+    app.state.rate_limiter = FixedWindowLimiter()
 
     install_exception_handlers(app)
     install_middleware(app, settings.max_request_bytes)
@@ -77,6 +81,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
 
     # ---- Python-native routes (grow with each migration phase) ----
     app.include_router(health.router)
+    app.include_router(auth.router)  # Step 2: /api/auth/{register,login,refresh,logout}
 
     # ---- Fallback proxy: MUST stay last ----
     if legacy_client is not None:

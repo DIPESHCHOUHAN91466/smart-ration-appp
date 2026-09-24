@@ -72,13 +72,15 @@ class ServiceUnavailable(ApiError):
 def install_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
     async def handle_api_error(_: Request, exc: ApiError):
-        return JSONResponse(status_code=exc.status_code, content=fail_body(exc.message, error_code=exc.error_code))
+        errors = getattr(exc, "errors", None)  # ValidationFailed carries the "Field: message" list
+        return JSONResponse(status_code=exc.status_code, content=fail_body(exc.message, errors, exc.error_code))
 
     @app.exception_handler(RequestValidationError)
     async def handle_validation(_: Request, exc: RequestValidationError):
         # Field names and reasons only — never echo the submitted values.
         errors = [f"{'.'.join(str(p) for p in e['loc'][1:]) or 'body'}: {e['msg']}" for e in exc.errors()]
-        return JSONResponse(status_code=400, content=fail_body("One or more validation errors occurred.", errors, "VALIDATION_FAILED"))
+        # Same shape as the C# InvalidModelStateResponseFactory (no errorCode).
+        return JSONResponse(status_code=400, content=fail_body("One or more validation errors occurred.", errors))
 
     @app.exception_handler(StarletteHTTPException)
     async def handle_http(_: Request, exc: StarletteHTTPException):

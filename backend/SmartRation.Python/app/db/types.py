@@ -5,7 +5,7 @@ Each type is the exact MySQL type on MySQL and a plain generic type elsewhere
 autogenerate sees no false differences against the live database.
 """
 
-from sqlalchemy import DateTime, Numeric, Text, Time
+from sqlalchemy import BigInteger, DateTime, Integer, Numeric, Text, Time
 from sqlalchemy.dialects import mysql
 
 # datetime(6): EF stores DateTime with microsecond precision, naive UTC.
@@ -19,3 +19,7 @@ LongText = Text().with_variant(mysql.LONGTEXT(), "mysql")
 
 # decimal(65,30): EF's default for C# decimal (quantities, quotas). Always Decimal in Python.
 Money = Numeric(65, 30, asdecimal=True)
+
+# bigint primary keys: BIGINT everywhere except SQLite, which only
+# auto-generates ids for INTEGER PRIMARY KEY columns (unit tests).
+BigId = BigInteger().with_variant(Integer(), "sqlite")

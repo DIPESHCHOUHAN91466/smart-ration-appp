@@ -43,8 +43,11 @@ def compare(method: str, path: str, token: str | None = None, **kwargs) -> tuple
         ja, jb = normalize(a.json()), normalize(b.json())
     except ValueError:
         ja, jb = a.text, b.text
-    served = b.headers.get("X-Served-By", "?")
-    same = a.status_code == b.status_code and ja == jb and served == "legacy-dotnet"
+    # Migrated routes are answered by Python itself; everything else must be proxied.
+    served = b.headers.get("X-Served-By", "python")
+    if isinstance(ja, dict) and isinstance(jb, dict) and ja.get("errors") and jb.get("errors"):
+        ja["errors"], jb["errors"] = sorted(ja["errors"]), sorted(jb["errors"])
+    same = a.status_code == b.status_code and ja == jb
     detail = f"{a.status_code}/{b.status_code} via {served}"
     if not same and a.status_code == b.status_code:
         detail += " BODY DIFFERS"

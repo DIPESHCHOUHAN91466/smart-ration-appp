@@ -16,7 +16,8 @@ Both ──► the same MySQL database (smartration)
 cd backend\SmartRation.Python
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
-copy .env.example .env        # fill DATABASE_URL (smartration_app account); never commit .env
+copy .env.example .env        # fill DATABASE_URL (smartration_app account) and JWT_SECRET_KEY
+                              # (= the C# user-secret Jwt:Key); never commit .env
 ```
 
 ## Run
@@ -32,11 +33,21 @@ copy .env.example .env        # fill DATABASE_URL (smartration_app account); nev
 
 The C# API must also be running (port 5188) for proxied routes.
 
+## Authentication (migrated in Step 2)
+
+`/api/auth/register|login|refresh|logout` are served by Python with the same routes, bodies,
+messages and status codes as the C# API. Tokens are interchangeable between the two backends
+(same HS256 key, issuer, audience and claims; refresh tokens share the `RefreshTokens` table).
+New passwords are Argon2id; existing BCrypt hashes are verified and upgraded to Argon2id on the
+next successful login. The C# API on this branch verifies both formats.
+Protect a Python route with `Depends(get_current_user)` or `Depends(require_roles(UserRole.ShopOwner))`.
+
 ## Tests
 
 ```
 .venv\Scripts\python -m pytest                            # unit + live schema check (MySQL from .env)
 .venv\Scripts\python tests\contract\compare_proxy.py      # live: C# direct vs through Python (both servers running)
+.venv\Scripts\python tests\contract\auth_interop.py       # live: tokens/hashes across both backends (creates 2 test accounts)
 ```
 
 `tests/test_schema_compat.py` compares the SQLAlchemy models with the live MySQL schema using

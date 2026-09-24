@@ -19,6 +19,7 @@ def make_settings(tmp_path, **overrides) -> Settings:
         legacy_api_url=LEGACY,
         cors_origins=["http://localhost:5173"],
         max_request_bytes=1024,
+        jwt_secret_key="unit-test-signing-key-0123456789abcdef-0123456789",
         log_level="WARNING",
     )
     values.update(overrides)

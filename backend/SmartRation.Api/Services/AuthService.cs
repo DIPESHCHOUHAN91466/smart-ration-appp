@@ -57,7 +57,7 @@ public class AuthService(
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
         var user = await db.Users.FirstOrDefaultAsync(u => u.Email == normalizedEmail);
 
-        if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        if (user is null || !PasswordHashes.Verify(request.Password, user.PasswordHash))
         {
             await auditLog.LogAsync(user?.Id, "LOGIN_FAILED", nameof(User), details: $"email={MaskEmail(normalizedEmail)}", result: "FAILED");
             throw new UnauthorizedApiException("Invalid email or password.");

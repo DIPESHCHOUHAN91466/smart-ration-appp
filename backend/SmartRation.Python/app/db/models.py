@@ -10,10 +10,10 @@ Enums are stored as integers, exactly as the C# API stores them.
 
 from __future__ import annotations
 
-from sqlalchemy import BigInteger, Boolean, Column, Double, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, Column, Double, ForeignKey, Index, Integer, String
 
 from app.db.database import Base
-from app.db.types import DateTime6, LongText, Money, Time6
+from app.db.types import BigId, DateTime6, LongText, Money, Time6
 
 
 class AIAlert(Base):
@@ -76,7 +76,7 @@ class AadhaarVerification(Base):
 
 class AuditLog(Base):
     __tablename__ = "AuditLogs"
-    Id = Column(BigInteger, primary_key=True, autoincrement=True)
+    Id = Column(BigId, primary_key=True, autoincrement=True)
     UserId = Column(Integer, nullable=True)
     Action = Column(LongText, nullable=False)
     EntityName = Column(LongText, nullable=False)
@@ -162,7 +162,7 @@ class Inventory(Base):
 
 class InventoryMovement(Base):
     __tablename__ = "InventoryMovements"
-    Id = Column(BigInteger, primary_key=True, autoincrement=True)
+    Id = Column(BigId, primary_key=True, autoincrement=True)
     RationShopId = Column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=False)
     RationType = Column(Integer, nullable=False)
     MovementType = Column(Integer, nullable=False)
@@ -417,7 +417,7 @@ class User(Base):
 
 class VerificationAuditLog(Base):
     __tablename__ = "VerificationAuditLogs"
-    Id = Column(BigInteger, primary_key=True, autoincrement=True)
+    Id = Column(BigId, primary_key=True, autoincrement=True)
     VerificationReference = Column(LongText, nullable=True)
     TokenNumber = Column(LongText, nullable=True)
     BeneficiaryId = Column(Integer, nullable=True)

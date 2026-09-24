@@ -35,12 +35,32 @@ class Settings(BaseSettings):
 
     log_level: str = "INFO"
 
+    # ---- Authentication (must match the C# API so tokens work on both) ----
+    # Same value as the C# user-secret Jwt:Key. Required; no default.
+    jwt_secret_key: str = Field(default="", repr=False)
+    jwt_algorithm: str = "HS256"
+    jwt_issuer: str = "SmartRationHSD2C"
+    jwt_audience: str = "SmartRationHSD2C.Clients"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 7
+    # Upgrade a user's BCrypt hash to Argon2id after a successful login.
+    password_upgrade_to_argon2: bool = True
+    # Per client IP, per minute, shared by login + register (same as the C# "auth" policy).
+    auth_rate_limit_per_minute: int = 10
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def split_origins(cls, value):
         # Accept a comma-separated string from the environment.
         if isinstance(value, str) and not value.startswith("["):
             return [v.strip() for v in value.split(",") if v.strip()]
+        return value
+
+    @field_validator("jwt_secret_key")
+    @classmethod
+    def strong_key(cls, value: str) -> str:
+        if value and len(value) < 32:
+            raise ValueError("JWT_SECRET_KEY must be at least 32 characters")
         return value
 
     @property

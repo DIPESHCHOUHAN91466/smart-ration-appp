@@ -66,7 +66,7 @@ def test_error_envelopes_match_the_csharp_api():
     assert r.json() == {"success": False, "message": "Already collected.", "data": None, "errors": None, "errorCode": "ALREADY_COLLECTED"}
 
     r = c.post("/validate", json={"tokenId": "not-a-number"})
-    assert r.status_code == 400 and r.json()["errorCode"] == "VALIDATION_FAILED"
+    assert r.status_code == 400 and "errorCode" not in r.json()  # C# validation responses carry none
     assert "not-a-number" not in r.text  # submitted values are never echoed
 
     r = c.get("/boom")
