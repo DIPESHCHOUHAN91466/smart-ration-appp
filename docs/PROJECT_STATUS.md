@@ -1,152 +1,169 @@
 # Smart Ration HSD2C — Project Status
 
-Date: 2026-09-25 · Branch `feature/python-backend-migration` (not yet pushed) · Audit: [PROJECT_AUDIT.md](PROJECT_AUDIT.md)
+Date: 2026-09-25 · Branch `feature/python-backend-migration` (not pushed) · Audit: [PROJECT_AUDIT.md](PROJECT_AUDIT.md)
 
-**Legend** — PASS: verified by automated tests and/or a browser check in this work ·
-PARTIAL: works but incomplete, or only partly verified · FAIL: known broken ·
-NOT TESTED: not verified in this work.
+**PASS** = verified by automated tests and/or in the browser during this work · **PARTIAL** = works but
+incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not verified ·
+**BLOCKED** = requires an external integration that doesn't exist.
 
-## Existing Features
+## Frontend
 
-| Feature | Status | Evidence / note |
+| Item | Status | Evidence |
 |---|---|---|
-| Registration, login, logout, token refresh | PASS | Python tests; 23/23 cross-backend interop; browser login as citizen |
-| Backend role-based authorisation | PASS | route role checks + ownership in services; C# + Python tests |
-| Rural user dashboard | PASS | browser: loads through the Python proxy, API calls 200, no console errors |
-| Ration shop dashboard, queue | PARTIAL | APIs pass proxy parity (36/36); screens not re-checked in the browser this release |
-| QR scanner (camera) | NOT TESTED | the browser pane blocks the camera; scan/verify logic covered by C# tests |
-| Government dashboard, statistics, reports, map, AI centre | PARTIAL | APIs return 200 through the proxy; screens not re-checked visually |
-| Admin dashboard | PARTIAL | Admin uses the government screens; no separate admin UI |
-| Ration-card management | PARTIAL | card data is modelled via family + passbook (read-only in the app); issuing/changing cards is a state process (documented in Public Help) |
-| Family members | PARTIAL | view with eligibility: PASS; add/remove members in-app: not implemented |
-| Aadhaar verification (simulated, masked) | PASS | synthetic `XXXX-XXXX-####` only; MySQL suite checks no real identifiers |
-| Passbook verification | PASS | C# tests |
-| QR verification (signed tokens) | PASS | C# `QrServiceTests`, `QrScanServiceTests` |
-| OTP fallback (mock SMS mode) | PASS | C# `OtpDeliveryTests`; hashed OTPs, 5 min / 3 attempts |
-| Token generation, 5-minute slots, capacity | PASS | C# tests; MySQL suite: 30 concurrent bookings on capacity 2 → exactly 2 |
-| Item selection, entitlement calculation | PASS | C# `EntitlementServiceTests` |
-| Inventory + ledger | PASS | C# `InventoryLedgerAndIdempotencyTests` |
-| Collection tracking (transactional, idempotent) | PASS | C# `RationCollectionServiceTests`, `CollectionSecurityTests` |
-| Transaction / booking history | PARTIAL | exists; not re-verified in this release |
-| Notifications | PASS | browser: API 200 through the proxy |
-| Reports, search, filtering, pagination | NOT TESTED | exist in the C# API; not exercised in this release |
-| Audit logs | PARTIAL | written by C# and Python services; audit screen not re-checked |
-| Language switching | PARTIAL | complete for public pages, chatbot, login, sidebar; 41 of 53 older dashboard components still have English text |
-| Responsive UI | PARTIAL | public pages + chatbot verified at 375 px; dashboards not re-checked |
+| Production build | PASS | `npm run build` (main bundle ≈ 520 KB, above Vite's 500 KB advisory) |
+| Component tests | PASS | Vitest 36/36 |
+| Landing page, Public Help, status page | PASS | browser (desktop + 375 px; en/hi/mr); tests |
+| Citizen dashboard via the Python API | PASS | browser: login → dashboard, all calls 200, no console errors |
+| Shop and government screens | PARTIAL | APIs 200 through the proxy (parity 36/36); screens not re-checked visually this round |
+| Layout kept, every folder documented | PASS | READMEs in `frontend/`, `src/*`, `tests/` |
+| TypeScript | NOT TESTED | not used (JavaScript app) |
+| End-to-end browser automation | NOT TESTED | none exists |
 
-## Newly Added Features
+## Backend (C# business API)
 
-| Feature | Status | Evidence |
+| Item | Status | Evidence |
 |---|---|---|
-| Public landing page (`/`) | PASS | browser (desktop, 375 px, en/hi/mr); 5 component tests |
-| Public Help page (`/help`): categories, articles, search | PASS | browser (mr, mobile); 4 component tests; API tests |
-| Smart Ration AI Assistant (floating chatbot) | PASS | browser: quick questions, typed questions, privacy reply, live shop list, Hindi; 17 component + 82 backend tests |
-| Chatbot branding (logo/avatar/icon SVG from the Ration Mitra mark) | PASS | rendered in the browser |
-| Public user role (anonymous access to landing, help, chatbot) | PASS | routes need no login; API ignores Authorization |
-| Chatbot/help content in en, hi, mr | PASS | integrity tests fail on any missing translation |
-| Frontend test runner (Vitest) | PASS | 33 tests; added to CI |
-| Root `tests/mysql` suite | PARTIAL | 24/24 pass with the correct password; the root `.env` `DB_PASSWORD` is wrong (tests error clearly) |
-| nginx reverse-proxy example | NOT TESTED | configuration example only |
-| Generative LLM behind the chatbot | NOT IMPLEMENTED | by design (no provider/key); interface ready (docs/chatbot/CHATBOT_ARCHITECTURE.md) |
-| Complaints workflow | NOT IMPLEMENTED | Public Help explains the official complaint channels |
-| Microphone input | NOT IMPLEMENTED | intentionally omitted (not supported end to end) |
+| Build + tests | PASS | xUnit 94/94 (8 new data-mode tests) |
+| Business logic owner (frozen hybrid) | PASS | decision recorded; proxy parity 36/36 |
+| Controllers thin, services + interfaces; no repository layer (by design) | PASS | documented in BACKEND_ARCHITECTURE.md |
+| Data-mode guard | PASS | real mode refused at startup (verified by running the API with `DATA_MODE=real`) |
 
-## Fixed Features
+## Python
 
-| Problem | Status | Evidence |
+| Item | Status | Evidence |
 |---|---|---|
-| Concurrent registrations deadlocked (35/100 → HTTP 500), both backends | PASS | 100 simultaneous registrations now succeed (MySQL suite); C# tests 86/86 |
-| 500 responses without `X-Request-ID`; error logs without request id | PASS | MySQL suite error-handling test |
-| pytest collection broken (relative imports; ignored root setting) | PASS | collects from each backend and from the repository root |
-| C# per-IP rate limits saw all proxied traffic as 127.0.0.1 | PARTIAL | forwarded headers enabled; build + proxy parity pass; not verified with two real client IPs |
-| Chatbot formatting with repeated blank lines; shop search matched all names | PASS | regression tests |
-| API docs described validation errors wrongly | PASS | corrected |
+| Python API (gateway, auth, chatbot, data providers, migrations) | PASS | pytest 164/164; ruff + mypy clean |
+| AI service | PASS | pytest 46/46; `/health` 200 |
+| Package structure, type hints, config via environment | PASS | see PYTHON_ARCHITECTURE.md |
 
-## Database Status
+## MySQL
 
-| Item | Status |
-|---|---|
-| `smartration` (MySQL 8.0.46): 25 tables, 24 FKs, 37 indexes, Alembic `0001_initial`, 0 drift | PASS (`verify_database.py`) |
-| `smartration_test`: application schema + your `test_users` table | PASS |
-| MySQL suite (CRUD, injection, performance, concurrency, errors, integrity) | PASS — 122/122 |
-| Backup | PASS (tested 2026-09-24) |
-| Restore | NOT TESTED (needs a root-created scratch database) |
-| Brief entities without tables (complaints, chatbot_faq, public_help_content, permissions) | not created — help content lives in versioned JSON; see PROJECT_AUDIT.md §6 |
+| Item | Status | Evidence |
+|---|---|---|
+| `smartration`: 25 tables, Alembic `0001_initial`, 0 drift | PASS | `verify_database.py` |
+| MySQL suite on `smartration_test` (CRUD, injection, performance, concurrency, errors, integrity) | PASS | 123/123 via `run-tests.ps1 -MySql` |
+| Root `tests/mysql` | PARTIAL | 24/24 with the correct password; your root `.env` `DB_PASSWORD` is still wrong |
+| Backup | PASS (2026-09-24) · Restore | NOT TESTED |
 
-## Backend Status
+## Authentication
 
-| Component | Status |
-|---|---|
-| Python FastAPI (auth, health, public help, chatbot; proxy for the rest) | PASS — 136 tests, ruff + mypy clean |
-| C# ASP.NET Core API (all other routes) | PASS — 86 tests |
-| AI service | PASS — 46 tests |
-| Proxy parity C# vs Python | PASS — 36/36 |
+| Item | Status | Evidence |
+|---|---|---|
+| Register, login, refresh, logout; Argon2id; BCrypt upgrade | PASS | pytest; cross-backend interop 23/23 (last run 2026-09-25); browser login |
 
-## Frontend Status
+## Authorization
 
-| Item | Status |
-|---|---|
-| Production build | PASS (main bundle 519 KB, above Vite's 500 KB advisory; mostly translations) |
-| Calls the Python backend (`:8000`) | PASS — every request 200 in the browser, no console errors |
-| Component tests | PASS — 33/33 |
-| End-to-end browser automation | NOT TESTED — none exists |
+| Item | Status | Evidence |
+|---|---|---|
+| Server-side roles + ownership | PASS | C# and Python tests; chatbot personal answers only for the token's own user (tests: other users/roles get the generic reply) |
+| Role permissions exercised in the browser | PARTIAL | citizen role only this round |
 
-## Chatbot Status
+## QR
 
-PASS — retrieval assistant over 25 reviewed articles (12 categories), safety rules (sensitive input,
-internals, private data, health), live public data, rate-limited, message text never logged, text-only
-rendering, en/hi/mr, mobile bottom sheet, keyboard and screen-reader support. Not an LLM.
+| Item | Status | Evidence |
+|---|---|---|
+| Signed QR generation and verification, masked details | PASS | C# `QrServiceTests`, `QrScanServiceTests` |
+| Camera scanning | NOT TESTED | camera blocked in the test browser |
 
-## Localization Status
+## OTP
 
-PARTIAL — English, Hindi and Marathi dictionaries are complete (355 + 120 keys, no gaps); the public
-pages, chatbot, login and navigation are fully translated; 41 older dashboard components still contain
-hard-coded English.
+| Item | Status | Evidence |
+|---|---|---|
+| OTP fallback (hashed, 5 min, 3 attempts, cooldown) | PASS | C# `OtpDeliveryTests` |
+| Real SMS delivery | BLOCKED | needs a DLT-registered SMS gateway (adapter exists) |
 
-## Testing Status
+## Appointments
+
+| Item | Status | Evidence |
+|---|---|---|
+| 5-minute slots, capacity, booking, cancel | PASS | C# tests; MySQL concurrency test (30 racers, capacity 2 → exactly 2); live booking created and cancelled through the proxy |
+
+## Inventory
+
+| Item | Status | Evidence |
+|---|---|---|
+| Ledger, transactional collection, idempotency | PASS | C# `InventoryLedgerAndIdempotencyTests`, `RationCollectionServiceTests` |
+| Inventory screens | NOT TESTED | this round |
+
+## Synthetic Data
+
+| Item | Status | Evidence |
+|---|---|---|
+| `DATA_MODE=synthetic` default; providers behind interfaces | PASS | tests (C# + Python) |
+| Reference data in `data/synthetic` (marked `isSynthetic`) | PASS | seed output identical to before; image-layout simulation |
+| Every generated record tagged `SYNTHETIC_DEMO`, masked Aadhaar only | PASS | MySQL suite integrity tests |
+
+## Real Data Architecture
+
+| Item | Status | Evidence |
+|---|---|---|
+| Interfaces, `RealDataProvider`, startup refusal, migration checklist | PASS | tests; `data/real/README.md` |
+| Real ration-card registry, eKYC, SMS, reference data | BLOCKED | REQUIRES EXTERNAL INTEGRATION (and legal/privacy review) |
+
+## AI
+
+| Item | Status | Evidence |
+|---|---|---|
+| Analytics service (forecasts, risk, alerts, OCR) | PASS | 46 tests; running and healthy |
+| Trained ML models | NOT TESTED | none exist (statistical methods by design) |
+| Generative LLM | BLOCKED | no provider or key; interface + prompt template ready |
+
+## Chatbot
+
+| Item | Status | Evidence |
+|---|---|---|
+| Floating assistant (quick questions, typing, history, search, clear, minimize, expand, offline, errors) | PASS | 18 component tests; browser |
+| Knowledge retrieval en/hi/mr | PASS | evaluation 48/48 retrieval, 19/19 safety |
+| Privacy: no personal data in public chat; signed-in citizen sees own booking | PASS | API tests; browser (Hindi, own token SR-2026-010088) |
+| "Not able to verify" fallback, health guidance, refusal of internals | PASS | tests |
+
+## Localization
+
+| Item | Status | Evidence |
+|---|---|---|
+| en / hi / mr dictionaries complete | PASS | i18n tests |
+| Public pages, chatbot, login, navigation translated | PASS | browser in all three languages |
+| 41 older dashboard components | PARTIAL | still contain English text |
+
+## Testing
 
 | Suite | Result |
 |---|---|
-| Python backend | 136 passed |
-| MySQL suite on `smartration_test` | 122 passed |
-| Root `tests/mysql` | 24 passed with correct credentials |
-| AI service | 46 passed |
-| C# | 86 passed |
-| Frontend | 33 passed |
-| Contract (proxy / auth interop) | 36/36 · 23/23 (last run 2026-09-25) |
-| E2E, load, accessibility audit tools | NOT TESTED |
+| Python 164 · MySQL 123 · evaluation 67 · AI 46 · C# 94 · frontend 36 | PASS (`run-tests.ps1 -MySql`, exit 0) |
+| Contract (proxy 36/36, auth interop 23/23) | PASS (earlier today; needs both servers) |
+| E2E, load, accessibility tooling | NOT TESTED |
 
-## Security Status
+## Security
 
 | Item | Status |
 |---|---|
-| SQL injection | PASS (16 payloads, bound parameters everywhere) |
-| XSS in chatbot/help | PASS (text-only rendering, no `dangerouslySetInnerHTML` anywhere) |
-| Secrets out of source; `.env` ignored | PASS |
-| Aadhaar / OTP / password never logged or exposed by the chatbot | PASS |
-| Rate limiting (auth, chatbot, help, QR scan, OTP) | PASS |
-| Tokens in `localStorage` | PARTIAL — open (HIGH): move the refresh token to an HttpOnly cookie |
-| JWT key present in old git history | PARTIAL — open (HIGH): rotate before public deployment |
+| SQL injection, XSS in chat, secrets out of source, rate limits, no secrets in logs, masked Aadhaar | PASS |
+| Refresh token in `localStorage` | PARTIAL — open (HIGH) |
+| JWT key in old git history | PARTIAL — rotate before any public deployment |
 
-## Deployment Status
+## Documentation
 
 | Item | Status |
 |---|---|
-| Dockerfile, docker-compose | NOT TESTED (Docker engine unavailable on this machine) |
-| GitHub Actions CI | NOT TESTED (branch not pushed; runs on push) |
-| Health endpoints `/health`, `/ready`, `/api/health` | PASS |
+| README (what/how/stack/architecture/flows/run/test/deploy), docs index, 6 architecture docs, LOCAL_SETUP, folder READMEs, `.env.example` | PASS — 57+ files, 0 broken links |
+| VS Code workspace, tasks, launch configs | PARTIAL — JSON validated, scripts run; not opened in VS Code by me |
+
+## Deployment
+
+| Item | Status |
+|---|---|
+| Dockerfile / compose (repo-root context, allow-list) | NOT TESTED — Docker engine unavailable here; image layout simulated; CI builds it |
+| GitHub Actions CI | NOT TESTED — branch not pushed |
 | nginx example | NOT TESTED |
+| Scripts: start-all, stop-all, health-check, seed, run-tests | PASS (stop-all: parse-checked only, not run — it would stop your servers) |
 
-## Remaining Issues
+## Remaining issues
 
-1. **Your action:** set `DB_PASSWORD` in the root `.env` to the `smartration_app` password (the same as
-   in `backend/SmartRation.Python/.env`), so `tests/mysql` runs.
-2. Push the branch so CI runs (Docker build included); Docker still unverified locally.
-3. Refresh token → HttpOnly cookie; rotate the JWT key before any public deployment.
-4. Translate the remaining 41 dashboard components; responsive check of dashboards.
-5. Add end-to-end tests (Playwright) for login → book → QR → collect.
-6. Rehearse a database restore.
-7. Complaints module; in-app family changes (if wanted).
-8. Continue the C# → Python migration (users, items, slots next) and merge the AI service.
-9. Main bundle > 500 KB: lazy-load the chatbot window / split translations.
-10. `tests/DROP DATABASE IF EXISTS smart_ratio.txt` (your SQL notes) is untracked; keep or delete as you prefer.
+1. Root `.env` `DB_PASSWORD` is wrong (your action).
+2. Push the branch so CI runs (includes the Docker build).
+3. Refresh token → HttpOnly cookie; rotate the JWT key before public use.
+4. Complaints module (not implemented anywhere).
+5. Translate the 41 older dashboard components; E2E tests (Playwright).
+6. Rehearse a database restore; containerise the C# API if Docker becomes the deployment path.
+7. Real-data integrations — BLOCKED, REQUIRES EXTERNAL INTEGRATION.
+8. `tests/DROP DATABASE IF EXISTS smart_ratio.txt` (your notes) is untracked.

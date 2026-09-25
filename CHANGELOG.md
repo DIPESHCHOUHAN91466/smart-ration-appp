@@ -2,6 +2,26 @@
 
 All notable changes. Dates are commit dates; hashes refer to this repository.
 
+## 2026-09-25 (later) — Workspace, data separation, documentation
+
+### Added
+- `DATA_MODE` (synthetic | real) in both backends; real mode refused with "BLOCKED — REQUIRES EXTERNAL
+  INTEGRATION"; `app/data_providers`; `data/synthetic/reference/*.json`; `data/real/README.md`. (`5ea59be`, `e159ac6`)
+- `ai/` folder: chatbot knowledge, evaluation set (67 cases) + `python -m app.chatbot.evaluate`, LLM prompt template.
+- Chatbot: signed-in citizens can ask about their own booking; offline state. `/health` reports AI service,
+  chatbot, data mode; developer `/status` page.
+- VS Code workspace (`SmartRation-HSD2C.code-workspace`), tasks, launch configurations;
+  `scripts/development` (start-all, stop-all, health-check, seed-demo-data, run-tests). (`e0fe79d`, `0eba854`)
+- READMEs in every main folder; docs reorganised into `docs/<area>/`; architecture set; LOCAL_SETUP; root `.env.example`.
+
+### Changed
+- Backend direction: **frozen hybrid** — C# keeps business logic; the Python migration is paused.
+- Docker builds from the repository root (allow-list `.dockerignore`).
+
+### Fixed
+- `Demo:UseSynthetic*` flags were ignored; `start-dev.bat` didn't start the Python API; broken paths in
+  `scripts/start-*.ps1`; `run-tests -MySql` skipped the suite; C# tests failed while the API ran.
+
 ## 2026-09-25 — Public Help, AI Assistant, fixes (`feature/python-backend-migration`)
 
 ### Added

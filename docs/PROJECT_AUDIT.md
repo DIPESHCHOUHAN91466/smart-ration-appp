@@ -7,7 +7,33 @@ Date: 2026-09-25 · Branch `feature/python-backend-migration` · Previous audits
 Everything below was checked against the code, the running services and the database on this date;
 items marked *fixed* were fixed during this audit and committed.
 
-## 1. Current architecture
+## 0. Second audit — workspace, data separation, documentation (2026-09-25, later)
+
+Triggered by the "professional architecture + VS Code" brief. Decisions taken with the owner:
+**frozen hybrid** backend (C# = business logic; Python = gateway, auth, chatbot, AI, data; migration
+paused) and **keep the frontend folder layout** (document, don't rename).
+
+| Finding | Priority | Status |
+|---|---|---|
+| `Demo:UseSyntheticAadhaar/Passbook` flags were never read — synthetic providers registered unconditionally (a "fake switch") | HIGH | **fixed**: `DATA_MODE` + `DataModeGuard`; real mode / flags off → startup refused, *BLOCKED — REQUIRES EXTERNAL INTEGRATION* |
+| Python registration fabricated synthetic identity records inline | MEDIUM | **fixed**: `app/data_providers` (`SyntheticDataProvider` / `RealDataProvider`) |
+| No `data/` separation; seed reference data hard-coded in a script | MEDIUM | **fixed**: `data/synthetic/reference/*.json` (marked `isSynthetic`), seed output verified identical |
+| Chatbot knowledge inside backend code; no evaluation set | MEDIUM | **fixed**: `ai/chatbot/knowledge`, `ai/chatbot/evaluation` (67 cases, 100%), evaluator command |
+| Logged-in users couldn't ask the chatbot about their own appointment | MEDIUM | **added**: own bookings only, from the verified token's user id |
+| `start-dev.bat` didn't start the Python API although the frontend calls it (Network Error) | HIGH | **fixed**: delegates to `scripts/development/start-all.ps1` |
+| `scripts/start-backend.ps1` / `start-frontend.ps1` used paths from the drive root | LOW | **fixed** |
+| `.vscode/launch.json` empty; no workspace map | LOW | **fixed**: launch configs + Full Stack compound, 22 tasks, numbered `.code-workspace` |
+| README described the old mock-data prototype (PostgreSQL); `database/README.md` said EF owns the schema | MEDIUM | **fixed** (old text archived in `docs/archive`) |
+| No README in frontend, backend, AI service, database/mysql, ai, data, tests, scripts, deployment | MEDIUM | **fixed** (each answers what / why / belongs / doesn't / run / connects) |
+| Docs flat in `docs/` | LOW | **fixed**: `docs/{architecture,api,database,chatbot,security,testing,deployment,development,migration}`; 0 broken links |
+| `/health` didn't show the AI service or data mode; no status page | LOW | **fixed**: `aiService`, `chatbot`, `dataMode`; `/status` (dev) |
+| Docker image couldn't include `ai/` and `data/` | MEDIUM | **fixed**: repo-root build context + allow-list `.dockerignore` (image itself still built only in CI) |
+| `run-tests -MySql` silently skipped the MySQL suite; C# tests failed while the API ran | MEDIUM | **fixed** |
+| C# has no repository layer | — | **kept by design** (EF `DbContext` is the repository; documented in BACKEND_ARCHITECTURE.md) |
+| Frontend is JavaScript, not TypeScript | — | kept (conversion possible later, file by file) |
+| Complaints module, E2E tests, TypeScript, 41 untranslated dashboard components, tokens in localStorage, JWT key in git history, bundle > 500 KB, Docker unverified locally, CI not yet run, root `.env` DB password wrong, mobile app is a template | — | **open** — see PROJECT_STATUS.md |
+
+## 1. Current architecture (first audit, same day)
 
 ```
 Browser ── React 18 / Vite 6 SPA (:5173)
