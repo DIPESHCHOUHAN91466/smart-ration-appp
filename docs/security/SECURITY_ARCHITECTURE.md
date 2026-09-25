@@ -56,7 +56,7 @@ passwords typed into the chat trigger a warning and aren't processed; requests f
 people's data are refused; health questions get general guidance only. Message text is never logged
 (only kind, article id, language, length, duration). Replies are plain text rendered without HTML,
 links are in-app paths only (validated server- and client-side). 30 messages/minute per client IP.
-The conversation lives in the browser's `sessionStorage` only. Details: [CHATBOT.md](CHATBOT.md).
+The conversation lives in the browser's `sessionStorage` only. Details: [CHATBOT.md](../chatbot/CHATBOT_ARCHITECTURE.md).
 
 ## Logging and errors
 

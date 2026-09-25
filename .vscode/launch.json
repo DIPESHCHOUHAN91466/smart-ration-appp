@@ -1,0 +1,93 @@
+{
+  // Run and Debug (Ctrl+Shift+D). "Start Full Stack" launches all four services with debuggers attached.
+  // Requires the extensions in extensions.json (C#, Python/debugpy, JavaScript debugger is built in).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Start .NET Backend (C# API :5188)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Backend: Build",
+      "program": "${workspaceFolder}/backend/SmartRation.Api/bin/Debug/net8.0/SmartRation.Api.dll",
+      "cwd": "${workspaceFolder}/backend/SmartRation.Api",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5188"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Start Python Service (API :8000)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:create_app", "--factory", "--host", "127.0.0.1", "--port", "8000"],
+      "cwd": "${workspaceFolder}/backend/SmartRation.Python",
+      "python": "${workspaceFolder}/backend/SmartRation.Python/.venv/Scripts/python.exe",
+      "justMyCode": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Start AI Service (:8001)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["smartration_ai.main:create_app", "--factory", "--host", "127.0.0.1", "--port", "8001"],
+      "cwd": "${workspaceFolder}/backend/SmartRation.AI",
+      "python": "${workspaceFolder}/backend/SmartRation.AI/.venv/Scripts/python.exe",
+      "justMyCode": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Start Frontend (Vite :5173)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "Open Browser (Edge, frontend debugging)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend/src"
+    },
+    {
+      "name": "Run Python Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q"],
+      "cwd": "${workspaceFolder}/backend/SmartRation.Python",
+      "python": "${workspaceFolder}/backend/SmartRation.Python/.venv/Scripts/python.exe",
+      "justMyCode": false,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run Backend Tests (C#)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run Frontend Tests (Vitest)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm test",
+      "cwd": "${workspaceFolder}/frontend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Start Full Stack",
+      "configurations": [
+        "Start .NET Backend (C# API :5188)",
+        "Start AI Service (:8001)",
+        "Start Python Service (API :8000)",
+        "Start Frontend (Vite :5173)"
+      ],
+      "stopAll": true
+    }
+  ]
+}

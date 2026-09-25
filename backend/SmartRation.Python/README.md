@@ -1,12 +1,18 @@
 # Smart Ration HSD2C — Python backend (FastAPI)
 
-The Python replacement for `backend/SmartRation.Api` (C#/.NET), built **side by side**:
-routes implemented here are served by Python; every other `/api/*` request is forwarded
-unchanged to the C# API by the fallback proxy. Progress is tracked in [MIGRATION.md](MIGRATION.md).
+**What is this?** The Python API — the single entry point for the frontend (:8000).
+**Why?** It serves what Python is best placed to own — authentication, the Public Help chatbot, data
+providers (synthetic/real), database migrations and health checks — and forwards every other `/api/*`
+request unchanged to the C# business API. (A full migration to Python was paused on 2026-09-25 —
+[MIGRATION.md](MIGRATION.md).)
+**Belongs here:** gateway, auth, chatbot engine, data providers, Alembic migrations, DB scripts, their tests.
+**Doesn't:** business rules for bookings, QR, collection, inventory (C# API); UI (frontend);
+chatbot *content* (`ai/chatbot/knowledge`); synthetic reference data (`data/synthetic`).
+Architecture: [../../docs/architecture/PYTHON_ARCHITECTURE.md](../../docs/architecture/PYTHON_ARCHITECTURE.md).
 
 ```
-Frontend ──► FastAPI :8000 ──► Python routes (health, … growing each step)
-                   └─► fallback proxy ──► C# API :5188 (everything not yet migrated)
+Frontend ──► FastAPI :8000 ──► Python routes (health, auth, public help, chatbot)
+                   └─► fallback proxy ──► C# API :5188 (all business routes)
 Both ──► the same MySQL database (smartration)
 ```
 
@@ -27,7 +33,7 @@ copy .env.example .env        # fill DATABASE_URL (smartration_app account) and 
 .venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000
 ```
 
-- Health: http://127.0.0.1:8000/health → `{status, database, legacyApi}` (503 if the database is down)
+- Health: http://127.0.0.1:8000/health → `{status, database, legacyApi, aiService, chatbot, dataMode}` (503 if the database is down)
 - Liveness: http://127.0.0.1:8000/health/live
 - Readiness: http://127.0.0.1:8000/ready → 200 only if the database is reachable, at the Alembic
   head this code expects, and the C# API (still needed for proxied routes) is up; 503 otherwise
@@ -81,7 +87,7 @@ revision. (The C# API's startup `Migrate()` has nothing to apply, so it leaves t
 .venv\Scripts\python scripts\setup_database.py [--seed]   # empty DB: create; EF DB: verify + adopt; then verify
 .venv\Scripts\python scripts\verify_database.py           # read-only: tables, columns, FKs, indexes, version, seed data
 .venv\Scripts\python scripts\seed_database.py             # synthetic data, inserted only into empty tables
-.venv\Scripts\python scripts\reset_database.py            # DEV ONLY; see docs/DATABASE.md for the confirmations
+.venv\Scripts\python scripts\reset_database.py            # DEV ONLY; see docs/database/DATABASE_ARCHITECTURE.md for the confirmations
 ```
 
 Seed users need `SEED_DEMO_PASSWORD` and/or `SEED_ADMIN_EMAIL` + `SEED_ADMIN_PASSWORD`

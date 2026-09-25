@@ -2,7 +2,7 @@
 
 ## Setup
 
-See [README.md](README.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for running the services, and
+See [README.md](README.md) and [docs/deployment/DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md) for running the services, and
 [backend/SmartRation.Python/README.md](backend/SmartRation.Python/README.md) for the Python backend.
 
 ## Branches and commits
@@ -27,7 +27,7 @@ npm run build
 dotnet test backend/SmartRation.Api.Tests
 ```
 
-CI runs the same checks (see [docs/TESTING.md](docs/TESTING.md)).
+CI runs the same checks (see [docs/testing/TESTING.md](docs/testing/TESTING.md)).
 
 ## Rules that protect users
 
@@ -40,9 +40,9 @@ CI runs the same checks (see [docs/TESTING.md](docs/TESTING.md)).
 - **Schema changes are Alembic revisions** with a working downgrade — never edit the database by hand
   and never add EF Core migrations.
 - **Keep the C# contract** while routes are being migrated: same paths, envelope, messages and status
-  codes (see [docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)).
+  codes (see [docs/migration/MIGRATION_GUIDE.md](docs/migration/MIGRATION_GUIDE.md)).
 - **Every user-facing string in en, hi and mr** via `t("key")`; tests fail on missing translations.
-- Chatbot content changes go through the knowledge JSON and its tests ([docs/CHATBOT.md](docs/CHATBOT.md)).
+- Chatbot content changes go through the knowledge JSON and its tests ([docs/chatbot/CHATBOT_ARCHITECTURE.md](docs/chatbot/CHATBOT_ARCHITECTURE.md)).
 
 ## Reporting security issues
 

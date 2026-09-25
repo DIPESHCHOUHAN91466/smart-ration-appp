@@ -1,272 +1,173 @@
-# Smart Ration HSD2C Blue Dashboard — Final Frontend
+# Smart Ration HSD2C
 
-A production-style React/Vite frontend prototype for the Smart Ration HSD2C distribution workflow.
+A digital Public Distribution System: citizens book a time slot at their ration shop, receive a
+signed QR token, and collect their ration without long queues; shops verify every collection;
+officials monitor distribution in real time. English, हिंदी and मराठी.
 
-## Backend and documentation
+> **Demonstration system.** All citizens, households, Aadhaar references and schemes are
+> **synthetic** (`DATA_MODE=synthetic`). It is not connected to any government system.
 
-The backend is being migrated from ASP.NET Core 8 (`backend/SmartRation.Api`, port 5188) to
-Python/FastAPI (`backend/SmartRation.Python`, port 8000), side by side on the same MySQL 8
-database. Routes not yet migrated are proxied from Python to C#.
-
-**New:** a public landing page (`/`), **Public Help** (`/help`) and the **Smart Ration AI Assistant**
-— a floating help chatbot (bottom-right) that answers questions about ration cards, eligibility,
-documents, tokens and QR verification in English, हिंदी and मराठी, without login.
-
-Quick start (Windows, after the one-time setup in each backend's README):
-
-```
-start the C# API:        dotnet run --project backend/SmartRation.Api --launch-profile http
-start the Python API:    cd backend\SmartRation.Python && .venv\Scripts\python -m uvicorn app.main:create_app --factory --port 8000
-start the frontend:      cd frontend && npm run dev          → http://localhost:5173
-```
-
-| Doc | Contents |
-|---|---|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | components, request flow, decisions |
-| [docs/DATABASE.md](docs/DATABASE.md) | schema, Alembic, setup/verify/seed/reset scripts |
-| [docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md) | how each area moves to Python; rollback |
-| [docs/API.md](docs/API.md) | conventions and every endpoint |
-| [docs/SECURITY.md](docs/SECURITY.md) | secrets, auth, data protection |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | local run, Docker, env vars, CI |
-| [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md) | MySQL backup and restore |
-| [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md) | compiled packages (there is no C code) |
-| [docs/CHATBOT.md](docs/CHATBOT.md) | the Smart Ration AI Assistant (Public Help chatbot) |
-| [docs/TESTING.md](docs/TESTING.md) | every test suite and how to run it |
-| [PROJECT_STATUS.md](PROJECT_STATUS.md) · [PROJECT_AUDIT.md](PROJECT_AUDIT.md) | current status (PASS/PARTIAL/…) and the latest audit |
-| [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) · [SECURITY.md](SECURITY.md) | how to contribute, what changed, reporting security issues |
-| [docs/DB_TESTING.md](docs/DB_TESTING.md) | step-by-step MySQL test plan (100 records: CRUD, security, performance, concurrency, errors, integrity) |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | common errors and fixes |
-| [MIGRATION_AUDIT.md](MIGRATION_AUDIT.md) | Phase 0 audit of the C# system |
-
-## Included
-
-- Three role-based login experiences: Rural User, Ration Shop Owner, Government Official
-- Blue modern responsive dashboard
-- Clickable cards with hierarchical navigation and Back breadcrumbs
-- Rural token generation
-- 5-minute time slots
-- Rice/Tandul, Wheat/Gahu, Sugar/Sakhar selection
-- Token confirmation and QR generation
-- QR display/print flow
-- Shop queue and collection management
-- QR verification UI with manual fallback
-- Inventory dashboard
-- Government analytics
-- Shop management
-- Beneficiary management
-- Complaints/feedback
-- Policy configuration
-- Audit trail
-- Reports UI
-- Responsive mobile layout
-- Mock data layer
-- Loading/empty/error-style states
-- Animated hover/click/QR scanning UI
-
-## Demo accounts
-
-- Rural: `rural@example.com` / `demo123`
-- Shop: `shop@example.com` / `demo123`
-- Government: `officer@example.com` / `demo123`
-
-## Run on Windows PowerShell
-
-Open PowerShell in this folder:
-
-```powershell
-npm install
-npm run dev
-```
-
-Then open:
-
-```text
-http://localhost:5173/
-```
-
-Keep the terminal running while using the website.
-
-## Production build
-
-```powershell
-npm run build
-npm run preview
-```
-
-## Important production note
-
-This package is a complete frontend prototype with a mock data layer. For a real government deployment, connect the existing screens to a secured backend API and PostgreSQL database. Do not put Aadhaar, biometric templates, passwords, or other sensitive personal information inside QR payloads. Use HTTPS, secure authentication, RBAC, audit logging, rate limiting, server-side QR validation and approved identity-verification providers.
-
-## Suggested backend API contract
-
-```text
-POST /api/auth/login
-POST /api/tokens
-GET  /api/tokens/:id
-POST /api/qr/generate
-POST /api/qr/verify
-POST /api/collections/:id/complete
-GET  /api/shop/queue
-GET  /api/inventory
-GET  /api/government/analytics
-GET  /api/government/audit
-GET  /api/reports
-```
-
+**Open the project in VS Code:** `SmartRation-HSD2C.code-workspace` (numbered folders 01–10, tasks,
+debug configurations — see [.vscode/README.md](.vscode/README.md)).
+**Run it:** `.\scripts\development\start-all.ps1` → http://localhost:5173 ·
+**Setup from scratch:** [docs/development/LOCAL_SETUP.md](docs/development/LOCAL_SETUP.md) ·
+**Status:** [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)
 
 ---
 
-# Developer guide (current system)
+## What is Smart Ration?
 
-Three processes, one database:
+India's ration system gives eligible households subsidised or free foodgrains through Fair Price
+Shops. Smart Ration digitises the collection: no crowding, every distribution recorded and
+verifiable, stock tracked automatically, and a public help assistant for anyone with questions.
 
-| Component | Path | Port | Required |
-|---|---|---|---|
-| ASP.NET Core 8 API (core PDS) | `backend/SmartRation.Api` | 5188 | yes |
-| React + Vite frontend | `frontend` | 5173 | yes |
-| Python FastAPI AI service (read-only analytics) | `backend/SmartRation.AI` | 8001 | optional |
-| MySQL 8 (`smartration`), or SQLite as local fallback | — | 3306 | yes |
+**Who uses it**
 
-If the AI service is down, the core PDS (login, QR/OTP verification, tokens,
-distribution, inventory) keeps working: `/health` reports `Degraded` and AI
-panels say "AI analytics temporarily unavailable".
+| Role | Can |
+|---|---|
+| Public (no login) | landing page, Public Help, the AI assistant |
+| Citizen (rural user) | register, see entitlement and family, book a 5-minute slot, get a QR token, history, notifications |
+| Ration shop owner | today's queue, scan QR / verify by OTP, hand out ration, manage stock |
+| Government official / admin | dashboards, statistics, map, stock alerts, AI insights, reports, audit log |
 
-## Prerequisites
+## How does it work?
 
-.NET 8 SDK, Node 18+, Python 3.12+ (tested with 3.14), MySQL 8.0 (SQLite works with no setup).
+1. A citizen registers → linked to a household, scheme and ration shop.
+2. They book a **5-minute slot** and choose items within their **monthly entitlement**
+   (scheme quota × eligible family members − already collected).
+3. They get a **token** with a **digitally signed QR code**.
+4. At the shop the operator **scans the QR** (or, if it fails, sends an **OTP** to the registered
+   mobile). The backend verifies it and shows only what's needed (masked Aadhaar, family, entitlement).
+5. The collection is recorded **once** (idempotent, transactional), stock is deducted in a ledger,
+   and officials see it immediately.
 
-## 1. MySQL (one time)
+## Technology stack
 
-1. Copy `database/mysql-setup.sql`, replace both `CHANGE_ME` passwords, and run it as MySQL root
-   (Workbench, or `mysql -u root -p < your-copy.sql`). It creates database `smartration`,
-   `smartration_app` (full rights on that database) and `smartration_ai` (**SELECT only**).
-   Keep your filled-in copy named `*.local.sql`: that pattern is git-ignored.
-2. Backend secrets (stored in your Windows profile, never in the repo):
-   ```
-   cd backend\SmartRation.Api
-   dotnet user-secrets set "Database:Provider" "MySql"
-   dotnet user-secrets set "ConnectionStrings:MySql" "Server=localhost;Port=3306;Database=smartration;User=smartration_app;Password=<app password>"
-   dotnet user-secrets set "AiService:ApiKey" "<random key, same as the AI service .env>"
-   dotnet user-secrets set "Jwt:Key" "<64+ random characters>"
-   dotnet user-secrets set "Qr:Secret" "<64+ random characters>"
-   ```
-   `Jwt:Key` and `Qr:Secret` are no longer in `appsettings.Development.json`. On an existing
-   install, keep the SAME `Qr:Secret` value: changing it invalidates every QR code already issued.
-   Remove `Database:Provider` (or set it to `Sqlite`) to go back to the local SQLite file.
-3. Start the API once: it applies the MySQL migrations (`Migrations/MySql`) and seeds demo data.
-   SQLite keeps its own migration history (`Migrations/`); both stay supported.
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Vite 6, React Router 7, Zustand, Axios, Leaflet, html5-qrcode, Vitest |
+| Business API | ASP.NET Core 8 (C#), Entity Framework Core 8 (Pomelo MySQL) |
+| Python API | FastAPI, SQLAlchemy 2, Alembic, Pydantic — gateway, authentication, Public Help, chatbot |
+| AI service | FastAPI (Python) — forecasts, stock risk, anomaly alerts, optional OCR |
+| Database | MySQL 8 (`smartration`), schema owned by Alembic |
+| Tooling | pytest, xUnit, Vitest, ruff, mypy, GitHub Actions, Docker |
 
-Adding a migration later (both providers):
-```
-dotnet ef migrations add <Name> --context SmartRationDbContext
-dotnet ef migrations add <Name> --context MySqlSmartRationDbContext --output-dir Migrations/MySql
-```
-
-## 2. Python AI service
+## Architecture
 
 ```
-cd backend\SmartRation.AI
-python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
-copy .env.example .env
-```
-Fill `.env` (git-ignored): `SMARTRATION_AI_DB_URL` (the read-only `smartration_ai` account),
-`SMARTRATION_AI_API_KEY` (same value as the API's `AiService:ApiKey`) and, only for the history
-generator, `SMARTRATION_WRITE_DB_URL` (the `smartration_app` account).
-
-## 3. Synthetic history (development and demo only)
-
-```
-cd backend\SmartRation.AI
-.venv\Scripts\python scripts\generate_history.py --months 12 --seed 42            # first time
-.venv\Scripts\python scripts\generate_history.py --months 12 --seed 42 --replace  # regenerate
-.venv\Scripts\python scripts\generate_history.py --verify                         # re-check invariants
-.venv\Scripts\python scripts\generate_history.py --dry-run                        # counts only
-```
-Fully fictional households (`BEN-HIST-*`, `@history.synthetic.invalid`; these accounts cannot log in),
-tokens, collections and a complete inventory ledger, with monsoon/festival seasonality and
-controlled anomalies: a festival distribution camp, a late-supply stock-out, heavy damage
-write-offs at one shop, and a few token-reuse attempts. It never writes a successful collection
-above entitlement or the per-visit cap, never lets stock go negative, and re-verifies this after
-writing (the whole run is one transaction and rolls back on any violation). It ends before
-the seeded demo bookings and does not touch existing beneficiaries' current-month entitlement.
-
-## 4. Run
-
-`start-dev.bat` opens three windows (API, AI service, frontend). Or individually:
-```
-dotnet run --project backend\SmartRation.Api --launch-profile http
-cd backend\SmartRation.AI && .venv\Scripts\python -m uvicorn smartration_ai.main:create_app --factory --host 127.0.0.1 --port 8001
-npm run dev --prefix frontend
-```
-- App: http://localhost:5173 (demo accounts above, password `demo123`)
-- Health: http://localhost:5188/health returns `{status, api, database, databaseProvider, aiService}`
-- Swagger (Development): http://localhost:5188/swagger
-- AI service docs: http://127.0.0.1:8001/docs
-
-## 5. Tests
-
-```
-dotnet test backend\SmartRation.Api.Tests                        # 80 tests (SQLite in-memory)
-cd backend\SmartRation.AI && .venv\Scripts\python -m pytest       # 46 tests
-npm run build --prefix frontend
+                         User (browser, EN / HI / MR)
+                                   │
+                         Frontend  (React, :5173)
+                                   │  all API calls
+                                   ▼
+          Python API  (FastAPI, :8000)  ── gateway ──────────────┐
+          · authentication (JWT, Argon2)                        │ every other /api/* route
+          · Public Help + AI Assistant (chatbot)                │ forwarded unchanged
+          · health / readiness                                  ▼
+                   │                               Business API  (ASP.NET Core, :5188)
+                   │                               · slots, tokens, QR, OTP, collection,
+                   │                                 inventory, beneficiaries, reports, admin
+                   │                                            │            │ HTTP
+                   └──────────────► MySQL 8 ◄───────────────────┘            ▼
+                                  (smartration)            AI service (FastAPI, :8001)
+                                                           · forecasts, alerts, OCR (read-only DB)
 ```
 
-## Features added in this phase
+**Architecture decision (2026-09-25): frozen hybrid.** The C# API owns the business logic; Python
+owns the gateway, authentication, the Public Help chatbot, AI and data tooling. The earlier plan to
+move every endpoint to Python is paused — see
+[docs/architecture/SYSTEM_ARCHITECTURE.md](docs/architecture/SYSTEM_ARCHITECTURE.md).
 
-**One collection security model.** QR confirm (`POST /api/ration/collection/confirm`) and the
-queue's quick complete (`POST /api/shop/collection/complete`) run the same pipeline:
-shop authorization, token validity (used / cancelled / expired), eligibility and verification
-status, entitlement (`ENTITLEMENT_EXCEEDED`, HTTP 400), all-or-nothing stock check
-(`INSUFFICIENT_STOCK`, 409), then one transaction for collection + stock + ledger + audit. Both accept
-`Idempotency-Key`: a retry returns the original result and never deducts twice. `Inventory` has a
-concurrency token so two counters cannot oversell the same stock.
+## Folder structure
 
-**Inventory ledger.** Every stock change writes an `InventoryMovements` row (Received /
-Distributed / Damaged / Adjustment, with the balance after). `POST /api/inventory/{id}/receive`,
-`POST /api/inventory/{id}/damage`.
+```
+Smart_Ration_HSD2C_Final/
+├── frontend/                 React app (UI only)                         → frontend/README.md
+├── backend/
+│   ├── SmartRation.Api/      C# business API                             → backend/README.md
+│   ├── SmartRation.Api.Tests/  C# tests (xUnit)
+│   ├── SmartRation.Python/   Python API: gateway, auth, chatbot, data providers, DB migrations
+│   └── SmartRation.AI/       Python AI/analytics service
+├── database/                 MySQL setup, backup/restore scripts          → database/README.md
+├── ai/                       chatbot knowledge, evaluation set, prompts   → ai/README.md
+├── data/                     synthetic reference data; real-data rules    → data/README.md
+├── tests/                    cross-component tests (MySQL)                → tests/README.md
+├── scripts/                  start-all, stop-all, health-check, seed, run-tests → scripts/README.md
+├── docs/                     architecture, API, database, security, testing, status → docs/README.md
+├── deployment/               Docker, nginx                                → deployment/README.md
+├── .vscode/                  tasks, debug configurations, settings
+├── .github/workflows/        CI
+└── docker-compose.yml
+```
 
-**AI analytics** (`/api/ai/analytics/{forecast|inventory|queue|risk|shops}?lang=en|hi|mr`):
-forecasts choose weighted moving average, exponential smoothing or a monthly-cycle seasonal method
-by a rolling-origin backtest of the reported horizon total, and return `data_points`,
-`minimum_required`, `data_sufficient`, `data_quality` (INSUFFICIENT / SUFFICIENT / ANOMALOUS;
-outlier days are capped), `confidence`, a range and `limitations`. Below 14 days of history no
-number is produced.
+## How data flows
 
-**Persisted AI alerts** (the existing `AIAlerts` table, extended): types `LOW_STOCK`, `FORECAST_RISK`,
-`DEMAND_SPIKE`, `UNUSUAL_CONSUMPTION`, `INVENTORY_ANOMALY` with severity, score, reason,
-recommended action, source, metadata and timestamps; deduplicated by `DedupKey` while open.
-- `GET /api/ai/alerts/active` (runs a throttled re-analysis, at most every 5 minutes)
-- `GET /api/ai/alerts/list?status=&shopId=&source=`, `GET /api/ai/alerts/shop/{shopId}`, `GET /api/ai/alerts/{id}`
-- `POST /api/ai/alerts/{id}/resolve` with `{status: UnderReview|Resolved|Dismissed, note}` (government only)
-- `POST /api/ai/alerts/sync` (government only)
+Browser → **Python API** (validates the JWT, rate-limits, adds a request id) → either a Python route
+(auth, help, chatbot) or the **C# API** through the proxy → **MySQL** in one transaction per request.
+Every response uses one envelope: `{success, message, data, errors, errorCode?}`.
 
-Shop owners only ever see their own shop's alerts. Alerts are review prompts, never proof of fraud.
+## How authentication works
 
-**OCR (optional).** `POST /api/ocr/extract` (PNG/JPEG up to 5 MB) and `POST /api/ocr/parse-text`.
-Aadhaar and mobile numbers are masked before leaving the AI service; results always carry
-`requires_human_confirmation: true` and `authoritative: false`. Image OCR needs Tesseract plus
-`pytesseract` and `Pillow` on the AI host; without them the API returns `OCR_ENGINE_UNAVAILABLE`
-(it never fabricates text). QR remains the primary workflow.
+Login (`POST /api/auth/login`, Python) checks the password (Argon2id; old BCrypt hashes are upgraded
+on login) and returns a 15-minute **JWT** plus a rotating **refresh token** (stored hashed). Both
+backends validate the same JWT (same key, issuer, audience, role claim), and every protected route
+checks the **role** and **ownership** on the server.
 
-**SMS / OTP.** `ISmsProvider` with `MockSmsProvider` (development: sends nothing, logs only the
-masked number) and `HttpSmsProvider`, a generic gateway adapter (**production integration
-required**: set `Sms:Provider=Http`, `Sms:BaseUrl`, `Sms:ApiKey`, `Sms:SenderId` via secrets and
-adapt the payload to your provider and DLT templates). OTP keeps expiry, max attempts and
-wrong-code handling, adds a 30-second resend cooldown (`Demo:OtpResendCooldownSeconds`) and expires
-older codes. Outside Development the API refuses to start with `Demo:DemoOtpEnabled=true` or the
-Mock SMS provider.
+## How QR verification works
 
-**Security.** Per-IP rate limits: login/register 10/min, OTP 6/min, QR scan/verify 120/min (HTTP 429).
-Audit records carry actor, role, action, result and reference; failed-login emails are masked.
-Error responses include a machine-readable `errorCode`.
+The token's QR carries a reference signed with an HMAC secret (`SRQR-{tokenId}-{signature}`), not
+personal data. The shop's scanner sends it to the backend, which checks the signature, shop, slot,
+status and entitlement, and returns masked details. If the QR can't be scanned, the operator requests
+an **OTP** (hashed, 5-minute expiry, 3 attempts) sent to the registered mobile. In synthetic mode SMS
+is a clearly marked mock.
 
-## Troubleshooting
+## How the chatbot works
 
-- **"Network Error" on login**: the API isn't running on 5188. Start it, or use `start-dev.bat`.
-- **API won't start, "ConnectionStrings:MySql is not set"**: set it with user-secrets (step 1) or remove `Database:Provider`.
-- **MySQL "Access denied"**: the setup script didn't run, or its passwords differ from your secrets/.env.
-- **AI panels say "unavailable"**: start the AI service; check that `AiService:ApiKey` equals `SMARTRATION_AI_API_KEY`; open http://127.0.0.1:8001/health.
-- **Forecast says "insufficient data"**: fewer than 14 days of distribution history; generate history (step 3) in development.
-- **Build error "file is being used by another process"**: stop the running API before `dotnet build` or `dotnet ef`.
-- **HTTP 429**: rate limit reached; wait a minute.
+The **Smart Ration AI Assistant** (bottom-right on every page) answers from **reviewed articles** in
+`ai/chatbot/knowledge/` (English, Hindi, Marathi) plus live public facts (shops, scheme quotas). Safety
+rules run first: it never reveals personal data (a signed-in citizen can ask only about *their own*
+booking), refuses requests for internals or other people's data, warns if someone types an Aadhaar
+number or OTP, and gives only general health guidance. Unknown questions get "I'm not able to verify
+that information…". It is retrieval-based (no LLM today) behind a provider interface.
+→ [docs/chatbot/CHATBOT_ARCHITECTURE.md](docs/chatbot/CHATBOT_ARCHITECTURE.md)
+
+## How synthetic data works
+
+`DATA_MODE=synthetic` (default). Reference data lives in `data/synthetic/reference/*.json`; households,
+Aadhaar references and passbooks are generated by **synthetic providers** behind interfaces
+(`IAadhaarVerificationService`, `DataProvider`…), and every generated record is tagged
+`DataSource = "SYNTHETIC_DEMO"`. → [docs/architecture/DATA_ARCHITECTURE.md](docs/architecture/DATA_ARCHITECTURE.md)
+
+## How to switch to real data
+
+Set `DATA_MODE=real` — and today both backends **refuse to start**:
+*BLOCKED — REQUIRES EXTERNAL INTEGRATION*. Real data needs authorised integrations (state ration-card
+registry, UIDAI-authorised eKYC, SMS gateway), a separate database, and privacy, consent and security
+review. The business code won't change: new *real* providers are added behind the same interfaces.
+→ [data/real/README.md](data/real/README.md)
+
+## How to run locally
+
+```
+.\scripts\development\start-all.ps1       # C# :5188, AI :8001, Python :8000, frontend :5173
+.\scripts\development\health-check.ps1
+```
+First time: [docs/development/LOCAL_SETUP.md](docs/development/LOCAL_SETUP.md).
+
+## How to test
+
+```
+.\scripts\development\run-tests.ps1        # add -MySql for the database suite
+```
+Python (pytest), chatbot evaluation, AI service, C# (xUnit), frontend (Vitest). Also in CI.
+→ [docs/testing/TESTING.md](docs/testing/TESTING.md)
+
+## How to deploy
+
+Docker image for the Python API + MySQL via `docker-compose.yml`, nginx reverse-proxy example,
+health/readiness probes. → [docs/deployment/DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md)
+
+## Documentation
+
+Start at [docs/README.md](docs/README.md). Also: [CONTRIBUTING.md](CONTRIBUTING.md) ·
+[SECURITY.md](SECURITY.md) · [CHANGELOG.md](CHANGELOG.md) · [docs/PROJECT_AUDIT.md](docs/PROJECT_AUDIT.md).

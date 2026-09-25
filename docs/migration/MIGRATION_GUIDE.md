@@ -1,7 +1,11 @@
 # C# → Python migration guide
 
-Status per area: [backend/SmartRation.Python/MIGRATION.md](../backend/SmartRation.Python/MIGRATION.md).
-Initial audit: [MIGRATION_AUDIT.md](../MIGRATION_AUDIT.md).
+> **Status (2026-09-25): paused — frozen hybrid.** Authentication was migrated (and the Public Help
+> chatbot built in Python). The remaining areas stay in C#, which owns the business logic. This guide
+> is kept for the day migration resumes; nothing below is scheduled.
+
+Status per area: [backend/SmartRation.Python/MIGRATION.md](../../backend/SmartRation.Python/MIGRATION.md).
+Initial audit: [MIGRATION_AUDIT.md](MIGRATION_AUDIT.md).
 
 ## How an area is migrated
 
@@ -51,5 +55,5 @@ revisions); keep route paths, bodies and messages identical; new routes from the
   C# is safe. Rolling back to the pre-migration checkpoint `3148b9d` is not: that build can't read
   Argon2id hashes (those users would need a password reset).
 - **Database:** revert the latest Alembic revision with `alembic downgrade -1` (after a backup), or
-  restore a backup ([BACKUP_RESTORE.md](BACKUP_RESTORE.md)). Adoption of the existing database
+  restore a backup ([BACKUP_RESTORE.md](../database/BACKUP_RESTORE.md)). Adoption of the existing database
   (`stamp 0001_initial`) is undone by dropping the `alembic_version` table; no other table changed.

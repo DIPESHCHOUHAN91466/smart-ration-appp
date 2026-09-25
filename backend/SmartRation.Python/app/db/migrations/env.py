@@ -4,7 +4,7 @@ Alembic owns the schema. Revision 0001_initial creates the 25 tables exactly
 as the C# API's EF Core migrations did; an existing EF-created database is
 adopted with `alembic stamp 0001_initial` (scripts/setup_database.py verifies
 it matches first). Every later schema change is a new Alembic revision.
-See docs/MIGRATION_GUIDE.md.
+See docs/migration/MIGRATION_GUIDE.md.
 """
 
 from logging.config import fileConfig

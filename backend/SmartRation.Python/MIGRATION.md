@@ -1,5 +1,8 @@
 # C# → Python migration tracker
 
+> **Paused on 2026-09-25 (frozen hybrid).** Steps marked *proxied* stay in the C# API, which owns the
+> business logic. Python keeps the gateway, authentication, Public Help/chatbot, AI and data tooling.
+
 Branch: `feature/python-backend-migration` · Rollback point: `3148b9d` on `main`.
 Strategy: side-by-side with a fallback proxy. A route area moves to Python only when its ported
 tests and the live contract check (`tests/contract/compare_proxy.py`) pass; until then the C#

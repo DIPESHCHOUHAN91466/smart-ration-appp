@@ -1,14 +1,36 @@
-# Smart Ration Database
+# database — MySQL setup and operations
 
-ORM: Entity Framework Core 8. Two supported providers, chosen by `Database:Provider`:
+**What is this?** Everything about the MySQL database that isn't application code: the one-time setup
+script, backup and restore scripts, and reference folders.
 
-- **MySQL 8** (`MySql`): primary. Pomelo provider; migrations in `backend/SmartRation.Api/Migrations/MySql`.
-- **SQLite** (`Sqlite`, the default when unset): zero-setup local fallback; migrations in `backend/SmartRation.Api/Migrations`.
+**Why does it exist?** The database outlives any single backend; creating it, backing it up and
+restoring it are operational tasks with their own safety rules.
 
-`mysql-setup.sql` creates the `smartration` database, an application account and a
-read-only account for the Python AI service. Replace the `CHANGE_ME` passwords in a
-local copy named `*.local.sql` (git-ignored) before running it. Never commit real passwords.
+**What belongs here:** `mysql-setup.sql` (creates the `smartration` database, the `smartration_app`
+account and the **read-only** `smartration_ai` account — copy to `*.local.sql`, which is git-ignored,
+before filling in passwords), `mysql/backup.ps1`, `mysql/restore.ps1` (see [mysql/README.md](mysql/README.md)).
+**What does NOT:** the schema definition and migrations — those are code, owned by **Alembic** in
+`backend/SmartRation.Python/app/db/migrations` (revision `0001_initial` = the 25 tables); setup/verify/
+seed/reset scripts live in `backend/SmartRation.Python/scripts`; synthetic reference data lives in
+`data/synthetic`. Never commit passwords or backups.
 
-The schema is owned by the .NET API (migrations run on startup). The Python AI service only
-reads; `backend/SmartRation.AI/scripts/generate_history.py` is the only Python writer and
-is for development/demo data only.
+> History: the schema used to be created by EF Core migrations in the C# API (MySQL and SQLite). Since
+> 2026-09-24 Alembic owns it; the existing database was adopted with zero drift. Do not add EF migrations.
+> The C# API still runs its (already complete) EF migration history on startup, which changes nothing.
+
+**How do I run it?**
+```
+mysql -u root -p < database\mysql-setup.local.sql            # one time, as root
+.\scripts\development\seed-demo-data.ps1                     # schema + synthetic reference data
+backend\SmartRation.Python\.venv\Scripts\python backend\SmartRation.Python\scripts\verify_database.py
+```
+
+**How does it connect?** Python API (read/write, `smartration_app`), C# API (read/write, same account),
+AI service (read-only, `smartration_ai`). Test suites use a separate `smartration_test` database.
+
+Architecture: [../docs/database/DATABASE_ARCHITECTURE.md](../docs/database/DATABASE_ARCHITECTURE.md) ·
+Backups: [../docs/database/BACKUP_RESTORE.md](../docs/database/BACKUP_RESTORE.md) ·
+Test plan: [../docs/database/DB_TESTING.md](../docs/database/DB_TESTING.md).
+
+The empty folders `schema/`, `migrations/`, `seed/`, `diagrams/` are placeholders from the original
+scaffold; their real equivalents are listed above.

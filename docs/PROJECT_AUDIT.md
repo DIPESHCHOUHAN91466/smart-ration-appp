@@ -1,8 +1,8 @@
 # Smart Ration HSD2C — Project Audit
 
 Date: 2026-09-25 · Branch `feature/python-backend-migration` · Previous audits:
-[docs/archive/PROJECT_AUDIT_2026-09-21.md](docs/archive/PROJECT_AUDIT_2026-09-21.md) (pre-cleanup state, now outdated) and
-[MIGRATION_AUDIT.md](MIGRATION_AUDIT.md) (C# → Python migration, Phase 0).
+[docs/archive/PROJECT_AUDIT_2026-09-21.md](archive/PROJECT_AUDIT_2026-09-21.md) (pre-cleanup state, now outdated) and
+[MIGRATION_AUDIT.md](migration/MIGRATION_AUDIT.md) (C# → Python migration, Phase 0).
 
 Everything below was checked against the code, the running services and the database on this date;
 items marked *fixed* were fixed during this audit and committed.
@@ -62,9 +62,9 @@ Browser ── React 18 / Vite 6 SPA (:5173)
 | i18n in the 41 components still hard-coded in English | MEDIUM | new UI fully translated; existing dashboards converted over time |
 | Complaints / grievance workflow | MEDIUM | not present in any layer; documented as future work |
 | Separate admin UI (Admin shares government screens) | LOW | keep; document |
-| Ration-card entity (passbook plays this role) | LOW | documented mapping in docs/DATABASE.md |
+| Ration-card entity (passbook plays this role) | LOW | documented mapping in docs/database/DATABASE_ARCHITECTURE.md |
 | Payments | — | not a feature of this system (decision recorded) |
-| `CONTRIBUTING.md`, `CHANGELOG.md`, `PROJECT_STATUS.md`, `docs/CHATBOT.md`, `docs/TESTING.md`, root `SECURITY.md` | MEDIUM | add |
+| `CONTRIBUTING.md`, `CHANGELOG.md`, `PROJECT_STATUS.md`, `docs/chatbot/CHATBOT_ARCHITECTURE.md`, `docs/testing/TESTING.md`, root `SECURITY.md` | MEDIUM | add |
 | `deployment/nginx`, `deployment/cloud` content | LOW | add reverse-proxy example |
 
 ## 4. Broken or weak (found in this audit)
@@ -76,7 +76,7 @@ Browser ── React 18 / Vite 6 SPA (:5173)
 | 500 responses lacked `X-Request-ID`; error log had `request_id "-"` | MEDIUM | **fixed** (`4491b6c`) |
 | C# per-IP rate limiter saw every proxied request as 127.0.0.1 | MEDIUM | **fixed** (`53f6080`, forwarded headers from loopback only) |
 | Root `.env` `DB_PASSWORD` doesn't match the `smartration_app` account (error 1045) | MEDIUM | owner action: copy the password from `backend/SmartRation.Python/.env` |
-| `docs/API.md` described validation errors as a map; they're a list | LOW | **fixed** |
+| `docs/api/API.md` described validation errors as a map; they're a list | LOW | **fixed** |
 | Frontend calls C# directly, bypassing the Python backend | MEDIUM | switch `VITE_API_BASE_URL` to :8000 (proxy parity 36/36 verified) |
 | Old `PROJECT_AUDIT.md` described a state that no longer exists | LOW | archived |
 
@@ -85,7 +85,7 @@ Browser ── React 18 / Vite 6 SPA (:5173)
 | Finding | Priority | Notes |
 |---|---|---|
 | Access **and refresh** tokens persisted in `localStorage` | HIGH | an XSS bug would expose them; move refresh token to an HttpOnly cookie (needs backend + CSRF work) — planned, not done |
-| JWT key and QR secret in git history before `4c983e2` | HIGH | rotate JWT key before any public deployment; QR secret kept by owner decision (docs/SECURITY.md) |
+| JWT key and QR secret in git history before `4c983e2` | HIGH | rotate JWT key before any public deployment; QR secret kept by owner decision (docs/security/SECURITY_ARCHITECTURE.md) |
 | Demo password shown on the login page | MEDIUM | fine for the demo; hide via config in production |
 | No `dangerouslySetInnerHTML`; React escapes output | ✓ | chatbot must keep rendering plain text |
 | SQL injection | ✓ | bound parameters everywhere; 16 payloads tested (MySQL suite) |
@@ -123,7 +123,7 @@ JSON knowledge files first (reviewable in git); a table is only worth adding onc
    branding assets; all new UI in en/hi/mr.
 4. ✅ Frontend test runner + chatbot/landing tests.
 5. ✅ Browser verification on desktop and mobile widths; fix console errors.
-6. ✅ Docs: `PROJECT_STATUS.md`, `docs/CHATBOT.md`, `docs/TESTING.md`, `CONTRIBUTING.md`,
+6. ✅ Docs: `PROJECT_STATUS.md`, `docs/chatbot/CHATBOT_ARCHITECTURE.md`, `docs/testing/TESTING.md`, `CONTRIBUTING.md`,
    `CHANGELOG.md`, root `SECURITY.md`; nginx example.
 7. Next: translate the remaining dashboards; refresh token → HttpOnly cookie; complaints module;
    continue the C# → Python migration (users, items, slots…).

@@ -2,7 +2,7 @@
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Frontend shows **"Network Error"** | the API it calls isn't running | start the C# API (`start-dev.bat`), check http://localhost:5188/api/health |
+| Frontend shows **"Network Error"** | the Python API (:8000) isn't running — the frontend sends every request to it (it forwards business routes to the C# API :5188) | `.\scripts\development\start-all.ps1` (or `start-dev.bat`), then `.\scripts\development\health-check.ps1` |
 | Python API exits: `JWT_SECRET_KEY is not set` | missing `.env` value | copy `.env.example` → `.env`, set it to the C# `Jwt:Key` |
 | C# API exits: `Jwt:Key is not set` | user-secrets missing | `dotnet user-secrets set "Jwt:Key" "<value>" --project backend/SmartRation.Api` (see note below) |
 | Tokens from one backend rejected by the other | different JWT keys | `.env` `JWT_SECRET_KEY` must equal user-secret `Jwt:Key` |
@@ -16,6 +16,12 @@
 | Proxied requests get **429** from C# | per-client limit reached (QR scan, OTP) | wait a minute; the C# API keys limits on `X-Forwarded-For` from the local proxy |
 | Chatbot says it can't reach the help service | Python API (:8000) not running, or `VITE_API_BASE_URL` still points at :5188 | start the Python API; set `VITE_API_BASE_URL=http://localhost:8000/api` in `frontend/.env` |
 | Chatbot answers in the wrong language | the interface language decides; Devanagari text is detected as Hindi or Marathi | switch the language at the top of the page |
+| API won't start: "ConnectionStrings:MySql is not set" | C# user-secrets missing | set it (LOCAL_SETUP.md §3), or remove `Database:Provider` for the SQLite fallback |
+| MySQL "Access denied" (1045) | setup script not run, or passwords differ from secrets/.env | re-check `database/mysql-setup.local.sql` and each component's secret |
+| AI panels say "unavailable" | AI service down or API keys differ | `.\scripts\development\start-all.ps1`; `AiService:ApiKey` must equal `SMARTRATION_AI_API_KEY`; open http://127.0.0.1:8001/health |
+| Forecast says "insufficient data" | fewer than 14 days of history | generate synthetic history (LOCAL_SETUP.md §5), development only |
+| Build error "file is being used by another process" | the API is running | stop it (`stop-all.ps1`) before `dotnet build` |
+| API refuses to start: "BLOCKED — REQUIRES EXTERNAL INTEGRATION" | `DATA_MODE=real` or a `Demo:UseSynthetic*` flag set to false | intended: real data isn't integrated yet — use `DATA_MODE=synthetic` (data/real/README.md) |
 | mysqldump: `Access denied; you need the PROCESS privilege` | app account lacks PROCESS | the backup script already passes `--no-tablespaces`; use it rather than a raw mysqldump |
 | `backup.ps1`: output lands in the wrong place | older PowerShell: `$PSScriptRoot` empty in param defaults | fixed in the script; pass `-OutputDir` explicitly if needed |
 | Tables appear lowercase (`users`) in MySQL | Windows `lower_case_table_names=1` | expected; the tooling compares case-insensitively |

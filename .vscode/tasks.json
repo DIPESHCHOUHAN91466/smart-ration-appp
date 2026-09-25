@@ -1,40 +1,185 @@
 {
+  // Terminal → Run Task… (Ctrl+Shift+P → "Tasks: Run Task"). Groups: Stack, Frontend, Backend (C#),
+  // Python API, AI service, Database, Tests. Long-running servers open in their own terminal.
   "version": "2.0.0",
   "tasks": [
+    // ---------------------------------------------------------------- whole stack
+    {
+      "label": "Stack: Start all services",
+      "detail": "C# :5188, AI :8001, Python :8000, frontend :5173 — each in its own window; skips what's running",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/start-all.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Stack: Stop all services",
+      "detail": "Stops only processes listening on 5173/5188/8000/8001 (asks first)",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/stop-all.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Stack: Health check",
+      "detail": "Frontend, Python /health + /ready, C# /api/health, AI service, MySQL schema",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/health-check.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+
+    // ---------------------------------------------------------------- frontend
+    {
+      "label": "Frontend: Install",
+      "type": "shell",
+      "command": "npm install",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": []
+    },
     {
       "label": "Frontend: Dev",
       "type": "shell",
       "command": "npm run dev",
-      "options": {
-        "cwd": "${workspaceFolder}/frontend"
-      },
+      "isBackground": true,
+      "options": { "cwd": "${workspaceFolder}/frontend" },
       "problemMatcher": []
     },
     {
       "label": "Frontend: Build",
       "type": "shell",
       "command": "npm run build",
-      "options": {
-        "cwd": "${workspaceFolder}/frontend"
-      },
-      "problemMatcher": []
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": [],
+      "group": "build"
     },
+    {
+      "label": "Frontend: Test",
+      "type": "shell",
+      "command": "npm test",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": [],
+      "group": "test"
+    },
+
+    // ---------------------------------------------------------------- C# backend
     {
       "label": "Backend: Run",
       "type": "shell",
-      "command": "dotnet run",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/SmartRation.Api"
-      },
+      "command": "dotnet run --launch-profile http",
+      "isBackground": true,
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Api" },
       "problemMatcher": []
     },
     {
       "label": "Backend: Build",
       "type": "shell",
       "command": "dotnet build",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/SmartRation.Api"
-      },
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Api" },
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "Backend: Test",
+      "type": "shell",
+      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": "$msCompile",
+      "group": "test"
+    },
+
+    // ---------------------------------------------------------------- Python API (gateway, auth, public help, chatbot)
+    {
+      "label": "Python: Start API",
+      "type": "shell",
+      "command": ".venv/Scripts/python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 --reload",
+      "isBackground": true,
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Python: Test",
+      "type": "shell",
+      "command": ".venv/Scripts/python -m pytest",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "Python: Lint + type check",
+      "type": "shell",
+      "command": ".venv/Scripts/python -m ruff check . ; .venv/Scripts/python -m mypy",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Chatbot: Evaluate",
+      "detail": "Scores the assistant on ai/chatbot/evaluation/questions.json (en/hi/mr)",
+      "type": "shell",
+      "command": ".venv/Scripts/python -m app.chatbot.evaluate",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "problemMatcher": []
+    },
+
+    // ---------------------------------------------------------------- AI service
+    {
+      "label": "AI service: Start",
+      "type": "shell",
+      "command": ".venv/Scripts/python -m uvicorn smartration_ai.main:create_app --factory --host 127.0.0.1 --port 8001",
+      "isBackground": true,
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.AI" },
+      "problemMatcher": []
+    },
+    {
+      "label": "AI service: Test",
+      "type": "shell",
+      "command": ".venv/Scripts/python -m pytest",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.AI" },
+      "problemMatcher": [],
+      "group": "test"
+    },
+
+    // ---------------------------------------------------------------- database
+    {
+      "label": "Database: Health check",
+      "detail": "Read-only: tables, columns, keys, indexes, migration version, reference data",
+      "type": "shell",
+      "command": ".venv/Scripts/python scripts/verify_database.py",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Database: Seed synthetic data",
+      "detail": "Creates/adopts the schema and fills EMPTY tables only with synthetic demo data",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/seed-demo-data.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Database: Back up",
+      "detail": "Needs SMARTRATION_DB_USER / SMARTRATION_DB_PASSWORD in the environment",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File database/mysql/backup.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+
+    // ---------------------------------------------------------------- everything
+    {
+      "label": "Tests: Run full suite",
+      "detail": "Python, chatbot evaluation, AI service, C#, frontend",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/run-tests.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "group": { "kind": "test", "isDefault": true }
+    },
+    {
+      "label": "Tests: Full suite + MySQL (smartration_test)",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/run-tests.ps1 -MySql",
+      "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     }
   ]

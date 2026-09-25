@@ -1,6 +1,6 @@
 import { apiClient } from "./api";
 
-// Public Help assistant (Python backend, no login needed). See docs/CHATBOT.md.
+// Public Help assistant (Python backend, no login needed). See docs/chatbot/CHATBOT_ARCHITECTURE.md.
 export const chatbotService = {
   welcome: (language) => apiClient.get("/chatbot/welcome", { params: { language } }).then((r) => r.data.data),
 

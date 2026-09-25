@@ -36,7 +36,7 @@ C# through the proxy work on :8000 but appear in Swagger only once migrated.
 
 `kind` is one of `answer`, `fallback`, `welcome`, `greeting`, `thanks`, `private_data`,
 `sensitive_input`, `internal`, `health`. `language` is `en`, `hi` or `mr`. Messages over 500 characters
-or empty → 400. See [CHATBOT.md](CHATBOT.md).
+or empty → 400. See [CHATBOT.md](../chatbot/CHATBOT_ARCHITECTURE.md).
 
 ## Endpoints
 

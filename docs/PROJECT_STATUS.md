@@ -47,7 +47,7 @@ NOT TESTED: not verified in this work.
 | Frontend test runner (Vitest) | PASS | 33 tests; added to CI |
 | Root `tests/mysql` suite | PARTIAL | 24/24 pass with the correct password; the root `.env` `DB_PASSWORD` is wrong (tests error clearly) |
 | nginx reverse-proxy example | NOT TESTED | configuration example only |
-| Generative LLM behind the chatbot | NOT IMPLEMENTED | by design (no provider/key); interface ready (docs/CHATBOT.md) |
+| Generative LLM behind the chatbot | NOT IMPLEMENTED | by design (no provider/key); interface ready (docs/chatbot/CHATBOT_ARCHITECTURE.md) |
 | Complaints workflow | NOT IMPLEMENTED | Public Help explains the official complaint channels |
 | Microphone input | NOT IMPLEMENTED | intentionally omitted (not supported end to end) |
 

@@ -32,6 +32,7 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/tasks.json
+!.vscode/README.md
 # Local-only SQL containing real credentials
 *.local.sql
 
@@ -47,3 +48,7 @@ database/mysql/backups/
 .pytest_cache/
 *.log
 
+
+# Local log files (the folder itself is kept)
+logs/*
+!logs/.gitkeep

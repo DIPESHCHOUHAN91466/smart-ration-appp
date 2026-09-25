@@ -11,7 +11,7 @@
 | Frontend | 5173 | `cd frontend` → `npm run dev` (calls the Python API on :8000) |
 
 `start-dev.bat` starts the C# API and frontend. First-time Python setup:
-[backend/SmartRation.Python/README.md](../backend/SmartRation.Python/README.md).
+[backend/SmartRation.Python/README.md](../../backend/SmartRation.Python/README.md).
 
 ## Docker (MySQL + Python API)
 

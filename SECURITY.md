@@ -10,7 +10,7 @@ download other people's data while testing; use the synthetic demo accounts.
 
 The full security architecture — secrets handling, authentication and authorisation, data protection
 (masked Aadhaar, hashed OTPs, signed QR codes), logging rules, rate limits, the Public Help chatbot's
-privacy rules, and the known open items — is documented in [docs/SECURITY.md](docs/SECURITY.md).
+privacy rules, and the known open items — is documented in [docs/security/SECURITY_ARCHITECTURE.md](docs/security/SECURITY_ARCHITECTURE.md).
 
 ## Known open items (summary)
 

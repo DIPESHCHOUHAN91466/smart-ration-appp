@@ -7,15 +7,37 @@
     "**/node_modules": true,
     "**/bin": true,
     "**/obj": true,
-    "**/dist": true
+    "**/dist": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true
   },
   "search.exclude": {
     "**/node_modules": true,
     "**/bin": true,
     "**/obj": true,
-    "**/dist": true
+    "**/dist": true,
+    "**/.venv": true,
+    "**/package-lock.json": true,
+    "database/mysql/backups": true
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "terminal.integrated.defaultProfile.windows": "PowerShell"
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+
+  // Python and C# use 4 spaces. Python is NOT formatted on save: the codebase is linted with ruff
+  // (`ruff check`), not reformatted, so saving a file must not rewrite it.
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnSave": false,
+    "editor.rulers": [160]
+  },
+  "[csharp]": {
+    "editor.tabSize": 4
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/SmartRation.Python/.venv/Scripts/python.exe",
+  "files.associations": {
+    "*.code-workspace": "jsonc"
+  }
 }

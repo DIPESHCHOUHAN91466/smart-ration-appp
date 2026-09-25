@@ -12,7 +12,7 @@ All notable changes. Dates are commit dates; hashes refer to this repository.
 - Chatbot branding derived from the Ration Mitra mark (`frontend/src/assets/chatbot/`).
 - Frontend test runner (Vitest + Testing Library), 33 tests; frontend tests in CI.
 - Root `tests/mysql` suite on `smartration_test` (connection, schema, CRUD, transactions). (`4491b6c`)
-- Docs: `PROJECT_AUDIT.md` (new), `PROJECT_STATUS.md`, `docs/CHATBOT.md`, `docs/TESTING.md`,
+- Docs: `PROJECT_AUDIT.md` (new), `PROJECT_STATUS.md`, `docs/chatbot/CHATBOT_ARCHITECTURE.md`, `docs/testing/TESTING.md`,
   `CONTRIBUTING.md`, `SECURITY.md`, this changelog; nginx example.
 
 ### Changed

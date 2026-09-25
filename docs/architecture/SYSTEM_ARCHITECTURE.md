@@ -1,9 +1,13 @@
 # Architecture
 
-Smart Ration HSD2C is moving from an ASP.NET Core 8 backend to a Python (FastAPI) backend.
-The move is **side by side**: both backends run against the same MySQL database, and the Python
-API forwards every route it doesn't implement yet to the C# API. The frontend doesn't notice
-which backend answered.
+Smart Ration HSD2C runs two backends against one MySQL database. The Python (FastAPI) API is the
+single entry point: it serves authentication, Public Help, the chatbot and health checks itself, and
+forwards every other `/api/*` route to the ASP.NET Core 8 API, which owns the business logic. The
+frontend doesn't notice which backend answered.
+
+**Decision, 2026-09-25 — frozen hybrid.** The earlier plan to migrate every C# endpoint to Python is
+paused after authentication. C# keeps business logic; Python keeps the gateway, auth, chatbot, AI and
+data tooling. No business rules are duplicated. See [BACKEND_ARCHITECTURE.md](BACKEND_ARCHITECTURE.md).
 
 ```
                      ┌───────────────────────────── Python API :8000 (FastAPI) ─────────────────────────────┐
@@ -22,7 +26,7 @@ The frontend calls the Python backend (`VITE_API_BASE_URL=http://localhost:8000/
 yet migrated reach the C# API through the proxy (parity verified 36/36), so no route was lost.
 
 New public features are built in Python only: the Public Help pages and the Public Help chatbot
-(`app/chatbot/`, `app/api/public_help.py`; see [CHATBOT.md](CHATBOT.md)).
+(`app/chatbot/`, `app/api/public_help.py`; see [CHATBOT.md](../chatbot/CHATBOT_ARCHITECTURE.md)).
 
 ## Python backend layout (`backend/SmartRation.Python`)
 
@@ -67,14 +71,14 @@ valid). Verified by `tests/contract/compare_proxy.py` (36/36) and `tests/contrac
 
 | Decision | Choice |
 |---|---|
-| Migration style | side by side with fallback proxy; one area per step; C# kept until the last area moves |
+| Backend split | **frozen hybrid** (2026-09-25): C# = business logic; Python = gateway, auth, chatbot, AI, data; migration paused |
 | Database | evolve the existing `smartration` DB in place (no second database, no data copy) |
 | Schema ownership | Alembic; `0001_initial` = the EF-created schema; live DB adopted by `stamp` |
 | Passwords | keep BCrypt verification, rehash to Argon2id on successful login |
 | AI service | merge `SmartRation.AI` into the Python backend (later step) |
 | Computer vision | OpenCV / PyTorch / YOLO not used |
 | Payments | not implemented (no payments feature exists); documented as future work |
-| Native code | none — see [NATIVE_DEPENDENCIES.md](NATIVE_DEPENDENCIES.md) |
+| Native code | none — see [NATIVE_DEPENDENCIES.md](../deployment/NATIVE_DEPENDENCIES.md) |
 | Chatbot | retrieval over reviewed articles (no LLM, no external calls); provider interface ready for one |
 | Frontend API | through the Python backend (:8000) since 2026-09-25 |
 
@@ -91,5 +95,5 @@ valid). Verified by `tests/contract/compare_proxy.py` (36/36) and `tests/contrac
 | `store/` | zustand stores (auth, preferences, QR scanner, chatbot) |
 | `i18n/` | `translations.js` (+ `publicStrings.js`), `useTranslation()` — en/hi/mr |
 
-See also: [DATABASE.md](DATABASE.md) · [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) · [API.md](API.md) ·
-[SECURITY.md](SECURITY.md) · [DEPLOYMENT.md](DEPLOYMENT.md).
+See also: [DATABASE.md](../database/DATABASE_ARCHITECTURE.md) · [MIGRATION_GUIDE.md](../migration/MIGRATION_GUIDE.md) · [API.md](../api/API.md) ·
+[SECURITY.md](../security/SECURITY_ARCHITECTURE.md) · [DEPLOYMENT.md](../deployment/DEPLOYMENT.md).

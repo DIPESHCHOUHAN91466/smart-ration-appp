@@ -1,7 +1,7 @@
 # Native dependencies
 
 **There is no C or C++ source code in this repository.** The migration brief assumed a C backend;
-the Phase 0 audit ([MIGRATION_AUDIT.md](../MIGRATION_AUDIT.md)) found the legacy backend is C#
+the Phase 0 audit ([MIGRATION_AUDIT.md](../migration/MIGRATION_AUDIT.md)) found the legacy backend is C#
 (ASP.NET Core 8), which is what's being replaced.
 
 The Python backend uses a few packages that ship compiled extensions. All install as prebuilt
