@@ -2,8 +2,8 @@
 
 Identifier formats (all clearly fabricated; `seed` and `n` shown for seed=2026, person n=1):
 
-    mobile         90BB000001        BB = seed % 99 + 1 (01-99). Block 00 is the demo accounts'
-                                     (9000000001-3) and the C# seeder's beneficiaries (9000000xxx).
+    mobile         90BB000001        BB = seed % 99 + 1 (01-99). Block 00 is reserved: demo accounts
+                                     9000000001, -051, -052 and the C# seeder's beneficiaries 9000000002-050.
     email          user0001.s2026@example.com
     ration card    SYN-RC-2026-000001     (stored as Families.FamilyCode)
     beneficiary    SYN-BEN-2026-000001
@@ -21,9 +21,10 @@ import re
 from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from typing import cast
 
+from sqlalchemy import CursorResult, select, update
 from sqlalchemy import insert as sql_insert
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.security import utc_now
@@ -43,12 +44,18 @@ from app.db.models import (
     FamilyMember,
     MobileVerification,
     PassbookVerification,
+    RationItem,
     RationScheme,
     RationShop,
+    SchemeEntitlementItem,
+    TimeSlot,
+    Token,
+    TokenItem,
     User,
 )
 
 SOURCE = "SYNTHETIC_DEMO"
+TOKEN_CONFIRMED = 2              # C# TokenStatus.Confirmed (Models/Token.cs)
 DEFAULT_SEED = 2026
 MAX_PEOPLE = 999_999            # the mobile/code formats carry six digits of person number
 MAX_FAMILY_SIZE = 6
@@ -264,3 +271,61 @@ def insert(db: Session, people: Sequence[SyntheticPerson], password_hash: str, b
     n = len(people)
     return {"Users": n, "Families": n, "FamilyMembers": len(members), "Beneficiaries": n,
             "MobileVerifications": n, "AadhaarVerifications": n, "PassbookVerifications": n}
+
+
+def book(db: Session, people: Sequence[SyntheticPerson]) -> dict[str, int]:
+    """Give each (already inserted) citizen one Confirmed token in the earliest free upcoming slot at
+    their family's shop, like the C# BookingService: capacity respected, BookedCount raised, token
+    number SR-<year>-<id>, items = the scheme's entitled ration types at their standard quota. The QR
+    value is left empty; the C# API signs it on first request. Caller commits. Citizens whose shop
+    has no free upcoming slot are counted as "Unbooked"."""
+    today = datetime.combine(utc_now().date(), datetime.min.time())
+    rows = db.execute(select(User.Id, Family.RationShopId, Family.RationSchemeId)
+                      .join(Beneficiary, Beneficiary.UserId == User.Id).join(Family, Family.Id == Beneficiary.FamilyId)
+                      .where(User.Email.in_([p.email for p in people]))).all()
+    if len(rows) != len(people):
+        raise SyntheticDataError(["insert the citizens before booking them"])
+    quotas = {t: q for t, q in db.execute(select(RationItem.RationType, RationItem.StandardQuotaPerBooking)
+                                          .where(RationItem.IsActive.is_(True)))}
+    entitled: dict[int, list[int]] = {}
+    for scheme_id, ration_type in db.execute(select(SchemeEntitlementItem.RationSchemeId, SchemeEntitlementItem.RationType)):
+        if ration_type in quotas:
+            entitled.setdefault(scheme_id, []).append(ration_type)
+
+    free: dict[int, list[list[int]]] = {}   # shop -> [[slot id, places left], ...] earliest first
+    for slot_id, shop_id, capacity, booked in db.execute(
+            select(TimeSlot.Id, TimeSlot.RationShopId, TimeSlot.Capacity, TimeSlot.BookedCount)
+            .where(TimeSlot.SlotDate >= today, TimeSlot.BookedCount < TimeSlot.Capacity)
+            .order_by(TimeSlot.SlotDate, TimeSlot.StartTime, TimeSlot.Id)):
+        free.setdefault(shop_id, []).append([slot_id, capacity - booked])
+
+    now = utc_now()
+    taken: dict[int, int] = {}
+    tokens: list[tuple[Token, int]] = []
+    for user_id, shop_id, scheme_id in rows:
+        slots = free.get(shop_id, [])
+        while slots and slots[0][1] == 0:
+            slots.pop(0)
+        if not slots:
+            continue
+        slots[0][1] -= 1
+        taken[slots[0][0]] = taken.get(slots[0][0], 0) + 1
+        token = Token(TokenNumber=f"PENDING-{user_id}-{now:%H%M%S%f}", UserId=user_id, RationShopId=shop_id,
+                      TimeSlotId=slots[0][0], Status=TOKEN_CONFIRMED, QRCodeValue=None, CreatedAt=now)
+        db.add(token)
+        tokens.append((token, scheme_id))
+    db.flush()
+    items = 0
+    for token, scheme_id in tokens:
+        token.TokenNumber = f"SR-{token.CreatedAt:%Y}-{token.Id:06d}"
+        for ration_type in entitled.get(scheme_id, []):
+            db.add(TokenItem(TokenId=token.Id, RationType=ration_type, Quantity=quotas[ration_type]))
+            items += 1
+    for slot_id, count in taken.items():
+        result = db.execute(update(TimeSlot).where(TimeSlot.Id == slot_id, TimeSlot.BookedCount + count <= TimeSlot.Capacity)
+                            .values(BookedCount=TimeSlot.BookedCount + count))
+        moved = cast(CursorResult, result).rowcount
+        if moved != 1:
+            raise SyntheticDataError([f"slot {slot_id} changed while booking; nothing was booked"])
+    db.flush()
+    return {"Tokens": len(tokens), "TokenItems": items, "Unbooked": len(people) - len(tokens)}

@@ -15,8 +15,8 @@ from sqlalchemy.orm import Session
 
 import app.db.models  # noqa: F401
 from app.db.database import Base
-from app.db.models import AadhaarVerification, Beneficiary, Family, FamilyMember, User
-from app.synthetic import SOURCE, SyntheticDataError, generate, insert, is_synthetic_email, is_synthetic_mobile, validate
+from app.db.models import AadhaarVerification, Beneficiary, Family, FamilyMember, RationShop, SchemeEntitlementItem, TimeSlot, Token, TokenItem, User
+from app.synthetic import SOURCE, SyntheticDataError, book, generate, insert, is_synthetic_email, is_synthetic_mobile, validate
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -28,7 +28,7 @@ def test_same_seed_same_data_and_different_seed_different_data():
     assert generate(50, seed=2026) == generate(200, seed=2026)[:50]   # growing a batch keeps the first records
 
 
-@pytest.mark.parametrize("count", [1, 10, 100, 1000, 5000])
+@pytest.mark.parametrize("count", [1, 10, 100, 1000, 10000])
 def test_every_size_is_valid_and_unique(count):
     people = generate(count)
     validate(people)
@@ -156,3 +156,52 @@ def test_cli_inserts_into_a_test_database_once_per_seed(sqlite_db):
     assert again.returncode == 1 and "already exist" in again.stdout
     with Session(sqlite_db) as db:
         assert db.scalar(select(func.count()).select_from(User)) == 30          # the failed rerun changed nothing
+
+
+# ------------------------------------------------------------------ bookings (tokens + time slots)
+
+def test_book_gives_each_citizen_one_upcoming_token_within_capacity(sqlite_db):
+    people = generate(100)
+    with Session(sqlite_db) as db, db.begin():
+        insert(db, people, password_hash="x")
+        counts = book(db, people)
+    assert counts["Tokens"] == 100 and counts["Unbooked"] == 0
+    with Session(sqlite_db) as db:
+        tokens = db.scalars(select(Token)).all()
+        assert len({t.UserId for t in tokens}) == 100 and len({t.TokenNumber for t in tokens}) == 100
+        assert all(t.TokenNumber == f"SR-{t.CreatedAt:%Y}-{t.Id:06d}" and t.Status == 2 and t.QRCodeValue is None for t in tokens)
+        slots = {s.Id: s for s in db.scalars(select(TimeSlot)).all()}
+        assert all(slots[t.TimeSlotId].RationShopId == t.RationShopId for t in tokens)
+        assert all(s.BookedCount <= s.Capacity for s in slots.values())
+        assert sum(s.BookedCount for s in slots.values()) == 100
+        entitled = db.scalar(select(func.count()).select_from(SchemeEntitlementItem)
+                             .where(SchemeEntitlementItem.RationSchemeId == db.scalar(select(Family.RationSchemeId).limit(1))))
+        assert counts["TokenItems"] == db.scalar(select(func.count()).select_from(TokenItem)) == 100 * entitled
+
+
+def test_book_stops_at_capacity_and_reports_the_rest(sqlite_db):
+    with Session(sqlite_db) as db, db.begin():
+        first_shop = db.scalar(select(RationShop.Id).order_by(RationShop.Id).limit(1))
+        db.query(RationShop).filter(RationShop.Id != first_shop).update({"IsActive": False})
+        db.query(TimeSlot).update({"BookedCount": TimeSlot.Capacity})
+        one = db.scalar(select(TimeSlot.Id).where(TimeSlot.RationShopId == first_shop).order_by(TimeSlot.SlotDate.desc()).limit(1))
+        db.query(TimeSlot).filter(TimeSlot.Id == one).update({"BookedCount": TimeSlot.Capacity - 1})
+        people = generate(3)
+        insert(db, people, password_hash="x")
+        counts = book(db, people)
+    assert counts == {"Tokens": 1, "TokenItems": counts["TokenItems"], "Unbooked": 2}
+    with Session(sqlite_db) as db:
+        slot = db.get(TimeSlot, one)
+        assert slot.BookedCount == slot.Capacity
+
+
+def test_book_requires_inserted_citizens(sqlite_db):
+    with Session(sqlite_db) as db, pytest.raises(SyntheticDataError, match="insert the citizens"):
+        book(db, generate(2))
+
+
+def test_cli_insert_with_bookings(sqlite_db):
+    url = sqlite_db.url.render_as_string(hide_password=False)
+    result = _cli("--users", "20", "--seed", "8", "--insert", "--bookings", TEST_DATABASE_URL=url)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Tokens 20" in result.stdout and "Unbooked 0" in result.stdout

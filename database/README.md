@@ -32,5 +32,9 @@ Architecture: [../docs/database/DATABASE_ARCHITECTURE.md](../docs/database/DATAB
 Backups: [../docs/database/BACKUP_RESTORE.md](../docs/database/BACKUP_RESTORE.md) ·
 Test plan: [../docs/database/DB_TESTING.md](../docs/database/DB_TESTING.md).
 
-The empty folders `schema/`, `migrations/`, `seed/`, `diagrams/` are placeholders from the original
-scaffold; their real equivalents are listed above.
+`schema/smartration_schema.sql` is a **generated, read-only** SQL view of the Alembic migrations (every
+table, column, key and index) for people who want to read the schema as SQL. Regenerate it after a
+migration with `backend\SmartRation.Python\scripts\export_schema_sql.py`; a test fails if it is out of
+date. Never apply it to a database — `setup_database.py` / `alembic upgrade head` do that.
+(The empty `migrations/`, `seed/` and `diagrams/` placeholders from the original scaffold were removed:
+migrations live in Alembic, seeds in `data/synthetic` + `seed_database.py`.)

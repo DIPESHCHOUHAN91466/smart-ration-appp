@@ -1,10 +1,10 @@
 {
-  // Run and Debug (Ctrl+Shift+D). "Start Full Stack" launches all four services with debuggers attached.
+  // Run and Debug (Ctrl+Shift+D). "Smart Ration: Full Stack" launches all four services with debuggers attached.
   // Requires the extensions in extensions.json (C#, Python/debugpy, JavaScript debugger is built in).
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Start .NET Backend (C# API :5188)",
+      "name": "Smart Ration: .NET API (:5188)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "Backend: Build",
@@ -17,7 +17,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Start Python Service (API :8000)",
+      "name": "Smart Ration: Python API (:8000)",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -28,7 +28,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Start AI Service (:8001)",
+      "name": "Smart Ration: AI Service (:8001)",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -39,21 +39,21 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Start Frontend (Vite :5173)",
+      "name": "Smart Ration: Frontend (:5173)",
       "type": "node-terminal",
       "request": "launch",
       "command": "npm run dev",
       "cwd": "${workspaceFolder}/frontend"
     },
     {
-      "name": "Open Browser (Edge, frontend debugging)",
+      "name": "Smart Ration: Browser (Edge, frontend debugging)",
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:5173",
       "webRoot": "${workspaceFolder}/frontend/src"
     },
     {
-      "name": "Run Python Tests",
+      "name": "Smart Ration: Python Tests",
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
@@ -64,14 +64,14 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Run Backend Tests (C#)",
+      "name": "Smart Ration: .NET Tests",
       "type": "node-terminal",
       "request": "launch",
-      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj -c Release",
+      "command": "dotnet test SmartRation.sln -c Release",
       "cwd": "${workspaceFolder}"
     },
     {
-      "name": "Run Frontend Tests (Vitest)",
+      "name": "Smart Ration: Frontend Tests (Vitest)",
       "type": "node-terminal",
       "request": "launch",
       "command": "npm test",
@@ -80,12 +80,12 @@
   ],
   "compounds": [
     {
-      "name": "Start Full Stack",
+      "name": "Smart Ration: Full Stack",
       "configurations": [
-        "Start .NET Backend (C# API :5188)",
-        "Start AI Service (:8001)",
-        "Start Python Service (API :8000)",
-        "Start Frontend (Vite :5173)"
+        "Smart Ration: .NET API (:5188)",
+        "Smart Ration: AI Service (:8001)",
+        "Smart Ration: Python API (:8000)",
+        "Smart Ration: Frontend (:5173)"
       ],
       "stopAll": true
     }

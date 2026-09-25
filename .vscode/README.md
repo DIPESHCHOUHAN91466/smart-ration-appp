@@ -15,21 +15,27 @@ Opening just the repository folder works too; the numbered view is only a conven
 
 ## Run and Debug (Ctrl+Shift+D)
 
-`Start Full Stack` (all four services with debuggers), or one of: `Start .NET Backend`,
-`Start Python Service`, `Start AI Service`, `Start Frontend`, `Open Browser (Edge)`,
-`Run Python Tests`, `Run Backend Tests (C#)`, `Run Frontend Tests (Vitest)`.
-Stop the script-started services first (`Stack: Stop all services`), or the ports will be taken.
+`Smart Ration: Full Stack` (all four services with debuggers), or one of: `Smart Ration: .NET API (:5188)`,
+`Smart Ration: Python API (:8000)`, `Smart Ration: AI Service (:8001)`, `Smart Ration: Frontend (:5173)`,
+`Smart Ration: Browser (Edge…)`, `Smart Ration: Python Tests`, `Smart Ration: .NET Tests`,
+`Smart Ration: Frontend Tests (Vitest)`.
+Stop the script-started services first (task `Smart Ration: Stop All`), or the ports will be taken — the
+.NET configuration also rebuilds `bin/Debug`, which a running API locks.
 
 ## Tasks (Ctrl+Shift+P → "Tasks: Run Task")
 
-Stack: start all · stop all · health check — Frontend: install · dev · build · test — Backend: run ·
-build · test — Python: start API · test · lint + type check — Chatbot: evaluate — AI service: start ·
-test — Database: health check · seed synthetic data · back up — Tests: full suite · full suite + MySQL.
-Default test task (Ctrl+Shift+P → "Run Test Task"): the full suite.
+Main tasks: **Smart Ration: Setup · Full Stack · Stop All · Health Check · Frontend · .NET · Python ·
+Database Health · Tests**. Also: Frontend: install · build · lint · test — Backend: build · test —
+Python: test · lint + type check — Chatbot: evaluate — AI service: start · test — Database: seed
+synthetic data · back up — Tests: full suite + MySQL.
+Default test task (Ctrl+Shift+P → "Run Test Task"): `Smart Ration: Tests`.
 
 ## Settings
 
-Format on save for JS/CSS (Prettier); **not** for Python (linted with ruff, never auto-reformatted).
+Format on save touches **only the lines you changed** (`formatOnSaveMode: modifications`); CSS is never
+formatted on save (`src/styles.css` is one long line). Python is not formatted on save (linted with ruff).
+ESLint runs in `frontend/` (`npm run lint`); Test Explorer uses pytest via the root `pytest.ini`; the C#
+extension opens `SmartRation.sln`.
 Python and C# indent 4, the rest 2. `backend/SmartRation.Python/.vscode` and
 `backend/SmartRation.AI/.vscode` point VS Code at each project's own `.venv` and tests.
 

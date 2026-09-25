@@ -49,6 +49,11 @@ Changing `Qr:Secret` invalidates every QR code already issued.
 
 ## 4. Install
 
+One command does all of the following (safe to re-run; never overwrites an existing `.env`):
+```
+.\scripts\development\setup.ps1            # -CheckOnly = dry run; macOS/Linux: scripts/development/setup.sh
+```
+Or by hand:
 ```
 cd backend\SmartRation.Python
 python -m venv .venv
@@ -63,6 +68,9 @@ copy .env.example .env                 # then fill it in
 cd ..\..\frontend
 npm install
 copy .env.example .env
+
+cd ..
+dotnet restore SmartRation.sln
 ```
 
 ## 5. Database schema and synthetic data
@@ -96,22 +104,27 @@ in one transaction that rolls back on any rule violation.
 |---|---|
 | http://localhost:5173 | the app (landing page, Public Help, chatbot, dashboards) |
 | http://localhost:5173/status | developer status page |
-| http://localhost:8000/docs | Python API (Swagger) — auth, public help, chatbot |
-| http://localhost:8000/health · /ready | Python health / readiness |
+| http://127.0.0.1:8000/docs | Python API (Swagger) — auth, public help, chatbot |
+| http://127.0.0.1:8000/health · /ready · /health/db | Python health / readiness / database |
 | http://localhost:5188/swagger | C# API (Swagger, Development only) |
-| http://localhost:8001/docs | AI service |
+| http://127.0.0.1:8001/docs | AI service |
+
+The Python API and the AI service listen on `127.0.0.1` only, so their URLs use `127.0.0.1`. `localhost`
+can resolve to IPv6 first, where another program (for example a Docker container publishing port 8000)
+may answer instead; `health-check.ps1` warns when a service port is shared.
 
 Demo accounts (synthetic; only if seeded with that password): `rural@example.com`, `shop@example.com`,
 `officer@example.com` — the C# seed uses password `demo123`.
 
 Stop everything: `.\scripts\development\stop-all.ps1`.
-In VS Code: *Run and Debug → Start Full Stack*, or *Tasks: Run Task → Stack: Start all services*.
+In VS Code: *Run and Debug → Smart Ration: Full Stack*, or *Tasks: Run Task → Smart Ration: Full Stack*.
 
 ## 7. Test
 
 ```
-.\scripts\development\run-tests.ps1           # Python, chatbot evaluation, AI service, C#, frontend
-.\scripts\development\run-tests.ps1 -MySql    # + the 122-test MySQL suite on smartration_test
+.\scripts\development\run-tests.ps1           # Python, chatbot evaluation, AI, C# (SmartRation.sln), frontend lint/tests/build, DB health
+.\scripts\development\run-tests.ps1 -MySql    # + the 145-test MySQL suite on smartration_test
+dotnet test SmartRation.sln -c Release         # C# only, from the repository root
 ```
 Details: [../testing/TESTING.md](../testing/TESTING.md).
 

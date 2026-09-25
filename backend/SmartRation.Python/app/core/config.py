@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     legacy_api_timeout_seconds: float = 30.0
 
     # The Python AI/analytics service (backend/SmartRation.AI). Only checked by /health; empty disables.
-    ai_service_url: str = Field(default="http://localhost:8001", description="AI service base URL; empty disables the check")
+    ai_service_url: str = Field(default="http://127.0.0.1:8001", description="AI service base URL; empty disables the check")
 
     # Comma-separated in the environment (NoDecode: not parsed as JSON).
     cors_origins: Annotated[list[str], NoDecode] = Field(default=["http://localhost:5173"])

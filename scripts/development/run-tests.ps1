@@ -3,10 +3,12 @@
   Run every automated test suite and print a summary. Read-only for real data.
 
 .DESCRIPTION
-  Python backend (pytest), chatbot evaluation, AI service (pytest), C# (dotnet test), frontend (Vitest).
-  -MySql also runs the 122-test MySQL suite against smartration_test (never the real database):
+  Python backend (pytest), chatbot evaluation, AI service (pytest), C# (dotnet test on SmartRation.sln),
+  frontend (ESLint, Vitest, production build) and a read-only database health check.
+  -MySql also runs the MySQL suite (145 tests) against smartration_test (never the real database):
   it builds TEST_DATABASE_URL from backend\SmartRation.Python\.env with the database name changed.
-  -Quick skips the C# build and the frontend (fastest feedback while working on Python).
+  -Quick skips the C# build, the frontend and the database check (fastest feedback while working on Python).
+  Works from any current directory.
 
 .EXAMPLE
   .\scripts\development\run-tests.ps1
@@ -42,8 +44,12 @@ Run "AI service" (Join-Path $root "backend\SmartRation.AI") { & .venv\Scripts\py
 
 if (-not $Quick) {
     # Release configuration: a running API (Debug build) locks its own .exe, which would break the build.
-    Run "C# API" $root { dotnet test backend\SmartRation.Api.Tests\SmartRation.Api.Tests.csproj -c Release --nologo -v q }
-    Run "Frontend (Vitest)" (Join-Path $root "frontend") { npm test --silent }
+    Run "C# API (SmartRation.sln)" $root { dotnet test SmartRation.sln -c Release --nologo -v q }
+    $frontend = Join-Path $root "frontend"
+    Run "Frontend lint (ESLint)" $frontend { npm run lint --silent }
+    Run "Frontend (Vitest)" $frontend { npm test --silent }
+    Run "Frontend build" $frontend { npm run build --silent }
+    Run "Database health (smartration)" $py { & .venv\Scripts\python scripts\verify_database.py }
 }
 
 Write-Host "`n=== Summary ===" -ForegroundColor Cyan

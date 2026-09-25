@@ -40,6 +40,10 @@ cd backend\SmartRation.Python
 | Aadhaar | masked only, `XXXX-XXXX-1234` — no full number exists anywhere |
 | names | English and Devanagari (Marathi/Hindi), families of 1–6 |
 
+`--insert --bookings` also gives each citizen one Confirmed token in the earliest free upcoming time slot at
+their shop (slot capacity respected, token number `SR-<year>-<id>`, items = the scheme's entitled ration
+types; the QR value is signed by the C# API on first request). Citizens whose shop has no free slot are
+reported as `Unbooked`.
 `--insert` refuses any database whose name doesn't end in `_test`, refuses unless `DATA_MODE=synthetic`,
 and runs in one transaction. Accounts can't log in unless `SYNTHETIC_USER_PASSWORD` is set.
 The MySQL suite's `sample_data.py` is different on purpose: 100 *adversarial* records (emoji, 150-character

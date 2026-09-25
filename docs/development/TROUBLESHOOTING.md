@@ -3,6 +3,10 @@
 | Symptom | Cause | Fix |
 |---|---|---|
 | Frontend shows **"Network Error"** | the Python API (:8000) isn't running — the frontend sends every request to it (it forwards business routes to the C# API :5188) | `.\scripts\development\start-all.ps1` (or `start-dev.bat`), then `.\scripts\development\health-check.ps1` |
+| "Network Error" / `ERR_FAILED` although the Python API is healthy; `health-check.ps1` says **Port 8000 shared** | another program publishes the same port (seen: a Docker container from another project on `[::]:8000`); `localhost` resolves to IPv6 first and reaches it | stop that program/container, **or** keep `VITE_API_BASE_URL=http://127.0.0.1:8000/api` in `frontend/.env` (the default since 2026-09-25) and restart the frontend |
+| `start-all.ps1` prints `SERVICE FAILED` | the service didn't start listening in time, crashed, or its port belongs to another program | read the `REASON` line; the service's own window shows its error; run the printed `COMMAND` by hand to see it |
+| `dotnet build` fails: file is locked by `SmartRation.Api` | the running C# API locks its Debug build | stop it first, or build/test with `-c Release` (what `run-tests.ps1` does) |
+| `dotnet build` from the root: *specify a project or solution* | older checkout without `SmartRation.sln` | pull; the solution file is at the repository root |
 | Python API exits: `JWT_SECRET_KEY is not set` | missing `.env` value | copy `.env.example` → `.env`, set it to the C# `Jwt:Key` |
 | C# API exits: `Jwt:Key is not set` | user-secrets missing | `dotnet user-secrets set "Jwt:Key" "<value>" --project backend/SmartRation.Api` (see note below) |
 | Tokens from one backend rejected by the other | different JWT keys | `.env` `JWT_SECRET_KEY` must equal user-secret `Jwt:Key` |

@@ -149,17 +149,20 @@ review. The business code won't change: new *real* providers are added behind th
 ## How to run locally
 
 ```
+.\scripts\development\setup.ps1           # first time (and after pulling): venvs, packages, restore, .env templates
 .\scripts\development\start-all.ps1       # C# :5188, AI :8001, Python :8000, frontend :5173
-.\scripts\development\health-check.ps1
+.\scripts\development\health-check.ps1    # [OK] / [WARNING] / [ERROR] for tools, setup, services, database
 ```
-First time: [docs/development/LOCAL_SETUP.md](docs/development/LOCAL_SETUP.md).
+First time (MySQL, secrets): [docs/development/LOCAL_SETUP.md](docs/development/LOCAL_SETUP.md).
+In VS Code: open `SmartRation-HSD2C.code-workspace` → Run and Debug → **Smart Ration: Full Stack**.
 
 ## How to test
 
 ```
 .\scripts\development\run-tests.ps1        # add -MySql for the database suite
 ```
-Python (pytest), chatbot evaluation, AI service, C# (xUnit), frontend (Vitest). Also in CI.
+Python (pytest), chatbot evaluation, AI service, C# (xUnit via `SmartRation.sln`), frontend (ESLint,
+Vitest, production build), database health. Also in CI (plus the MySQL suite and the Docker image).
 → [docs/testing/TESTING.md](docs/testing/TESTING.md)
 
 ## How to deploy

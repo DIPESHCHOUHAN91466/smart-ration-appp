@@ -58,19 +58,45 @@ jobs:
         run: python scripts/setup_database.py --seed
       - name: Tests (unit + live schema compatibility against MySQL)
         run: python -m pytest
+      - name: Create the separate test database (smartration_test)
+        run: |
+          mysql -h 127.0.0.1 -u root -pci-root-only -e "CREATE DATABASE smartration_test CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci; GRANT ALL PRIVILEGES ON smartration_test.* TO 'smartration_app'@'%';"
+      - name: MySQL suite (CRUD, injection, 1000 records, concurrency 10-100) on smartration_test
+        env:
+          TEST_DATABASE_URL: mysql+pymysql://smartration_app:ci-app-only@127.0.0.1:3306/smartration_test?charset=utf8mb4
+        run: python -m pytest tests/mysql_suite
+      - name: Chatbot evaluation (en/hi/mr)
+        run: python -m app.chatbot.evaluate
+
+  ai:
+    name: AI service tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/SmartRation.AI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/SmartRation.AI/requirements.txt
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pytest
 
   csharp:
-    name: C# API tests (legacy, until retired)
+    name: C# API build + tests (SmartRation.sln)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-      - run: dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj --configuration Release
+      - run: dotnet build SmartRation.sln --configuration Release
+      - run: dotnet test SmartRation.sln --configuration Release --no-build
 
   frontend:
-    name: Frontend tests + build
+    name: Frontend lint + tests + build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -83,6 +109,8 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - name: Lint (ESLint)
+        run: npm run lint
       - name: Unit and component tests (Vitest)
         run: npm test
       - run: npm run build

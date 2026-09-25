@@ -18,7 +18,6 @@ export default function Audit() {
       .catch((err) => setError(err.message));
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(load, [statusFilter]);
 
   return (

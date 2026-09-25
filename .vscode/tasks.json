@@ -5,7 +5,15 @@
   "tasks": [
     // ---------------------------------------------------------------- whole stack
     {
-      "label": "Stack: Start all services",
+      "label": "Smart Ration: Setup",
+      "detail": "First-time/refresh setup: virtualenvs, pip, npm, dotnet restore; copies .env.example -> .env only if missing",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/setup.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Smart Ration: Full Stack",
       "detail": "C# :5188, AI :8001, Python :8000, frontend :5173 — each in its own window; skips what's running",
       "type": "shell",
       "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/start-all.ps1",
@@ -13,7 +21,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Stack: Stop all services",
+      "label": "Smart Ration: Stop All",
       "detail": "Stops only processes listening on 5173/5188/8000/8001 (asks first)",
       "type": "shell",
       "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/stop-all.ps1",
@@ -21,8 +29,8 @@
       "problemMatcher": []
     },
     {
-      "label": "Stack: Health check",
-      "detail": "Frontend, Python /health + /ready, C# /api/health, AI service, MySQL schema",
+      "label": "Smart Ration: Health Check",
+      "detail": "Tools, project setup, every service, MySQL schema: [OK] / [WARNING] / [ERROR]",
       "type": "shell",
       "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/health-check.ps1",
       "options": { "cwd": "${workspaceFolder}" },
@@ -38,7 +46,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Frontend: Dev",
+      "label": "Smart Ration: Frontend",
       "type": "shell",
       "command": "npm run dev",
       "isBackground": true,
@@ -54,6 +62,13 @@
       "group": "build"
     },
     {
+      "label": "Frontend: Lint",
+      "type": "shell",
+      "command": "npm run lint",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
       "label": "Frontend: Test",
       "type": "shell",
       "command": "npm test",
@@ -64,7 +79,7 @@
 
     // ---------------------------------------------------------------- C# backend
     {
-      "label": "Backend: Run",
+      "label": "Smart Ration: .NET",
       "type": "shell",
       "command": "dotnet run --launch-profile http",
       "isBackground": true,
@@ -82,7 +97,7 @@
     {
       "label": "Backend: Test",
       "type": "shell",
-      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj -c Release",
+      "command": "dotnet test SmartRation.sln -c Release",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": "$msCompile",
       "group": "test"
@@ -90,7 +105,7 @@
 
     // ---------------------------------------------------------------- Python API (gateway, auth, public help, chatbot)
     {
-      "label": "Python: Start API",
+      "label": "Smart Ration: Python",
       "type": "shell",
       "command": ".venv/Scripts/python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 --reload",
       "isBackground": true,
@@ -141,7 +156,7 @@
 
     // ---------------------------------------------------------------- database
     {
-      "label": "Database: Health check",
+      "label": "Smart Ration: Database Health",
       "detail": "Read-only: tables, columns, keys, indexes, migration version, reference data",
       "type": "shell",
       "command": ".venv/Scripts/python scripts/verify_database.py",
@@ -167,8 +182,8 @@
 
     // ---------------------------------------------------------------- everything
     {
-      "label": "Tests: Run full suite",
-      "detail": "Python, chatbot evaluation, AI service, C#, frontend",
+      "label": "Smart Ration: Tests",
+      "detail": "Python, chatbot evaluation, AI service, C# (SmartRation.sln), frontend lint + tests + build, database health",
       "type": "shell",
       "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/run-tests.ps1",
       "options": { "cwd": "${workspaceFolder}" },

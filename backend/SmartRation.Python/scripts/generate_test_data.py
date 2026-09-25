@@ -4,6 +4,7 @@ Usage (from backend/SmartRation.Python):
     .venv\\Scripts\\python scripts\\generate_test_data.py --users 1000                 # generate + validate, print a summary
     .venv\\Scripts\\python scripts\\generate_test_data.py --users 1000 --json out.json # also write the records as JSON
     .venv\\Scripts\\python scripts\\generate_test_data.py --users 1000 --insert        # insert into smartration_test
+    .venv\\Scripts\\python scripts\\generate_test_data.py --users 1000 --insert --bookings  # + one upcoming token each
 
 --seed (default 2026, or the SEED environment variable) makes the output reproducible.
 --insert only ever writes to a database whose name ends in _test (DATABASE_URL from .env with the
@@ -31,7 +32,7 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.core.security import hash_password
 from app.db.models import RationShop
-from app.synthetic import SyntheticDataError, generate, insert, validate
+from app.synthetic import SyntheticDataError, book, generate, insert, validate
 
 
 def _test_url(name: str) -> str:
@@ -56,6 +57,7 @@ def main() -> int:
     parser.add_argument("--json", metavar="FILE", help="write the generated records to FILE")
     parser.add_argument("--insert", action="store_true", help="insert into the test database")
     parser.add_argument("--database", default="smartration_test", help="test database name (must end in _test)")
+    parser.add_argument("--bookings", action="store_true", help="with --insert: give each citizen one upcoming token (time slot)")
     args = parser.parse_args()
 
     try:
@@ -90,6 +92,8 @@ def main() -> int:
                 print("The test database has no reference data. Run the MySQL suite or seed_database.py against it first.")
                 return 1
             counts = insert(db, people, hash_password(password))
+            if args.bookings:
+                counts.update(book(db, people))
     except IntegrityError:
         print(f"Nothing inserted: citizens for seed {args.seed} already exist in this database. Use another --seed.")
         return 1

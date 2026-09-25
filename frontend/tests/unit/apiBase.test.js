@@ -7,7 +7,7 @@ describe("API base URL", () => {
   });
 
   it("falls back to the local API only in development", () => {
-    expect(resolveApiBaseUrl("", true)).toBe("http://localhost:8000/api");
+    expect(resolveApiBaseUrl("", true)).toBe("http://127.0.0.1:8000/api");
   });
 
   it("never falls back to localhost in a production build", () => {

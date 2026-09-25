@@ -1,5 +1,8 @@
 {
   "editor.formatOnSave": true,
+  // Format only the lines you changed: whole-file formatting would rewrite code nobody touched
+  // (and expand the single-line src/styles.css into thousands of lines).
+  "editor.formatOnSaveMode": "modifications",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
@@ -36,7 +39,18 @@
   "[csharp]": {
     "editor.tabSize": 4
   },
+  "[css]": {
+    "editor.formatOnSave": false
+  },
   "python.defaultInterpreterPath": "${workspaceFolder}/backend/SmartRation.Python/.venv/Scripts/python.exe",
+  // Test Explorer: the root pytest.ini collects the Python API, AI service and root MySQL tests.
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [],
+  "ruff.lint.enable": true,
+  // ESLint runs in frontend/ (frontend/eslint.config.js).
+  "eslint.workingDirectories": [{ "directory": "frontend", "changeProcessCWD": true }],
+  "dotnet.defaultSolution": "SmartRation.sln",
   "files.associations": {
     "*.code-workspace": "jsonc"
   }
