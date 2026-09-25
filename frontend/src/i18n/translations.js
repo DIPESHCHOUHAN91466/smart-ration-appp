@@ -1,3 +1,5 @@
+import { publicStrings } from "./publicStrings";
+
 // Centralized translation dictionary. English is the authoritative
 // fallback. Components must use translation KEYS via useTranslation() —
 // never hard-code Hindi/Marathi strings inline in a component.
@@ -1159,6 +1161,11 @@ export const translations = {
     ai_data: "डेटा",
   },
 };
+
+// Public pages + chatbot strings live in their own module; merged here so t() sees one dictionary.
+for (const language of Object.keys(publicStrings)) {
+  Object.assign(translations[language], publicStrings[language]);
+}
 
 export const LANGUAGE_OPTIONS = [
   { code: "en", label: "English" },

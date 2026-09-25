@@ -63,6 +63,7 @@ def categories(language: str = Language):
     lang, kb = _lang(language), get_knowledge_base()
     return ok([
         {"id": c.id, "icon": c.icon, "title": c.title[lang], "description": c.description[lang], "ask": c.ask[lang],
+         "primaryArticle": c.primary,
          "quick": c.quick, "articles": [{"id": a.id, "title": a.title[lang]} for a in kb.by_category[c.id]]}
         for c in kb.categories
     ])

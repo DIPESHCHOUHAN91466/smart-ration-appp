@@ -129,7 +129,7 @@ def test_rate_limited_per_client(make_client):
 def test_help_categories_and_articles(api):
     cats = data(api.get("/api/public-help/categories?language=mr"))
     assert [c["id"] for c in cats][:3] == ["ration_card", "eligibility", "how_to_apply"]
-    assert cats[0]["title"] == "रेशन कार्ड" and cats[0]["articles"]
+    assert cats[0]["title"] == "रेशन कार्ड" and cats[0]["articles"] and cats[0]["primaryArticle"] == "what_is_ration_card"
     article = data(api.get("/api/public-help/articles/required_documents?language=hi"))
     assert article["title"] == "आमतौर पर ज़रूरी दस्तावेज़"
     r = api.get("/api/public-help/articles/does-not-exist")

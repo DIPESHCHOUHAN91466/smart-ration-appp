@@ -6,6 +6,12 @@ import { homePathForRole } from "./routes/roleHome";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { LoadingState } from "./components/EmptyState";
+import PublicLayout from "./components/layout/PublicLayout";
+import ChatbotWidget from "./components/chatbot/ChatbotWidget";
+
+// Public pages (no login): loaded on demand so the dashboards bundle stays the same size.
+const LandingPage = lazy(() => import("./pages/landing/LandingPage"));
+const PublicHelpPage = lazy(() => import("./pages/public-help/PublicHelpPage"));
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -45,15 +51,18 @@ const GovernmentMap = lazy(() => import("./pages/government/Map"));
 
 import "./styles.css";
 
-function HomeRedirect() {
+// Visitors see the public landing page; signed-in users go straight to their dashboard.
+function Home() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
 
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />;
+  if (isAuthenticated && user) {
+    return <Navigate to={homePathForRole(user.role)} replace />;
   }
-  return <Navigate to={homePathForRole(user.role)} replace />;
+  return <LandingPage />;
 }
+
+const publicFallback = <LoadingState text="" />;
 
 export default function App() {
   return (
@@ -63,7 +72,10 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile/:publicReference" element={<PublicProfile />} />
-          <Route path="/" element={<HomeRedirect />} />
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Suspense fallback={publicFallback}><Home /></Suspense>} />
+            <Route path="/help" element={<Suspense fallback={publicFallback}><PublicHelpPage /></Suspense>} />
+          </Route>
 
           <Route element={<ProtectedRoute roles={["RuralUser", "ShopOwner", "GovernmentOfficial", "Admin"]} />}>
             <Route element={<DashboardLayout />}>
@@ -127,6 +139,7 @@ export default function App() {
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ChatbotWidget />
       </BrowserRouter>
     </ToastProvider>
   );

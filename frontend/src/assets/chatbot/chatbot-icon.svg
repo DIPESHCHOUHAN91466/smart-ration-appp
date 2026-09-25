@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Smart Ration AI Assistant">
+  <!-- Launcher glyph: chat bubble + leaf sprig + AI spark (Ration Mitra motifs), white for use on the blue button. -->
+  <path d="M6 5h20a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4H14l-6.5 5.2c-.7.5-1.5 0-1.5-.8V24a4 4 0 0 1-4-4V9a4 4 0 0 1 4-4Z"
+        fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M13 20v-9" stroke="#bbf7d0" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M13 13c-3.2-.4-4.2-2.6-4.2-4.4 2.6 0 4.2 1.6 4.2 4.4Z" fill="#86efac"/>
+  <path d="M13 13c3.2-.4 4.2-2.6 4.2-4.4-2.6 0-4.2 1.6-4.2 4.4Z" fill="#86efac"/>
+  <path d="M13 17.5c-3.2-.4-4.4-2.6-4.4-4.4 2.7 0 4.4 1.6 4.4 4.4Z" fill="#86efac"/>
+  <path d="M13 17.5c3.2-.4 4.4-2.6 4.4-4.4-2.7 0-4.4 1.6-4.4 4.4Z" fill="#86efac"/>
+  <path d="M22.5 9.5l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1Z" fill="#ffffff"/>
+</svg>
