@@ -48,6 +48,14 @@ class Settings(BaseSettings):
     # Per client IP, per minute, shared by login + register (same as the C# "auth" policy).
     auth_rate_limit_per_minute: int = 10
 
+    # ---- Public Help chatbot ----
+    # "knowledge" = retrieval over the reviewed knowledge base (no external service).
+    chatbot_provider: str = "knowledge"
+    # Reserved for a future generative provider; unused by "knowledge". Never commit a real key.
+    chatbot_api_key: str = Field(default="", repr=False)
+    chatbot_rate_limit_per_minute: int = 30
+    public_help_rate_limit_per_minute: int = 120
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def split_origins(cls, value):

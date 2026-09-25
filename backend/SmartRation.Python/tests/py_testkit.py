@@ -17,3 +17,19 @@ def live_database_url() -> str | None:
         return Settings().database_url
     except Exception:
         return os.environ.get("DATABASE_URL")
+
+
+LEGACY = "http://legacy.test"
+
+
+def make_settings(tmp_path, **overrides) -> Settings:
+    values = dict(
+        database_url=f"sqlite:///{(tmp_path / 'unit.db').as_posix()}",
+        legacy_api_url=LEGACY,
+        cors_origins=["http://localhost:5173"],
+        max_request_bytes=1024,
+        jwt_secret_key="unit-test-signing-key-0123456789abcdef-0123456789",
+        log_level="WARNING",
+    )
+    values.update(overrides)
+    return Settings(_env_file=None, **values)

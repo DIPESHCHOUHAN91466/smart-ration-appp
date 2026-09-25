@@ -1,0 +1,395 @@
+{
+  "_comment": "How the Smart Ration app itself works. Facts here must match the code (booking rules: BookingService; OTP: DemoModeOptions — 5-minute expiry, 3 attempts, 30 s resend). `dynamic` adds live data from the database. `links` are in-app paths only.",
+  "articles": [
+    {
+      "id": "app_register",
+      "category": "how_to_apply",
+      "keywords": [
+        "register",
+        "sign up",
+        "signup",
+        "create account",
+        "new account",
+        "account",
+        "registration",
+        "join",
+        "khata",
+        "account kaise",
+        "पंजीकरण",
+        "रजिस्टर",
+        "खाता",
+        "खाते",
+        "नोंदणी",
+        "register on",
+        "how to register",
+        "sign up on"
+      ],
+      "title": {
+        "en": "Create a Smart Ration account",
+        "hi": "स्मार्ट राशन खाता बनाएँ",
+        "mr": "स्मार्ट रेशन खाते तयार करा"
+      },
+      "answer": {
+        "en": "To use Smart Ration online:\n1. Open Smart Ration and choose “Get Started”, then “Create account”.\n2. Enter your full name, email, mobile number and a password (at least 8 characters).\n3. Your account is created as a citizen (rural user) account and linked to a ration shop.\n4. Log in to book a collection slot and get your token.\n\nShop operators and officials receive their accounts from the administration; they can't be created by self-registration.",
+        "hi": "स्मार्ट राशन ऑनलाइन इस्तेमाल करने के लिए:\n1. स्मार्ट राशन खोलें, “शुरू करें” और फिर “खाता बनाएँ” चुनें।\n2. अपना पूरा नाम, ईमेल, मोबाइल नंबर और पासवर्ड (कम से कम 8 अक्षर) भरें।\n3. आपका खाता नागरिक (ग्रामीण उपयोगकर्ता) खाते के रूप में बनता है और एक राशन दुकान से जुड़ता है।\n4. लॉग इन करके स्लॉट बुक करें और टोकन पाएँ।\n\nदुकान संचालकों और अधिकारियों के खाते प्रशासन देता है; वे स्वयं पंजीकरण से नहीं बनते।",
+        "mr": "स्मार्ट रेशन ऑनलाइन वापरण्यासाठी:\n1. स्मार्ट रेशन उघडा, “सुरुवात करा” आणि नंतर “खाते तयार करा” निवडा.\n2. तुमचे पूर्ण नाव, ईमेल, मोबाइल क्रमांक आणि पासवर्ड (किमान 8 अक्षरे) भरा.\n3. तुमचे खाते नागरिक (ग्रामीण वापरकर्ता) खाते म्हणून तयार होते आणि एका रेशन दुकानाशी जोडले जाते.\n4. लॉग इन करून स्लॉट बुक करा आणि टोकन मिळवा.\n\nदुकान संचालक आणि अधिकाऱ्यांची खाती प्रशासन देते; ती स्वतः नोंदणीने तयार होत नाहीत."
+      },
+      "links": [
+        {
+          "path": "/register",
+          "label": {
+            "en": "Create account",
+            "hi": "खाता बनाएँ",
+            "mr": "खाते तयार करा"
+          }
+        }
+      ]
+    },
+    {
+      "id": "book_slot",
+      "category": "token_slots",
+      "keywords": [
+        "book",
+        "booking",
+        "slot",
+        "time slot",
+        "appointment",
+        "schedule",
+        "date",
+        "time",
+        "5 minute",
+        "five minute",
+        "reschedule",
+        "cancel",
+        "slot book",
+        "bukking",
+        "स्लॉट",
+        "बुक",
+        "बुकिंग",
+        "समय",
+        "वेळ",
+        "तारीख"
+      ],
+      "title": {
+        "en": "Book a collection slot",
+        "hi": "राशन लेने का स्लॉट बुक करें",
+        "mr": "रेशन घेण्याचा स्लॉट बुक करा"
+      },
+      "answer": {
+        "en": "Collection is by appointment, so you don't have to wait in a long queue:\n1. Log in and open “Book Ration”.\n2. Choose a date and a 5-minute time slot at your ration shop. Each slot takes only a small number of people, so full slots can't be booked.\n3. Select the items you want. The quantities are limited to your family's entitlement and the shop's stock.\n4. Confirm. You get a token number and a QR code.\n\nYou can reschedule or cancel a booking from “Booking History” as long as it hasn't been collected. Past slots can't be booked.",
+        "hi": "राशन अपॉइंटमेंट से मिलता है, ताकि लंबी कतार में न रुकना पड़े:\n1. लॉग इन करें और “राशन बुक करें” खोलें।\n2. अपनी राशन दुकान पर तारीख और 5 मिनट का समय स्लॉट चुनें। हर स्लॉट में कुछ ही लोग होते हैं, इसलिए भरा हुआ स्लॉट बुक नहीं होता।\n3. चाहिए वे वस्तुएँ चुनें। मात्रा आपके परिवार के हक़ और दुकान के स्टॉक तक सीमित है।\n4. पुष्टि करें। आपको टोकन नंबर और QR कोड मिलेगा।\n\nराशन लेने से पहले आप “बुकिंग इतिहास” से समय बदल या बुकिंग रद्द कर सकते हैं। बीते समय का स्लॉट बुक नहीं होता।",
+        "mr": "रेशन अपॉइंटमेंटने मिळते, त्यामुळे लांब रांगेत थांबावे लागत नाही:\n1. लॉग इन करा आणि “रेशन बुक करा” उघडा.\n2. तुमच्या रेशन दुकानात तारीख आणि 5 मिनिटांचा वेळ स्लॉट निवडा. प्रत्येक स्लॉटमध्ये मोजकेच लोक असतात, त्यामुळे भरलेला स्लॉट बुक होत नाही.\n3. हव्या त्या वस्तू निवडा. प्रमाण तुमच्या कुटुंबाच्या हक्कापर्यंत आणि दुकानातील साठ्यापर्यंत मर्यादित आहे.\n4. पुष्टी करा. तुम्हाला टोकन क्रमांक आणि QR कोड मिळेल.\n\nरेशन घेण्यापूर्वी “बुकिंग इतिहास” मधून वेळ बदलू किंवा बुकिंग रद्द करू शकता. गेलेल्या वेळेचा स्लॉट बुक होत नाही."
+      },
+      "links": [
+        {
+          "path": "/login",
+          "label": {
+            "en": "Log in to book",
+            "hi": "बुक करने के लिए लॉग इन करें",
+            "mr": "बुक करण्यासाठी लॉग इन करा"
+          }
+        }
+      ]
+    },
+    {
+      "id": "token_info",
+      "category": "token_slots",
+      "keywords": [
+        "token",
+        "token number",
+        "qr code",
+        "show token",
+        "where is my token",
+        "lost token",
+        "टोकन",
+        "टोकन नंबर",
+        "टोकन क्रमांक"
+      ],
+      "title": {
+        "en": "Your token and QR code",
+        "hi": "आपका टोकन और QR कोड",
+        "mr": "तुमचे टोकन आणि QR कोड"
+      },
+      "answer": {
+        "en": "After booking, your token (with its QR code, shop, date, time and items) is under “My Token” and “Booking History” once you log in.\n\n• Show the QR code on your phone at the shop, or print it.\n• The token is valid only for the booked shop and slot.\n• Never share a screenshot of your QR code publicly.",
+        "hi": "बुकिंग के बाद लॉग इन करने पर आपका टोकन (QR कोड, दुकान, तारीख, समय और वस्तुओं सहित) “मेरा टोकन” और “बुकिंग इतिहास” में मिलता है।\n\n• दुकान पर फ़ोन में QR कोड दिखाएँ या उसका प्रिंट लें।\n• टोकन केवल बुक की गई दुकान और स्लॉट के लिए मान्य है।\n• अपने QR कोड का स्क्रीनशॉट सार्वजनिक रूप से साझा न करें।",
+        "mr": "बुकिंगनंतर लॉग इन केल्यावर तुमचे टोकन (QR कोड, दुकान, तारीख, वेळ आणि वस्तूंसह) “माझे टोकन” आणि “बुकिंग इतिहास” मध्ये मिळते.\n\n• दुकानात फोनवर QR कोड दाखवा किंवा त्याची प्रिंट घ्या.\n• टोकन फक्त बुक केलेल्या दुकान आणि स्लॉटसाठी वैध आहे.\n• तुमच्या QR कोडचा स्क्रीनशॉट सार्वजनिकपणे शेअर करू नका."
+      },
+      "links": [
+        {
+          "path": "/login",
+          "label": {
+            "en": "Log in",
+            "hi": "लॉग इन",
+            "mr": "लॉग इन"
+          }
+        }
+      ]
+    },
+    {
+      "id": "qr_verification",
+      "category": "qr_verification",
+      "keywords": [
+        "qr",
+        "qr code",
+        "scan",
+        "scanner",
+        "verification",
+        "verify",
+        "camera",
+        "qr verification",
+        "क्यूआर",
+        "स्कैन",
+        "सत्यापन",
+        "पडताळणी",
+        "स्कॅन"
+      ],
+      "title": {
+        "en": "How QR verification works",
+        "hi": "QR सत्यापन कैसे होता है",
+        "mr": "QR पडताळणी कशी होते"
+      },
+      "answer": {
+        "en": "QR verification is the main way your identity is checked at the shop:\n1. Show your token's QR code at the counter.\n2. The shop operator scans it with the Smart Ration scanner.\n3. The system checks that the QR code is genuine (it is digitally signed), belongs to that shop and slot, and hasn't been used.\n4. The operator sees only what is needed: your name, masked Aadhaar (only the last 4 digits), family members, scheme, entitlement and the items you booked.\n\nIf the QR code can't be scanned, the operator can verify you with a one-time password (OTP) sent to your registered mobile number.",
+        "hi": "दुकान पर आपकी पहचान जाँचने का मुख्य तरीका QR सत्यापन है:\n1. काउंटर पर अपने टोकन का QR कोड दिखाएँ।\n2. दुकान संचालक स्मार्ट राशन स्कैनर से उसे स्कैन करता है।\n3. सिस्टम जाँचता है कि QR कोड असली है (डिजिटल हस्ताक्षर वाला), उसी दुकान और स्लॉट का है, और पहले इस्तेमाल नहीं हुआ।\n4. संचालक को केवल ज़रूरी जानकारी दिखती है: आपका नाम, छिपा हुआ आधार (केवल आख़िरी 4 अंक), परिवार के सदस्य, योजना, हक़ और बुक की गई वस्तुएँ।\n\nअगर QR स्कैन न हो, तो संचालक आपके पंजीकृत मोबाइल पर भेजे गए OTP से सत्यापन कर सकता है।",
+        "mr": "दुकानात तुमची ओळख तपासण्याचा मुख्य मार्ग QR पडताळणी आहे:\n1. काउंटरवर तुमच्या टोकनचा QR कोड दाखवा.\n2. दुकान संचालक स्मार्ट रेशन स्कॅनरने तो स्कॅन करतो.\n3. प्रणाली तपासते की QR कोड खरा आहे (डिजिटल स्वाक्षरी असलेला), त्याच दुकान आणि स्लॉटचा आहे आणि आधी वापरलेला नाही.\n4. संचालकाला फक्त आवश्यक माहिती दिसते: तुमचे नाव, लपवलेला आधार (फक्त शेवटचे 4 अंक), कुटुंबातील सदस्य, योजना, हक्क आणि बुक केलेल्या वस्तू.\n\nQR स्कॅन न झाल्यास संचालक तुमच्या नोंदणीकृत मोबाइलवर पाठवलेल्या OTP ने पडताळणी करू शकतो."
+      }
+    },
+    {
+      "id": "otp_fallback",
+      "category": "qr_verification",
+      "keywords": [
+        "otp",
+        "one time password",
+        "mobile otp",
+        "otp not received",
+        "qr not working",
+        "qr failed",
+        "fallback",
+        "sms",
+        "ओटीपी",
+        "मोबाइल",
+        "एसएमएस"
+      ],
+      "title": {
+        "en": "OTP when the QR code doesn't work",
+        "hi": "QR न चलने पर OTP",
+        "mr": "QR चालत नसल्यास OTP"
+      },
+      "answer": {
+        "en": "If your QR code can't be scanned:\n1. The shop operator requests a one-time password (OTP).\n2. It is sent to the mobile number registered with your ration details.\n3. Tell the OTP to the operator at the counter, in person.\n\n• The OTP is valid for 5 minutes and allows 3 attempts; a new one can be requested after 30 seconds.\n• Never share an OTP over a phone call, SMS or chat — Smart Ration staff will never ask for it that way.\n\nIn this demo installation, SMS may run in a clearly marked test mode.",
+        "hi": "अगर आपका QR कोड स्कैन न हो:\n1. दुकान संचालक एक वन-टाइम पासवर्ड (OTP) माँगता है।\n2. यह आपके राशन विवरण में दर्ज मोबाइल नंबर पर भेजा जाता है।\n3. काउंटर पर संचालक को OTP खुद बताएँ।\n\n• OTP 5 मिनट तक मान्य है और 3 प्रयास मिलते हैं; 30 सेकंड बाद नया OTP माँगा जा सकता है।\n• OTP कभी फ़ोन कॉल, SMS या चैट पर न बताएँ — स्मार्ट राशन कर्मचारी इस तरह कभी नहीं पूछते।\n\nइस डेमो में SMS स्पष्ट रूप से चिह्नित टेस्ट मोड में चल सकता है।",
+        "mr": "तुमचा QR कोड स्कॅन न झाल्यास:\n1. दुकान संचालक वन-टाइम पासवर्ड (OTP) मागतो.\n2. तो तुमच्या रेशन तपशिलात नोंदलेल्या मोबाइल क्रमांकावर पाठवला जातो.\n3. काउंटरवर संचालकाला OTP प्रत्यक्ष सांगा.\n\n• OTP 5 मिनिटे वैध असतो आणि 3 प्रयत्न मिळतात; 30 सेकंदांनी नवीन OTP मागता येतो.\n• OTP कधीही फोन कॉल, SMS किंवा चॅटवर सांगू नका — स्मार्ट रेशन कर्मचारी असे कधीच विचारत नाहीत.\n\nया डेमोमध्ये SMS स्पष्टपणे चिन्हांकित चाचणी मोडमध्ये चालू शकतो."
+      }
+    },
+    {
+      "id": "collection",
+      "category": "collection",
+      "keywords": [
+        "collect",
+        "collection",
+        "pick up",
+        "receive ration",
+        "counter",
+        "receipt",
+        "weight",
+        "weigh",
+        "shop visit",
+        "what to bring",
+        "राशन लेना",
+        "रसीद",
+        "तौल",
+        "पावती",
+        "वजन",
+        "रेशन घेणे"
+      ],
+      "title": {
+        "en": "Collecting your ration",
+        "hi": "राशन लेना",
+        "mr": "रेशन घेणे"
+      },
+      "answer": {
+        "en": "On your slot day:\n1. Go to your ration shop at the booked time with your phone (or printed QR code).\n2. The operator verifies you by QR code, or by OTP if needed.\n3. You receive the booked items within your entitlement.\n4. The collection is recorded once — the same token can't be used twice — and appears in your history.\n\n• Check the weight of each item before you leave.\n• Ask for your receipt; the collection code is also in the app.",
+        "hi": "स्लॉट के दिन:\n1. बुक किए समय पर फ़ोन (या छपे QR कोड) के साथ अपनी राशन दुकान जाएँ।\n2. संचालक QR कोड से, या ज़रूरत हो तो OTP से, आपका सत्यापन करता है।\n3. आपको हक़ के भीतर बुक की गई वस्तुएँ मिलती हैं।\n4. राशन एक बार दर्ज होता है — एक टोकन दोबारा इस्तेमाल नहीं होता — और आपके इतिहास में दिखता है।\n\n• जाने से पहले हर वस्तु का तौल जाँचें।\n• अपनी रसीद माँगें; संग्रह कोड ऐप में भी है।",
+        "mr": "स्लॉटच्या दिवशी:\n1. बुक केलेल्या वेळी फोन (किंवा छापलेला QR कोड) घेऊन तुमच्या रेशन दुकानात जा.\n2. संचालक QR कोडने, किंवा गरज असल्यास OTP ने, तुमची पडताळणी करतो.\n3. तुम्हाला हक्काच्या आत बुक केलेल्या वस्तू मिळतात.\n4. रेशन एकदाच नोंदवले जाते — एक टोकन पुन्हा वापरता येत नाही — आणि तुमच्या इतिहासात दिसते.\n\n• निघण्यापूर्वी प्रत्येक वस्तूचे वजन तपासा.\n• पावती मागा; संकलन कोड ॲपमध्येही आहे."
+      }
+    },
+    {
+      "id": "entitlement",
+      "category": "eligibility",
+      "dynamic": "schemes",
+      "keywords": [
+        "entitlement",
+        "quota",
+        "how much",
+        "quantity",
+        "kg",
+        "kilo",
+        "rice",
+        "wheat",
+        "sugar",
+        "dal",
+        "pulses",
+        "oil",
+        "salt",
+        "items",
+        "allocation",
+        "per person",
+        "hak",
+        "kitna milega",
+        "हक़",
+        "हक",
+        "कितना",
+        "मात्रा",
+        "चावल",
+        "गेहूं",
+        "गेहूँ",
+        "तांदूळ",
+        "गहू",
+        "साखर",
+        "डाळ",
+        "किती"
+      ],
+      "title": {
+        "en": "How much ration you get",
+        "hi": "आपको कितना राशन मिलता है",
+        "mr": "तुम्हाला किती रेशन मिळते"
+      },
+      "answer": {
+        "en": "Your monthly entitlement is calculated from your scheme and the number of eligible members in your family: each item has a quota per eligible member per month. What you have already collected this month is subtracted.\n\nThe quotas below come from this system's configuration:",
+        "hi": "आपका मासिक हक़ आपकी योजना और परिवार के पात्र सदस्यों की संख्या से तय होता है: हर वस्तु का प्रति पात्र सदस्य प्रति माह कोटा होता है। इस महीने पहले लिया गया राशन घटा दिया जाता है।\n\nनीचे दिए कोटा इस सिस्टम की सेटिंग से हैं:",
+        "mr": "तुमचा मासिक हक्क तुमची योजना आणि कुटुंबातील पात्र सदस्यांच्या संख्येवरून ठरतो: प्रत्येक वस्तूचा प्रति पात्र सदस्य प्रति महिना कोटा असतो. या महिन्यात आधी घेतलेले रेशन वजा केले जाते.\n\nखालील कोटा या प्रणालीच्या सेटिंगमधून आहेत:"
+      }
+    },
+    {
+      "id": "find_shop",
+      "category": "find_help",
+      "dynamic": "shops",
+      "keywords": [
+        "~shop",
+        "~shops",
+        "nearest",
+        "near me",
+        "where",
+        "location",
+        "address",
+        "~ration shop",
+        "fair price shop",
+        "fps",
+        "~dukan",
+        "~दुकान",
+        "कहाँ",
+        "कुठे",
+        "पत्ता",
+        "जवळ",
+        "नज़दीकी",
+        "where is",
+        "nearest shop",
+        "shop near",
+        "shop address",
+        "दुकान कहाँ",
+        "दुकान कुठे"
+      ],
+      "title": {
+        "en": "Find a ration shop",
+        "hi": "राशन दुकान खोजें",
+        "mr": "रेशन दुकान शोधा"
+      },
+      "answer": {
+        "en": "Your account is linked to one ration shop; after logging in, its name and address are on your dashboard. Active shops in this system:",
+        "hi": "आपका खाता एक राशन दुकान से जुड़ा है; लॉग इन करने पर उसका नाम और पता डैशबोर्ड पर दिखता है। इस सिस्टम की सक्रिय दुकानें:",
+        "mr": "तुमचे खाते एका रेशन दुकानाशी जोडलेले आहे; लॉग इन केल्यावर त्याचे नाव आणि पत्ता डॅशबोर्डवर दिसतो. या प्रणालीतील सक्रिय दुकाने:"
+      }
+    },
+    {
+      "id": "language",
+      "category": "contact_support",
+      "keywords": [
+        "language",
+        "hindi",
+        "marathi",
+        "english",
+        "change language",
+        "bhasha",
+        "भाषा",
+        "हिंदी",
+        "मराठी"
+      ],
+      "title": {
+        "en": "Change the language",
+        "hi": "भाषा बदलें",
+        "mr": "भाषा बदला"
+      },
+      "answer": {
+        "en": "Smart Ration is available in English, हिंदी and मराठी. Use the language selector at the top of the page (or in Settings after logging in). This assistant answers in the selected language.",
+        "hi": "स्मार्ट राशन English, हिंदी और मराठी में उपलब्ध है। पेज के ऊपर भाषा चयन (या लॉग इन के बाद सेटिंग्स) का उपयोग करें। यह सहायक चुनी गई भाषा में जवाब देता है।",
+        "mr": "स्मार्ट रेशन English, हिंदी आणि मराठीत उपलब्ध आहे. पानाच्या वर भाषा निवड (किंवा लॉग इन नंतर सेटिंग्ज) वापरा. हा सहाय्यक निवडलेल्या भाषेत उत्तर देतो."
+      }
+    },
+    {
+      "id": "login_help",
+      "category": "contact_support",
+      "keywords": [
+        "login",
+        "log in",
+        "sign in",
+        "cannot login",
+        "can't log in",
+        "forgot password",
+        "reset password",
+        "password",
+        "locked",
+        "account problem",
+        "लॉगिन",
+        "पासवर्ड",
+        "लॉग इन"
+      ],
+      "title": {
+        "en": "Trouble logging in",
+        "hi": "लॉग इन में समस्या",
+        "mr": "लॉग इनमध्ये अडचण"
+      },
+      "answer": {
+        "en": "If you can't log in:\n• Check that you are using the email address you registered with, and that Caps Lock is off.\n• After several failed attempts, wait one minute before trying again.\n• Password reset isn't available online yet. Contact your ration shop or district supply office to get help with your account.\n\nNever tell anyone your password — not even Smart Ration staff.",
+        "hi": "अगर लॉग इन नहीं हो रहा:\n• जाँचें कि आप पंजीकरण वाला ईमेल ही इस्तेमाल कर रहे हैं और Caps Lock बंद है।\n• कई गलत प्रयासों के बाद एक मिनट रुककर फिर कोशिश करें।\n• पासवर्ड रीसेट अभी ऑनलाइन उपलब्ध नहीं है। खाते की सहायता के लिए अपनी राशन दुकान या ज़िला आपूर्ति कार्यालय से संपर्क करें।\n\nअपना पासवर्ड कभी किसी को न बताएँ — स्मार्ट राशन कर्मचारियों को भी नहीं।",
+        "mr": "लॉग इन होत नसल्यास:\n• नोंदणी केलेलाच ईमेल वापरत आहात आणि Caps Lock बंद आहे हे तपासा.\n• अनेक चुकीच्या प्रयत्नांनंतर एक मिनिट थांबून पुन्हा प्रयत्न करा.\n• पासवर्ड रीसेट अजून ऑनलाइन उपलब्ध नाही. खात्याच्या मदतीसाठी तुमच्या रेशन दुकानाशी किंवा जिल्हा पुरवठा कार्यालयाशी संपर्क साधा.\n\nतुमचा पासवर्ड कधीही कोणालाही सांगू नका — स्मार्ट रेशन कर्मचाऱ्यांनाही नाही."
+      },
+      "links": [
+        {
+          "path": "/login",
+          "label": {
+            "en": "Go to login",
+            "hi": "लॉग इन पर जाएँ",
+            "mr": "लॉग इनवर जा"
+          }
+        }
+      ]
+    },
+    {
+      "id": "about_smart_ration",
+      "category": "about",
+      "keywords": [
+        "~smart ration",
+        "what is smart ration",
+        "about",
+        "hsd2c",
+        "this app",
+        "this website",
+        "~स्मार्ट राशन",
+        "~स्मार्ट रेशन",
+        "क्या है",
+        "काय आहे"
+      ],
+      "title": {
+        "en": "About Smart Ration",
+        "hi": "स्मार्ट राशन के बारे में",
+        "mr": "स्मार्ट रेशनबद्दल"
+      },
+      "answer": {
+        "en": "Smart Ration is a digital public-distribution platform: citizens book a time slot at their ration shop, get a QR token, and collect their ration without long queues. Shops verify each collection by QR code (or OTP), stock is tracked automatically, and officials monitor distribution in real time.\n\nThis installation is a demonstration: its schemes and beneficiaries are synthetic, and it is not connected to any government database.",
+        "hi": "स्मार्ट राशन एक डिजिटल सार्वजनिक वितरण प्लेटफ़ॉर्म है: नागरिक अपनी राशन दुकान पर समय स्लॉट बुक करते हैं, QR टोकन पाते हैं और बिना लंबी कतार के राशन लेते हैं। दुकानें हर वितरण को QR कोड (या OTP) से सत्यापित करती हैं, स्टॉक अपने-आप दर्ज होता है और अधिकारी वितरण पर तुरंत नज़र रखते हैं।\n\nयह इंस्टॉलेशन एक प्रदर्शन (डेमो) है: इसकी योजनाएँ और लाभार्थी काल्पनिक हैं और यह किसी सरकारी डेटाबेस से जुड़ा नहीं है।",
+        "mr": "स्मार्ट रेशन हे डिजिटल सार्वजनिक वितरण व्यासपीठ आहे: नागरिक त्यांच्या रेशन दुकानात वेळ स्लॉट बुक करतात, QR टोकन मिळवतात आणि लांब रांगेशिवाय रेशन घेतात. दुकाने प्रत्येक वितरण QR कोडने (किंवा OTP ने) पडताळतात, साठा आपोआप नोंदवला जातो आणि अधिकारी वितरणावर लगेच लक्ष ठेवतात.\n\nही स्थापना प्रात्यक्षिक (डेमो) आहे: तिच्या योजना आणि लाभार्थी काल्पनिक आहेत आणि ती कोणत्याही सरकारी डेटाबेसशी जोडलेली नाही."
+      }
+    }
+  ]
+}

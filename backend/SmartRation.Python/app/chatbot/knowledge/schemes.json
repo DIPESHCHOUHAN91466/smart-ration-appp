@@ -1,0 +1,45 @@
+{
+  "_comment": "Government food schemes (general public information, hedged where details change) and this installation's own schemes, which are synthetic and read live from the database.",
+  "articles": [
+    {
+      "id": "nfsa", "category": "schemes",
+      "keywords": ["nfsa", "national food security act", "food security", "act", "2013", "scheme", "yojana", "government scheme", "राष्ट्रीय खाद्य सुरक्षा", "खाद्य सुरक्षा", "अन्न सुरक्षा", "योजना"],
+      "title": {"en": "National Food Security Act (NFSA)", "hi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम (NFSA)", "mr": "राष्ट्रीय अन्न सुरक्षा कायदा (NFSA)"},
+      "answer": {
+        "en": "The National Food Security Act, 2013 gives eligible households a legal right to subsidised foodgrains through the Public Distribution System:\n• Priority Households (PHH): 5 kg of foodgrains per person per month.\n• Antyodaya Anna Yojana (AAY): 35 kg per household per month.\n• It also provides for maternity benefits and nutrition support for children through Anganwadi centres and schools.\n\nStates identify eligible households and issue ration cards.",
+        "hi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम, 2013 पात्र परिवारों को सार्वजनिक वितरण प्रणाली से सब्सिडी वाला अनाज पाने का कानूनी अधिकार देता है:\n• प्राथमिकता परिवार (PHH): प्रति व्यक्ति प्रति माह 5 किलो अनाज।\n• अंत्योदय अन्न योजना (AAY): प्रति परिवार प्रति माह 35 किलो।\n• इसमें मातृत्व लाभ और आंगनवाड़ी केंद्रों व स्कूलों के ज़रिए बच्चों के पोषण की व्यवस्था भी है।\n\nपात्र परिवारों की पहचान और राशन कार्ड राज्य जारी करते हैं।",
+        "mr": "राष्ट्रीय अन्न सुरक्षा कायदा, 2013 पात्र कुटुंबांना सार्वजनिक वितरण व्यवस्थेतून अनुदानित धान्य मिळवण्याचा कायदेशीर हक्क देतो:\n• प्राधान्य कुटुंब (PHH): प्रति व्यक्ती प्रति महिना 5 किलो धान्य.\n• अंत्योदय अन्न योजना (AAY): प्रति कुटुंब प्रति महिना 35 किलो.\n• यात मातृत्व लाभ आणि अंगणवाडी केंद्रे व शाळांमार्फत मुलांच्या पोषणाचीही तरतूद आहे.\n\nपात्र कुटुंबांची निवड आणि रेशन कार्ड राज्ये देतात."
+      }
+    },
+    {
+      "id": "free_foodgrain", "category": "schemes",
+      "keywords": ["free", "free ration", "free grain", "pmgkay", "garib kalyan", "pradhan mantri", "cost", "price", "muft", "मुफ़्त", "मुफ्त", "मोफत", "गरीब कल्याण", "किंमत", "कीमत"],
+      "title": {"en": "Free foodgrains (PMGKAY)", "hi": "मुफ़्त अनाज (PMGKAY)", "mr": "मोफत धान्य (PMGKAY)"},
+      "answer": {
+        "en": "Under the Pradhan Mantri Garib Kalyan Anna Yojana (PMGKAY), foodgrains for NFSA beneficiaries (AAY and PHH) have been provided free of cost since January 2023, and the scheme was extended for five years from 2024.\n\nOther items such as sugar, pulses or oil may still be sold at subsidised prices, depending on your state. Check the prices displayed at your shop or on your state's portal, as policies can change.",
+        "hi": "प्रधानमंत्री गरीब कल्याण अन्न योजना (PMGKAY) के तहत NFSA लाभार्थियों (AAY और PHH) को जनवरी 2023 से अनाज मुफ़्त दिया जा रहा है, और योजना को 2024 से पाँच साल के लिए बढ़ाया गया।\n\nचीनी, दाल या तेल जैसी दूसरी वस्तुएँ राज्य के अनुसार अब भी रियायती दाम पर बिक सकती हैं। नीतियाँ बदल सकती हैं, इसलिए दुकान पर लगे दाम या राज्य का पोर्टल देखें।",
+        "mr": "प्रधानमंत्री गरीब कल्याण अन्न योजनेअंतर्गत (PMGKAY) NFSA लाभार्थ्यांना (AAY आणि PHH) जानेवारी 2023 पासून धान्य मोफत दिले जात आहे आणि योजना 2024 पासून पाच वर्षांसाठी वाढवण्यात आली.\n\nसाखर, डाळ किंवा तेल यांसारख्या इतर वस्तू राज्यानुसार अजूनही सवलतीच्या दराने विकल्या जाऊ शकतात. धोरणे बदलू शकतात, म्हणून दुकानात लावलेले दर किंवा राज्याचे पोर्टल पहा."
+      }
+    },
+    {
+      "id": "onorc", "category": "schemes",
+      "keywords": ["one nation one ration card", "onorc", "portability", "another state", "migrant", "moved", "different city", "other shop", "पोर्टेबिलिटी", "दूसरे राज्य", "प्रवासी", "दुसऱ्या राज्यात", "स्थलांतरित"],
+      "title": {"en": "One Nation One Ration Card (portability)", "hi": "वन नेशन वन राशन कार्ड (पोर्टेबिलिटी)", "mr": "वन नेशन वन रेशन कार्ड (पोर्टेबिलिटी)"},
+      "answer": {
+        "en": "One Nation One Ration Card (ONORC) lets NFSA cardholders collect their foodgrains from any Fair Price Shop in the country using biometric (Aadhaar-based) authentication — useful for migrant workers and families who have moved.\n\n• Family members left behind can still collect the rest of the entitlement at home.\n• The “Mera Ration” mobile app shows nearby shops and your entitlement.\n\nIn this Smart Ration demo, bookings are made at the shop linked to your account.",
+        "hi": "वन नेशन वन राशन कार्ड (ONORC) से NFSA कार्डधारक बायोमेट्रिक (आधार आधारित) प्रमाणीकरण से देश की किसी भी उचित मूल्य दुकान से अनाज ले सकते हैं — प्रवासी मज़दूरों और स्थान बदलने वाले परिवारों के लिए उपयोगी।\n\n• घर पर रहने वाले सदस्य बाकी हक़ वहीं ले सकते हैं।\n• “मेरा राशन” मोबाइल ऐप नज़दीकी दुकानें और आपका हक़ दिखाता है।\n\nइस स्मार्ट राशन डेमो में बुकिंग आपके खाते से जुड़ी दुकान पर होती है।",
+        "mr": "वन नेशन वन रेशन कार्डमुळे (ONORC) NFSA कार्डधारक बायोमेट्रिक (आधार आधारित) प्रमाणीकरणाने देशातील कोणत्याही स्वस्त धान्य दुकानातून धान्य घेऊ शकतात — स्थलांतरित मजूर आणि स्थलांतर केलेल्या कुटुंबांसाठी उपयुक्त.\n\n• घरी राहिलेले सदस्य उरलेला हक्क तिथेच घेऊ शकतात.\n• “मेरा राशन” मोबाइल ॲप जवळची दुकाने आणि तुमचा हक्क दाखवते.\n\nया स्मार्ट रेशन डेमोमध्ये बुकिंग तुमच्या खात्याशी जोडलेल्या दुकानात होते."
+      }
+    },
+    {
+      "id": "demo_schemes", "category": "schemes", "dynamic": "schemes",
+      "keywords": ["demo scheme", "demo-nfsa", "demo-aay", "schemes in this app", "which schemes", "scheme list", "कौन सी योजनाएँ", "कोणत्या योजना"],
+      "title": {"en": "Schemes in this Smart Ration installation", "hi": "इस स्मार्ट राशन में योजनाएँ", "mr": "या स्मार्ट रेशनमधील योजना"},
+      "answer": {
+        "en": "This installation uses synthetic demonstration schemes modelled loosely on NFSA-style entitlements; they are not real government schemes. Current configuration:",
+        "hi": "यह इंस्टॉलेशन NFSA जैसी पात्रताओं पर आधारित काल्पनिक प्रदर्शन योजनाएँ इस्तेमाल करता है; ये असली सरकारी योजनाएँ नहीं हैं। वर्तमान सेटिंग:",
+        "mr": "ही स्थापना NFSA सारख्या हक्कांवर आधारित काल्पनिक प्रात्यक्षिक योजना वापरते; त्या खऱ्या सरकारी योजना नाहीत. सध्याची सेटिंग:"
+      }
+    }
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "_comment": "General public information about ration cards in India. Rules differ by state, so answers stay general and point to the state Food & Civil Supplies department for final requirements. Review before any public deployment.",
+  "articles": [
+    {
+      "id": "what_is_ration_card",
+      "category": "ration_card",
+      "keywords": [
+        "~ration card",
+        "what is ration card",
+        "ration card meaning",
+        "~rashan card",
+        "~राशन कार्ड",
+        "~रेशन कार्ड",
+        "~राशनकार्ड",
+        "what is a ration card",
+        "राशन कार्ड क्या है",
+        "रेशन कार्ड म्हणजे",
+        "rashan card kya hai",
+        "use of ration card"
+      ],
+      "title": {
+        "en": "What is a ration card?",
+        "hi": "राशन कार्ड क्या है?",
+        "mr": "रेशन कार्ड म्हणजे काय?"
+      },
+      "answer": {
+        "en": "A ration card is an official document issued by your state government. It lets a household buy subsidised or free foodgrains (such as rice and wheat) and other essentials from a Fair Price Shop (ration shop) under the Public Distribution System.\n\n• It lists the head of the family and the members.\n• The card type (for example Antyodaya or Priority Household) decides how much you receive.\n• It is also widely accepted as a proof of address.",
+        "hi": "राशन कार्ड राज्य सरकार द्वारा जारी एक आधिकारिक दस्तावेज़ है। इससे परिवार सार्वजनिक वितरण प्रणाली के तहत उचित मूल्य की दुकान (राशन दुकान) से सब्सिडी वाला या मुफ़्त अनाज (जैसे चावल, गेहूँ) और अन्य ज़रूरी चीज़ें ले सकता है।\n\n• इसमें परिवार के मुखिया और सदस्यों के नाम होते हैं।\n• कार्ड का प्रकार (जैसे अंत्योदय या प्राथमिकता परिवार) तय करता है कि कितना मिलेगा।\n• इसे पते के प्रमाण के रूप में भी व्यापक रूप से माना जाता है।",
+        "mr": "रेशन कार्ड हे राज्य सरकारने दिलेले अधिकृत कागदपत्र आहे. याद्वारे कुटुंब सार्वजनिक वितरण व्यवस्थेअंतर्गत स्वस्त धान्य दुकानातून (रेशन दुकान) अनुदानित किंवा मोफत धान्य (उदा. तांदूळ, गहू) आणि इतर जीवनावश्यक वस्तू घेऊ शकते.\n\n• त्यात कुटुंबप्रमुख आणि सदस्यांची नावे असतात.\n• कार्डचा प्रकार (उदा. अंत्योदय किंवा प्राधान्य कुटुंब) किती मिळेल ते ठरवतो.\n• ते पत्त्याचा पुरावा म्हणूनही मोठ्या प्रमाणात स्वीकारले जाते."
+      }
+    },
+    {
+      "id": "card_types",
+      "category": "ration_card",
+      "keywords": [
+        "types of ration card",
+        "card type",
+        "aay",
+        "antyodaya",
+        "phh",
+        "priority household",
+        "bpl",
+        "apl",
+        "yellow card",
+        "orange card",
+        "white card",
+        "saffron",
+        "अंत्योदय",
+        "प्राथमिकता",
+        "प्राधान्य",
+        "प्रकार",
+        "पीला",
+        "पिवळे",
+        "केशरी"
+      ],
+      "title": {
+        "en": "Types of ration cards",
+        "hi": "राशन कार्ड के प्रकार",
+        "mr": "रेशन कार्डचे प्रकार"
+      },
+      "answer": {
+        "en": "Under the National Food Security Act (NFSA) there are two main categories:\n• Antyodaya Anna Yojana (AAY): the poorest households; a fixed quantity per household per month.\n• Priority Household (PHH): a quantity per family member per month.\n\nMany states also issue other cards (for example APL, BPL or colour-coded cards such as yellow, saffron or white) with their own rules. Your state Food & Civil Supplies department decides which card a family gets.",
+        "hi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम (NFSA) के तहत दो मुख्य श्रेणियाँ हैं:\n• अंत्योदय अन्न योजना (AAY): सबसे गरीब परिवार; प्रति परिवार प्रति माह तय मात्रा।\n• प्राथमिकता परिवार (PHH): प्रति सदस्य प्रति माह मात्रा।\n\nकई राज्य दूसरे कार्ड भी देते हैं (जैसे APL, BPL या पीले, केसरिया, सफ़ेद जैसे रंग वाले कार्ड), जिनके अपने नियम होते हैं। परिवार को कौन सा कार्ड मिलेगा, यह आपके राज्य का खाद्य एवं नागरिक आपूर्ति विभाग तय करता है।",
+        "mr": "राष्ट्रीय अन्न सुरक्षा कायद्यांतर्गत (NFSA) दोन मुख्य गट आहेत:\n• अंत्योदय अन्न योजना (AAY): सर्वात गरीब कुटुंबे; प्रति कुटुंब प्रति महिना ठरावीक प्रमाण.\n• प्राधान्य कुटुंब (PHH): प्रति सदस्य प्रति महिना प्रमाण.\n\nअनेक राज्ये इतर कार्डेही देतात (उदा. APL, BPL किंवा पिवळे, केशरी, पांढरे अशी रंगीत कार्डे), ज्यांचे स्वतःचे नियम असतात. कुटुंबाला कोणते कार्ड मिळेल ते तुमच्या राज्याचा अन्न व नागरी पुरवठा विभाग ठरवतो."
+      }
+    },
+    {
+      "id": "how_to_apply_card",
+      "category": "how_to_apply",
+      "keywords": [
+        "apply",
+        "application",
+        "new ration card",
+        "how to apply",
+        "get ration card",
+        "make ration card",
+        "online application",
+        "apply online",
+        "kaise banaye",
+        "kaise banwaye",
+        "आवेदन",
+        "अर्ज",
+        "नया राशन कार्ड",
+        "नवीन रेशन कार्ड",
+        "कैसे बनवाएं",
+        "कसे काढावे",
+        "apply for",
+        "how can i apply",
+        "want to apply",
+        "banwana",
+        "banaye",
+        "बनवाना",
+        "बनवाएँ",
+        "काढायचे"
+      ],
+      "title": {
+        "en": "How to apply for a ration card",
+        "hi": "राशन कार्ड के लिए आवेदन कैसे करें",
+        "mr": "रेशन कार्डसाठी अर्ज कसा करावा"
+      },
+      "answer": {
+        "en": "Ration cards are issued by your state government, not by this app. The usual steps are:\n1. Visit your state's Food & Civil Supplies department portal, a Common Service Centre (CSC), or the taluka/district supply office.\n2. Fill in the application form with details of the head of the family and all members.\n3. Attach the required documents (see “Required Documents”).\n4. Submit the form and keep the acknowledgement or application number.\n5. After verification (sometimes including a home visit), the card is issued. You can track the status with your application number.\n\nThe exact process, fees and timelines differ by state.",
+        "hi": "राशन कार्ड राज्य सरकार जारी करती है, यह ऐप नहीं। सामान्य चरण:\n1. अपने राज्य के खाद्य एवं नागरिक आपूर्ति विभाग के पोर्टल, कॉमन सर्विस सेंटर (CSC) या तहसील/ज़िला आपूर्ति कार्यालय जाएँ।\n2. परिवार के मुखिया और सभी सदस्यों की जानकारी के साथ आवेदन पत्र भरें।\n3. ज़रूरी दस्तावेज़ लगाएँ (“आवश्यक दस्तावेज़” देखें)।\n4. फ़ॉर्म जमा करें और पावती या आवेदन संख्या संभालकर रखें।\n5. सत्यापन (कभी-कभी घर जाकर जाँच) के बाद कार्ड जारी होता है। आवेदन संख्या से स्थिति देख सकते हैं।\n\nसटीक प्रक्रिया, शुल्क और समय-सीमा हर राज्य में अलग होती है।",
+        "mr": "रेशन कार्ड राज्य सरकार देते, हे ॲप नाही. नेहमीच्या पायऱ्या:\n1. तुमच्या राज्याच्या अन्न व नागरी पुरवठा विभागाचे पोर्टल, आपले सरकार सेवा केंद्र / कॉमन सर्व्हिस सेंटर (CSC) किंवा तहसील/जिल्हा पुरवठा कार्यालयात जा.\n2. कुटुंबप्रमुख आणि सर्व सदस्यांच्या माहितीसह अर्ज भरा.\n3. आवश्यक कागदपत्रे जोडा (“आवश्यक कागदपत्रे” पहा).\n4. अर्ज सादर करा आणि पोचपावती किंवा अर्ज क्रमांक जपून ठेवा.\n5. पडताळणीनंतर (कधी घरभेटीसह) कार्ड दिले जाते. अर्ज क्रमांकाने स्थिती पाहता येते.\n\nनेमकी प्रक्रिया, शुल्क आणि कालमर्यादा राज्यानुसार वेगवेगळी असते."
+      }
+    },
+    {
+      "id": "required_documents",
+      "category": "documents",
+      "keywords": [
+        "documents",
+        "document",
+        "papers",
+        "proof",
+        "required documents",
+        "what documents",
+        "documents needed",
+        "kagaz",
+        "dastavej",
+        "दस्तावेज़",
+        "दस्तावेज",
+        "कागज़",
+        "कागदपत्रे",
+        "पुरावा",
+        "प्रमाण",
+        "~needed",
+        "~required",
+        "~need"
+      ],
+      "title": {
+        "en": "Documents usually required",
+        "hi": "आमतौर पर ज़रूरी दस्तावेज़",
+        "mr": "सहसा लागणारी कागदपत्रे"
+      },
+      "answer": {
+        "en": "Commonly requested documents for a new ration card:\n• Identity proof of the head of the family (for example Aadhaar card, voter ID)\n• Aadhaar details of all family members\n• Proof of address (electricity bill, rent agreement, property document, etc.)\n• Income certificate (for priority categories)\n• Recent passport-size photographs\n• Bank account details (in some states)\n• Surrender or deletion certificate if you held a card elsewhere\n\nYour state may ask for different or additional documents. Never share Aadhaar numbers in this chat.",
+        "hi": "नए राशन कार्ड के लिए आमतौर पर माँगे जाने वाले दस्तावेज़:\n• परिवार के मुखिया का पहचान प्रमाण (जैसे आधार कार्ड, मतदाता पहचान पत्र)\n• परिवार के सभी सदस्यों का आधार विवरण\n• पते का प्रमाण (बिजली बिल, किराया अनुबंध, संपत्ति दस्तावेज़ आदि)\n• आय प्रमाण पत्र (प्राथमिकता श्रेणियों के लिए)\n• हाल की पासपोर्ट आकार की फ़ोटो\n• बैंक खाता विवरण (कुछ राज्यों में)\n• अगर पहले कहीं और कार्ड था तो उसका समर्पण/नाम हटाने का प्रमाण पत्र\n\nआपका राज्य अलग या अतिरिक्त दस्तावेज़ माँग सकता है। इस चैट में आधार नंबर कभी न लिखें।",
+        "mr": "नवीन रेशन कार्डसाठी सहसा मागितली जाणारी कागदपत्रे:\n• कुटुंबप्रमुखाचा ओळख पुरावा (उदा. आधार कार्ड, मतदार ओळखपत्र)\n• कुटुंबातील सर्व सदस्यांचा आधार तपशील\n• पत्त्याचा पुरावा (वीज बिल, भाडेकरार, मालमत्तेचे कागदपत्र इ.)\n• उत्पन्नाचा दाखला (प्राधान्य गटांसाठी)\n• अलीकडचे पासपोर्ट आकाराचे फोटो\n• बँक खात्याचा तपशील (काही राज्यांत)\n• आधी दुसरीकडे कार्ड असल्यास ते रद्द/नाव कमी केल्याचा दाखला\n\nतुमचे राज्य वेगळी किंवा अधिक कागदपत्रे मागू शकते. या चॅटमध्ये आधार क्रमांक कधीही लिहू नका."
+      }
+    },
+    {
+      "id": "eligibility",
+      "category": "eligibility",
+      "keywords": [
+        "eligible",
+        "eligibility",
+        "who can get",
+        "qualify",
+        "criteria",
+        "income limit",
+        "who is eligible",
+        "patra",
+        "पात्र",
+        "पात्रता",
+        "कौन",
+        "कोण"
+      ],
+      "title": {
+        "en": "Who is eligible",
+        "hi": "कौन पात्र है",
+        "mr": "कोण पात्र आहे"
+      },
+      "answer": {
+        "en": "Eligibility is decided by your state using criteria under the National Food Security Act. In general:\n• The household must live in the state and not hold another ration card anywhere.\n• Priority categories (AAY and PHH) are for low-income and vulnerable households; states set income and exclusion criteria (for example, government employees or income-tax payers are often excluded).\n• Each eligible member counts towards the family's entitlement.\n\nIn Smart Ration, each family member's eligibility is recorded, and only eligible members count when your monthly entitlement is calculated.",
+        "hi": "पात्रता राष्ट्रीय खाद्य सुरक्षा अधिनियम के मानदंडों के आधार पर आपका राज्य तय करता है। सामान्यतः:\n• परिवार उसी राज्य में रहता हो और कहीं और राशन कार्ड न हो।\n• प्राथमिकता श्रेणियाँ (AAY और PHH) कम आय और कमज़ोर परिवारों के लिए हैं; आय और बहिष्करण के मानदंड राज्य तय करते हैं (जैसे सरकारी कर्मचारी या आयकरदाता अक्सर बाहर रहते हैं)।\n• हर पात्र सदस्य परिवार के हक़ में जुड़ता है।\n\nस्मार्ट राशन में हर सदस्य की पात्रता दर्ज होती है, और मासिक हक़ की गणना में केवल पात्र सदस्य गिने जाते हैं।",
+        "mr": "पात्रता राष्ट्रीय अन्न सुरक्षा कायद्याच्या निकषांवर तुमचे राज्य ठरवते. सर्वसाधारणपणे:\n• कुटुंब त्याच राज्यात राहत असावे आणि इतरत्र रेशन कार्ड नसावे.\n• प्राधान्य गट (AAY आणि PHH) कमी उत्पन्न आणि दुर्बल कुटुंबांसाठी आहेत; उत्पन्न आणि वगळण्याचे निकष राज्ये ठरवतात (उदा. सरकारी कर्मचारी किंवा आयकरदाते अनेकदा वगळले जातात).\n• प्रत्येक पात्र सदस्य कुटुंबाच्या हक्कात धरला जातो.\n\nस्मार्ट रेशनमध्ये प्रत्येक सदस्याची पात्रता नोंदलेली असते आणि मासिक हक्क मोजताना फक्त पात्र सदस्य धरले जातात."
+      }
+    },
+    {
+      "id": "update_card",
+      "category": "ration_card",
+      "keywords": [
+        "add member",
+        "add name",
+        "remove member",
+        "delete name",
+        "update",
+        "change address",
+        "correction",
+        "new baby",
+        "marriage",
+        "name change",
+        "सदस्य जोड़ना",
+        "नाम जोड़ना",
+        "नाव जोडणे",
+        "नाव कमी",
+        "पता बदलना",
+        "पत्ता बदल",
+        "सुधार",
+        "दुरुस्ती",
+        "add",
+        "name",
+        "wife",
+        "husband",
+        "child",
+        "son",
+        "daughter",
+        "member",
+        "members",
+        "remove",
+        "delete",
+        "पत्नी",
+        "पति",
+        "बच्चा",
+        "पत्नीचे",
+        "मुलाचे",
+        "नाव"
+      ],
+      "title": {
+        "en": "Adding or removing members, changing details",
+        "hi": "सदस्य जोड़ना/हटाना, विवरण बदलना",
+        "mr": "सदस्य जोडणे/कमी करणे, तपशील बदलणे"
+      },
+      "answer": {
+        "en": "Changes to a ration card (adding a newborn or a new family member after marriage, removing a member, changing the address or correcting a name) are made by the state supply department:\n1. Apply online on your state's portal or at the supply office / CSC.\n2. Attach proof for the change (for example a birth certificate, marriage certificate, death certificate or new address proof).\n3. Keep the acknowledgement number to track the request.\n\nOnce the change is approved, your entitlement in Smart Ration follows the updated family details.",
+        "hi": "राशन कार्ड में बदलाव (नवजात या शादी के बाद नए सदस्य को जोड़ना, सदस्य हटाना, पता बदलना या नाम सुधारना) राज्य आपूर्ति विभाग करता है:\n1. राज्य के पोर्टल पर या आपूर्ति कार्यालय / CSC में आवेदन करें।\n2. बदलाव का प्रमाण लगाएँ (जैसे जन्म, विवाह या मृत्यु प्रमाण पत्र, या नए पते का प्रमाण)।\n3. अनुरोध देखने के लिए पावती संख्या रखें।\n\nबदलाव मंज़ूर होने पर स्मार्ट राशन में आपका हक़ नए पारिवारिक विवरण के अनुसार होता है।",
+        "mr": "रेशन कार्डमधील बदल (नवजात बाळ किंवा लग्नानंतर नवीन सदस्य जोडणे, सदस्य कमी करणे, पत्ता बदलणे किंवा नाव दुरुस्त करणे) राज्य पुरवठा विभाग करतो:\n1. राज्याच्या पोर्टलवर किंवा पुरवठा कार्यालय / CSC मध्ये अर्ज करा.\n2. बदलाचा पुरावा जोडा (उदा. जन्म, विवाह किंवा मृत्यू दाखला, किंवा नवीन पत्त्याचा पुरावा).\n3. विनंतीचा मागोवा घेण्यासाठी पोचपावती क्रमांक ठेवा.\n\nबदल मंजूर झाल्यावर स्मार्ट रेशनमधील तुमचा हक्क नवीन कौटुंबिक तपशिलानुसार होतो."
+      }
+    },
+    {
+      "id": "lost_card",
+      "category": "ration_card",
+      "keywords": [
+        "lost",
+        "lost card",
+        "duplicate",
+        "stolen",
+        "damaged",
+        "reissue",
+        "खो गया",
+        "गुम",
+        "डुप्लीकेट",
+        "हरवले",
+        "हरवला"
+      ],
+      "title": {
+        "en": "Lost or damaged ration card",
+        "hi": "राशन कार्ड खो गया या खराब हो गया",
+        "mr": "रेशन कार्ड हरवले किंवा खराब झाले"
+      },
+      "answer": {
+        "en": "If your ration card is lost or damaged:\n1. Apply for a duplicate card on your state's portal or at the supply office.\n2. Some states ask for a police report (for a lost card) or the damaged card.\n3. A small fee may apply.\n\nMany states also let you download an e-ration card. Your Smart Ration token and QR code keep working, because they are linked to your account, not to the paper card.",
+        "hi": "अगर राशन कार्ड खो जाए या खराब हो जाए:\n1. राज्य के पोर्टल पर या आपूर्ति कार्यालय में डुप्लीकेट कार्ड के लिए आवेदन करें।\n2. कुछ राज्य पुलिस रिपोर्ट (खोने पर) या खराब कार्ड माँगते हैं।\n3. थोड़ा शुल्क लग सकता है।\n\nकई राज्य ई-राशन कार्ड डाउनलोड करने की सुविधा भी देते हैं। आपका स्मार्ट राशन टोकन और QR कोड काम करते रहेंगे, क्योंकि वे आपके खाते से जुड़े हैं, कागज़ी कार्ड से नहीं।",
+        "mr": "रेशन कार्ड हरवल्यास किंवा खराब झाल्यास:\n1. राज्याच्या पोर्टलवर किंवा पुरवठा कार्यालयात दुय्यम (डुप्लिकेट) कार्डसाठी अर्ज करा.\n2. काही राज्ये पोलीस तक्रार (हरवल्यास) किंवा खराब कार्ड मागतात.\n3. थोडे शुल्क लागू शकते.\n\nअनेक राज्ये ई-रेशन कार्ड डाउनलोड करण्याची सोयही देतात. तुमचे स्मार्ट रेशन टोकन आणि QR कोड चालू राहतात, कारण ते तुमच्या खात्याशी जोडलेले आहेत, कागदी कार्डाशी नाही."
+      }
+    },
+    {
+      "id": "user_rights",
+      "category": "rights",
+      "keywords": [
+        "rights",
+        "my rights",
+        "refuse",
+        "denied",
+        "less ration",
+        "short weight",
+        "overcharge",
+        "extra money",
+        "cheating",
+        "fraud",
+        "अधिकार",
+        "कम राशन",
+        "ज़्यादा पैसे",
+        "हक्क",
+        "कमी रेशन",
+        "जास्त पैसे",
+        "gave me less",
+        "short",
+        "did not give",
+        "not given",
+        "refused",
+        "नहीं दिया",
+        "दिले नाही"
+      ],
+      "title": {
+        "en": "Your rights at the ration shop",
+        "hi": "राशन दुकान पर आपके अधिकार",
+        "mr": "रेशन दुकानात तुमचे हक्क"
+      },
+      "answer": {
+        "en": "As a cardholder you have the right to:\n• Receive your full entitlement at the notified price (or free, where applicable).\n• Correct weight — ask to see the weighing.\n• A receipt for every collection.\n• See the shop's stock, prices and opening hours, which should be displayed.\n• Collect from any Fair Price Shop in India under One Nation One Ration Card, where your state supports it.\n• Complain if you are refused, short-changed or overcharged.\n\nIn Smart Ration every collection is recorded against your token, so there is a digital record of what you received.",
+        "hi": "कार्डधारक के रूप में आपको अधिकार है:\n• अधिसूचित दाम पर (या जहाँ लागू हो, मुफ़्त) अपना पूरा हक़ पाने का।\n• सही तौल का — तौल दिखाने को कहें।\n• हर बार राशन लेने की रसीद का।\n• दुकान का स्टॉक, दाम और समय देखने का, जो प्रदर्शित होने चाहिए।\n• जहाँ आपका राज्य समर्थन करता है, वन नेशन वन राशन कार्ड के तहत भारत की किसी भी उचित मूल्य दुकान से राशन लेने का।\n• मना करने, कम देने या ज़्यादा पैसे लेने पर शिकायत करने का।\n\nस्मार्ट राशन में हर वितरण आपके टोकन के साथ दर्ज होता है, इसलिए आपको मिले राशन का डिजिटल रिकॉर्ड रहता है।",
+        "mr": "कार्डधारक म्हणून तुम्हाला हक्क आहे:\n• अधिसूचित दराने (किंवा लागू असेल तिथे मोफत) पूर्ण हक्काचे रेशन मिळवण्याचा.\n• योग्य वजनाचा — वजन करताना दाखवायला सांगा.\n• प्रत्येक वेळी रेशन घेतल्याच्या पावतीचा.\n• दुकानातील साठा, दर आणि वेळ पाहण्याचा, जे दर्शवलेले असावेत.\n• तुमचे राज्य समर्थन करत असेल तिथे वन नेशन वन रेशन कार्ड अंतर्गत भारतातील कोणत्याही स्वस्त धान्य दुकानातून रेशन घेण्याचा.\n• नकार, कमी देणे किंवा जास्त पैसे घेतल्यास तक्रार करण्याचा.\n\nस्मार्ट रेशनमध्ये प्रत्येक वितरण तुमच्या टोकनसह नोंदवले जाते, त्यामुळे मिळालेल्या रेशनची डिजिटल नोंद राहते."
+      }
+    },
+    {
+      "id": "complaints",
+      "category": "contact_support",
+      "keywords": [
+        "complaint",
+        "complain",
+        "grievance",
+        "problem",
+        "issue",
+        "report",
+        "helpline",
+        "1967",
+        "toll free",
+        "shikayat",
+        "शिकायत",
+        "तक्रार",
+        "समस्या",
+        "हेल्पलाइन",
+        "complaint against",
+        "complain against",
+        "complaints"
+      ],
+      "title": {
+        "en": "Making a complaint",
+        "hi": "शिकायत कैसे करें",
+        "mr": "तक्रार कशी करावी"
+      },
+      "answer": {
+        "en": "If you have a problem with ration distribution:\n1. First speak to the shop operator and note the date, time and your token number.\n2. Contact your taluka or district supply office.\n3. Call your state's food helpline — in many states this is 1967 — or use the grievance section of your state's Food & Civil Supplies portal.\n4. Under the National Food Security Act, each district has a grievance redressal officer.\n\nAn in-app complaint form isn't available yet in Smart Ration.",
+        "hi": "राशन वितरण में समस्या हो तो:\n1. पहले दुकान संचालक से बात करें और तारीख, समय और टोकन नंबर नोट करें।\n2. अपने तहसील या ज़िला आपूर्ति कार्यालय से संपर्क करें।\n3. अपने राज्य की खाद्य हेल्पलाइन पर कॉल करें — कई राज्यों में यह 1967 है — या राज्य के खाद्य एवं नागरिक आपूर्ति पोर्टल के शिकायत भाग का उपयोग करें।\n4. राष्ट्रीय खाद्य सुरक्षा अधिनियम के तहत हर ज़िले में शिकायत निवारण अधिकारी होता है।\n\nस्मार्ट राशन में ऐप के अंदर शिकायत फ़ॉर्म अभी उपलब्ध नहीं है।",
+        "mr": "रेशन वितरणात अडचण असल्यास:\n1. आधी दुकान संचालकाशी बोला आणि तारीख, वेळ आणि टोकन क्रमांक नोंदवा.\n2. तुमच्या तहसील किंवा जिल्हा पुरवठा कार्यालयाशी संपर्क साधा.\n3. तुमच्या राज्याच्या अन्न हेल्पलाइनवर कॉल करा — अनेक राज्यांत हा 1967 आहे — किंवा राज्याच्या अन्न व नागरी पुरवठा पोर्टलच्या तक्रार विभागाचा वापर करा.\n4. राष्ट्रीय अन्न सुरक्षा कायद्यांतर्गत प्रत्येक जिल्ह्यात तक्रार निवारण अधिकारी असतो.\n\nस्मार्ट रेशनमध्ये ॲपमधील तक्रार अर्ज अजून उपलब्ध नाही."
+      }
+    },
+    {
+      "id": "contact_support",
+      "category": "contact_support",
+      "keywords": [
+        "contact",
+        "support",
+        "help",
+        "helpdesk",
+        "call",
+        "phone number",
+        "email",
+        "office",
+        "customer care",
+        "sampark",
+        "संपर्क",
+        "सहायता",
+        "मदद",
+        "मदत",
+        "फ़ोन"
+      ],
+      "title": {
+        "en": "Contact and support",
+        "hi": "संपर्क और सहायता",
+        "mr": "संपर्क आणि मदत"
+      },
+      "answer": {
+        "en": "Where to get help:\n• Your ration shop operator — for tokens, slots and collection on the day.\n• Taluka / district supply office — for ration cards, family changes, eligibility and account problems.\n• State food helpline — 1967 in many states — for complaints.\n• Your state's Food & Civil Supplies portal — applications and status.\n\nThis assistant can answer general questions any time. For personal details, log in to Smart Ration.",
+        "hi": "सहायता कहाँ मिलेगी:\n• आपकी राशन दुकान का संचालक — टोकन, स्लॉट और उसी दिन राशन लेने के लिए।\n• तहसील / ज़िला आपूर्ति कार्यालय — राशन कार्ड, परिवार में बदलाव, पात्रता और खाते की समस्याओं के लिए।\n• राज्य खाद्य हेल्पलाइन — कई राज्यों में 1967 — शिकायतों के लिए।\n• राज्य का खाद्य एवं नागरिक आपूर्ति पोर्टल — आवेदन और स्थिति।\n\nयह सहायक सामान्य सवालों के जवाब कभी भी देता है। निजी जानकारी के लिए स्मार्ट राशन में लॉग इन करें।",
+        "mr": "मदत कुठे मिळेल:\n• तुमच्या रेशन दुकानाचा संचालक — टोकन, स्लॉट आणि त्याच दिवशी रेशन घेण्यासाठी.\n• तहसील / जिल्हा पुरवठा कार्यालय — रेशन कार्ड, कुटुंबातील बदल, पात्रता आणि खात्याच्या अडचणींसाठी.\n• राज्य अन्न हेल्पलाइन — अनेक राज्यांत 1967 — तक्रारींसाठी.\n• राज्याचे अन्न व नागरी पुरवठा पोर्टल — अर्ज आणि स्थिती.\n\nहा सहाय्यक सामान्य प्रश्नांची उत्तरे कधीही देतो. वैयक्तिक माहितीसाठी स्मार्ट रेशनमध्ये लॉग इन करा."
+      }
+    }
+  ]
+}

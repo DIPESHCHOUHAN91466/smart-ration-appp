@@ -16,7 +16,9 @@ import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, health, legacy_proxy
+from app.api import auth, health, legacy_proxy, public_help
+from app.chatbot.knowledge_base import get_knowledge_base
+from app.chatbot.providers import get_provider
 from app.core.config import Settings, get_settings
 from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
@@ -37,6 +39,8 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     settings = settings or get_settings()
     if not settings.jwt_secret_key:
         raise RuntimeError("JWT_SECRET_KEY is not set (it must equal the C# API's user-secret Jwt:Key). See .env.example.")
+    get_provider(settings.chatbot_provider)  # fail at startup on an unknown CHATBOT_PROVIDER
+    get_knowledge_base()  # validate the Public Help content at startup, not on the first question
     configure_logging(settings.log_level)
     configure_database(settings.database_url)
 
@@ -82,6 +86,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     # ---- Python-native routes (grow with each migration phase) ----
     app.include_router(health.router)
     app.include_router(auth.router)  # Step 2: /api/auth/{register,login,refresh,logout}
+    app.include_router(public_help.router)  # new: /api/public-help/*, /api/chatbot/* (no login)
 
     # ---- Fallback proxy: MUST stay last ----
     if legacy_client is not None:
