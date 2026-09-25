@@ -6,7 +6,7 @@
 [![Gateway & AI](https://img.shields.io/badge/Gateway%20%26%20AI-FastAPI%20%7C%20Python%203.11-3776AB?logo=fastapi)](backend/SmartRation.Python/README.md)
 [![Database](https://img.shields.io/badge/Database-MySQL%208-4479A1?logo=mysql)](database/README.md)
 [![Mobile](https://img.shields.io/badge/Mobile-Expo%20%7C%20React%20Native-000020?logo=expo)](mobile/README.md)
-[![Tests](https://img.shields.io/badge/Tests-104%20xUnit%20%7C%20248%20pytest%20%7C%2039%20vitest-success)](tests/README.md)
+[![Tests](https://img.shields.io/badge/Tests-612%20passing%20(104%20xUnit%20%7C%20247%20pytest%20%7C%20146%20MySQL%20%7C%2039%20vitest%20%7C%209%20E2E)-success)](tests/README.md)
 
 A modern, transparent, and resilient digital **Public Distribution System (PDS)** for India. **Smart Ration** eliminates long queues at Fair Price Shops (FPS) through scheduled slot reservations, cryptographically signed offline-verifiable QR tokens, real-time stock ledgering, predictive supply chain analytics, and a multilingual AI assistant (**Ration Mitra**).
 
@@ -304,17 +304,17 @@ Smart Ration enforces high test coverage across all layers:
                             ┌──┴───────┴──┐
                             │ Contract/Live│ Proxy Parity & MySQL Suite (1000 records)
                          ┌──┴──────────────┴──┐
-                         │    Unit & Component │ xUnit (104), pytest (248), Vitest (39)
+                         │    Unit & Component │ xUnit (104), pytest (201 + AI 46), Vitest (39)
                          └─────────────────────┘
 ```
 
 | Component | Framework | Count | Command |
 |---|---|---|---|
 | **C# Business API** | xUnit | **104** | `dotnet test SmartRation.sln -c Release` |
-| **Python Gateway** | pytest | **248** | `backend\SmartRation.Python\.venv\Scripts\pytest` |
+| **Python Gateway** | pytest | **201** (+ 46 AI service, + 67-case chatbot evaluation) | `backend\SmartRation.Python\.venv\Scripts\pytest` |
 | **Frontend Web** | Vitest, Testing Library | **39** | `cd frontend && npm test` |
-| **End-to-End** | Playwright | **Smoke Suite** | `cd frontend && npm run test:e2e` |
-| **Direct MySQL** | pytest, SQLAlchemy | **145** | `.\sr.ps1 test -MySql` |
+| **End-to-End** | Playwright (installed Edge) | **9** (stack must be running) | `cd frontend && npm run test:e2e` |
+| **Direct MySQL** | pytest, SQLAlchemy | **146** | `.\sr.ps1 test -MySql` |
 
 ---
 

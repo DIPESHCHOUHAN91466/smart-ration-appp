@@ -20,7 +20,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 | Shop and government screens | PARTIAL | APIs 200 through the proxy (parity 36/36); screens not re-checked visually this round |
 | Layout kept, every folder documented | PASS | READMEs in `frontend/`, `src/*`, `tests/` |
 | TypeScript | NOT TESTED | not used (JavaScript app) |
-| End-to-end browser automation | NOT TESTED | none exists |
+| End-to-end browser automation | PASS | Playwright, 9 tests (desktop + phone) against the running stack, installed Edge |
 
 ## Backend (C# business API)
 
@@ -28,7 +28,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 |---|---|---|
 | Build + tests | PASS | xUnit 94/94 (8 new data-mode tests) |
 | Business logic owner (frozen hybrid) | PASS | decision recorded; proxy parity 36/36 |
-| Controllers thin, services + interfaces; no repository layer (by design) | PASS | documented in BACKEND_ARCHITECTURE.md |
+| Controllers thin, services + interfaces; no repository layer (by design) | PASS | last two fat controllers moved into services (+10 tests); documented in BACKEND_ARCHITECTURE.md |
 | Data-mode guard | PASS | real mode refused at startup (verified by running the API with `DATA_MODE=real`) |
 
 ## Python
@@ -134,10 +134,11 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Suite | Result |
 |---|---|
-| Python 195 · MySQL 145 · evaluation 67 · AI 46 · C# 94 (`SmartRation.sln`) · frontend 39 + ESLint (0 errors) + build · database health | PASS (`run-tests.ps1 -MySql`, exit 0, 9/9 steps) |
+| Python 201 · MySQL 146 · evaluation 67 · AI 46 · C# 104 (`SmartRation.sln`) · frontend 39 + ESLint (0 errors) + build · database health · E2E 9 | PASS (`run-tests.ps1 -MySql -E2E`, exit 0, 10/10 steps, 612 tests) |
 | Fresh clone (no venvs, packages or `.env`): `setup.ps1`, then Python/AI/C#/frontend lint, tests, build | PASS (192 Python — the 3 live-MySQL schema tests skip without a database — 46 AI, 94 C#, 39 frontend, build) |
 | Contract (proxy 36/36, auth interop 23/23) | PASS (earlier today; needs both servers) |
-| E2E, load, accessibility tooling | NOT TESTED |
+| E2E | PASS (9 Playwright tests, local; not in CI — it needs the whole stack running) |
+| Load testing, accessibility tooling | NOT TESTED |
 
 ## Security
 
@@ -170,9 +171,9 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 2. Push the branch so CI runs (now also the MySQL suite, the AI service tests, ESLint and the solution build).
 3. Refresh token → HttpOnly cookie; rotate the JWT key before public use.
 4. Complaints module (not implemented anywhere).
-5. Translate the 41 older dashboard components; E2E tests (Playwright).
+5. Translate the 41 older dashboard components; run the E2E suite in CI (needs the full stack in a job).
 6. Rehearse a database restore; containerise the C# API if Docker becomes the deployment path.
 7. Real-data integrations — BLOCKED, REQUIRES EXTERNAL INTEGRATION.
-8. `tests/DROP DATABASE IF EXISTS smart_ratio.txt` (your notes) and an empty `backend/SmartRation.Api/package-lock.json` (from running npm in that folder) are untracked.
+8. `mobile/` is still the Expo starter template (its README now says so); the planned features are not built.
 9. Another project's Docker containers (`smart-ration-hsd2c-dashboard`: API on :8000, Postgres on :5432) share port 8000; this project now uses `127.0.0.1` URLs and `health-check.ps1` warns, but stop them to avoid confusion.
 10. Reusing an already-verified OTP has no dedicated test (C#).

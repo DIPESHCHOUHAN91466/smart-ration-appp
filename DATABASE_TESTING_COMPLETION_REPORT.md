@@ -19,15 +19,15 @@ scenarios described; it is not a guarantee of production behaviour, which needs 
 
 | Suite | Tests | Passed | Failed | Skipped / not run |
 |---|---|---|---|---|
-| Python backend (SQLite) | 195 | 195 | 0 | 144 skipped = the MySQL suite, which only runs with `TEST_DATABASE_URL` (counted on the next line) |
-| MySQL suite on `smartration_test` | 145 | 145 | 0 | 0 |
+| Python backend (SQLite) | 201 | 201 | 0 | 144 skipped = the MySQL suite, which only runs with `TEST_DATABASE_URL` (counted on the next line) |
+| MySQL suite on `smartration_test` | 146 | 146 | 0 | 0 |
 | Chatbot evaluation (48 answers + 19 safety cases, en/hi/mr) | 67 | 67 | 0 | 0 |
 | AI service | 46 | 46 | 0 | 0 |
-| C# API | 94 | 94 | 0 | 0 |
+| C# API | 104 | 104 | 0 | 0 |
 | Frontend | 39 | 39 | 0 | 0 |
-| **Total** | **586** | **586** | **0** | — |
+| End-to-end (Playwright, running stack) | 9 | 9 | 0 | 0 |
+| **Total** | **612** | **612** | **0** | — |
 | Root `tests/mysql` (24) | — | — | — | **NOT RUN** — root `.env` `DB_PASSWORD` is wrong (owner action) |
-| End-to-end browser automation | — | — | — | **NOT TESTED** — none exists (deferred by decision) |
 | MySQLi | — | — | — | **NOT APPLICABLE** |
 
 Command: `.\scripts\development\run-tests.ps1 -MySql` (exit 0). Note: that full run took 89 minutes for the

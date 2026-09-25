@@ -4,11 +4,11 @@
 
 | Suite | Where | Runs against | Count | Command |
 |---|---|---|---|---|
-| Python backend unit/API | `backend/SmartRation.Python/tests/` | SQLite temp files | 195 | `.venv\Scripts\python -m pytest` (in that folder) |
-| MySQL suite (100 adversarial + 1000 generated records; concurrency 10/25/50/100) | `backend/SmartRation.Python/tests/mysql_suite/` | `smartration_test` | 145 | set `TEST_DATABASE_URL`, then `… -m pytest tests/mysql_suite` |
+| Python backend unit/API | `backend/SmartRation.Python/tests/` | SQLite temp files | 201 | `.venv\Scripts\python -m pytest` (in that folder) |
+| MySQL suite (100 adversarial + 1000 generated records; concurrency 10/25/50/100) | `backend/SmartRation.Python/tests/mysql_suite/` | `smartration_test` | 146 | set `TEST_DATABASE_URL`, then `… -m pytest tests/mysql_suite` |
 | Root MySQL tests | `tests/mysql/` | `smartration_test` (root `.env`) | 24 | from the repo root: `backend\SmartRation.Python\.venv\Scripts\python -m pytest tests/mysql` |
 | AI service | `backend/SmartRation.AI/tests/` | SQLite | 46 | `.venv\Scripts\python -m pytest` (in that folder) |
-| C# API | `backend/SmartRation.Api.Tests/` | in-memory | 94 | `dotnet test SmartRation.sln -c Release` (repository root) |
+| C# API | `backend/SmartRation.Api.Tests/` | in-memory | 104 | `dotnet test SmartRation.sln -c Release` (repository root) |
 | Frontend | `frontend/tests/unit/` | jsdom | 39 | `npm test` (in `frontend`) |
 | Contract (live) | `backend/SmartRation.Python/tests/contract/` | both running APIs | 36 + 23 | `compare_proxy.py`, `auth_interop.py` |
 | Database verify | `backend/SmartRation.Python/scripts/verify_database.py` | the configured DB | — | read-only check |
