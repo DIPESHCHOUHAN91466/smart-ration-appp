@@ -102,9 +102,13 @@ def test_generate_refuses_bad_counts():
 
 
 @pytest.fixture
-def sqlite_db(tmp_path):
+def sqlite_db(tmp_path, monkeypatch):
     import seed_database
 
+    # Reference data only: without this, a machine (or CI) that sets SEED_DEMO_PASSWORD would also get
+    # the 3 demo accounts, and every "exactly N users" assertion below would be off by 3.
+    for name in ("SEED_DEMO_PASSWORD", "SEED_ADMIN_EMAIL", "SEED_ADMIN_PASSWORD"):
+        monkeypatch.delenv(name, raising=False)
     eng = create_engine(f"sqlite:///{tmp_path / 'synthetic_test'}")  # SQLite's "database name" is the path: ends in _test
     Base.metadata.create_all(eng)
     with Session(eng) as db, db.begin():
