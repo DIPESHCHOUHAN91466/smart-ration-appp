@@ -67,7 +67,7 @@
       "name": "Run Backend Tests (C#)",
       "type": "node-terminal",
       "request": "launch",
-      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj",
+      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj -c Release",
       "cwd": "${workspaceFolder}"
     },
     {

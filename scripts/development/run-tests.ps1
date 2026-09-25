@@ -31,7 +31,8 @@ Run "Python backend" $py { & .venv\Scripts\python -m pytest -p no:warnings }
 Run "Chatbot evaluation" $py { & .venv\Scripts\python -m app.chatbot.evaluate }
 
 if ($MySql) {
-    $url = & "$py\.venv\Scripts\python" -c "import sys;sys.path.insert(0,'.');from sqlalchemy.engine import make_url;from app.core.config import get_settings;print(make_url(get_settings().database_url).set(database='smartration_test').render_as_string(hide_password=False))"
+    $url = & "$py\.venv\Scripts\python" "$py\scripts\test_database_url.py"   # password stays in this variable only
+    if ($LASTEXITCODE -ne 0 -or -not $url) { throw "Could not build TEST_DATABASE_URL from backend\SmartRation.Python\.env" }
     $env:TEST_DATABASE_URL = $url
     Run "MySQL suite (smartration_test)" $py { & .venv\Scripts\python -m pytest tests/mysql_suite -p no:warnings }
     Remove-Item Env:TEST_DATABASE_URL
@@ -40,7 +41,8 @@ if ($MySql) {
 Run "AI service" (Join-Path $root "backend\SmartRation.AI") { & .venv\Scripts\python -m pytest -p no:warnings }
 
 if (-not $Quick) {
-    Run "C# API" $root { dotnet test backend\SmartRation.Api.Tests\SmartRation.Api.Tests.csproj --nologo -v q }
+    # Release configuration: a running API (Debug build) locks its own .exe, which would break the build.
+    Run "C# API" $root { dotnet test backend\SmartRation.Api.Tests\SmartRation.Api.Tests.csproj -c Release --nologo -v q }
     Run "Frontend (Vitest)" (Join-Path $root "frontend") { npm test --silent }
 }
 

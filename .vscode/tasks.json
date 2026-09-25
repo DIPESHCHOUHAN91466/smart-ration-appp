@@ -82,7 +82,7 @@
     {
       "label": "Backend: Test",
       "type": "shell",
-      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj",
+      "command": "dotnet test backend/SmartRation.Api.Tests/SmartRation.Api.Tests.csproj -c Release",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": "$msCompile",
       "group": "test"
