@@ -2,6 +2,24 @@
 
 All notable changes. Dates are commit dates; hashes refer to this repository.
 
+## 2026-09-25 (night) — Solution file, setup, lint, schema snapshot, bookings, port clashes
+
+### Added
+- `SmartRation.sln` at the root (`dotnet restore/build/test` from the repository root).
+- `scripts/development/setup.ps1` and `setup.sh`: tools check, virtualenvs, pip/npm, restore; `.env` templates only when missing.
+- Frontend ESLint (`npm run lint`, flat config).
+- `database/schema/smartration_schema.sql` generated from Alembic (`export_schema_sql.py`) with a drift test.
+- Synthetic generator `--bookings`: one upcoming token per citizen, capacity respected; tests up to 10 000 records.
+- CI: MySQL suite on `smartration_test`, AI service job, ESLint, solution build.
+
+### Changed
+- `health-check.ps1`: tools, project setup, services, port clashes and database with `[OK]/[WARNING]/[ERROR]`.
+- `start-all.ps1`: waits for each service; prints `SERVICE FAILED / REASON / COMMAND`; detects ports held by other programs.
+- `run-tests.ps1`: + ESLint, frontend build, database health; C# via the solution.
+- Python API and AI service URLs use `127.0.0.1` (another program on `[::]:8000` was answering `localhost`).
+- VS Code: `Smart Ration: …` configurations and tasks, Setup and Lint tasks, pytest discovery, format only modified lines.
+- Removed empty placeholder folders (`tests/backend|e2e|frontend`, `scripts/setup|deployment`, `database/migrations|seed|diagrams`).
+
 ## 2026-09-25 (evening) — Synthetic data generator, scale tests, branding
 
 ### Added

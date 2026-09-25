@@ -19,13 +19,13 @@ scenarios described; it is not a guarantee of production behaviour, which needs 
 
 | Suite | Tests | Passed | Failed | Skipped / not run |
 |---|---|---|---|---|
-| Python backend (SQLite) | 189 | 189 | 0 | 144 skipped = the MySQL suite, which only runs with `TEST_DATABASE_URL` (counted on the next line) |
+| Python backend (SQLite) | 195 | 195 | 0 | 144 skipped = the MySQL suite, which only runs with `TEST_DATABASE_URL` (counted on the next line) |
 | MySQL suite on `smartration_test` | 145 | 145 | 0 | 0 |
 | Chatbot evaluation (48 answers + 19 safety cases, en/hi/mr) | 67 | 67 | 0 | 0 |
 | AI service | 46 | 46 | 0 | 0 |
 | C# API | 94 | 94 | 0 | 0 |
 | Frontend | 39 | 39 | 0 | 0 |
-| **Total** | **580** | **580** | **0** | — |
+| **Total** | **586** | **586** | **0** | — |
 | Root `tests/mysql` (24) | — | — | — | **NOT RUN** — root `.env` `DB_PASSWORD` is wrong (owner action) |
 | End-to-end browser automation | — | — | — | **NOT TESTED** — none exists (deferred by decision) |
 | MySQLi | — | — | — | **NOT APPLICABLE** |
@@ -56,7 +56,7 @@ The cause of the slow run was not identified (no code changed between the runs);
 | Error handling | PASS | `test_06`: database down, bad credentials, timeouts, duplicates, FK violation, health without details |
 | API | PASS | Python API tests; proxy parity 36/36 and auth interop 23/23 (earlier today, needs both servers) |
 | Health | PASS | `/health`, `/ready`, new `/health/db` (status, latency, migrations; no connection details) — tests + live call |
-| Deployment validation | NOT TESTED | Docker engine unavailable locally; CI runs only after the branch is pushed |
+| Deployment validation | PARTIAL | Docker image built and run locally (healthy, non-root, no secrets inside); compose config valid; CI runs only after the branch is pushed |
 
 ## Performance (this machine, second run)
 
@@ -89,11 +89,11 @@ Timings vary run to run and depend on the machine; they describe this run only.
 ## Remaining risks (documented, not fixed here)
 
 1. Root `.env` `DB_PASSWORD` is wrong → root `tests/mysql` can't run (owner action).
-2. Docker image and CI not executed (no local Docker engine; branch not pushed).
+2. CI not executed (branch not pushed). The Docker image was built and run locally on 2026-09-25; `docker compose up` was not run.
 3. Refresh token stored in `localStorage`; JWT key present in old git history (rotate before public use).
 4. No end-to-end browser tests; 41 older dashboard components still English-only.
 5. Real Aadhaar/ration-card/SMS integrations: BLOCKED — REQUIRES EXTERNAL INTEGRATION.
-6. One unexplained 89-minute MySQL-suite run (rerun: 90 s).
+6. One unexplained 89-minute MySQL-suite run; the two later full runs took 90 s and 100 s.
 
 ## Final status
 

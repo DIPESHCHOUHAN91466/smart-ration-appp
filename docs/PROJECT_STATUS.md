@@ -35,7 +35,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Item | Status | Evidence |
 |---|---|---|
-| Python API (gateway, auth, chatbot, data providers, migrations) | PASS | pytest 189/189; ruff + mypy clean |
+| Python API (gateway, auth, chatbot, data providers, migrations) | PASS | pytest 195/195; ruff + mypy clean |
 | AI service | PASS | pytest 46/46; `/health` 200 |
 | Package structure, type hints, config via environment | PASS | see PYTHON_ARCHITECTURE.md |
 
@@ -134,7 +134,8 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Suite | Result |
 |---|---|
-| Python 189 · MySQL 145 · evaluation 67 · AI 46 · C# 94 · frontend 39 | PASS (`run-tests.ps1 -MySql`, exit 0) |
+| Python 195 · MySQL 145 · evaluation 67 · AI 46 · C# 94 (`SmartRation.sln`) · frontend 39 + ESLint (0 errors) + build · database health | PASS (`run-tests.ps1 -MySql`, exit 0, 9/9 steps) |
+| Fresh clone (no venvs, packages or `.env`): `setup.ps1`, then Python/AI/C#/frontend lint, tests, build | PASS (192 Python — the 3 live-MySQL schema tests skip without a database — 46 AI, 94 C#, 39 frontend, build) |
 | Contract (proxy 36/36, auth interop 23/23) | PASS (earlier today; needs both servers) |
 | E2E, load, accessibility tooling | NOT TESTED |
 
@@ -151,24 +152,27 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 | Item | Status |
 |---|---|
 | README (what/how/stack/architecture/flows/run/test/deploy), docs index, 6 architecture docs, LOCAL_SETUP, folder READMEs, `.env.example` | PASS — 57+ files, 0 broken links |
-| VS Code workspace, tasks, launch configs | PARTIAL — JSON validated, scripts run; not opened in VS Code by me |
+| VS Code workspace, tasks, launch configs ("Smart Ration: …") | PARTIAL — all 7 files parse, every reference/path checked; the .NET and Python launch commands and the Setup/Full Stack/Health Check/Tests/Database Health/Lint tasks were run from a terminal; the VS Code UI itself was not opened by me |
 
 ## Deployment
 
 | Item | Status |
 |---|---|
-| Dockerfile / compose (repo-root context, allow-list) | NOT TESTED — Docker engine unavailable here; image layout simulated; CI builds it |
+| Dockerfile (repo-root context, allow-list) | PASS — built locally (316 MB), container healthy, non-root (uid 10001), no `.env` inside, knowledge + reference data present, `/health` `/docs` 200 |
+| docker-compose.yml | PARTIAL — `docker compose config` valid (refuses to run without secrets, as intended); not started (it would clash with the local MySQL :3306 and another project's container on :8000) |
 | GitHub Actions CI | NOT TESTED — branch not pushed |
 | nginx example | NOT TESTED |
-| Scripts: start-all, stop-all, health-check, seed, run-tests | PASS (stop-all: parse-checked only, not run — it would stop your servers) |
+| Scripts: setup (.ps1/.sh), start-all, stop-all, health-check, seed, run-tests | PASS — all run from a subfolder too; start-all failure report forced and seen; stop-all parse-checked only (it would stop your servers); setup.sh dry-run only (Git Bash) |
 
 ## Remaining issues
 
 1. Root `.env` `DB_PASSWORD` is wrong (your action).
-2. Push the branch so CI runs (includes the Docker build).
+2. Push the branch so CI runs (now also the MySQL suite, the AI service tests, ESLint and the solution build).
 3. Refresh token → HttpOnly cookie; rotate the JWT key before public use.
 4. Complaints module (not implemented anywhere).
 5. Translate the 41 older dashboard components; E2E tests (Playwright).
 6. Rehearse a database restore; containerise the C# API if Docker becomes the deployment path.
 7. Real-data integrations — BLOCKED, REQUIRES EXTERNAL INTEGRATION.
-8. `tests/DROP DATABASE IF EXISTS smart_ratio.txt` (your notes) is untracked.
+8. `tests/DROP DATABASE IF EXISTS smart_ratio.txt` (your notes) and an empty `backend/SmartRation.Api/package-lock.json` (from running npm in that folder) are untracked.
+9. Another project's Docker containers (`smart-ration-hsd2c-dashboard`: API on :8000, Postgres on :5432) share port 8000; this project now uses `127.0.0.1` URLs and `health-check.ps1` warns, but stop them to avoid confusion.
+10. Reusing an already-verified OTP has no dedicated test (C#).
