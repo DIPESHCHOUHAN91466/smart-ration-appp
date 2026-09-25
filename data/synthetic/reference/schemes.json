@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "isSynthetic": true,
+    "dataSource": "SYNTHETIC_DEMO",
+    "note": "Fabricated demonstration data. Not real government records. Loaded only when DATA_MODE=synthetic."
+  },
+  "records": [
+    {
+      "schemeCode": "DEMO-NFSA",
+      "name": "Demo National Food Security Scheme",
+      "description": "Synthetic demo scheme modeled loosely on NFSA-style entitlements. Not a real government scheme.",
+      "quotaPerEligibleMemberPerMonth": {
+        "Rice": 5,
+        "Wheat": 3,
+        "Sugar": 1,
+        "Pulses": 1,
+        "EdibleOil": 0.5,
+        "Salt": 0.25
+      }
+    },
+    {
+      "schemeCode": "DEMO-AAY",
+      "name": "Demo Priority Household Scheme",
+      "description": "Synthetic demo scheme with a higher flat entitlement, modeled loosely on Antyodaya-style schemes. Not a real government scheme.",
+      "quotaPerEligibleMemberPerMonth": {
+        "Rice": 7,
+        "Wheat": 4,
+        "Sugar": 1.5,
+        "Pulses": 1.5,
+        "EdibleOil": 1,
+        "Salt": 0.5
+      }
+    }
+  ]
+}

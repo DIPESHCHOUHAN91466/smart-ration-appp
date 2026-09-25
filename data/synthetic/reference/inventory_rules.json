@@ -1,0 +1,25 @@
+{
+  "_meta": {
+    "isSynthetic": true,
+    "dataSource": "SYNTHETIC_DEMO",
+    "note": "Fabricated demonstration data. Not real government records. Loaded only when DATA_MODE=synthetic."
+  },
+  "records": {
+    "minimumStockLevel": {
+      "Rice": 300,
+      "Wheat": 300,
+      "Sugar": 200,
+      "Pulses": 150,
+      "EdibleOil": 100,
+      "Salt": 80
+    },
+    "tiers": "Shop i (0-based, by id): i % 4 == 0 → 30% of minimum (critical), == 1 → 80% (low), else (3.0 + 0.15·i) × minimum (normal)",
+    "slotCapacity": 2,
+    "slotMinutes": 5,
+    "slotHours": [
+      "09:00",
+      "17:00"
+    ],
+    "slotDaysAhead": 2
+  }
+}

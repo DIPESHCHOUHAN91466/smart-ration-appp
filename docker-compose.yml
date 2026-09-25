@@ -31,7 +31,9 @@ services:
       start_period: 30s
 
   api:
-    build: ./backend/SmartRation.Python
+    build:
+      context: .                                   # repo root: the image needs ai/ and data/ too
+      dockerfile: backend/SmartRation.Python/Dockerfile
     restart: unless-stopped
     depends_on:
       mysql:

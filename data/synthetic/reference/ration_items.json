@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "isSynthetic": true,
+    "dataSource": "SYNTHETIC_DEMO",
+    "note": "Fabricated demonstration data. Not real government records. Loaded only when DATA_MODE=synthetic."
+  },
+  "records": [
+    {
+      "rationType": "Rice",
+      "name": "Rice",
+      "vernacularName": "Tandul",
+      "unit": "kg",
+      "standardQuotaPerBooking": 5
+    },
+    {
+      "rationType": "Wheat",
+      "name": "Wheat",
+      "vernacularName": "Gahu",
+      "unit": "kg",
+      "standardQuotaPerBooking": 5
+    },
+    {
+      "rationType": "Sugar",
+      "name": "Sugar",
+      "vernacularName": "Sakhar",
+      "unit": "kg",
+      "standardQuotaPerBooking": 1
+    },
+    {
+      "rationType": "Pulses",
+      "name": "Pulses",
+      "vernacularName": "Daal",
+      "unit": "kg",
+      "standardQuotaPerBooking": 2
+    },
+    {
+      "rationType": "EdibleOil",
+      "name": "Edible Oil",
+      "vernacularName": "Tel",
+      "unit": "L",
+      "standardQuotaPerBooking": 1
+    },
+    {
+      "rationType": "Salt",
+      "name": "Salt",
+      "vernacularName": "Mith",
+      "unit": "kg",
+      "standardQuotaPerBooking": 1
+    }
+  ]
+}

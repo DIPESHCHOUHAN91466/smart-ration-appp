@@ -1,0 +1,119 @@
+{
+  "_meta": {
+    "isSynthetic": true,
+    "dataSource": "SYNTHETIC_DEMO",
+    "note": "Fabricated demonstration data. Not real government records. Loaded only when DATA_MODE=synthetic."
+  },
+  "records": [
+    {
+      "shopName": "Satnavari Ration Shop",
+      "shopCode": "SR-SATNAVARI-001",
+      "address": "Main Road, Satnavari",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Nagpur Rural",
+      "village": "Satnavari",
+      "latitude": 21.1904,
+      "longitude": 79.085
+    },
+    {
+      "shopName": "Koradi Ration Shop",
+      "shopCode": "SR-KORADI-001",
+      "address": "Station Road, Koradi",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Kamptee",
+      "village": "Koradi",
+      "latitude": 21.2472,
+      "longitude": 79.1197
+    },
+    {
+      "shopName": "Hingna Ration Shop",
+      "shopCode": "SHOP-DEMO-001",
+      "address": "Main Road, Hingna",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Hingna",
+      "village": "Hingna",
+      "latitude": 21.0947,
+      "longitude": 79.0177
+    },
+    {
+      "shopName": "Kamptee Ration Shop",
+      "shopCode": "SHOP-DEMO-002",
+      "address": "Main Road, Kamptee",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Kamptee",
+      "village": "Kamptee",
+      "latitude": 21.2185,
+      "longitude": 79.1927
+    },
+    {
+      "shopName": "Wadi Ration Shop",
+      "shopCode": "SHOP-DEMO-003",
+      "address": "Main Road, Wadi",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Nagpur Rural",
+      "village": "Wadi",
+      "latitude": 21.2016,
+      "longitude": 78.9814
+    },
+    {
+      "shopName": "Mouda Ration Shop",
+      "shopCode": "SHOP-DEMO-004",
+      "address": "Main Road, Mouda",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Mouda",
+      "village": "Mouda",
+      "latitude": 21.3799,
+      "longitude": 79.3524
+    },
+    {
+      "shopName": "Ramtek Ration Shop",
+      "shopCode": "SHOP-DEMO-005",
+      "address": "Main Road, Ramtek",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Ramtek",
+      "village": "Ramtek",
+      "latitude": 21.3959,
+      "longitude": 79.3306
+    },
+    {
+      "shopName": "Katol Ration Shop",
+      "shopCode": "SHOP-DEMO-006",
+      "address": "Main Road, Katol",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Katol",
+      "village": "Katol",
+      "latitude": 21.2667,
+      "longitude": 78.5833
+    },
+    {
+      "shopName": "Umred Ration Shop",
+      "shopCode": "SHOP-DEMO-007",
+      "address": "Main Road, Umred",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Umred",
+      "village": "Umred",
+      "latitude": 20.85,
+      "longitude": 79.3333
+    },
+    {
+      "shopName": "Saoner Ration Shop",
+      "shopCode": "SHOP-DEMO-008",
+      "address": "Main Road, Saoner",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "taluka": "Saoner",
+      "village": "Saoner",
+      "latitude": 21.3833,
+      "longitude": 78.9167
+    }
+  ]
+}

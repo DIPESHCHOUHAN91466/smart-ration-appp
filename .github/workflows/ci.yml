@@ -94,10 +94,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build
-        run: docker build -t smartration-api:ci backend/SmartRation.Python
+        run: docker build -f backend/SmartRation.Python/Dockerfile -t smartration-api:ci .
       - name: Image contains no secrets or env files
         run: |
-          docker run --rm --entrypoint sh smartration-api:ci -c 'test ! -e /app/.env && test ! -d /app/tests && test ! -d /app/.venv'
+          docker run --rm --entrypoint sh smartration-api:ci -c 'test ! -e /app/.env && test ! -d /app/tests && test ! -d /app/.venv && test -f /app/ai/chatbot/knowledge/faq.json && test -f /app/data/synthetic/reference/shops.json'
       - name: Container starts and is live
         run: |
           docker run -d --name api -p 8000:8000 \

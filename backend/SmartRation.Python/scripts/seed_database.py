@@ -1,8 +1,8 @@
 """Seed SYNTHETIC reference and demo data. Idempotent and non-destructive.
 
-Port of the reference part of the C# DbInitializer, with identical values:
-ration items, 10 demo shops, the two demo schemes and their entitlements,
-inventory tiers and 5-minute time slots. Each group is inserted only when its
+Reference data (ration items, 10 demo shops, the two demo schemes and their entitlements,
+inventory tiers, 5-minute slot rules) is read from data/synthetic/reference/*.json — the same
+values as the C# DbInitializer. Each group is inserted only when its
 table is empty, so running this against an existing database changes nothing.
 
 Users (only when the Users table is empty):
@@ -17,9 +17,11 @@ Usage (from backend/SmartRation.Python):
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from datetime import datetime, time, timedelta
+from pathlib import Path
 
 from _common import database_url, engine, safe_url
 from sqlalchemy import func, select
@@ -29,45 +31,25 @@ from app.core.security import hash_password, utc_now
 from app.db.enums import RationType, UserRole
 from app.db.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
 
-SLOT_CAPACITY = 2
+# The synthetic reference data lives in <repo>/data/synthetic/reference/*.json (clearly labelled
+# isSynthetic / SYNTHETIC_DEMO). SYNTHETIC_DATA_DIR overrides the location (e.g. in Docker).
+DATA_DIR = Path(os.environ.get("SYNTHETIC_DATA_DIR") or Path(__file__).resolve().parents[3] / "data" / "synthetic" / "reference")
 
-ITEMS = [
-    (RationType.Rice, "Rice", "Tandul", "kg", 5),
-    (RationType.Wheat, "Wheat", "Gahu", "kg", 5),
-    (RationType.Sugar, "Sugar", "Sakhar", "kg", 1),
-    (RationType.Pulses, "Pulses", "Daal", "kg", 2),
-    (RationType.EdibleOil, "Edible Oil", "Tel", "L", 1),
-    (RationType.Salt, "Salt", "Mith", "kg", 1),
-]
 
-# (name, code, address, taluka, village, lat, lng)
-SHOPS = [
-    ("Satnavari Ration Shop", "SR-SATNAVARI-001", "Main Road, Satnavari", "Nagpur Rural", "Satnavari", 21.1904, 79.0850),
-    ("Koradi Ration Shop", "SR-KORADI-001", "Station Road, Koradi", "Kamptee", "Koradi", 21.2472, 79.1197),
-] + [
-    (name, f"SHOP-DEMO-{i:03d}", f"Main Road, {village}", taluka, village, lat, lng)
-    for i, (name, taluka, village, lat, lng) in enumerate([
-        ("Hingna Ration Shop", "Hingna", "Hingna", 21.0947, 79.0177),
-        ("Kamptee Ration Shop", "Kamptee", "Kamptee", 21.2185, 79.1927),
-        ("Wadi Ration Shop", "Nagpur Rural", "Wadi", 21.2016, 78.9814),
-        ("Mouda Ration Shop", "Mouda", "Mouda", 21.3799, 79.3524),
-        ("Ramtek Ration Shop", "Ramtek", "Ramtek", 21.3959, 79.3306),
-        ("Katol Ration Shop", "Katol", "Katol", 21.2667, 78.5833),
-        ("Umred Ration Shop", "Umred", "Umred", 20.8500, 79.3333),
-        ("Saoner Ration Shop", "Saoner", "Saoner", 21.3833, 78.9167),
-    ], start=1)
-]
+def _records(name: str):
+    document = json.loads((DATA_DIR / f"{name}.json").read_text(encoding="utf-8"))
+    if not document.get("_meta", {}).get("isSynthetic"):
+        raise SystemExit(f"{name}.json is not marked as synthetic data; refusing to seed it.")
+    return document["records"]
 
-SCHEMES = [
-    ("DEMO-NFSA", "Demo National Food Security Scheme",
-     "Synthetic demo scheme modeled loosely on NFSA-style entitlements. Not a real government scheme.",
-     [5, 3, 1, 1, 0.5, 0.25]),
-    ("DEMO-AAY", "Demo Priority Household Scheme",
-     "Synthetic demo scheme with a higher flat entitlement, modeled loosely on Antyodaya-style schemes. Not a real government scheme.",
-     [7, 4, 1.5, 1.5, 1, 0.5]),
-]
 
-MINIMUM_STOCK = [300, 300, 200, 150, 100, 80]  # per RationType 1..6
+_rules = _records("inventory_rules")
+SLOT_CAPACITY = _rules["slotCapacity"]
+ITEMS = [(RationType[r["rationType"]], r["name"], r["vernacularName"], r["unit"], r["standardQuotaPerBooking"]) for r in _records("ration_items")]
+SHOPS = [(s["shopName"], s["shopCode"], s["address"], s["taluka"], s["village"], s["latitude"], s["longitude"]) for s in _records("shops")]
+SCHEMES = [(s["schemeCode"], s["name"], s["description"], [s["quotaPerEligibleMemberPerMonth"][t.name] for t in RationType])
+           for s in _records("schemes")]
+MINIMUM_STOCK = [_rules["minimumStockLevel"][t.name] for t in RationType]  # per RationType 1..6
 
 
 def _round_half_even(value: float) -> int:
