@@ -52,7 +52,7 @@ export default function Register() {
         <div className="login-brand">
           <BrandMark variant="light" />
           <div>
-            <b>{t("app_name")}</b>
+            <b>{t("brand_name")}</b>
             <small>{t("app_subtitle")}</small>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function Register() {
           </label>
           <label>
             {t("mobile_number")}
-            <input required value={form.mobileNumber} onChange={update("mobileNumber")} placeholder="9876543210" />
+            <input required value={form.mobileNumber} onChange={update("mobileNumber")} placeholder="9000000001" />
           </label>
           <label>
             {t("password")}

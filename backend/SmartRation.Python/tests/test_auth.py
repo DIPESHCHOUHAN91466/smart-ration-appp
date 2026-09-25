@@ -38,9 +38,9 @@ def api(make_client):
     with get_session_factory()() as db:
         db.add(RationShop(Id=1, ShopName="Satnavari", ShopCode="S-1", Address="a", District="d", State="s", Latitude=0, Longitude=0, IsActive=True, CreatedAt=utc_now()))
         db.add(RationScheme(Id=1, SchemeCode="DEMO-NFSA", Name="NFSA", Description="", IsActive=True))
-        db.add(User(Id=1, FullName="Rahul Patil", Email="rural@example.com", MobileNumber="9876543210", PasswordHash=BCRYPT_DEMO, Role=1, IsActive=True, CreatedAt=utc_now()))
-        db.add(User(Id=2, FullName="Shop Owner", Email="shop@example.com", MobileNumber="9876543211", PasswordHash=BCRYPT_DEMO, Role=2, IsActive=True, CreatedAt=utc_now(), RationShopId=1))
-        db.add(User(Id=3, FullName="Gone", Email="inactive@example.com", MobileNumber="9876543212", PasswordHash=BCRYPT_DEMO, Role=1, IsActive=False, CreatedAt=utc_now()))
+        db.add(User(Id=1, FullName="Rahul Patil", Email="rural@example.com", MobileNumber="9000000001", PasswordHash=BCRYPT_DEMO, Role=1, IsActive=True, CreatedAt=utc_now()))
+        db.add(User(Id=2, FullName="Shop Owner", Email="shop@example.com", MobileNumber="9000000051", PasswordHash=BCRYPT_DEMO, Role=2, IsActive=True, CreatedAt=utc_now(), RationShopId=1))
+        db.add(User(Id=3, FullName="Gone", Email="inactive@example.com", MobileNumber="9000000052", PasswordHash=BCRYPT_DEMO, Role=1, IsActive=False, CreatedAt=utc_now()))
         db.commit()
     return client
 
@@ -64,7 +64,7 @@ def test_login_returns_csharp_shaped_response_and_claims(api):
     assert list(body) == ["success", "message", "data", "errors"] and body["message"] == "Login successful"
     d = body["data"]
     assert list(d) == ["accessToken", "refreshToken", "accessTokenExpiresAt", "user"]
-    assert d["user"] == {"id": 2, "fullName": "Shop Owner", "email": "shop@example.com", "mobileNumber": "9876543211", "role": "ShopOwner", "rationShopId": 1}
+    assert d["user"] == {"id": 2, "fullName": "Shop Owner", "email": "shop@example.com", "mobileNumber": "9000000051", "role": "ShopOwner", "rationShopId": 1}
     assert len(d["refreshToken"]) == 88 and d["accessTokenExpiresAt"].endswith("Z") and len(d["accessTokenExpiresAt"]) == 28
     c = claims(d["accessToken"])
     assert set(c) == {"sub", "email", NAME_CLAIM, ROLE_CLAIM, "jti", "rationShopId", "exp", "iss", "aud"}
@@ -152,7 +152,7 @@ def test_register_ignores_client_supplied_role(api):
 def test_register_duplicates_are_409(api):
     base = {"fullName": "Dup", "mobileNumber": "9111111111", "password": "strongpass1"}
     assert api.post("/api/auth/register", json={**base, "email": "rural@example.com"}).json()["message"] == "An account with this email already exists."
-    r = api.post("/api/auth/register", json={**base, "email": "new@example.com", "mobileNumber": "9876543210"})
+    r = api.post("/api/auth/register", json={**base, "email": "new@example.com", "mobileNumber": "9000000001"})
     assert r.status_code == 409 and r.json()["message"] == "An account with this mobile number already exists."
 
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ChatbotWindow from "./ChatbotWindow";
-import chatbotIcon from "../../assets/chatbot/chatbot-icon.svg";
+import ChatbotAvatar from "./ChatbotAvatar";
 import { useChatbot } from "../../hooks/useChatbot";
 import { useChatbotStore } from "../../store/chatbotStore";
 import { useTranslation } from "../../i18n/useTranslation";
@@ -93,7 +93,7 @@ export default function ChatbotWidget() {
             aria-label={unread ? `${t("chat_open")} (${unread} ${t("chat_unread")})` : t("chat_open")}
             aria-describedby="chatbot-tooltip"
           >
-            <img src={chatbotIcon} alt="" aria-hidden="true" width={30} height={30} />
+            <ChatbotAvatar size={46} />
             {unread > 0 && <span className="chatbot-badge" aria-hidden="true">{unread > 9 ? "9+" : unread}</span>}
           </button>
         </div>

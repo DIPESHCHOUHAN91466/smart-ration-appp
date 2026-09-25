@@ -13,6 +13,7 @@
 .pub-brand { display: flex; align-items: center; gap: 10px; color: var(--text); min-width: 0; }
 .pub-brand:hover { text-decoration: none; }
 .pub-brand .brand-mark.hsd2c { height: 42px; box-shadow: 0 4px 14px #0757b822; border: 1px solid #e6eef7; }
+.pub-brand .brand-mark.emblem { width: 42px; height: 42px; }
 .pub-brand-text { display: flex; flex-direction: column; line-height: 1.15; }
 .pub-brand-text strong { font-size: 17px; color: #063B7A; }
 .pub-brand-text small { font-size: 11.5px; color: var(--muted); }

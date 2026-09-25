@@ -114,11 +114,11 @@ def seed(db: Session) -> list[str]:
         if demo_password:
             h = hash_password(demo_password)
             db.add_all([
-                User(FullName="Rahul Patil", Email="rural@example.com", MobileNumber="9876543210", PasswordHash=h,
+                User(FullName="Rahul Patil", Email="rural@example.com", MobileNumber="9000000001", PasswordHash=h,
                      Role=int(UserRole.RuralUser), IsActive=True, CreatedAt=now),
-                User(FullName="Satnavari Shop Owner", Email="shop@example.com", MobileNumber="9876543211", PasswordHash=h,
+                User(FullName="Satnavari Shop Owner", Email="shop@example.com", MobileNumber="9000000051", PasswordHash=h,
                      Role=int(UserRole.ShopOwner), RationShopId=satnavari, IsActive=True, CreatedAt=now),
-                User(FullName="District Government Officer", Email="officer@example.com", MobileNumber="9876543212",
+                User(FullName="District Government Officer", Email="officer@example.com", MobileNumber="9000000052",
                      PasswordHash=h, Role=int(UserRole.GovernmentOfficial), IsActive=True, CreatedAt=now),
             ])
             done.append("3 demo users")

@@ -4,12 +4,12 @@
 
 | Suite | Where | Runs against | Count | Command |
 |---|---|---|---|---|
-| Python backend unit/API | `backend/SmartRation.Python/tests/` | SQLite temp files | 136 | `.venv\Scripts\python -m pytest` (in that folder) |
-| MySQL suite (100 records) | `backend/SmartRation.Python/tests/mysql_suite/` | `smartration_test` | 122 | set `TEST_DATABASE_URL`, then `… -m pytest tests/mysql_suite` |
+| Python backend unit/API | `backend/SmartRation.Python/tests/` | SQLite temp files | 189 | `.venv\Scripts\python -m pytest` (in that folder) |
+| MySQL suite (100 adversarial + 1000 generated records; concurrency 10/25/50/100) | `backend/SmartRation.Python/tests/mysql_suite/` | `smartration_test` | 145 | set `TEST_DATABASE_URL`, then `… -m pytest tests/mysql_suite` |
 | Root MySQL tests | `tests/mysql/` | `smartration_test` (root `.env`) | 24 | from the repo root: `backend\SmartRation.Python\.venv\Scripts\python -m pytest tests/mysql` |
 | AI service | `backend/SmartRation.AI/tests/` | SQLite | 46 | `.venv\Scripts\python -m pytest` (in that folder) |
-| C# API | `backend/SmartRation.Api.Tests/` | in-memory | 86 | `dotnet test backend/SmartRation.Api.Tests` |
-| Frontend | `frontend/tests/unit/` | jsdom | 33 | `npm test` (in `frontend`) |
+| C# API | `backend/SmartRation.Api.Tests/` | in-memory | 94 | `dotnet test backend/SmartRation.Api.Tests` |
+| Frontend | `frontend/tests/unit/` | jsdom | 39 | `npm test` (in `frontend`) |
 | Contract (live) | `backend/SmartRation.Python/tests/contract/` | both running APIs | 36 + 23 | `compare_proxy.py`, `auth_interop.py` |
 | Database verify | `backend/SmartRation.Python/scripts/verify_database.py` | the configured DB | — | read-only check |
 
@@ -25,19 +25,20 @@ Everything Python can also be collected from the repository root with the Python
 | SQL injection | MySQL suite `test_03_security.py` (16 payloads × API/ORM/raw driver), `tests/mysql/test_crud.py` |
 | Rate limiting | `test_auth.py`, `test_public_help_api.py` |
 | Schema, migrations, drift | `test_schema_compat.py`, `test_db_scripts.py`, `verify_database.py`, MySQL suite `test_01` |
-| CRUD, transactions, integrity, concurrency | MySQL suite `test_02`, `test_05`, `test_07`; `tests/mysql/*` |
+| CRUD, transactions, integrity, concurrency | MySQL suite `test_02`, `test_05`, `test_07`, `test_08_scale` (1000 records; 10/25/50/100 concurrent reads, creates, updates, bookings, stock issues); `tests/mysql/*` |
+| Synthetic data generator (determinism, reserved ranges, validation, insert, CLI guards) | `test_synthetic_data.py` |
 | Error handling, logging without secrets | MySQL suite `test_06`, `test_health_and_errors.py` |
 | Proxy parity with C# | `test_proxy.py`, `compare_proxy.py` |
 | Chatbot + Public Help | `test_chatbot_engine.py`, `test_public_help_api.py`, frontend `chatbot.test.jsx`, `publicPages.test.jsx` |
 | Translations complete (en/hi/mr) | frontend `i18n.test.js`, backend knowledge-integrity tests |
-| QR, OTP, collection, inventory, entitlement | C# tests (86) — still served by C# |
+| QR, OTP, collection, inventory, entitlement | C# tests (94) — still served by C# |
 
 ## Gaps (honest list)
 
 - **No end-to-end browser automation** (Playwright/Cypress). Browser checks were done manually for
   this release (see PROJECT_STATUS.md).
 - Frontend tests cover the new public pages and chatbot only; existing dashboards have none.
-- No load tests beyond the MySQL suite's 100-record and 40-thread checks.
+- No HTTP load tests; database-level scale is covered up to 1000 records and 100 concurrent operations.
 - Restore of a MySQL backup has not been rehearsed (see BACKUP_RESTORE.md).
 
 ## CI

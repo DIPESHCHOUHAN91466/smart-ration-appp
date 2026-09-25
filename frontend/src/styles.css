@@ -82,3 +82,8 @@
 @media(max-width:430px){.qr-result-grid{grid-template-columns:1fr 1fr}.qr-camera-message-actions .primary-btn,.qr-camera-message-actions .secondary-btn{width:100%}}
 .ai-subhead{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text);margin:20px 0 10px}.ai-subhead svg{color:var(--blue)}
 .ai-subhead-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.ai-last-run{display:inline-flex;align-items:center;gap:6px;font-size:11px}.ai-alert-list{display:grid;gap:10px}.ai-alert{border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:#fff}.ai-alert-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ai-alert-head b{font-size:13px}.ai-alert-meta{margin-left:auto;font-size:11px}.ai-alert p{margin:8px 0 0;font-size:12px}.ai-alert-action{color:var(--blue2)}.ai-alert-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}.ai-alert-buttons{display:flex;gap:6px}.ai-alert-buttons .secondary-btn{padding:6px 10px;font-size:11px}.ai-disclaimer{font-size:11px;margin-top:10px}
+
+/* Logo 1 — Ration Mitra emblem (components/BrandMark.jsx): cropped from the supplied logo, kept on its own black background, never stretched */
+.brand-mark.emblem{width:44px;height:44px;padding:0;border-radius:12px;background:#000;overflow:hidden;flex:none;box-shadow:0 4px 14px #001f4e33}
+.brand-mark.emblem img{width:100%;height:100%;object-fit:contain;display:block}
+.sidebar-bottom .powered-by{font-size:10px;letter-spacing:.3px;color:#7fa9d7;padding:8px 12px 0}

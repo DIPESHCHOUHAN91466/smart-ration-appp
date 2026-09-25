@@ -11,7 +11,7 @@ const SUGGESTIONS = [
   { topic: "documents", label: "Required Documents", ask: "What documents are required?" },
   { topic: "token_slots", label: "Token & Slots", ask: "How do I book a time slot and get a token?" },
 ];
-const WELCOME = { kind: "welcome", text: "Namaste! 👋\nI'm the Smart Ration AI Assistant.\n• Ration cards\n• Eligibility", suggestions: SUGGESTIONS, links: [], related: [] };
+const WELCOME = { kind: "welcome", text: "Namaste! 👋\nI'm the Ration Mitra AI Assistant.\n• Ration cards\n• Eligibility", suggestions: SUGGESTIONS, links: [], related: [] };
 const answer = (text, extra = {}) => ({ kind: "answer", title: "Documents usually required", text, links: [], related: [], suggestions: SUGGESTIONS, ...extra });
 
 function renderWidget(path = "/") {
@@ -23,8 +23,8 @@ function renderWidget(path = "/") {
 }
 
 async function openWidget(user) {
-  await user.click(screen.getByRole("button", { name: /open smart ration ai assistant/i }));
-  return screen.findByRole("dialog", { name: "Smart Ration AI Assistant" });
+  await user.click(screen.getByRole("button", { name: /open ration mitra ai assistant/i }));
+  return screen.findByRole("dialog", { name: "Ration Mitra AI Assistant" });
 }
 
 beforeEach(() => {
@@ -35,7 +35,7 @@ beforeEach(() => {
 describe("Public Help chatbot", () => {
   it("shows a floating launcher with an unread indicator and tooltip", () => {
     renderWidget();
-    const launcher = screen.getByRole("button", { name: /open smart ration ai assistant \(1 unread message\)/i });
+    const launcher = screen.getByRole("button", { name: /open ration mitra ai assistant \(1 unread message\)/i });
     expect(launcher).toHaveClass("has-unread");
     expect(screen.getByRole("tooltip")).toHaveTextContent("Need help? Ask me");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -45,7 +45,7 @@ describe("Public Help chatbot", () => {
     const user = userEvent.setup();
     renderWidget();
     const dialog = await openWidget(user);
-    expect(await within(dialog).findByText("I'm the Smart Ration AI Assistant.")).toBeInTheDocument();
+    expect(await within(dialog).findByText("I'm the Ration Mitra AI Assistant.")).toBeInTheDocument();
     expect(within(dialog).getByText("Ration cards").tagName).toBe("LI");            // bullet lines become a list
     expect(within(dialog).getByRole("group", { name: "Quick questions" })).toBeInTheDocument();
     expect(chatbotService.welcome).toHaveBeenCalledWith("en");
@@ -66,7 +66,7 @@ describe("Public Help chatbot", () => {
     useLanguageStore.setState({ language: "hi" });
     const user = userEvent.setup();
     renderWidget();
-    await user.click(screen.getByRole("button", { name: /स्मार्ट राशन AI सहायक खोलें/ }));
+    await user.click(screen.getByRole("button", { name: /राशन मित्र AI सहायक खोलें/ }));
     const input = await screen.findByRole("textbox", { name: "स्मार्ट राशन के बारे में कुछ भी पूछें..." });
     await user.type(input, "राशन कार्ड कैसे बनवाएं{Enter}");
     expect(chatbotService.send).toHaveBeenCalledWith({ message: "राशन कार्ड कैसे बनवाएं", language: "hi" });
@@ -154,7 +154,7 @@ describe("Public Help chatbot", () => {
     await within(dialog).findByText("Proof of address");
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    await waitFor(() => expect(screen.getByRole("button", { name: /open smart ration ai assistant/i })).toHaveFocus());
+    await waitFor(() => expect(screen.getByRole("button", { name: /open ration mitra ai assistant/i })).toHaveFocus());
     expect(JSON.parse(sessionStorage.getItem("smart-ration-chat")).map((m) => m.role)).toEqual(["bot", "user", "bot"]);
     await openWidget(user);
     expect(screen.getByText("Proof of address")).toBeInTheDocument();                      // conversation restored
@@ -189,7 +189,7 @@ describe("Public Help chatbot", () => {
     await within(dialog).findByText("Proof of address");
     await user.click(within(dialog).getByRole("button", { name: "Clear conversation" }));
     await waitFor(() => expect(within(dialog).queryByText("Proof of address")).not.toBeInTheDocument());
-    expect(await within(dialog).findByText("I'm the Smart Ration AI Assistant.")).toBeInTheDocument();
+    expect(await within(dialog).findByText("I'm the Ration Mitra AI Assistant.")).toBeInTheDocument();
   });
 
   it("searches within the conversation", async () => {
@@ -200,7 +200,7 @@ describe("Public Help chatbot", () => {
     await within(dialog).findByText("Proof of address");
     await user.click(within(dialog).getByRole("button", { name: "Search conversation" }));
     await user.type(within(dialog).getByRole("searchbox"), "address");
-    expect(within(dialog).queryByText("I'm the Smart Ration AI Assistant.")).not.toBeInTheDocument();
+    expect(within(dialog).queryByText("I'm the Ration Mitra AI Assistant.")).not.toBeInTheDocument();
     expect(within(dialog).getByText("Proof of address")).toBeInTheDocument();
     await user.clear(within(dialog).getByRole("searchbox"));
     await user.type(within(dialog).getByRole("searchbox"), "zzz");
@@ -229,6 +229,6 @@ describe("Public Help chatbot", () => {
 
   it("stays out of the way on the full-screen QR scanner", () => {
     renderWidget("/shop/scanner");
-    expect(screen.queryByRole("button", { name: /open smart ration ai assistant/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /open ration mitra ai assistant/i })).not.toBeInTheDocument();
   });
 });

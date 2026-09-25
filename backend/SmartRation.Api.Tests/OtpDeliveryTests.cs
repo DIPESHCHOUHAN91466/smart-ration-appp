@@ -101,7 +101,7 @@ public class OtpDeliveryTests
     [Fact]
     public async Task MockProvider_ReportsSentWithoutDelivering()
     {
-        var result = await new MockSmsProvider(NullLogger<MockSmsProvider>.Instance).SendAsync("9876543210", "code 123456");
+        var result = await new MockSmsProvider(NullLogger<MockSmsProvider>.Instance).SendAsync("9000000001", "code 123456");
         Assert.True(result.Sent);
         Assert.Equal("Mock", result.Provider);
     }
@@ -110,7 +110,7 @@ public class OtpDeliveryTests
     public async Task HttpProvider_Unconfigured_FailsSafely()
     {
         var provider = new HttpSmsProvider(new HttpClient(), Options.Create(new SmsOptions { Provider = "Http" }), NullLogger<HttpSmsProvider>.Instance);
-        var result = await provider.SendAsync("9876543210", "hello");
+        var result = await provider.SendAsync("9000000001", "hello");
         Assert.False(result.Sent);
     }
 }

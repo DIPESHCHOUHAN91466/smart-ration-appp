@@ -2,6 +2,23 @@
 
 All notable changes. Dates are commit dates; hashes refer to this repository.
 
+## 2026-09-25 (evening) — Synthetic data generator, scale tests, branding
+
+### Added
+- Central seeded synthetic-data generator `backend/SmartRation.Python/app/synthetic` and
+  `scripts/generate_test_data.py --users N --seed S [--json F] [--insert]` (test databases only).
+- MySQL suite `test_08_scale.py`: 1000-citizen CRUD with integrity checks; concurrency at 10/25/50/100
+  (reads, creates, lost updates, bookings, stock). `/health/db`. `DATABASE_TESTING_COMPLETION_REPORT.md`.
+- Favicon and Apple touch icon (emblem cropped from the supplied Ration Mitra logo).
+
+### Changed
+- Logo 1: the Ration Mitra emblem replaces the HSD2C logo in every header; HSD2C moves to the footer.
+- Logo 2: the chatbot avatar and launcher use the same emblem (the drawn SVGs were removed); the assistant is
+  named "Ration Mitra AI Assistant" in en/hi/mr.
+- Demo mobiles `9876543210–12` → `9000000001`, `9000000051`, `9000000052` (seeders, tests, dev database rows).
+- Frontend falls back to `http://localhost:8000/api` only in development; production builds use `/api`.
+- C# test `ScenarioBuilder`: sequential synthetic mobiles instead of `Random`.
+
 ## 2026-09-25 (later) — Workspace, data separation, documentation
 
 ### Added

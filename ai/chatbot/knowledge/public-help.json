@@ -256,9 +256,9 @@
   ],
   "responses": {
     "welcome": {
-      "en": "Namaste! 👋\nI'm the Smart Ration AI Assistant.\n\nI can help you with:\n• Ration cards\n• Eligibility\n• Required documents\n• Tokens & time slots\n• QR verification\n• Ration collection\n• Public help & support\n\nHow can I help you today?",
-      "hi": "नमस्ते! 👋\nमैं स्मार्ट राशन AI सहायक हूँ।\n\nमैं इनमें आपकी मदद कर सकता हूँ:\n• राशन कार्ड\n• पात्रता\n• आवश्यक दस्तावेज़\n• टोकन और समय स्लॉट\n• QR सत्यापन\n• राशन लेना\n• सार्वजनिक सहायता\n\nआज मैं आपकी क्या मदद करूँ?",
-      "mr": "नमस्कार! 👋\nमी स्मार्ट रेशन AI सहाय्यक आहे.\n\nमी यात मदत करू शकतो:\n• रेशन कार्ड\n• पात्रता\n• आवश्यक कागदपत्रे\n• टोकन आणि वेळ स्लॉट\n• QR पडताळणी\n• रेशन घेणे\n• सार्वजनिक मदत\n\nआज मी तुमची काय मदत करू?"
+      "en": "Namaste! 👋\nI'm the Ration Mitra AI Assistant.\n\nI can help you with:\n• Ration cards\n• Eligibility\n• Required documents\n• Tokens & time slots\n• QR verification\n• Ration collection\n• Public help & support\n\nHow can I help you today?",
+      "hi": "नमस्ते! 👋\nमैं राशन मित्र AI सहायक हूँ।\n\nमैं इनमें आपकी मदद कर सकता हूँ:\n• राशन कार्ड\n• पात्रता\n• आवश्यक दस्तावेज़\n• टोकन और समय स्लॉट\n• QR सत्यापन\n• राशन लेना\n• सार्वजनिक सहायता\n\nआज मैं आपकी क्या मदद करूँ?",
+      "mr": "नमस्कार! 👋\nमी रेशन मित्र AI सहाय्यक आहे.\n\nमी यात मदत करू शकतो:\n• रेशन कार्ड\n• पात्रता\n• आवश्यक कागदपत्रे\n• टोकन आणि वेळ स्लॉट\n• QR पडताळणी\n• रेशन घेणे\n• सार्वजनिक मदत\n\nआज मी तुमची काय मदत करू?"
     },
     "greeting": {
       "en": "Namaste! How can I help you today? You can ask about ration cards, eligibility, documents, tokens, slots or QR verification.",

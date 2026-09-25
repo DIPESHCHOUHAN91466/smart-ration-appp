@@ -1,4 +1,4 @@
-# src/components/chatbot — Smart Ration AI Assistant (UI)
+# src/components/chatbot — Ration Mitra AI Assistant (UI)
 
 **What:** the reusable UI for the Public Help chatbot — floating button (bottom-right), chat window,
 messages, quick questions, input. **Why:** one assistant, mounted once in `App.jsx`, on every page
@@ -19,7 +19,7 @@ from `store/chatbotStore.js`.
 | `ChatbotMessage.jsx` | a reply as paragraphs/lists (never HTML); in-app links only; related topics; error + retry |
 | `ChatbotInput.jsx` | textarea (Enter sends, Shift+Enter new line, 500 characters), privacy hint |
 | `ChatbotSuggestions.jsx` | quick-question chips (asked by topic id) |
-| `ChatbotAvatar.jsx` | assistant avatar (`src/assets/chatbot/`) |
+| `ChatbotAvatar.jsx` | assistant avatar and launcher image: the Ration Mitra emblem (`src/assets/ration-mitra-emblem.png`, Logo 2) |
 | `chatbot.css` | styles; bottom sheet on phones; reduced-motion aware |
 
 Full design: [../../../../docs/chatbot/CHATBOT_ARCHITECTURE.md](../../../../docs/chatbot/CHATBOT_ARCHITECTURE.md).

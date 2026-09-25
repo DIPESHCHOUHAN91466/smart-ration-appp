@@ -11,7 +11,10 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 | Item | Status | Evidence |
 |---|---|---|
 | Production build | PASS | `npm run build` (main bundle ≈ 520 KB, above Vite's 500 KB advisory) |
-| Component tests | PASS | Vitest 36/36 |
+| Component tests | PASS | Vitest 39/39 |
+| Logo 1 (Ration Mitra emblem, cropped from the supplied logo) in every header; HSD2C in the footer | PASS | browser: landing (desktop + 375 px), login; dashboard sidebar by code only (no sign-in performed) |
+| Logo 2 (same emblem, small) in chatbot header/avatar/launcher; favicon | PASS | browser + chatbot tests |
+| Production API base never falls back to localhost | PASS | `apiBase.test.js` |
 | Landing page, Public Help, status page | PASS | browser (desktop + 375 px; en/hi/mr); tests |
 | Citizen dashboard via the Python API | PASS | browser: login → dashboard, all calls 200, no console errors |
 | Shop and government screens | PARTIAL | APIs 200 through the proxy (parity 36/36); screens not re-checked visually this round |
@@ -32,7 +35,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Item | Status | Evidence |
 |---|---|---|
-| Python API (gateway, auth, chatbot, data providers, migrations) | PASS | pytest 164/164; ruff + mypy clean |
+| Python API (gateway, auth, chatbot, data providers, migrations) | PASS | pytest 189/189; ruff + mypy clean |
 | AI service | PASS | pytest 46/46; `/health` 200 |
 | Package structure, type hints, config via environment | PASS | see PYTHON_ARCHITECTURE.md |
 
@@ -41,7 +44,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 | Item | Status | Evidence |
 |---|---|---|
 | `smartration`: 25 tables, Alembic `0001_initial`, 0 drift | PASS | `verify_database.py` |
-| MySQL suite on `smartration_test` (CRUD, injection, performance, concurrency, errors, integrity) | PASS | 123/123 via `run-tests.ps1 -MySql` |
+| MySQL suite on `smartration_test` (CRUD, injection, performance, concurrency, errors, integrity, 1000 records, concurrency 10/25/50/100) | PASS | 145/145 via `run-tests.ps1 -MySql`; see [DATABASE_TESTING_COMPLETION_REPORT.md](../DATABASE_TESTING_COMPLETION_REPORT.md) |
 | Root `tests/mysql` | PARTIAL | 24/24 with the correct password; your root `.env` `DB_PASSWORD` is still wrong |
 | Backup | PASS (2026-09-24) · Restore | NOT TESTED |
 
@@ -69,7 +72,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Item | Status | Evidence |
 |---|---|---|
-| OTP fallback (hashed, 5 min, 3 attempts, cooldown) | PASS | C# `OtpDeliveryTests` |
+| OTP fallback (hashed, 5 min, 3 attempts, cooldown) | PASS | C# `SyntheticOtpServiceTests`, `OtpDeliveryTests` (no dedicated test for reusing a verified code) |
 | Real SMS delivery | BLOCKED | needs a DLT-registered SMS gateway (adapter exists) |
 
 ## Appointments
@@ -92,6 +95,8 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 | `DATA_MODE=synthetic` default; providers behind interfaces | PASS | tests (C# + Python) |
 | Reference data in `data/synthetic` (marked `isSynthetic`) | PASS | seed output identical to before; image-layout simulation |
 | Every generated record tagged `SYNTHETIC_DEMO`, masked Aadhaar only | PASS | MySQL suite integrity tests |
+| Central seeded generator (`app/synthetic`, `generate_test_data.py --users N --seed S`) | PASS | 23 unit tests; 1000 citizens inserted into `smartration_test` |
+| Demo mobiles in the reserved `9000000xxx` block (were `9876543210–12`) | PASS | seeders, tests, dev DB rows updated |
 
 ## Real Data Architecture
 
@@ -129,7 +134,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Suite | Result |
 |---|---|
-| Python 164 · MySQL 123 · evaluation 67 · AI 46 · C# 94 · frontend 36 | PASS (`run-tests.ps1 -MySql`, exit 0) |
+| Python 189 · MySQL 145 · evaluation 67 · AI 46 · C# 94 · frontend 39 | PASS (`run-tests.ps1 -MySql`, exit 0) |
 | Contract (proxy 36/36, auth interop 23/23) | PASS (earlier today; needs both servers) |
 | E2E, load, accessibility tooling | NOT TESTED |
 

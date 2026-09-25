@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { ArrowRight, Menu, X } from "lucide-react";
-import BrandMark from "../BrandMark";
+import BrandMark, { CompanyMark } from "../BrandMark";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import "../../pages/landing/public.css";
@@ -33,7 +33,7 @@ export default function PublicLayout() {
           <Link to="/" className="pub-brand" aria-label={`${t("app_name")} — ${t("nav_home")}`}>
             <BrandMark variant="light" />
             <span className="pub-brand-text">
-              <strong>{t("app_name")}</strong>
+              <strong>{t("brand_name")}</strong>
               <small>{t("footer_tagline")}</small>
             </span>
           </Link>
@@ -69,10 +69,10 @@ export default function PublicLayout() {
         <div className="pub-footer-inner">
           <div>
             <div className="pub-brand footer">
-              <BrandMark variant="light" />
+              <CompanyMark variant="light" />
               <span className="pub-brand-text">
                 <strong>{t("app_name")} HSD2C</strong>
-                <small>{t("footer_tagline")}</small>
+                <small>{t("powered_by")}</small>
               </span>
             </div>
             <p className="pub-demo-note">{t("land_demo_notice")}</p>

@@ -174,7 +174,7 @@ public static class DbInitializer
                 {
                     FullName = "Rahul Patil",
                     Email = "rural@example.com",
-                    MobileNumber = "9876543210",
+                    MobileNumber = "9000000001",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("demo123"),
                     Role = UserRole.RuralUser,
                     IsActive = true
@@ -183,7 +183,7 @@ public static class DbInitializer
                 {
                     FullName = "Satnavari Shop Owner",
                     Email = "shop@example.com",
-                    MobileNumber = "9876543211",
+                    MobileNumber = "9000000051",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("demo123"),
                     Role = UserRole.ShopOwner,
                     RationShopId = satnavariShop.Id,
@@ -193,7 +193,7 @@ public static class DbInitializer
                 {
                     FullName = "District Government Officer",
                     Email = "officer@example.com",
-                    MobileNumber = "9876543212",
+                    MobileNumber = "9000000052",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("demo123"),
                     Role = UserRole.GovernmentOfficial,
                     IsActive = true

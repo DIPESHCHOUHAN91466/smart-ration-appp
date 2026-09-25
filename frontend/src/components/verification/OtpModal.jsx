@@ -64,7 +64,7 @@ export default function OtpModal({ onClose, onVerified }) {
                 required
                 value={mobileNumber}
                 onChange={(e) => setMobileNumber(e.target.value)}
-                placeholder="9876543210"
+                placeholder="9000000001"
               />
             </label>
             {error && <p style={{ color: "var(--red)", fontSize: 12 }}>{error}</p>}

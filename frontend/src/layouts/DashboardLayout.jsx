@@ -182,7 +182,7 @@ export default function DashboardLayout() {
         <div className="brand">
           <BrandMark />
           <div>
-            <strong>{t("app_name")}</strong>
+            <strong>{t("brand_name")}</strong>
             <span>{t("app_subtitle")}</span>
           </div>
         </div>
@@ -203,6 +203,7 @@ export default function DashboardLayout() {
             <LogOut size={19} />
             <span>{t("sign_out")}</span>
           </button>
+          <div className="offline powered-by">{t("powered_by")}</div>
         </div>
       </aside>
 

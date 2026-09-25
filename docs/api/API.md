@@ -21,7 +21,8 @@ C# through the proxy work on :8000 but appear in Swagger only once migrated.
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
 | GET | `/health/live` | — | process is up |
-| GET | `/health` | — | `{status, database, legacyApi}`; 503 if the DB is down |
+| GET | `/health/db` | — | `{status, latencyMs, migrations}` (no connection details); 503 if the DB is down |
+| GET | `/health` | — | `{status, database, legacyApi, aiService, chatbot, dataMode}`; 503 if the DB is down |
 | GET | `/ready` | — | 200 only if DB reachable, schema at the expected Alembic head, legacy API up |
 
 ## Public Help and chatbot (Python, no login)

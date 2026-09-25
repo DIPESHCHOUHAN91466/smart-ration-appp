@@ -1,6 +1,7 @@
 """Health endpoints for the Python backend itself.
 
 GET /health        -> overall status: database, legacy C# API, AI service, chatbot, data mode.
+GET /health/db     -> database only: reachable, query latency, migrations at head.
 GET /health/live   -> process is up (no dependencies checked).
 GET /ready         -> 200 only when the app can serve traffic: database reachable,
                       schema at the Alembic head this code expects, and (while
@@ -14,6 +15,7 @@ existing health check keeps its current response shape.
 from __future__ import annotations
 
 import asyncio
+import time
 
 import httpx
 from fastapi import APIRouter, Request
@@ -89,6 +91,28 @@ async def ready(request: Request):
     }
     is_ready = all(v in ("ok", "disabled") for v in checks.values())
     return JSONResponse(status_code=200 if is_ready else 503, content=ReadyResponse(ready=is_ready, checks=checks).model_dump())
+
+
+class DatabaseHealthResponse(BaseModel):
+    status: str = Field(description="healthy | unhealthy")
+    latencyMs: float | None = Field(description="round trip of a trivial query; null when unreachable")
+    migrations: str = Field(description="ok | behind | unknown — schema at the Alembic head this code expects")
+
+
+@router.get(
+    "/health/db",
+    summary="Database health (no connection details are returned)",
+    response_model=DatabaseHealthResponse,
+    responses={503: {"model": DatabaseHealthResponse, "description": "Database unreachable"}},
+)
+async def database_health():
+    started = time.perf_counter()
+    reachable = await asyncio.to_thread(database_is_reachable)
+    latency = round((time.perf_counter() - started) * 1000, 1) if reachable else None
+    current = await asyncio.to_thread(current_revision) if reachable else None
+    migrations = "unknown" if not reachable else "ok" if current == alembic_head() else "behind"
+    body = DatabaseHealthResponse(status="healthy" if reachable else "unhealthy", latencyMs=latency, migrations=migrations)
+    return JSONResponse(status_code=200 if reachable else 503, content=body.model_dump())
 
 
 @router.get("/health/live", summary="Liveness probe", response_model=dict)

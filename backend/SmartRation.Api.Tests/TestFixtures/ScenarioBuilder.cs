@@ -17,6 +17,12 @@ public record BasicScenario(
 // specific negative cases (unverified Aadhaar, already-completed token, etc).
 public static class ScenarioBuilder
 {
+    private static int _mobileSequence;
+
+    // Synthetic block 9098xxxxxx (see backend/SmartRation.Python/app/synthetic): unique per test run,
+    // never a real subscriber's number, and the same sequence every run (no Random).
+    public static string NextSyntheticMobile() => $"9098{Interlocked.Increment(ref _mobileSequence):D6}";
+
     public static BasicScenario SeedBasicScenario(
         SmartRationDbContext db,
         AadhaarVerificationStatus aadhaarStatus = AadhaarVerificationStatus.Verified,
@@ -42,7 +48,7 @@ public static class ScenarioBuilder
         db.Inventory.Add(new Inventory { RationShopId = shop.Id, RationType = RationType.Rice, AvailableQuantity = riceInventory, AllocatedQuantity = 0, MinimumStockLevel = 10 });
         db.SaveChanges();
 
-        var user = new User { FullName = "Test Beneficiary", Email = $"test{Guid.NewGuid():N}@example.com", MobileNumber = $"9{Random.Shared.Next(100000000, 999999999)}", PasswordHash = "x", Role = UserRole.RuralUser, IsActive = true };
+        var user = new User { FullName = "Test Beneficiary", Email = $"test{Guid.NewGuid():N}@example.com", MobileNumber = NextSyntheticMobile(), PasswordHash = "x", Role = UserRole.RuralUser, IsActive = true };
         db.Users.Add(user);
         db.SaveChanges();
 

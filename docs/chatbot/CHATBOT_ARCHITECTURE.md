@@ -1,4 +1,4 @@
-# Smart Ration AI Assistant (Public Help chatbot)
+# Ration Mitra AI Assistant (Public Help chatbot)
 
 A floating assistant (bottom-right on every page except the full-screen QR scanner) that answers
 public questions about ration cards, eligibility, documents, tokens and slots, QR/OTP verification,
@@ -34,7 +34,7 @@ Public Help page ──────► GET  /api/public-help/*              ├�
 | `app/api/public_help.py` | the five public routes |
 | `frontend/src/components/chatbot/` | widget, window, header, message, input, suggestions, avatar, CSS |
 | `frontend/src/hooks/useChatbot.js` | conversation state (sessionStorage) |
-| `frontend/src/assets/chatbot/` | `chatbot-logo.svg`, `chatbot-avatar.svg`, `chatbot-icon.svg` (from the Ration Mitra mark) |
+| `frontend/src/assets/ration-mitra-emblem.png` | the emblem cropped from the supplied logo (`ration-mitra-logo.webp`); chatbot avatar + launcher (Logo 2), header (Logo 1), favicon |
 
 ## Safety rules (checked before any search)
 

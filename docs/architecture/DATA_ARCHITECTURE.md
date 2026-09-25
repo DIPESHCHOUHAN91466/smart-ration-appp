@@ -37,6 +37,10 @@
 - Codes are visibly fake: `FAM-DEMO-0001`, `BEN-DEMO-0001`, `AAD-DEMO-000001`, `PB-DEMO-0001`;
   history households `BEN-HIST-*` with `@history.synthetic.invalid` emails (cannot log in).
 - Aadhaar is only ever a masked reference `XXXX-XXXX-1234` that belongs to nobody.
+- Bulk test citizens (`app/synthetic`, `scripts/generate_test_data.py`): `SYN-RC-<seed>-000001` ration cards,
+  `90BBxxxxxx` mobiles, `@example.com` emails; see [data/synthetic/README.md](../../data/synthetic/README.md).
+  The `Users` table has no flag column; synthetic users are identified by these reserved ranges/domains and
+  by `DataSource` on their beneficiary rows.
 - Reference JSON carries `"_meta": {"isSynthetic": true}`; the seeder refuses files without it.
 - The UI footer and the status page say "Demonstration system / synthetic".
 

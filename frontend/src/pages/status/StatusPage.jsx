@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Activity, CheckCircle2, CircleAlert, CircleSlash, RefreshCw, XCircle } from "lucide-react";
+import { API_BASE_URL } from "../../services/apiBase";
 import "./status.css";
 
 // Developer status page (/status): live health of every component, read from the Python API's
 // /health and /ready and the C# API's /api/health (through the proxy). Only routed in development
 // builds or when VITE_SHOW_STATUS=true — see App.jsx. English only: it's a developer tool.
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api").replace(/\/api\/?$/, "");
+const API_BASE = API_BASE_URL.replace(/\/api\/?$/, "");
 
 const ICON = { healthy: CheckCircle2, ok: CheckCircle2, synthetic: CircleAlert, disabled: CircleSlash };
 

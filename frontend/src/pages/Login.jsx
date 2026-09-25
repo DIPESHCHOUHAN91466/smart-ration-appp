@@ -62,7 +62,7 @@ export default function Login() {
         <div className="login-brand">
           <BrandMark variant="light" />
           <div>
-            <b>{t("app_name")}</b>
+            <b>{t("brand_name")}</b>
             <small>{t("app_subtitle")}</small>
           </div>
         </div>

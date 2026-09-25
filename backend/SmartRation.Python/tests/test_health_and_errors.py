@@ -32,6 +32,21 @@ def test_health_unhealthy_503_when_database_down(make_client, tmp_path):
     assert r.status_code == 503 and r.json()["database"] == "unhealthy"
 
 
+def test_database_health_reports_latency_without_connection_details(make_client):
+    r = make_client(healthy_legacy).get("/health/db")
+    body = r.json()
+    assert r.status_code == 200 and body["status"] == "healthy"
+    assert isinstance(body["latencyMs"], float) and body["migrations"] in ("ok", "behind")
+    assert set(body) == {"status", "latencyMs", "migrations"}       # no URL, host, user or password
+    assert "sqlite" not in r.text.lower()
+
+
+def test_database_health_503_when_database_down(make_client, tmp_path):
+    bad = f"sqlite:///{(tmp_path / 'missing' / 'x.db').as_posix()}"
+    r = make_client(healthy_legacy, database_url=bad).get("/health/db")
+    assert r.status_code == 503 and r.json() == {"status": "unhealthy", "latencyMs": None, "migrations": "unknown"}
+
+
 def test_docs_and_openapi_available(make_client):
     c = make_client(healthy_legacy)
     assert c.get("/docs").status_code == 200 and c.get("/redoc").status_code == 200
