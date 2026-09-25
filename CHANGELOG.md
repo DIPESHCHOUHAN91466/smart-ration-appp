@@ -2,6 +2,34 @@
 
 All notable changes. Dates are commit dates; hashes refer to this repository.
 
+## 2026-09-25 (late night) — Thin controllers, chatbot modules, collections, contracts, E2E, `sr.ps1`
+
+Most of this was committed in `583792e` (together with new READMEs); the rest in the following commit.
+
+### Added
+- `BeneficiaryProfileService` and `AdminDatabaseBrowserService`: the logic of `BeneficiariesController`
+  (including the "citizens see only their own beneficiary" rule) and `AdminDatabaseController` moved out of
+  the controllers; 10 new C# tests (104 total).
+- Chatbot split into `text.py`, `intents.py`, `retrieval.py`, `responses.py` + `engine.py` (orchestration);
+  identical replies to the old engine on 8 565 comparisons; evaluation 67/67.
+- Synthetic `collect()` / `--collections SHARE`: past collections with stock and ledger updates, never
+  below zero. 100 000-citizen run on MySQL (83 s). MySQL suite: collections for 1 000 citizens (146 tests).
+- `api/openapi/`: generated Python (drift-tested) and C# API contracts (`scripts/export_openapi.py`).
+- `sr.ps1`: one command for setup, run, stop, health, test, e2e, build, lint, db, synthetic, contracts, docker.
+- Playwright end-to-end smoke tests (9: desktop + phone) using the installed Microsoft Edge; `run-tests.ps1 -E2E`.
+- VS Code tasks named as in the brief (Build All, Synthetic Data, Python/.NET/Frontend/E2E/All Tests, …).
+
+### Changed
+- Health check labels: `[PASS]` / `[FAIL]` / `[WARNING]` / `[NOT CONFIGURED]`; `-Deep` builds C# and the frontend.
+- Python seeder creates time slots from 5 days ago to 2 days ahead (like the C# seeder), so fresh
+  databases have history to attach collections to.
+- Public Help: "1 topic" (was "1 topics"), found by the E2E suite.
+- Documentation corrected where it described features that don't exist (offline QR, eligibility calculator,
+  SMS alerts, mobile app features, test libraries, forecast horizon, test counts).
+
+### Removed
+- Empty placeholder folders (`api/`, `shared/`, `atp/`, five in `frontend/src/`) and the unused root `.venv`.
+
 ## 2026-09-25 (night) — Solution file, setup, lint, schema snapshot, bookings, port clashes
 
 ### Added

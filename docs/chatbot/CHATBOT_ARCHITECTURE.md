@@ -29,7 +29,11 @@ Public Help page ──────► GET  /api/public-help/*              ├�
 | `…/knowledge/faq.json` | ration cards: what, types, applying, documents, eligibility, changes, lost card, rights, complaints, support |
 | `…/knowledge/schemes.json` | NFSA, free foodgrain (PMGKAY), One Nation One Ration Card, this installation's demo schemes |
 | `app/chatbot/knowledge_base.py` | loads + validates (every text in en/hi/mr, valid categories, in-app links only) at startup |
-| `app/chatbot/engine.py` | safety rules, language detection, search, reply building |
+| `app/chatbot/text.py` | input clean-up, normalisation (Devanagari variants), language detection |
+| `app/chatbot/intents.py` | safety and intent rules, in order: sensitive input, internals, own records, health, greeting, thanks |
+| `app/chatbot/retrieval.py` | knowledge-base scoring (keywords, title words, inflections, typos) |
+| `app/chatbot/responses.py` | the `Reply` model and all text assembled in code (bookings, shop and scheme lists) |
+| `app/chatbot/engine.py` | orchestration only (`Assistant`); data arrives through the `PublicData` / `PersonalData` protocols, never directly from the database |
 | `app/chatbot/providers.py` | `ChatProvider` interface; `CHATBOT_PROVIDER=knowledge` |
 | `app/api/public_help.py` | the five public routes |
 | `frontend/src/components/chatbot/` | widget, window, header, message, input, suggestions, avatar, CSS |

@@ -43,9 +43,9 @@ Supported Languages: **English**, **हिंदी (Hindi)**, and **मरा�
 |---|---|
 | **Overcrowding & Long Waiting Times** | Citizens book a **5-minute time slot** at their designated Fair Price Shop. |
 | **Tampering & Ration Card Fraud** | Time-limited **HMAC-SHA256 digitally signed QR tokens**; zero PII stored inside the QR code. |
-| **Network Blackouts at Rural Shops** | Offline QR verification supported with secure local caching, backed by **SMS OTP fallback**. |
+| **Network Blackouts at Rural Shops** | Signed QR tokens checked by the server, with an **OTP fallback** when scanning fails (SMS delivery is a mock until a registered gateway is configured). Offline verification is *planned*. |
 | **Stock Leakages & Ghost Beneficiaries** | Transactional, **idempotent collection ledger** with optimistic concurrency control. |
-| **Information Barriers & Low Literacy** | Full trilingual UI (English, Hindi, Marathi) with voice-ready text and a **safe AI Chatbot (Ration Mitra)**. |
+| **Information Barriers & Low Literacy** | Full trilingual UI (English, Hindi, Marathi) and a **safe AI Chatbot (Ration Mitra)**. |
 | **Last-Minute Stockouts** | Python AI analytics service predicting **stock depletion risks**, demand spikes, and distribution anomalies. |
 
 ---
@@ -63,7 +63,7 @@ graph TD
 
 ### 1. Public Visitor (No Login Required)
 - Access transparent information on government schemes (Antyodaya Anna Yojana - AAY, Priority Household - PHH).
-- Interactive **Scheme Eligibility Calculator**.
+- Eligibility explained in Public Help and the chatbot (an interactive eligibility calculator is *planned*).
 - Searchable Public Knowledge Base articles in English, Hindi, and Marathi.
 - Interactive **Ration Mitra AI Chatbot** for general guidance.
 
@@ -71,11 +71,11 @@ graph TD
 - Authenticated citizen portal with family member details and monthly ration card entitlement balance.
 - 5-minute time slot booking at their assigned local Fair Price Shop.
 - Generation of a digitally signed QR token (`SRQR-{tokenId}-{signature}`).
-- Token collection history, active passbook verification, and instant SMS status alerts.
+- Token collection history, active passbook verification, and in-app notifications (SMS delivery is a mock until a real gateway is configured).
 
 ### 3. Fair Price Shop (FPS) Operator
 - Today's appointment queue and real-time operational dashboard.
-- High-speed camera QR scanner via browser (`html5-qrcode`) or mobile app (`expo-camera`).
+- High-speed camera QR scanner via the browser (`html5-qrcode`). A mobile scanner app is *planned* — `mobile/` is still the Expo starter template.
 - Cryptographic HMAC signature validation.
 - Fail-safe **SMS OTP verification** (6-digit, 5-minute expiry, 3-attempt limit) if the beneficiary's phone screen is damaged.
 - Real-time stock issuance and automated stock ledger deductions.
@@ -83,7 +83,7 @@ graph TD
 ### 4. Government Official & District Admin
 - Live district/taluka GIS map tracking Fair Price Shop activity.
 - Real-time distribution progress vs. monthly quotas.
-- AI-driven stockout alerts (warning when buffer falls below 14-day threshold).
+- AI-driven stockout alerts (forecast demand for the next 7 days — `FORECAST_DAYS` — compared with the stock left after reservations).
 - Anomaly and fraud detection flags (unusual booking spikes, off-hours collections).
 - Full audit trails and read-only administrative database viewer.
 
@@ -112,7 +112,7 @@ graph TD
 Smart Ration adopts a **frozen hybrid architecture**: ASP.NET Core 8 powers high-performance transactional business rules and inventory ledgers; Python FastAPI serves as the intelligent API gateway, authentication authority, and AI analytics engine.
 
 ```
-                         User (Browser / Mobile App)
+                         User (Browser; mobile app planned)
                                     │
                                     ▼
                          Frontend (React 18 + Vite, :5173)
@@ -135,7 +135,7 @@ Smart Ration adopts a **frozen hybrid architecture**: ASP.NET Core 8 powers high
                          │                                   │
                          │                                   ▼ HTTP (Internal)
                          │                      AI Analytics Service (FastAPI, :8001)
-                         │                      ├── 14-Day Demand & Stockout Forecasting
+                         │                      ├── Demand & Stockout Forecasting (7 days, configurable)
                          │                      ├── Anomaly Detection & Fraud Scoring
                          │                      └── Document OCR (Optional)
                          │                                   │
@@ -150,12 +150,12 @@ Smart Ration adopts a **frozen hybrid architecture**: ASP.NET Core 8 powers high
 | Layer | Technologies |
 |---|---|
 | **Frontend Web** | React 18, Vite 6, React Router 7, Zustand, Axios, Leaflet / React-Leaflet, html5-qrcode, Lucide Icons, Vitest |
-| **Mobile App** | React Native 0.86, Expo SDK 57, Expo Router, Expo Camera, Expo SQLite, Expo SecureStore |
-| **API Gateway** | Python 3.11+, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, httpx, Argon2-cffi, PyJWT |
+| **Mobile App** | Expo SDK 57 / React Native starter template — *not yet connected to the API* (see `mobile/README.md`) |
+| **API Gateway** | Python 3.12+, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, httpx, Argon2-cffi, PyJWT |
 | **Core Business API** | .NET 8 (C#), ASP.NET Core Web API, Entity Framework Core 8, Pomelo MySQL Provider |
-| **AI & Analytics** | Python 3.11+, FastAPI, NumPy, Pandas, scikit-learn |
+| **AI & Analytics** | Python 3.12+, FastAPI, SQLAlchemy/PyMySQL (read-only), statistical forecasting and rules — no ML libraries or trained models |
 | **Database** | MySQL 8.0 (`InnoDB`, `utf8mb4_0900_ai_ci`), Alembic Migrations |
-| **Testing & Quality** | xUnit, Moq, FluentAssertions, pytest, Vitest, Playwright, Ruff, mypy, ESLint |
+| **Testing & Quality** | xUnit (SQLite in-memory), pytest, Vitest, Playwright, Ruff, mypy, ESLint |
 | **Deployment** | Docker, Docker Compose, Nginx, PowerShell Automation |
 
 ---
@@ -235,7 +235,7 @@ Smart_Ration_HSD2C_Final/
 
 ### Prerequisites
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Python 3.11+](https://www.python.org/downloads/)
+- [Python 3.12+](https://www.python.org/downloads/)
 - [Node.js 18+ and npm](https://nodejs.org/)
 - [MySQL 8.0+](https://dev.mysql.com/downloads/mysql/) (running on localhost:3306)
 
@@ -310,7 +310,7 @@ Smart Ration enforces high test coverage across all layers:
 
 | Component | Framework | Count | Command |
 |---|---|---|---|
-| **C# Business API** | xUnit, Moq | **104** | `dotnet test SmartRation.sln -c Release` |
+| **C# Business API** | xUnit | **104** | `dotnet test SmartRation.sln -c Release` |
 | **Python Gateway** | pytest | **248** | `backend\SmartRation.Python\.venv\Scripts\pytest` |
 | **Frontend Web** | Vitest, Testing Library | **39** | `cd frontend && npm test` |
 | **End-to-End** | Playwright | **Smoke Suite** | `cd frontend && npm run test:e2e` |

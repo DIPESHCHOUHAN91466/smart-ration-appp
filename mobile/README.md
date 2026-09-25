@@ -1,5 +1,9 @@
 # mobile — Smart Ration Mobile Companion App (React Native & Expo)
 
+> **Status (verified 2026-09-25): not implemented yet.** This folder is the unmodified Expo starter template
+> (`src/app/index.tsx` and `explore.tsx` tabs). It does not call the API, scan QR codes or store tokens.
+> Everything under *Overview* and *Tech Stack* below is the **planned** design, not current behaviour.
+
 Cross-platform mobile application for citizens and Fair Price Shop owners built with **React Native 0.86**, **Expo SDK 57**, **Expo Router**, and **Zustand**.
 
 ## Overview

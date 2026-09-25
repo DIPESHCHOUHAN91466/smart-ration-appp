@@ -15,7 +15,7 @@ Opening just the repository folder works too; the numbered view is only a conven
 
 ## Run and Debug (Ctrl+Shift+D)
 
-`Smart Ration: Full Stack` (all four services with debuggers), or one of: `Smart Ration: .NET API (:5188)`,
+`Smart Ration: Full Stack` (compound: all four services with debuggers), or one of: `Smart Ration: .NET API (:5188)`,
 `Smart Ration: Python API (:8000)`, `Smart Ration: AI Service (:8001)`, `Smart Ration: Frontend (:5173)`,
 `Smart Ration: Browser (Edge…)`, `Smart Ration: Python Tests`, `Smart Ration: .NET Tests`,
 `Smart Ration: Frontend Tests (Vitest)`.
@@ -24,11 +24,13 @@ Stop the script-started services first (task `Smart Ration: Stop All`), or the p
 
 ## Tasks (Ctrl+Shift+P → "Tasks: Run Task")
 
-Main tasks: **Smart Ration: Setup · Full Stack · Stop All · Health Check · Frontend · .NET · Python ·
-Database Health · Tests**. Also: Frontend: install · build · lint · test — Backend: build · test —
-Python: test · lint + type check — Chatbot: evaluate — AI service: start · test — Database: seed
-synthetic data · back up — Tests: full suite + MySQL.
-Default test task (Ctrl+Shift+P → "Run Test Task"): `Smart Ration: Tests`.
+Main tasks (all prefixed **Smart Ration:**): Setup · Build All · Run Full Stack · Stop All · Health Check ·
+Python API · .NET API · Frontend · Database Health · Synthetic Data (asks for count and seed) ·
+Python Tests · .NET Tests · Frontend Tests · E2E Tests · All Tests.
+Also: Frontend: install · build · lint — Backend: build — Python: lint + type check — Chatbot: evaluate —
+AI service: start · test — Database: seed synthetic data · back up — Tests: full suite + MySQL.
+Default build task (Ctrl+Shift+B): `Smart Ration: Build All`. Default test task: `Smart Ration: All Tests`.
+Every task runs the same command as `.\sr.ps1 <command>` or a script in `scripts/development`.
 
 ## Settings
 

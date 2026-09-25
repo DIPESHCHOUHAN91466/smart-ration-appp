@@ -1,6 +1,6 @@
 # SmartRation.Api.Tests — C# Backend Test Suite
 
-Unit and integration tests for the ASP.NET Core business API (`SmartRation.Api`). Built with **xUnit**, **Moq**, **FluentAssertions**, and in-memory EF Core database providers.
+Unit and integration tests for the ASP.NET Core business API (`SmartRation.Api`). Built with **xUnit** against a real **SQLite in-memory** database (`TestFixtures/TestDbFactory.cs` — deliberately not the EF InMemory provider, so queries translate as in production); fakes such as `FakeCurrentUserService` instead of a mocking library.
 
 ## Overview
 

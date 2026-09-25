@@ -32,7 +32,9 @@ testability (services are tested against an in-memory database). If the data sou
 EF/MySQL, add interfaces then, at the service boundary.
 
 **Controllers stay thin**: validate → call one service method → wrap in the envelope. Transactions,
-locking and auditing live in services.
+locking and auditing live in services. (The last two exceptions were fixed on 2026-09-25:
+`BeneficiariesController` → `BeneficiaryProfileService`, which also owns the "a citizen sees only their
+own beneficiary" rule; `AdminDatabaseController` → `AdminDatabaseBrowserService`. Both have service tests.)
 
 ## Python API layout
 

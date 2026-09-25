@@ -117,7 +117,9 @@ Demo accounts (synthetic; only if seeded with that password): `rural@example.com
 `officer@example.com` — the C# seed uses password `demo123`.
 
 Stop everything: `.\scripts\development\stop-all.ps1`.
-In VS Code: *Run and Debug → Smart Ration: Full Stack*, or *Tasks: Run Task → Smart Ration: Full Stack*.
+In VS Code: *Run and Debug → Smart Ration: Full Stack*, or *Tasks: Run Task → Smart Ration: Run Full Stack*.
+Everything also has a one-word command: `.\sr.ps1 help` lists them (setup, run, stop, health, test, e2e, build, lint,
+db, synthetic, contracts, docker).
 
 ## 7. Test
 

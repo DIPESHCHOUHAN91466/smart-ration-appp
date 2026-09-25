@@ -44,6 +44,13 @@ cd backend\SmartRation.Python
 their shop (slot capacity respected, token number `SR-<year>-<id>`, items = the scheme's entitled ration
 types; the QR value is signed by the C# API on first request). Citizens whose shop has no free slot are
 reported as `Unbooked`.
+`--collections SHARE` (e.g. `0.5`) adds past collections — the "transaction" history — for that share of the
+citizens, following the C# collection rules: a Completed token in a **past** slot, a `RationCollection` with
+its items, stock moved from available to allocated with a *Distributed* ledger entry per item, and never
+below zero (citizens whose shop lacks stock are reported as `NotCollected`). Past slots exist in databases
+seeded since 2026-09-25 (the seeder now creates −5…+2 days, like the C# seeder).
+Verified at scale on MySQL: 100 000 citizens (343 085 family members) inserted in 83 s; 1 000 citizens'
+collections with stock and ledger checked exactly (`tests/mysql_suite/test_08_scale.py`).
 `--insert` refuses any database whose name doesn't end in `_test`, refuses unless `DATA_MODE=synthetic`,
 and runs in one transaction. Accounts can't log in unless `SYNTHETIC_USER_PASSWORD` is set.
 The MySQL suite's `sample_data.py` is different on purpose: 100 *adversarial* records (emoji, 150-character

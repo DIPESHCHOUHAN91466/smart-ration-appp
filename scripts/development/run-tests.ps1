@@ -5,16 +5,17 @@
 .DESCRIPTION
   Python backend (pytest), chatbot evaluation, AI service (pytest), C# (dotnet test on SmartRation.sln),
   frontend (ESLint, Vitest, production build) and a read-only database health check.
-  -MySql also runs the MySQL suite (145 tests) against smartration_test (never the real database):
+  -MySql also runs the MySQL suite (146 tests) against smartration_test (never the real database):
   it builds TEST_DATABASE_URL from backend\SmartRation.Python\.env with the database name changed.
   -Quick skips the C# build, the frontend and the database check (fastest feedback while working on Python).
+  -E2E also runs the Playwright end-to-end tests (the stack must already be running: start-all.ps1).
   Works from any current directory.
 
 .EXAMPLE
   .\scripts\development\run-tests.ps1
   .\scripts\development\run-tests.ps1 -MySql
 #>
-param([switch]$MySql, [switch]$Quick)
+param([switch]$MySql, [switch]$Quick, [switch]$E2E)
 $root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $results = New-Object System.Collections.Generic.List[object]
 
@@ -50,6 +51,10 @@ if (-not $Quick) {
     Run "Frontend (Vitest)" $frontend { npm test --silent }
     Run "Frontend build" $frontend { npm run build --silent }
     Run "Database health (smartration)" $py { & .venv\Scripts\python scripts\verify_database.py }
+}
+
+if ($E2E) {
+    Run "End-to-end (Playwright)" (Join-Path $root "frontend") { npm run test:e2e --silent }
 }
 
 Write-Host "`n=== Summary ===" -ForegroundColor Cyan
