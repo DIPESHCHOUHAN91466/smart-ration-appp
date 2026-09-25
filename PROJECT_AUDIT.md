@@ -1,127 +1,129 @@
-# Smart Ration HSD2C — Project Audit (Phase 0)
+# Smart Ration HSD2C — Project Audit
 
-Date: 2026-09-21
+Date: 2026-09-25 · Branch `feature/python-backend-migration` · Previous audits:
+[docs/archive/PROJECT_AUDIT_2026-09-21.md](docs/archive/PROJECT_AUDIT_2026-09-21.md) (pre-cleanup state, now outdated) and
+[MIGRATION_AUDIT.md](MIGRATION_AUDIT.md) (C# → Python migration, Phase 0).
 
-## 1. Current Architecture
+Everything below was checked against the code, the running services and the database on this date;
+items marked *fixed* were fixed during this audit and committed.
 
-The repository contains **three parallel copies of the same frontend prototype**, **two copies of the backend**, **one untouched mobile template with a duplicate nested copy**, and a large number of empty placeholder folders (`database/`, `docs/`, `shared/`, `tests/`, `.github/workflows/`, `deployment/`, `api/openapi/`) that were scaffolded but never filled in. There is also an unrelated standalone Python/FastAPI demo (`synthetic-data-demo/`) living inside the same repo.
-
-Both the real backend and the real frontend **build successfully today** (`dotnet build` → 0 errors; `npm run build` → succeeds), but the backend has no real API yet and the frontend UI is not wired to it — it runs entirely on hardcoded mock data.
-
-## 2. Folder Structure (as it exists now)
+## 1. Current architecture
 
 ```
-Smart_Ration_HSD2C_Final/
-├── SmartRation.Api/              ⚠ DUPLICATE — bare `dotnet new webapi` scaffold, bin/obj committed
-├── backend/
-│   ├── SmartRation.Api/          ✅ REAL backend project (builds OK)
-│   └── .venv/                    ⚠ stray, unrelated Python venv (not used by .NET backend)
-├── frontend/                     ✅ REAL frontend project (builds OK)
-│   ├── src/App.jsx                — 0 bytes (empty)
-│   ├── src/pages/*.jsx (9 files)  — all 0 bytes (empty)
-│   ├── src/main.jsx               — 303 lines, THE ENTIRE app lives here
-│   └── src/services/api.js        — generic REST client, currently unused
-├── src/, index.html               ⚠ DUPLICATE of the same 303-line prototype
-├── src_backup/, index_backup.html ⚠ explicit backup of the same prototype
-├── package.json / package_backup.json / package-lock_backup.json  ⚠ root-level duplicates
-├── dist/, frontend/dist/          ⚠ committed build output (should never be in git)
-├── mobile/                        ⚠ untouched default Expo Router template ("Welcome to Expo")
-│   └── mobile/                    ⚠ exact nested duplicate of the above
-├── database/, docs/, shared/, tests/, deployment/, api/, .github/workflows/  — empty scaffolding, no content
-├── scripts/                       start-backend.ps1, start-frontend.ps1
-└── synthetic-data-demo/           unrelated standalone FastAPI + React demo project
+Browser ── React 18 / Vite 6 SPA (:5173)
+              │  VITE_API_BASE_URL = http://localhost:5188/api   ← still calls C# directly
+              ▼
+        ASP.NET Core 8 API (:5188) ──── EF Core 8 (Pomelo) ──┐
+              │ HTTP (AI analytics)                           │
+              ▼                                               ▼
+        Python AI service (:8001) ────────────────────► MySQL 8 `smartration`
+                                                              ▲   (25 tables, owned by Alembic)
+        Python FastAPI backend (:8000) ── SQLAlchemy 2 ───────┘
+              serves /health /ready /api/auth/*, proxies every other /api/* to C#
 ```
 
-## 3. Technologies Detected
-
-| Layer | Technology | Version |
+| Path | What it is | State |
 |---|---|---|
-| Frontend | React + Vite | React 18.3.1, Vite 6.0.0 |
-| Frontend libs | axios, zustand, react-router-dom, zod, lucide-react, qrcode, html5-qrcode | latest |
-| Backend | ASP.NET Core Web API | .NET 8.0 |
-| Backend | Entity Framework Core | 8.0.8, **SQLite** provider |
-| Backend | Swashbuckle (Swagger) | 6.6.2 |
-| Mobile | Expo Router + React Native | Expo ~57, RN 0.86.3 |
-| Unrelated demo | Python FastAPI + SQLAlchemy + Faker | separate, not part of main stack |
+| `frontend/` | React 18, Vite 6, react-router 7, zustand, axios, zod, lucide, html5-qrcode, leaflet, qrcode | builds; 53 components/pages; no test runner |
+| `backend/SmartRation.Api/` | ASP.NET Core 8, 25 controllers, 81 endpoints | builds; 86 xUnit tests pass |
+| `backend/SmartRation.Python/` | FastAPI replacement (side-by-side, fallback proxy) | auth + health migrated; 54 unit + 122 MySQL tests pass |
+| `backend/SmartRation.AI/` | FastAPI AI/analytics service (to be merged into the Python backend) | 46 tests pass |
+| `mobile/` | Expo 57 default template | not integrated with the API |
+| `database/mysql/` | backup/restore scripts | backup tested; restore not rehearsed |
+| `tests/mysql/` | root-level MySQL tests on `smartration_test` | 24 tests (need correct root `.env`) |
+| `docs/` | architecture, database, migration, API, security, deployment, backup, testing guide… | current |
+| `.github/workflows/ci.yml`, `docker-compose.yml`, `deployment/docker/` | CI + containers | written; not yet run (branch not pushed; Docker engine unavailable locally) |
 
-No JWT/auth libraries, no password-hashing library (BCrypt/Identity), no test framework (xUnit/Jest/Vitest) are installed anywhere yet.
+## 2. Existing features (verified)
 
-## 4. Frontend Status
+| Feature | Where | Status |
+|---|---|---|
+| Register / login / refresh / logout | Python `/api/auth` (C# too) | works; Argon2id, BCrypt upgraded on login |
+| Roles: RuralUser, ShopOwner, GovernmentOfficial, Admin | backend-enforced (`[Authorize]`, `require_roles`) + route guards | works |
+| Rural dashboard, booking, 5-minute slots (capacity 2), token, booking history | `pages/rural/*` + C# | works |
+| QR tokens (HMAC-signed `SRQR-…`), shop scanner (camera, image, manual), OTP fallback (mock SMS) | `components/qr`, `components/verification`, C# | works (camera needs a real browser) |
+| Entitlement calculation per scheme, family members, masked Aadhaar, passbook | C# services, `BeneficiaryProfile` | works; synthetic data only |
+| Collection (transactional, idempotent), inventory ledger | C# | works |
+| Notifications, audit log, search | C# + pages | works |
+| Government: dashboard, statistics, reports, bookings, shops, users, inventory, map, AI center, synthetic data, DB viewer | `pages/government/*` | works |
+| AI alerts, forecasts, OCR (optional Tesseract) | AI service + C# | works |
+| Languages en / hi / mr | `i18n/translations.js` (355 keys × 3, complete) | **partial**: only 12 of 53 components use it |
+| Health | `/api/health` (C#), `/health`, `/ready` (Python) | works |
 
-- **What actually runs:** `frontend/src/main.jsx` — a single 303-line file containing the entire UI: login screen with 3 hardcoded demo accounts (`rural@example.com` / `shop@example.com` / `officer@example.com`, password `demo123`), and every screen (dashboards, token generation, QR display via client-side `qrcode` canvas, fake QR scanner matched against an in-memory array, inventory table, reports, analytics, shop management, beneficiaries, complaints, policies, audit trail). All data is hardcoded JS arrays (`initialBookings`, `users`, `shops`) — nothing persists, nothing calls the backend.
-- **The intended architecture is not implemented:** `App.jsx` and all 9 files in `src/pages/` exist but are **empty (0 bytes)**. `react-router-dom` is installed but there is no `<Router>` anywhere — navigation is a manual `useState` page switch inside `main.jsx`.
-- `src/services/api.js` is a clean, generic fetch wrapper (get/post/put/remove) pointed at `VITE_API_BASE_URL`, but it is **never imported or called** anywhere — dead code today.
-- `frontend/.env` / `.env.example` correctly point to `http://localhost:5188/api`.
-- Build verified: `npm run build` succeeds, output ~222 KB JS / 21 KB CSS.
+## 3. Missing features
 
-## 5. Backend Status
+| Item | Priority | Plan |
+|---|---|---|
+| Public landing page (`/` redirects straight to login) | HIGH | add |
+| Public Help section (searchable, no login) | HIGH | add (Python `/api/public-help`) |
+| Public Help AI Chatbot (bottom-right) | HIGH | add (Python `/api/chatbot`, retrieval over a curated knowledge base; LLM-ready interface) |
+| "Public user" role | MEDIUM | = anonymous access to landing, help and chatbot; no account needed |
+| Frontend tests (none exist) | HIGH | add Vitest + Testing Library |
+| i18n in the 41 components still hard-coded in English | MEDIUM | new UI fully translated; existing dashboards converted over time |
+| Complaints / grievance workflow | MEDIUM | not present in any layer; documented as future work |
+| Separate admin UI (Admin shares government screens) | LOW | keep; document |
+| Ration-card entity (passbook plays this role) | LOW | documented mapping in docs/DATABASE.md |
+| Payments | — | not a feature of this system (decision recorded) |
+| `CONTRIBUTING.md`, `CHANGELOG.md`, `PROJECT_STATUS.md`, `docs/CHATBOT.md`, `docs/TESTING.md`, root `SECURITY.md` | MEDIUM | add |
+| `deployment/nginx`, `deployment/cloud` content | LOW | add reverse-proxy example |
 
-- **Two backend projects exist.** `backend/SmartRation.Api/` is the real one (matches the intended folder plan: `Controllers/`, `Models/`, `DTOs/`, `Data/`, `Migrations/`, `Authentication/`, `Middleware/`, `Services/`, `Repositories/`, `Validators/`, `Mapping/`, `Configuration/`). The root-level `SmartRation.Api/` is a leftover bare `dotnet new webapi` scaffold (only the default `WeatherForecastController`) — it appears abandoned and its **compiled `bin/`/`obj/` output (100+ DLLs) is currently staged for commit**, because it was `git add`-ed before `.gitignore` existed (`.gitignore` itself is still untracked).
-- `backend/SmartRation.Api` **builds cleanly** (`dotnet build` → 0 warnings, 0 errors).
-- `Program.cs` wires up: EF Core with SQLite, Swagger/OpenAPI, a CORS policy allowing `http://localhost:5173`, and `MapControllers()`. `UseAuthorization()` is called but there is **no `AddAuthentication`, no JWT, no Identity** — so it does nothing yet.
-- **Models are well-designed:** `User` (with `PasswordHash`, `UserRole` enum: RuralUser/ShopOwner/GovernmentOfficial/Admin), `RationShop`, `TimeSlot`, `Token`, `Inventory`, `AuditLog`. `SmartRationDbContext.OnModelCreating` correctly defines unique indexes (Email, MobileNumber, ShopCode, TokenNumber, Inventory per-shop-per-type) and relationships (User↔Shop, User↔Tokens, Shop↔TimeSlots, Token↔Shop/TimeSlot).
-- **Everything else is an empty folder:** `Controllers/` has only the default `WeatherForecastController` — **zero real API endpoints exist**. `DTOs/`, `Migrations/`, `Authentication/`, `Middleware/`, `Services/`, `Repositories/`, `Validators/`, `Mapping/`, `Configuration/` are all empty. No migration has ever been generated, so **no database has actually been created** despite the connection string pointing at `smartration.db`.
-- `backend/SmartRation.Api/.env` contains only `VITE_API_BASE_URL=/api` — a frontend-style variable, meaningless in an ASP.NET Core context (which reads `appsettings.json`, not `.env`). Likely a copy-paste leftover.
-- `backend/.venv/` is a stray Python 3.14 virtualenv sitting inside the backend folder, unrelated to the .NET project.
+## 4. Broken or weak (found in this audit)
 
-## 6. Database Status
+| Problem | Priority | Status |
+|---|---|---|
+| pytest collection broken after `tests/__init__.py` removal (relative imports; root `import_mode` key silently ignored) | CRITICAL | **fixed** (`4491b6c`) — collects from each backend and from the root |
+| Concurrent registrations deadlock (35/100 → HTTP 500): placeholder code `""` on UNIQUE columns, in **both** backends | HIGH | **fixed** (`4491b6c`, `53f6080`) |
+| 500 responses lacked `X-Request-ID`; error log had `request_id "-"` | MEDIUM | **fixed** (`4491b6c`) |
+| C# per-IP rate limiter saw every proxied request as 127.0.0.1 | MEDIUM | **fixed** (`53f6080`, forwarded headers from loopback only) |
+| Root `.env` `DB_PASSWORD` doesn't match the `smartration_app` account (error 1045) | MEDIUM | owner action: copy the password from `backend/SmartRation.Python/.env` |
+| `docs/API.md` described validation errors as a map; they're a list | LOW | **fixed** |
+| Frontend calls C# directly, bypassing the Python backend | MEDIUM | switch `VITE_API_BASE_URL` to :8000 (proxy parity 36/36 verified) |
+| Old `PROJECT_AUDIT.md` described a state that no longer exists | LOW | archived |
 
-- **No database exists yet.** No EF Core migrations have been generated (`Migrations/` folder is empty), so `dotnet ef database update` has never been run.
-- `appsettings.json` configures **SQLite** (`Data Source=smartration.db`), but `database/README.md` and `docs/architecture/README.md` both state the intended production database is **PostgreSQL**. This is a documented mismatch that needs a decision (SQLite is fine for dev; a Postgres provider swap is needed before "production database" claims are accurate).
-- No seed data exists anywhere in the backend.
+## 5. Security
 
-## 7. Mobile Status
+| Finding | Priority | Notes |
+|---|---|---|
+| Access **and refresh** tokens persisted in `localStorage` | HIGH | an XSS bug would expose them; move refresh token to an HttpOnly cookie (needs backend + CSRF work) — planned, not done |
+| JWT key and QR secret in git history before `4c983e2` | HIGH | rotate JWT key before any public deployment; QR secret kept by owner decision (docs/SECURITY.md) |
+| Demo password shown on the login page | MEDIUM | fine for the demo; hide via config in production |
+| No `dangerouslySetInnerHTML`; React escapes output | ✓ | chatbot must keep rendering plain text |
+| SQL injection | ✓ | bound parameters everywhere; 16 payloads tested (MySQL suite) |
+| Rate limiting on auth, QR scan, OTP | ✓ | new public endpoints (chatbot) need their own limit |
+| Secrets in `.env` / user-secrets only; `.env` git-ignored | ✓ | |
+| Aadhaar only masked/synthetic; OTP hashed; logs without secrets | ✓ | verified by tests |
 
-- `mobile/` is the **unmodified default Expo Router starter template** — the home screen literally renders "Welcome to Expo". No Smart Ration screens, navigation, or API calls exist.
-- There is a **fully duplicated nested copy** at `mobile/mobile/` containing the exact same template files again.
-- Good dependencies are already installed for future use (expo-camera, expo-secure-store, expo-sqlite, expo-notifications, expo-location, axios, zustand) but none are used yet.
+## 6. Database
 
-## 8. Existing API Endpoints
+`smartration` (MySQL 8.0.46): 25 tables, 24 FKs, 37 indexes, Alembic `0001_initial`, 0 drift,
+utf8mb4, strict mode. `smartration_test`: application schema + the owner's `test_users` table.
+Full 122-test MySQL suite passes (CRUD, injection, performance, concurrency, errors, integrity).
+Brief entities without tables: `complaints`, `chatbot_faq`, `public_help_content`, `permissions`,
+`shop_operators` (operators are `Users.RationShopId`). Chatbot/help content will live in versioned
+JSON knowledge files first (reviewable in git); a table is only worth adding once it's edited in-app.
 
-None. The only controller in the real backend is the default ASP.NET template's `GET /WeatherForecast`. None of the endpoints requested in the roadmap (auth, users, ration, tokens, slots, qr, inventory, shop, admin, notifications) exist.
+## 7. Testing
 
-## 9. Existing Authentication
+| Suite | Result |
+|---|---|
+| C# xUnit | 86 / 86 |
+| Python backend unit | 54 / 54 |
+| Python MySQL suite (`smartration_test`) | 122 / 122 |
+| AI service | 46 / 46 |
+| Root `tests/mysql` | 24 / 24 with correct credentials |
+| Contract: proxy parity / auth interop | 36 / 36 · 23 / 23 |
+| Frontend | build OK; **no tests** |
+| E2E / browser automation | none |
 
-None on the backend. On the frontend, "login" is a client-side string comparison against 3 hardcoded demo credentials in `main.jsx` — it is a UI mock only, not real authentication, and grants no real session/token.
+## 8. Recommended implementation order
 
-## 10. Working Features (today)
-
-- A complete, professional-looking, blue-themed, responsive **UI prototype** covering all three roles (Rural User, Shop Owner, Government Official), with role-based navigation, token generation flow, client-side QR generation/printing, a mock QR "scanner" (string match against local data), inventory/report/analytics/audit views — all built on static mock data with no persistence.
-- Both the frontend and backend projects **compile/build without errors** in their current state.
-
-## 11. Missing Features (per requested roadmap)
-
-Essentially all of Phases 4–24 in the requested roadmap: real REST API controllers, DTOs, JWT auth, role-based authorization, token/slot/QR business logic, inventory tracking logic, notifications, reports, database migrations, tests (unit/integration/e2e — `tests/` folder exists but is empty), Swagger documentation of real endpoints, Docker/CI setup (`deployment/`, `.github/workflows/` exist but are empty), and any real frontend↔backend or mobile↔backend integration.
-
-## 12. Known Problems / Repo Hygiene Issues
-
-1. **Duplicate backend**: root `SmartRation.Api/` vs `backend/SmartRation.Api/` — the root one is a dead scaffold with compiled binaries staged in git.
-2. **Duplicate frontend**: root `src/` + `index.html` + `package.json`, plus an explicit `*_backup` set, plus the real `frontend/` project — three copies of the identical 303-line prototype.
-3. **Duplicate mobile**: `mobile/` and `mobile/mobile/` are identical.
-4. **Committed build output**: `dist/` and `frontend/dist/` are checked into the working tree (untracked but present; should be gitignored and removed).
-5. **`.gitignore` was never committed** — this is why the bin/obj binaries and other build artifacts got staged in the first place. It's currently sitting as an untracked file.
-6. **Architecture drift in the frontend**: the intended `pages/`-based structure (`App.jsx` + `src/pages/*.jsx`) is 100% empty; the real app lives in a single monolithic `main.jsx`, which will make incremental, safe changes harder until it's decomposed.
-7. **Stray unrelated files**: `backend/.venv/` (Python venv inside a .NET folder) and `synthetic-data-demo/` (a separate FastAPI+React demo app unrelated to the main architecture) add noise to the repo.
-8. **Doc/config mismatch**: docs say PostgreSQL, code uses SQLite.
-9. No secrets were found committed in tracked `.env` files (values are placeholders), but the root `.gitignore` covers `.env` only now that it exists — it should be committed promptly.
-
-## 13. Security Issues (preliminary — full Phase 16 review still pending)
-
-- No authentication/authorization implemented anywhere on the backend; `UseAuthorization()` is called with no scheme configured.
-- No password hashing implementation yet (model has a `PasswordHash` field but nothing populates or verifies it).
-- Frontend "login" is purely cosmetic and must not be mistaken for real access control.
-- Compiled binaries and build output should not be committed (repo bloat, and in principle a vector for stale/unreviewed artifacts).
-
-## 14. Recommended Development Order
-
-1. **Repo cleanup (do first, needs your sign-off since it involves deletions):** commit `.gitignore`, remove `bin/`/`obj/` from git tracking, decide which frontend copy is canonical (recommend keeping `frontend/`) and remove/archive the root-level `src/`, `src_backup/`, duplicate `package*.json`, `index.html`/`index_backup.html`, `dist/` folders and the duplicate `SmartRation.Api/` at root and `mobile/mobile/`. Decide whether `synthetic-data-demo/` and `backend/.venv/` stay in this repo at all.
-2. **Backend core (Phase 4–7):** DTOs, centralized error handling, JWT auth + password hashing, real controllers (auth, users, ration, tokens, slots, qr, inventory, shop, admin, notifications), first EF Core migration.
-3. **Frontend refactor (Phase 2/14):** decompose `main.jsx` into the existing `pages/`/`components/` structure, wire up `react-router-dom`, replace mock data with real calls through `services/api.js`, connect login to real JWT auth.
-4. **Database (Phase 5):** generate and apply migrations, decide SQLite (dev) vs PostgreSQL (prod) and configure accordingly, add seed data.
-5. **Token/slot/QR/inventory business logic (Phases 7–11)**, then **dashboards wired to real data (Phase 13)**.
-6. **Mobile (Phase 15):** build real screens once the API contract is stable; remove the duplicate `mobile/mobile/` first.
-7. **Security review, testing, Swagger docs, Docker/CI, performance, accessibility, final QA, documentation (Phases 16–25)**, in that order, after the above is functional.
-
----
-
-**Per your instructions, I am stopping here for approval before making any changes.** Nothing has been deleted, moved, or overwritten during this audit — this was inspection only (plus two build verifications, `dotnet build` and `npm run build`, both of which left no unintended changes beyond normal build output).
+1. ✅ Fix test collection and the bugs the MySQL suite exposed.
+2. Public Help + Chatbot backend (Python): knowledge base, search, rate limit, privacy guard, tests.
+3. Frontend: route through the Python backend; landing page; Public Help page; chatbot widget +
+   branding assets; all new UI in en/hi/mr.
+4. Frontend test runner + chatbot/landing tests.
+5. Browser verification on desktop and mobile widths; fix console errors.
+6. Docs: `PROJECT_STATUS.md`, `docs/CHATBOT.md`, `docs/TESTING.md`, `CONTRIBUTING.md`,
+   `CHANGELOG.md`, root `SECURITY.md`; nginx example.
+7. Next: translate the remaining dashboards; refresh token → HttpOnly cookie; complaints module;
+   continue the C# → Python migration (users, items, slots…).
