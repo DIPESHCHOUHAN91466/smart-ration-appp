@@ -14,8 +14,9 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Protocol
 
-from app.chatbot.engine import Assistant, PersonalData, PublicData, Reply
+from app.chatbot.engine import Assistant, PersonalData, PublicData
 from app.chatbot.knowledge_base import get_knowledge_base
+from app.chatbot.responses import Reply
 
 
 class ChatProvider(Protocol):

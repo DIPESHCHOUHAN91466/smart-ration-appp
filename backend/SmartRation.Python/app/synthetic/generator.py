@@ -21,9 +21,10 @@ import re
 from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from decimal import Decimal
 from typing import cast
 
-from sqlalchemy import CursorResult, select, update
+from sqlalchemy import CursorResult, func, select, update
 from sqlalchemy import insert as sql_insert
 from sqlalchemy.orm import Session
 
@@ -42,8 +43,12 @@ from app.db.models import (
     Beneficiary,
     Family,
     FamilyMember,
+    Inventory,
+    InventoryMovement,
     MobileVerification,
     PassbookVerification,
+    RationCollection,
+    RationCollectionItem,
     RationItem,
     RationScheme,
     RationShop,
@@ -56,6 +61,8 @@ from app.db.models import (
 
 SOURCE = "SYNTHETIC_DEMO"
 TOKEN_CONFIRMED = 2              # C# TokenStatus.Confirmed (Models/Token.cs)
+TOKEN_COMPLETED = 3              # C# TokenStatus.Completed
+MOVEMENT_DISTRIBUTED = 2         # C# InventoryMovementType.Distributed
 DEFAULT_SEED = 2026
 MAX_PEOPLE = 999_999            # the mobile/code formats carry six digits of person number
 MAX_FAMILY_SIZE = 6
@@ -273,6 +280,40 @@ def insert(db: Session, people: Sequence[SyntheticPerson], password_hash: str, b
             "MobileVerifications": n, "AadhaarVerifications": n, "PassbookVerifications": n}
 
 
+@dataclass(frozen=True)
+class _Citizen:
+    user_id: int
+    beneficiary_id: int
+    shop_id: int
+    scheme_id: int
+
+
+def _citizens(db: Session, people: Sequence[SyntheticPerson], batch_size: int = 1000) -> list[_Citizen]:
+    """The inserted rows behind `people`, in the same order (batched: large IN lists are slow)."""
+    found: dict[str, _Citizen] = {}
+    for part in _chunks([p.email for p in people], batch_size):
+        for email, user_id, beneficiary_id, shop_id, scheme_id in db.execute(
+                select(User.Email, User.Id, Beneficiary.Id, Family.RationShopId, Family.RationSchemeId)
+                .join(Beneficiary, Beneficiary.UserId == User.Id).join(Family, Family.Id == Beneficiary.FamilyId)
+                .where(User.Email.in_(list(part)))):
+            found[email] = _Citizen(user_id, beneficiary_id, shop_id, scheme_id)
+    if len(found) != len(people):
+        raise SyntheticDataError(["insert the citizens before booking or collecting for them"])
+    return [found[p.email] for p in people]
+
+
+def _entitlements(db: Session) -> tuple[dict[int, Decimal], dict[int, list[int]]]:
+    """(standard quota per active ration type, entitled ration types per scheme) - what a token carries."""
+    quotas = {t: q for t, q in db.execute(select(RationItem.RationType, RationItem.StandardQuotaPerBooking)
+                                          .where(RationItem.IsActive.is_(True)))}
+    entitled: dict[int, list[int]] = {}
+    for scheme_id, ration_type in db.execute(select(SchemeEntitlementItem.RationSchemeId, SchemeEntitlementItem.RationType)
+                                             .order_by(SchemeEntitlementItem.RationSchemeId, SchemeEntitlementItem.RationType)):
+        if ration_type in quotas:
+            entitled.setdefault(scheme_id, []).append(ration_type)
+    return quotas, entitled
+
+
 def book(db: Session, people: Sequence[SyntheticPerson]) -> dict[str, int]:
     """Give each (already inserted) citizen one Confirmed token in the earliest free upcoming slot at
     their family's shop, like the C# BookingService: capacity respected, BookedCount raised, token
@@ -280,17 +321,8 @@ def book(db: Session, people: Sequence[SyntheticPerson]) -> dict[str, int]:
     value is left empty; the C# API signs it on first request. Caller commits. Citizens whose shop
     has no free upcoming slot are counted as "Unbooked"."""
     today = datetime.combine(utc_now().date(), datetime.min.time())
-    rows = db.execute(select(User.Id, Family.RationShopId, Family.RationSchemeId)
-                      .join(Beneficiary, Beneficiary.UserId == User.Id).join(Family, Family.Id == Beneficiary.FamilyId)
-                      .where(User.Email.in_([p.email for p in people]))).all()
-    if len(rows) != len(people):
-        raise SyntheticDataError(["insert the citizens before booking them"])
-    quotas = {t: q for t, q in db.execute(select(RationItem.RationType, RationItem.StandardQuotaPerBooking)
-                                          .where(RationItem.IsActive.is_(True)))}
-    entitled: dict[int, list[int]] = {}
-    for scheme_id, ration_type in db.execute(select(SchemeEntitlementItem.RationSchemeId, SchemeEntitlementItem.RationType)):
-        if ration_type in quotas:
-            entitled.setdefault(scheme_id, []).append(ration_type)
+    rows = [(c.user_id, c.shop_id, c.scheme_id) for c in _citizens(db, people)]
+    quotas, entitled = _entitlements(db)
 
     free: dict[int, list[list[int]]] = {}   # shop -> [[slot id, places left], ...] earliest first
     for slot_id, shop_id, capacity, booked in db.execute(
@@ -329,3 +361,66 @@ def book(db: Session, people: Sequence[SyntheticPerson]) -> dict[str, int]:
             raise SyntheticDataError([f"slot {slot_id} changed while booking; nothing was booked"])
     db.flush()
     return {"Tokens": len(tokens), "TokenItems": items, "Unbooked": len(people) - len(tokens)}
+
+
+def collect(db: Session, people: Sequence[SyntheticPerson], share: float = 0.5) -> dict[str, int]:
+    """Past collections (the "transaction" history) for the first `share` of the (already inserted)
+    citizens, following the C# RationCollectionService rules: a Completed token in a past slot at the
+    family's shop (capacity respected), a RationCollection with its items, stock moved from available
+    to allocated with a Distributed ledger entry per item, and never below zero - a citizen whose shop
+    lacks the stock is skipped ("NotCollected"). Operator = the shop's owner account if one exists,
+    else 0 (the generator). Caller commits."""
+    if not 0 <= share <= 1:
+        raise SyntheticDataError([f"share must be between 0 and 1, got {share}"])
+    chosen = _citizens(db, people)[:round(len(people) * share)]
+    today = datetime.combine(utc_now().date(), datetime.min.time())
+    quotas, entitled = _entitlements(db)
+    operators: dict[int, int] = {shop: user for shop, user in db.execute(
+        select(User.RationShopId, func.min(User.Id))
+        .where(User.Role == int(UserRole.ShopOwner), User.RationShopId.is_not(None))
+        .group_by(User.RationShopId)) if shop is not None}
+    stock = {(i.RationShopId, i.RationType): i for i in db.scalars(select(Inventory))}
+    slots: dict[int, list[TimeSlot]] = {}
+    for slot in db.scalars(select(TimeSlot).where(TimeSlot.SlotDate < today, TimeSlot.BookedCount < TimeSlot.Capacity)
+                           .order_by(TimeSlot.SlotDate, TimeSlot.StartTime, TimeSlot.Id)):
+        slots.setdefault(slot.RationShopId, []).append(slot)
+
+    done: list[tuple[Token, RationCollection]] = []
+    skipped = 0
+    for citizen in chosen:
+        free = slots.get(citizen.shop_id, [])
+        while free and free[0].BookedCount >= free[0].Capacity:
+            free.pop(0)
+        items = [(t, quotas[t]) for t in entitled.get(citizen.scheme_id, []) if (citizen.shop_id, t) in stock]
+        if not free or not items or any(stock[(citizen.shop_id, t)].AvailableQuantity < q for t, q in items):
+            skipped += 1
+            continue
+        slot = free[0]
+        slot.BookedCount += 1
+        at = datetime.combine(slot.SlotDate.date(), slot.StartTime)
+        operator = operators.get(citizen.shop_id, 0)
+        token = Token(TokenNumber=f"PENDING-{citizen.user_id}-C", UserId=citizen.user_id, RationShopId=citizen.shop_id,
+                      TimeSlotId=slot.Id, Status=TOKEN_COMPLETED, QRCodeValue=None, CreatedAt=at, CollectedAt=at)
+        collection = RationCollection(CollectionCode=f"PENDING-{citizen.user_id}-C", BeneficiaryId=citizen.beneficiary_id,
+                                      RationShopId=citizen.shop_id, OperatorUserId=operator, VerificationMethod="QR",
+                                      CollectedAt=at, IdempotencyKey=None)
+        db.add(token)
+        db.flush()
+        collection.TokenId = token.Id
+        token.TokenNumber = f"SR-{at:%Y}-{token.Id:06d}"
+        db.add(collection)
+        db.flush()
+        collection.CollectionCode = f"COL-SYN-{collection.Id:06d}"
+        for ration_type, quantity in items:
+            db.add(TokenItem(TokenId=token.Id, RationType=ration_type, Quantity=quantity))
+            db.add(RationCollectionItem(RationCollectionId=collection.Id, RationType=ration_type, Quantity=quantity))
+            inventory = stock[(citizen.shop_id, ration_type)]
+            inventory.AvailableQuantity -= quantity
+            inventory.AllocatedQuantity += quantity
+            inventory.UpdatedAt = at
+            db.add(InventoryMovement(RationShopId=citizen.shop_id, RationType=ration_type, MovementType=MOVEMENT_DISTRIBUTED,
+                                     Quantity=quantity, BalanceAfter=inventory.AvailableQuantity, Reference=token.TokenNumber,
+                                     Note="synthetic collection", RecordedByUserId=operator or None, CreatedAt=at))
+        done.append((token, collection))
+    db.flush()
+    return {"Collections": len(done), "NotCollected": skipped, "NotSelected": len(people) - len(chosen)}

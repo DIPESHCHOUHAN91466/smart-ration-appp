@@ -14,9 +14,25 @@ from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session
 
 import app.db.models  # noqa: F401
+from app.core.security import utc_now
 from app.db.database import Base
-from app.db.models import AadhaarVerification, Beneficiary, Family, FamilyMember, RationShop, SchemeEntitlementItem, TimeSlot, Token, TokenItem, User
-from app.synthetic import SOURCE, SyntheticDataError, book, generate, insert, is_synthetic_email, is_synthetic_mobile, validate
+from app.db.models import (
+    AadhaarVerification,
+    Beneficiary,
+    Family,
+    FamilyMember,
+    Inventory,
+    InventoryMovement,
+    RationCollection,
+    RationCollectionItem,
+    RationShop,
+    SchemeEntitlementItem,
+    TimeSlot,
+    Token,
+    TokenItem,
+    User,
+)
+from app.synthetic import SOURCE, SyntheticDataError, book, collect, generate, insert, is_synthetic_email, is_synthetic_mobile, validate
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -205,3 +221,62 @@ def test_cli_insert_with_bookings(sqlite_db):
     result = _cli("--users", "20", "--seed", "8", "--insert", "--bookings", TEST_DATABASE_URL=url)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "Tokens 20" in result.stdout and "Unbooked 0" in result.stdout
+
+
+# ------------------------------------------------------------------ collections (transactions + stock ledger)
+
+def _stock(db) -> dict:
+    return {(i.RationShopId, i.RationType): (i.AvailableQuantity, i.AllocatedQuantity) for i in db.scalars(select(Inventory))}
+
+
+def test_collect_records_transactions_and_moves_stock_exactly(sqlite_db):
+    people = generate(40)
+    with Session(sqlite_db) as db, db.begin():
+        insert(db, people, password_hash="x")
+        before = _stock(db)
+        counts = collect(db, people, share=0.5)
+    assert counts["NotSelected"] == 20 and counts["Collections"] + counts["NotCollected"] == 20 and counts["Collections"] > 0
+    with Session(sqlite_db) as db:
+        collections = db.scalars(select(RationCollection)).all()
+        assert len(collections) == counts["Collections"]
+        assert all(c.CollectionCode == f"COL-SYN-{c.Id:06d}" for c in collections)
+        tokens = {t.Id: t for t in db.scalars(select(Token))}
+        assert all(tokens[c.TokenId].Status == 3 and tokens[c.TokenId].CollectedAt == c.CollectedAt for c in collections)
+        slots = {s.Id: s for s in db.scalars(select(TimeSlot))}
+        assert all(slots[tokens[c.TokenId].TimeSlotId].SlotDate.date() < utc_now().date() for c in collections)   # past slots only
+        assert all(s.BookedCount <= s.Capacity for s in slots.values())
+        # every issued unit is on the ledger and left "available" for "allocated"; nothing went negative
+        issued: dict = {}
+        for item in db.scalars(select(RationCollectionItem)):
+            shop = next(c.RationShopId for c in collections if c.Id == item.RationCollectionId)
+            issued[(shop, item.RationType)] = issued.get((shop, item.RationType), 0) + item.Quantity
+        after = _stock(db)
+        for key, qty in issued.items():
+            assert after[key][0] == before[key][0] - qty and after[key][1] == before[key][1] + qty and after[key][0] >= 0
+        movements = db.scalars(select(InventoryMovement)).all()
+        assert len(movements) == db.scalar(select(func.count()).select_from(RationCollectionItem))
+        assert all(m.MovementType == 2 and m.BalanceAfter >= 0 for m in movements)
+
+
+def test_collect_never_issues_more_than_the_shop_has(sqlite_db):
+    people = generate(30)
+    with Session(sqlite_db) as db, db.begin():
+        insert(db, people, password_hash="x")
+        db.query(Inventory).update({"AvailableQuantity": 0})
+        counts = collect(db, people, share=1.0)
+    assert counts == {"Collections": 0, "NotCollected": 30, "NotSelected": 0}
+    with Session(sqlite_db) as db:
+        assert db.scalar(select(func.count()).select_from(RationCollection)) == 0
+        assert db.scalar(select(func.count()).select_from(InventoryMovement)) == 0
+
+
+def test_collect_rejects_a_bad_share(sqlite_db):
+    with Session(sqlite_db) as db, pytest.raises(SyntheticDataError, match="share"):
+        collect(db, generate(2), share=1.5)
+
+
+def test_cli_insert_with_bookings_and_collections(sqlite_db):
+    url = sqlite_db.url.render_as_string(hide_password=False)
+    result = _cli("--users", "20", "--seed", "9", "--insert", "--bookings", "--collections", "0.5", TEST_DATABASE_URL=url)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Tokens 20" in result.stdout and "Collections " in result.stdout and "NotSelected 10" in result.stdout

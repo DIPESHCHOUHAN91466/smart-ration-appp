@@ -5,6 +5,7 @@
     validate(people)                      # raises SyntheticDataError on any unsafe/invalid record
     insert(db, people, password_hash)     # bulk insert; caller commits
     book(db, people)                      # optional: one upcoming token each, capacity respected
+    collect(db, people, share=0.5)        # optional: past collections + stock ledger (never below zero)
 
 Nothing here resembles a real person's identity: mobiles are in 90xx-xxxxxx blocks the demo
 accounts don't use, emails are on the reserved example.com domain (RFC 2606), Aadhaar exists only
@@ -17,6 +18,7 @@ from app.synthetic.generator import (
     SyntheticMember,
     SyntheticPerson,
     book,
+    collect,
     generate,
     insert,
     is_synthetic_email,
@@ -30,6 +32,7 @@ __all__ = [
     "SyntheticMember",
     "SyntheticPerson",
     "book",
+    "collect",
     "generate",
     "insert",
     "is_synthetic_email",

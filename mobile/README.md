@@ -1,56 +1,76 @@
-# Welcome to your Expo app 👋
+# mobile — Smart Ration Mobile Companion App (React Native & Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Cross-platform mobile application for citizens and Fair Price Shop owners built with **React Native 0.86**, **Expo SDK 57**, **Expo Router**, and **Zustand**.
 
-## Get started
+## Overview
 
-1. Install dependencies
+The mobile client brings Smart Ration capabilities directly to smartphones and handheld POS terminals used in rural distribution centres:
 
-   ```bash
-   npm install
-   ```
+- **Citizen Mobile Pass**: View ration card entitlement, book 5-minute distribution slots, and present digitally signed QR tokens even in low-connectivity areas using offline SQLite token caching.
+- **Shop Operator Scanner**: Use the device camera (`expo-camera`) to scan beneficiary QR tokens, verify HMAC signatures, or trigger SMS OTP fallback.
+- **Offline Resilience**: Local SQLite database (`expo-sqlite`) caches valid slots and token signatures so distribution is never stalled by network outages.
+- **Secure Storage**: Cryptographic keys and auth tokens are stored using device hardware security via `expo-secure-store`.
 
-2. Start the app
+## Tech Stack
 
-   ```bash
-   npx expo start
-   ```
+| Technology | Purpose |
+|---|---|
+| **Expo SDK 57** & **React Native 0.86** | Cross-platform runtime targeting Android & iOS |
+| **Expo Router** | File-based routing (`src/app`) |
+| **Expo Camera** | High-speed QR token scanning at Fair Price Shops |
+| **Expo SQLite** | Local offline token and entitlement storage |
+| **Expo SecureStore** | Encrypted token and key storage |
+| **Zustand** | Lightweight client state management |
+| **Axios** | Communication with the Python API Gateway (:8000) |
 
-In the output, you'll find options to open the app in a
+## Getting Started
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Node.js 18+ and npm
+- Expo Go app on your physical device (Android / iOS) or Android Studio emulator / Xcode simulator
 
-## Get a fresh project
-
-When you're ready, run:
+### Installation
 
 ```bash
-npm run reset-project
+cd mobile
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Running the App
 
-### Other setup steps
+```bash
+# Start the Expo development server (scans QR in Expo Go)
+npm start
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+# Run directly on Android emulator
+npm run android
 
-## Learn more
+# Run directly on iOS simulator (macOS required)
+npm run ios
 
-To learn more about developing your project with Expo, look at the following resources:
+# Run in web browser mode
+npm run web
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Directory Structure
 
-## Join the community
+```
+mobile/
+├── assets/          # App icons, splash screens, and illustrations
+├── scripts/         # Utility scripts (reset-project)
+├── src/
+│   ├── app/         # Expo Router screen definitions (_layout.tsx, index.tsx, explore.tsx)
+│   ├── components/  # Themed UI components, animated icons, badges
+│   ├── constants/   # Color themes, dimensions, spacing
+│   └── hooks/       # Custom React hooks (color scheme, responsive layout)
+├── app.json         # Expo project configuration and native permissions
+└── tsconfig.json    # TypeScript compiler configuration
+```
 
-Join our community of developers creating universal apps.
+## Backend Connection
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+By default, the mobile app communicates with the Python API Gateway:
+- Physical device: Point to your workstation's LAN IP (e.g. `http://192.168.1.X:8000/api`)
+- Android Emulator: Point to `http://10.0.2.2:8000/api`
+- iOS Simulator: Point to `http://localhost:8000/api`

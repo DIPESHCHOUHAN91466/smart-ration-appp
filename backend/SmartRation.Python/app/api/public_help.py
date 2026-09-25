@@ -22,9 +22,10 @@ from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.chatbot.engine import MAX_MESSAGE_LENGTH, Reply
 from app.chatbot.knowledge_base import LANGUAGES, get_knowledge_base
 from app.chatbot.providers import get_provider
+from app.chatbot.responses import Reply
+from app.chatbot.text import MAX_MESSAGE_LENGTH
 from app.core.dependencies import optional_current_user
 from app.core.errors import NotFound, ok
 from app.core.rate_limit import rate_limit

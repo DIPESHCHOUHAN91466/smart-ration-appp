@@ -156,7 +156,7 @@ export default function PublicHelpPage() {
                           <strong>{c.title}</strong>
                           <small>{c.description}</small>
                         </span>
-                        <span className="help-count">{c.articles.length} {t("help_topics_count")}</span>
+                        <span className="help-count">{c.articles.length} {t(c.articles.length === 1 ? "help_topic_one" : "help_topics_count")}</span>
                       </button>
                       {isOpen && (
                         <ul id={`help-${c.id}`} className="help-card-articles">

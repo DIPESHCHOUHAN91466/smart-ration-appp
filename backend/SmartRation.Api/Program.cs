@@ -222,6 +222,8 @@ builder.Services.AddScoped<IQueuePredictionService, QueuePredictionService>();
 builder.Services.AddScoped<IAnomalyDetectionService, AnomalyDetectionService>();
 builder.Services.AddScoped<IShopInsightService, ShopInsightService>();
 builder.Services.AddScoped<IBeneficiaryInsightService, BeneficiaryInsightService>();
+builder.Services.AddScoped<IBeneficiaryProfileService, BeneficiaryProfileService>();
+builder.Services.AddScoped<IAdminDatabaseBrowserService, AdminDatabaseBrowserService>();
 builder.Services.AddScoped<IAIIntelligenceService, AIIntelligenceService>();
 
 // --------------------------------------------------

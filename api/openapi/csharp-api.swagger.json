@@ -1,0 +1,7344 @@
+{
+  "components": {
+    "schemas": {
+      "AIAlert": {
+        "additionalProperties": false,
+        "properties": {
+          "alertType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "beneficiaryId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dedupKey": {
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "detectedAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "lastSeenAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "metadataJson": {
+            "nullable": true,
+            "type": "string"
+          },
+          "rationType": {
+            "$ref": "#/components/schemas/RationType"
+          },
+          "recommendedAction": {
+            "nullable": true,
+            "type": "string"
+          },
+          "resolutionNote": {
+            "nullable": true,
+            "type": "string"
+          },
+          "resolvedAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "resolvedByUserId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "score": {
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/AIAlertSeverity"
+          },
+          "shopId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "source": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AIAlertStatus"
+          },
+          "title": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AIAlertListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AIAlert"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AIAlertSeverity": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "format": "int32",
+        "type": "integer"
+      },
+      "AIAlertStatus": {
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "format": "int32",
+        "type": "integer"
+      },
+      "AIIntelligenceCenterDto": {
+        "additionalProperties": false,
+        "properties": {
+          "anomaliesRequiringReview": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "averageQueueWaitMinutes": {
+            "format": "double",
+            "type": "number"
+          },
+          "demandForecast": {
+            "items": {
+              "$ref": "#/components/schemas/DemandForecastDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "inventoryRisks": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryRiskDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "isSyntheticData": {
+            "type": "boolean"
+          },
+          "queuePredictions": {
+            "items": {
+              "$ref": "#/components/schemas/QueuePredictionDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "recentAnomalies": {
+            "items": {
+              "$ref": "#/components/schemas/AnomalyAlertDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "shopsRequiringAttention": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AIIntelligenceCenterDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AIIntelligenceCenterDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AadhaarVerificationDto": {
+        "additionalProperties": false,
+        "properties": {
+          "aadhaarMasked": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationDate": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationMode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationSource": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ActiveAlertsDto": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AiAlertDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "sync": {
+            "$ref": "#/components/schemas/AiAlertSyncResultDto"
+          }
+        },
+        "type": "object"
+      },
+      "ActiveAlertsDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ActiveAlertsDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AiAlertDto": {
+        "additionalProperties": false,
+        "properties": {
+          "alertType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "beneficiaryId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "detectedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "lastSeenAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "metadata": {
+            "nullable": true
+          },
+          "notice": {
+            "nullable": true,
+            "readOnly": true,
+            "type": "string"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "recommendedAction": {
+            "nullable": true,
+            "type": "string"
+          },
+          "resolutionNote": {
+            "nullable": true,
+            "type": "string"
+          },
+          "resolvedAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "score": {
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "severity": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "source": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AiAlertDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AiAlertDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AiAlertDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AiAlertDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AiAlertSyncResultDto": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "created": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "lastAnalysisAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "rejected": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "skipped": {
+            "type": "boolean"
+          },
+          "updated": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AiAlertSyncResultDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AiAlertSyncResultDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AiAnalyticsResponseDto": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "data": {
+            "nullable": true
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fallback": {
+            "nullable": true
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "source": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AiAnalyticsResponseDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AiAnalyticsResponseDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AnomalyAlertDto": {
+        "additionalProperties": false,
+        "properties": {
+          "alertType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "beneficiaryId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "createdAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "severity": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AuthResponseDto": {
+        "additionalProperties": false,
+        "properties": {
+          "accessToken": {
+            "nullable": true,
+            "type": "string"
+          },
+          "accessTokenExpiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "refreshToken": {
+            "nullable": true,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserSummaryDto"
+          }
+        },
+        "type": "object"
+      },
+      "AuthResponseDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AuthResponseDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryFullProfileDto": {
+        "additionalProperties": false,
+        "properties": {
+          "aadhaarVerification": {
+            "$ref": "#/components/schemas/AadhaarVerificationDto"
+          },
+          "aiInsight": {
+            "$ref": "#/components/schemas/BeneficiaryRiskInsightDto"
+          },
+          "collectionHistory": {
+            "items": {
+              "$ref": "#/components/schemas/CollectionHistoryItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "currentQr": {
+            "$ref": "#/components/schemas/CurrentQrInfoDto"
+          },
+          "entitlement": {
+            "$ref": "#/components/schemas/EntitlementSummaryDto"
+          },
+          "family": {
+            "$ref": "#/components/schemas/FamilyDto"
+          },
+          "mobileVerification": {
+            "$ref": "#/components/schemas/MobileVerificationDto"
+          },
+          "passbookVerification": {
+            "$ref": "#/components/schemas/PassbookVerificationDto"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/BeneficiaryProfileDetailsDto"
+          },
+          "qrScanHistory": {
+            "items": {
+              "$ref": "#/components/schemas/VerificationAuditLogDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "rationCard": {
+            "$ref": "#/components/schemas/RationCardDto"
+          },
+          "verificationHistory": {
+            "items": {
+              "$ref": "#/components/schemas/VerificationAuditLogDto"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryFullProfileDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BeneficiaryFullProfileDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryProfileDetailsDto": {
+        "additionalProperties": false,
+        "properties": {
+          "beneficiaryCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "nullable": true,
+            "type": "string"
+          },
+          "district": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fullName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "gender": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isBlocked": {
+            "type": "boolean"
+          },
+          "lastCollectionDate": {
+            "nullable": true,
+            "type": "string"
+          },
+          "mobileMasked": {
+            "nullable": true,
+            "type": "string"
+          },
+          "nextCollectionDate": {
+            "nullable": true,
+            "type": "string"
+          },
+          "pincode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "profilePhotoUrl": {
+            "nullable": true,
+            "type": "string"
+          },
+          "registrationDate": {
+            "nullable": true,
+            "type": "string"
+          },
+          "state": {
+            "nullable": true,
+            "type": "string"
+          },
+          "village": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryProfileDto": {
+        "additionalProperties": false,
+        "properties": {
+          "aadhaarVerification": {
+            "$ref": "#/components/schemas/AadhaarVerificationDto"
+          },
+          "beneficiary": {
+            "$ref": "#/components/schemas/BeneficiarySummaryDto"
+          },
+          "family": {
+            "$ref": "#/components/schemas/FamilyDto"
+          },
+          "mobileVerification": {
+            "$ref": "#/components/schemas/MobileVerificationDto"
+          },
+          "passbookVerification": {
+            "$ref": "#/components/schemas/PassbookVerificationDto"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryProfileDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BeneficiaryProfileDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryRiskInsightDto": {
+        "additionalProperties": false,
+        "properties": {
+          "explanation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "riskLevel": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryRiskInsightDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BeneficiaryRiskInsightDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiarySummaryDto": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "nullable": true,
+            "type": "string"
+          },
+          "beneficiaryCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fullName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isBlocked": {
+            "type": "boolean"
+          },
+          "mobileMasked": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryVerificationResponseDto": {
+        "additionalProperties": false,
+        "properties": {
+          "aadhaarVerification": {
+            "$ref": "#/components/schemas/AadhaarVerificationDto"
+          },
+          "beneficiary": {
+            "$ref": "#/components/schemas/BeneficiarySummaryDto"
+          },
+          "booking": {
+            "$ref": "#/components/schemas/BookingSummaryDto"
+          },
+          "entitlement": {
+            "$ref": "#/components/schemas/EntitlementSummaryDto"
+          },
+          "family": {
+            "$ref": "#/components/schemas/FamilyDto"
+          },
+          "mobileVerification": {
+            "$ref": "#/components/schemas/MobileVerificationDto"
+          },
+          "passbookVerification": {
+            "$ref": "#/components/schemas/PassbookVerificationDto"
+          },
+          "previousCollections": {
+            "items": {
+              "$ref": "#/components/schemas/CollectionHistoryItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "verificationSummary": {
+            "$ref": "#/components/schemas/VerificationSummaryDto"
+          }
+        },
+        "type": "object"
+      },
+      "BeneficiaryVerificationResponseDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BeneficiaryVerificationResponseDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "BookingItemRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "quantity": {
+            "format": "double",
+            "maximum": 1000,
+            "minimum": 0.01,
+            "type": "number"
+          },
+          "rationType": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "rationType"
+        ],
+        "type": "object"
+      },
+      "BookingSummaryDto": {
+        "additionalProperties": false,
+        "properties": {
+          "bookingTime": {
+            "nullable": true,
+            "type": "string"
+          },
+          "collectionCompleted": {
+            "type": "boolean"
+          },
+          "collectionDate": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tokenId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "tokenNumber": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CollectedItemDto": {
+        "additionalProperties": false,
+        "properties": {
+          "quantity": {
+            "format": "double",
+            "type": "number"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CollectionHistoryItemDto": {
+        "additionalProperties": false,
+        "properties": {
+          "collectedAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "collectionCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CollectedItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CollectionHistoryItemDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/CollectionHistoryItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "CollectionReceiptDto": {
+        "additionalProperties": false,
+        "properties": {
+          "beneficiaryName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "collectedAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "collectionCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "familySize": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "issuedItems": {
+            "items": {
+              "$ref": "#/components/schemas/CollectedItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "schemeCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tokenNumber": {
+            "nullable": true,
+            "type": "string"
+          },
+          "totalQuantityKg": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "CollectionReceiptDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CollectionReceiptDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "CompleteCollectionRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "tokenId": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tokenId"
+        ],
+        "type": "object"
+      },
+      "ConfirmCollectionRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "tokenId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "verificationMethod": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "tokenId",
+          "verificationMethod"
+        ],
+        "type": "object"
+      },
+      "CreateBookingRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BookingItemRequestDto"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "rationShopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "timeSlotId": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "rationShopId",
+          "timeSlotId"
+        ],
+        "type": "object"
+      },
+      "CreateInventoryRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "availableQuantity": {
+            "format": "double",
+            "minimum": 0,
+            "type": "number"
+          },
+          "minimumStockLevel": {
+            "format": "double",
+            "minimum": 0,
+            "type": "number"
+          },
+          "rationShopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "rationType": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "rationShopId",
+          "rationType"
+        ],
+        "type": "object"
+      },
+      "CreateSlotRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity": {
+            "format": "int32",
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "endTime": {
+            "format": "date-span",
+            "type": "string"
+          },
+          "rationShopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "slotDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "startTime": {
+            "format": "date-span",
+            "type": "string"
+          }
+        },
+        "required": [
+          "endTime",
+          "rationShopId",
+          "slotDate",
+          "startTime"
+        ],
+        "type": "object"
+      },
+      "CurrentQrInfoDto": {
+        "additionalProperties": false,
+        "properties": {
+          "bookingTime": {
+            "nullable": true,
+            "type": "string"
+          },
+          "collectionDate": {
+            "nullable": true,
+            "type": "string"
+          },
+          "qrCodeValue": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tokenId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "tokenNumber": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DemandForecastDto": {
+        "additionalProperties": false,
+        "properties": {
+          "growthPercent": {
+            "format": "double",
+            "type": "number"
+          },
+          "last30DaysKg": {
+            "format": "double",
+            "type": "number"
+          },
+          "predictedNext30DaysKg": {
+            "format": "double",
+            "type": "number"
+          },
+          "previous30DaysKg": {
+            "format": "double",
+            "type": "number"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DemandForecastDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/DemandForecastDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "EntitlementItemDto": {
+        "additionalProperties": false,
+        "properties": {
+          "alreadyCollected": {
+            "format": "double",
+            "type": "number"
+          },
+          "monthlyEntitlement": {
+            "format": "double",
+            "type": "number"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "remaining": {
+            "format": "double",
+            "type": "number"
+          },
+          "todayAllocation": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "EntitlementSummaryDto": {
+        "additionalProperties": false,
+        "properties": {
+          "eligibleMemberCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "familySize": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EntitlementItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "schemeCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "schemeName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EntitlementSummaryDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/EntitlementSummaryDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "FamilyDto": {
+        "additionalProperties": false,
+        "properties": {
+          "eligibleMemberCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "familyCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "familyHeadName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "familySize": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/FamilyMemberDto"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "FamilyDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FamilyDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "FamilyMemberDto": {
+        "additionalProperties": false,
+        "properties": {
+          "age": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "eligibility": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fullName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "relationship": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GenerateQrRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "tokenId": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tokenId"
+        ],
+        "type": "object"
+      },
+      "GovernmentDashboardDto": {
+        "additionalProperties": false,
+        "properties": {
+          "lowStockAlerts": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "pendingCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "rationDistributedTodayKg": {
+            "format": "double",
+            "type": "number"
+          },
+          "todayBookings": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "todayCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalBeneficiaries": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalShops": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "GovernmentDashboardDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GovernmentDashboardDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "HeatmapPointDto": {
+        "additionalProperties": false,
+        "properties": {
+          "intensity": {
+            "format": "double",
+            "type": "number"
+          },
+          "lat": {
+            "format": "double",
+            "type": "number"
+          },
+          "lng": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "InventoryDto": {
+        "additionalProperties": false,
+        "properties": {
+          "allocatedQuantity": {
+            "format": "double",
+            "type": "number"
+          },
+          "availableQuantity": {
+            "format": "double",
+            "type": "number"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "isLowStock": {
+            "type": "boolean"
+          },
+          "minimumStockLevel": {
+            "format": "double",
+            "type": "number"
+          },
+          "rationShopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "InventoryDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/InventoryDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "InventoryDtoIReadOnlyListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "InventoryRiskDto": {
+        "additionalProperties": false,
+        "properties": {
+          "availableQuantity": {
+            "format": "double",
+            "type": "number"
+          },
+          "averageDailyConsumption": {
+            "format": "double",
+            "type": "number"
+          },
+          "currentStatus": {
+            "nullable": true,
+            "type": "string"
+          },
+          "explanation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "predictedDaysUntilReorder": {
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "InventoryRiskDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryRiskDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "LoginRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "format": "email",
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object"
+      },
+      "MapAnalyticsDto": {
+        "additionalProperties": false,
+        "properties": {
+          "activeShops": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "beneficiaryDensityHeatmap": {
+            "items": {
+              "$ref": "#/components/schemas/HeatmapPointDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "collectionActivityHeatmap": {
+            "items": {
+              "$ref": "#/components/schemas/HeatmapPointDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "criticalInventoryShops": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "demandHeatmap": {
+            "items": {
+              "$ref": "#/components/schemas/HeatmapPointDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "eligibleBeneficiaries": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "inventoryShortageHeatmap": {
+            "items": {
+              "$ref": "#/components/schemas/HeatmapPointDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "isSyntheticData": {
+            "type": "boolean"
+          },
+          "lowInventoryShops": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "pendingCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "todayCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalBeneficiaries": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalShops": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "MapAnalyticsDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MapAnalyticsDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "MarkNotificationsReadRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "notificationIds": {
+            "items": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "notificationIds"
+        ],
+        "type": "object"
+      },
+      "MobileVerificationDto": {
+        "additionalProperties": false,
+        "properties": {
+          "mobileMasked": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verifiedAt": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NotificationDto": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "isRead": {
+            "type": "boolean"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "type": "string"
+          },
+          "type": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NotificationDtoIReadOnlyListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/NotificationDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ObjectApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "nullable": true
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "OcrTextRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "OtpRequestRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "mobileNumber": {
+            "format": "tel",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "mobileNumber"
+        ],
+        "type": "object"
+      },
+      "OtpRequestResponseDto": {
+        "additionalProperties": false,
+        "properties": {
+          "demoOtpValue": {
+            "nullable": true,
+            "type": "string"
+          },
+          "expiresInMinutes": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "mobileMasked": {
+            "nullable": true,
+            "type": "string"
+          },
+          "otpVerificationId": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "OtpRequestResponseDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/OtpRequestResponseDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "OtpVerifyRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 6,
+            "minLength": 6,
+            "type": "string"
+          },
+          "otpVerificationId": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "otpVerificationId"
+        ],
+        "type": "object"
+      },
+      "PassbookVerificationDto": {
+        "additionalProperties": false,
+        "properties": {
+          "lastUpdated": {
+            "nullable": true,
+            "type": "string"
+          },
+          "passbookNumber": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationSource": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationStatus": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PublicBeneficiaryProfileDto": {
+        "additionalProperties": false,
+        "properties": {
+          "beneficiaryCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "eligibilityBadge": {
+            "nullable": true,
+            "type": "string"
+          },
+          "lastCollectionMonth": {
+            "nullable": true,
+            "type": "string"
+          },
+          "region": {
+            "nullable": true,
+            "type": "string"
+          },
+          "schemeCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationBadge": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PublicBeneficiaryProfileDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PublicBeneficiaryProfileDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "QrScanRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "qrData": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "qrData"
+        ],
+        "type": "object"
+      },
+      "QrScanResultDto": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tokenNumber": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/BeneficiaryVerificationResponseDto"
+          },
+          "verified": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "QrScanResultDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/QrScanResultDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "QueuePredictionDto": {
+        "additionalProperties": false,
+        "properties": {
+          "explanation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "pendingInQueue": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "predictedWaitMinutes": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "QueuePredictionDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/QueuePredictionDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RationCardDto": {
+        "additionalProperties": false,
+        "properties": {
+          "familySize": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "rationCardNumber": {
+            "nullable": true,
+            "type": "string"
+          },
+          "schemeCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "schemeName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RationItemDto": {
+        "additionalProperties": false,
+        "properties": {
+          "availableQuantity": {
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "eligibleQuantity": {
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "standardQuotaPerBooking": {
+            "format": "double",
+            "type": "number"
+          },
+          "unit": {
+            "nullable": true,
+            "type": "string"
+          },
+          "vernacularName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RationItemDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/RationItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RationShopDto": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "nullable": true,
+            "type": "string"
+          },
+          "district": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "shopCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "state": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RationShopDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/RationShopDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RationType": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "format": "int32",
+        "type": "integer"
+      },
+      "RefreshRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "refreshToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ],
+        "type": "object"
+      },
+      "RegisterRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "format": "email",
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 2,
+            "type": "string"
+          },
+          "mobileNumber": {
+            "format": "tel",
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 100,
+            "minLength": 8,
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "fullName",
+          "mobileNumber",
+          "password"
+        ],
+        "type": "object"
+      },
+      "ReportSummaryDto": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "exportAvailable": {
+            "type": "boolean"
+          },
+          "recordCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "reportName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ReportSummaryDtoIReadOnlyListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ReportSummaryDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RescheduleBookingRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "timeSlotId": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "timeSlotId"
+        ],
+        "type": "object"
+      },
+      "ResolveAiAlertRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "maxLength": 500,
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "minLength": 1,
+            "pattern": "^(UnderReview|Resolved|Dismissed)$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "SearchResultDto": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "nullable": true,
+            "type": "string"
+          },
+          "subtitle": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "type": "string"
+          },
+          "type": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SearchResultDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/SearchResultDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ShopDashboardDto": {
+        "additionalProperties": false,
+        "properties": {
+          "inventory": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "shopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "todayCancelled": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "todayCompleted": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "todayPending": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "todayTotalTokens": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ShopDashboardDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ShopDashboardDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ShopMapDetailDto": {
+        "additionalProperties": false,
+        "properties": {
+          "completedCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "district": {
+            "nullable": true,
+            "type": "string"
+          },
+          "eligibleBeneficiaries": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "inventory": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "latitude": {
+            "format": "double",
+            "type": "number"
+          },
+          "longitude": {
+            "format": "double",
+            "type": "number"
+          },
+          "operatorName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "pendingCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "state": {
+            "nullable": true,
+            "type": "string"
+          },
+          "todayBookings": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "verificationIssues": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "village": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ShopMapDetailDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ShopMapDetailDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ShopMapMarkerDto": {
+        "additionalProperties": false,
+        "properties": {
+          "completedCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "dataSource": {
+            "nullable": true,
+            "type": "string"
+          },
+          "district": {
+            "nullable": true,
+            "type": "string"
+          },
+          "eligibleBeneficiaries": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "inventoryStatus": {
+            "nullable": true,
+            "type": "string"
+          },
+          "latitude": {
+            "format": "double",
+            "type": "number"
+          },
+          "longitude": {
+            "format": "double",
+            "type": "number"
+          },
+          "pendingCollections": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "state": {
+            "nullable": true,
+            "type": "string"
+          },
+          "taluka": {
+            "nullable": true,
+            "type": "string"
+          },
+          "todayBookings": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "verificationIssues": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "village": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ShopMapMarkerDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ShopMapMarkerDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ShopPerformanceDto": {
+        "additionalProperties": false,
+        "properties": {
+          "completedTokens": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "efficiencyPercent": {
+            "format": "double",
+            "type": "number"
+          },
+          "shopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "totalTokens": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ShopRiskInsightDto": {
+        "additionalProperties": false,
+        "properties": {
+          "anomalyLevel": {
+            "nullable": true,
+            "type": "string"
+          },
+          "demandLevel": {
+            "nullable": true,
+            "type": "string"
+          },
+          "inventoryHealth": {
+            "nullable": true,
+            "type": "string"
+          },
+          "queueHealth": {
+            "nullable": true,
+            "type": "string"
+          },
+          "recommendation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ShopRiskInsightDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ShopRiskInsightDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "StatisticsDto": {
+        "additionalProperties": false,
+        "properties": {
+          "collectionEfficiencyPercent": {
+            "format": "double",
+            "type": "number"
+          },
+          "collectionsCancelled": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "collectionsCompleted": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "fromDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "shopPerformance": {
+            "items": {
+              "$ref": "#/components/schemas/ShopPerformanceDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "toDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "tokensGenerated": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "StatisticsDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StatisticsDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "StockMovementRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "maxLength": 256,
+            "nullable": true,
+            "type": "string"
+          },
+          "quantity": {
+            "format": "double",
+            "maximum": 1000000,
+            "minimum": 0.01,
+            "type": "number"
+          },
+          "reference": {
+            "maxLength": 64,
+            "nullable": true,
+            "pattern": "^[A-Za-z0-9\\-/_. ]*$",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "StringApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "StringArrayApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SyntheticBeneficiaryRowDto": {
+        "additionalProperties": false,
+        "properties": {
+          "aadhaarStatus": {
+            "nullable": true,
+            "type": "string"
+          },
+          "beneficiaryCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "district": {
+            "nullable": true,
+            "type": "string"
+          },
+          "familySize": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "fullName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "gender": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isBlocked": {
+            "type": "boolean"
+          },
+          "passbookStatus": {
+            "nullable": true,
+            "type": "string"
+          },
+          "schemeCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "state": {
+            "nullable": true,
+            "type": "string"
+          },
+          "village": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SyntheticBeneficiaryRowDtoPagedResultDto": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SyntheticBeneficiaryRowDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageSize": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalCount": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "SyntheticBeneficiaryRowDtoPagedResultDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SyntheticBeneficiaryRowDtoPagedResultDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "TimeSlotDto": {
+        "additionalProperties": false,
+        "properties": {
+          "bookedCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "capacity": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "endTime": {
+            "format": "date-span",
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "rationShopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "slotDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "startTime": {
+            "format": "date-span",
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TimeSlotDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TimeSlotDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "TimeSlotDtoIReadOnlyListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TimeSlotDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "TokenDto": {
+        "additionalProperties": false,
+        "properties": {
+          "collectedAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endTime": {
+            "format": "date-span",
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TokenItemDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "qrCodeValue": {
+            "nullable": true,
+            "type": "string"
+          },
+          "rationShopId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "rationShopName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "slotDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "startTime": {
+            "format": "date-span",
+            "type": "string"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "timeSlotId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "tokenNumber": {
+            "nullable": true,
+            "type": "string"
+          },
+          "userId": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "userName": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TokenDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TokenDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "TokenDtoIReadOnlyListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TokenDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "TokenItemDto": {
+        "additionalProperties": false,
+        "properties": {
+          "quantity": {
+            "format": "double",
+            "type": "number"
+          },
+          "rationType": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateInventoryRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "availableQuantity": {
+            "format": "double",
+            "minimum": 0,
+            "type": "number"
+          },
+          "minimumStockLevel": {
+            "format": "double",
+            "minimum": 0,
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateProfileRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 2,
+            "type": "string"
+          },
+          "mobileNumber": {
+            "format": "tel",
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "required": [
+          "fullName",
+          "mobileNumber"
+        ],
+        "type": "object"
+      },
+      "UpdateSlotRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity": {
+            "format": "int32",
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "UserSummaryDto": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fullName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "mobileNumber": {
+            "nullable": true,
+            "type": "string"
+          },
+          "rationShopId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "role": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UserSummaryDtoApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UserSummaryDto"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "UserSummaryDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/UserSummaryDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "VerificationAuditLogDto": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "nullable": true,
+            "type": "string"
+          },
+          "beneficiaryId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "operatorId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "reason": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shopId": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "timestamp": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tokenNumber": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationMethod": {
+            "nullable": true,
+            "type": "string"
+          },
+          "verificationReference": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VerificationAuditLogDtoListApiResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/VerificationAuditLogDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "VerificationSummaryDto": {
+        "additionalProperties": false,
+        "properties": {
+          "aadhaarVerified": {
+            "type": "boolean"
+          },
+          "blockedReason": {
+            "nullable": true,
+            "type": "string"
+          },
+          "entitlementAvailable": {
+            "type": "boolean"
+          },
+          "familyEligible": {
+            "type": "boolean"
+          },
+          "mobileVerified": {
+            "type": "boolean"
+          },
+          "overallStatus": {
+            "nullable": true,
+            "type": "string"
+          },
+          "passbookVerified": {
+            "type": "boolean"
+          },
+          "tokenValid": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "VerifyQrRequestDto": {
+        "additionalProperties": false,
+        "properties": {
+          "qrCodeValue": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "qrCodeValue"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "bearerFormat": "JWT",
+        "description": "Enter the access token returned by /api/auth/login.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Government-oriented smart ration distribution management API.",
+    "title": "Smart Ration HSD2C API",
+    "version": "v1"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/api/admin/dashboard": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GovernmentDashboardDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GovernmentDashboardDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GovernmentDashboardDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/admin/database/tables": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringArrayApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringArrayApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringArrayApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AdminDatabase"
+        ]
+      }
+    },
+    "/api/admin/database/{table}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "table",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 25,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AdminDatabase"
+        ]
+      }
+    },
+    "/api/admin/reports": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fromDate",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "toDate",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportSummaryDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportSummaryDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportSummaryDtoIReadOnlyListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/admin/statistics": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fromDate",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "toDate",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/admin/synthetic-data/beneficiaries": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "district",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "aadhaarStatus",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "passbookStatus",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyntheticBeneficiaryRowDtoPagedResultDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyntheticBeneficiaryRowDtoPagedResultDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyntheticBeneficiaryRowDtoPagedResultDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "SyntheticData"
+        ]
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/ai/alerts": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAlertListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAlertListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAlertListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/alerts/active": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveAlertsDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveAlertsDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveAlertsDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AIAlerts"
+        ]
+      }
+    },
+    "/api/ai/alerts/list": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AIAlerts"
+        ]
+      }
+    },
+    "/api/ai/alerts/shop/{shopId}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shopId",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "default": "active",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AIAlerts"
+        ]
+      }
+    },
+    "/api/ai/alerts/sync": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertSyncResultDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertSyncResultDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertSyncResultDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AIAlerts"
+        ]
+      }
+    },
+    "/api/ai/alerts/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AIAlerts"
+        ]
+      }
+    },
+    "/api/ai/alerts/{id}/resolve": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveAiAlertRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveAiAlertRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveAiAlertRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAlertDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AIAlerts"
+        ]
+      }
+    },
+    "/api/ai/analytics/forecast": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "horizonDays",
+            "schema": {
+              "default": 7,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "schema": {
+              "default": "en",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/analytics/inventory": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "schema": {
+              "default": "en",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/analytics/queue": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "schema": {
+              "default": "en",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/analytics/risk": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 25,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "schema": {
+              "default": "en",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/analytics/shops": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "schema": {
+              "default": "en",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/beneficiaries/{beneficiaryId}/insight": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiaryId",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryRiskInsightDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryRiskInsightDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryRiskInsightDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/demand-forecast": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemandForecastDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemandForecastDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemandForecastDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/intelligence-center": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIIntelligenceCenterDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIIntelligenceCenterDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIIntelligenceCenterDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/inventory-risk": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryRiskDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryRiskDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryRiskDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/queue-prediction": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueuePredictionDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueuePredictionDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueuePredictionDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/ai/shops/{shopId}/insight": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shopId",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopRiskInsightDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopRiskInsightDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopRiskInsightDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "AI"
+        ]
+      }
+    },
+    "/api/audit/verification": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "beneficiaryId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "take",
+            "schema": {
+              "default": 100,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationAuditLogDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationAuditLogDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationAuditLogDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Audit"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/beneficiaries/me": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryProfileDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryProfileDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryProfileDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Beneficiaries"
+        ]
+      }
+    },
+    "/api/beneficiaries/{id}/collections": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionHistoryItemDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionHistoryItemDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionHistoryItemDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Beneficiaries"
+        ]
+      }
+    },
+    "/api/beneficiaries/{id}/entitlement": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementSummaryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementSummaryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementSummaryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Beneficiaries"
+        ]
+      }
+    },
+    "/api/beneficiaries/{id}/family": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Beneficiaries"
+        ]
+      }
+    },
+    "/api/beneficiaries/{id}/full-profile": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryFullProfileDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryFullProfileDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryFullProfileDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Beneficiaries"
+        ]
+      }
+    },
+    "/api/beneficiaries/{id}/verification": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryProfileDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryProfileDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryProfileDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Beneficiaries"
+        ]
+      }
+    },
+    "/api/families/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Families"
+        ]
+      }
+    },
+    "/api/families/{id}/entitlement": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementSummaryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementSummaryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementSummaryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Families"
+        ]
+      }
+    },
+    "/api/government/map/analytics": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MapAnalyticsDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MapAnalyticsDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MapAnalyticsDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "GovernmentMap"
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/inventory": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoIReadOnlyListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Inventory"
+        ]
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInventoryRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInventoryRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInventoryRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Inventory"
+        ]
+      }
+    },
+    "/api/inventory/{id}": {
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInventoryRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInventoryRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInventoryRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Inventory"
+        ]
+      }
+    },
+    "/api/inventory/{id}/damage": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockMovementRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockMovementRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockMovementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Inventory"
+        ]
+      }
+    },
+    "/api/inventory/{id}/receive": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockMovementRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockMovementRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockMovementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Inventory"
+        ]
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationDtoIReadOnlyListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/notifications/read": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkNotificationsReadRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkNotificationsReadRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkNotificationsReadRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/ocr/extract": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              },
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ocr"
+        ]
+      }
+    },
+    "/api/ocr/parse-text": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OcrTextRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OcrTextRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OcrTextRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAnalyticsResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ocr"
+        ]
+      }
+    },
+    "/api/public/beneficiaries/{publicReference}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "publicReference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicBeneficiaryProfileDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicBeneficiaryProfileDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicBeneficiaryProfileDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Public"
+        ]
+      }
+    },
+    "/api/qr/generate": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateQrRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateQrRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateQrRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Qr"
+        ]
+      }
+    },
+    "/api/qr/payload/{tokenId}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tokenId",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Qr"
+        ]
+      }
+    },
+    "/api/qr/scan": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QrScanRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QrScanRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QrScanRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QrScanResultDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QrScanResultDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QrScanResultDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Qr"
+        ]
+      }
+    },
+    "/api/qr/verify": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyQrRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyQrRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyQrRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Qr"
+        ]
+      }
+    },
+    "/api/ration/bookings": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ration"
+        ]
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ration"
+        ]
+      }
+    },
+    "/api/ration/bookings/{id}": {
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ration"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ration"
+        ]
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleBookingRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleBookingRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleBookingRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ration"
+        ]
+      }
+    },
+    "/api/ration/collection/confirm": {
+      "post": {
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmCollectionRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmCollectionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmCollectionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionReceiptDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionReceiptDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionReceiptDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "RationCollection"
+        ]
+      }
+    },
+    "/api/ration/collection/history/{beneficiaryId}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiaryId",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionHistoryItemDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionHistoryItemDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionHistoryItemDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "RationCollection"
+        ]
+      }
+    },
+    "/api/ration/items": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RationItemDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RationItemDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RationItemDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Ration"
+        ]
+      }
+    },
+    "/api/search": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/shop/collection/complete": {
+      "post": {
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteCollectionRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteCollectionRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteCollectionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Shop"
+        ]
+      }
+    },
+    "/api/shop/dashboard": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopDashboardDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopDashboardDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopDashboardDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Shop"
+        ]
+      }
+    },
+    "/api/shop/queue": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Shop"
+        ]
+      }
+    },
+    "/api/shops": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RationShopDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RationShopDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RationShopDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Shops"
+        ]
+      }
+    },
+    "/api/shops/map": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "district",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "taluka",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "village",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "schemeCode",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "inventoryStatus",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopMapMarkerDtoListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopMapMarkerDtoListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopMapMarkerDtoListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Shops"
+        ]
+      }
+    },
+    "/api/shops/{id}/location": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopMapDetailDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopMapDetailDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopMapDetailDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Shops"
+        ]
+      }
+    },
+    "/api/slots": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoIReadOnlyListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Slots"
+        ]
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSlotRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSlotRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSlotRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Slots"
+        ]
+      }
+    },
+    "/api/slots/{id}": {
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSlotRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSlotRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSlotRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSlotDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Slots"
+        ]
+      }
+    },
+    "/api/tokens/generate": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Tokens"
+        ]
+      }
+    },
+    "/api/tokens/today": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoIReadOnlyListApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Tokens"
+        ]
+      }
+    },
+    "/api/tokens/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Tokens"
+        ]
+      }
+    },
+    "/api/users/profile": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      },
+      "put": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/verification/otp/request": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpRequestRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpRequestRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpRequestRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpRequestResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpRequestResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpRequestResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Verification"
+        ]
+      }
+    },
+    "/api/verification/otp/verify": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpVerifyRequestDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpVerifyRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpVerifyRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryVerificationResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryVerificationResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryVerificationResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Verification"
+        ]
+      }
+    },
+    "/api/verification/qr/{reference}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryVerificationResponseDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryVerificationResponseDtoApiResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryVerificationResponseDtoApiResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Verification"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

@@ -45,6 +45,8 @@ def _records(name: str):
 
 _rules = _records("inventory_rules")
 SLOT_CAPACITY = _rules["slotCapacity"]
+# Past days give collection history something to attach to (same range as the C# DbInitializer: -5..+2).
+SLOT_DAYS = range(-_rules.get("slotDaysBack", 0), _rules["slotDaysAhead"] + 1)
 ITEMS = [(RationType[r["rationType"]], r["name"], r["vernacularName"], r["unit"], r["standardQuotaPerBooking"]) for r in _records("ration_items")]
 SHOPS = [(s["shopName"], s["shopCode"], s["address"], s["taluka"], s["village"], s["latitude"], s["longitude"]) for s in _records("shops")]
 SCHEMES = [(s["schemeCode"], s["name"], s["description"], [s["quotaPerEligibleMemberPerMonth"][t.name] for t in RationType])
@@ -99,13 +101,13 @@ def seed(db: Session) -> list[str]:
     if _is_empty(db, TimeSlot):
         today = datetime(now.year, now.month, now.day)
         for shop in shops:
-            for offset in range(0, 3):
+            for offset in SLOT_DAYS:
                 for minutes in range(9 * 60, 17 * 60, 5):
                     db.add(TimeSlot(RationShopId=shop.Id, SlotDate=today + timedelta(days=offset),
                                     StartTime=time(minutes // 60, minutes % 60),
                                     EndTime=time((minutes + 5) // 60, (minutes + 5) % 60),
                                     Capacity=SLOT_CAPACITY, BookedCount=0))
-        done.append("time slots for today and the next 2 days")
+        done.append(f"time slots for {len(SLOT_DAYS)} days ({SLOT_DAYS.start:+d} to {SLOT_DAYS.stop - 1:+d})")
 
     if _is_empty(db, User):
         demo_password = os.environ.get("SEED_DEMO_PASSWORD")

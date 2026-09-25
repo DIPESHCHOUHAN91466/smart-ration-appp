@@ -2,6 +2,9 @@
 dist/
 build/
 node_modules/
+# Playwright end-to-end output (screenshots/traces of failures)
+test-results/
+playwright-report/
 .vite/
 
 # Environment

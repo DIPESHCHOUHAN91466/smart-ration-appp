@@ -88,6 +88,7 @@ export const publicStrings = {
     help_related: "Related topics",
     help_privacy_note: "Never share your Aadhaar number, OTP or password with anyone online — Smart Ration staff will never ask for them.",
     help_topics_count: "topics",
+    help_topic_one: "topic",
 
     chat_title: "Ration Mitra AI Assistant",
     chat_subtitle: "Public Help & Information",
@@ -218,6 +219,7 @@ export const publicStrings = {
     help_related: "संबंधित विषय",
     help_privacy_note: "अपना आधार नंबर, OTP या पासवर्ड ऑनलाइन किसी को न बताएँ — स्मार्ट राशन कर्मचारी इन्हें कभी नहीं माँगते।",
     help_topics_count: "विषय",
+    help_topic_one: "विषय",
 
     chat_title: "राशन मित्र AI सहायक",
     chat_subtitle: "सार्वजनिक सहायता और जानकारी",
@@ -348,6 +350,7 @@ export const publicStrings = {
     help_related: "संबंधित विषय",
     help_privacy_note: "तुमचा आधार क्रमांक, OTP किंवा पासवर्ड ऑनलाइन कोणालाही सांगू नका — स्मार्ट रेशन कर्मचारी ते कधीच मागत नाहीत.",
     help_topics_count: "विषय",
+    help_topic_one: "विषय",
 
     chat_title: "रेशन मित्र AI सहाय्यक",
     chat_subtitle: "सार्वजनिक मदत आणि माहिती",

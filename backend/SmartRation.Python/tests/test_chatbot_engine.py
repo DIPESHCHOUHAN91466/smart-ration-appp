@@ -8,8 +8,9 @@ from pathlib import Path
 
 import pytest
 
-from app.chatbot.engine import Assistant, detect_language, normalize
+from app.chatbot.engine import Assistant
 from app.chatbot.knowledge_base import KNOWLEDGE_DIR, LANGUAGES, KnowledgeError, load
+from app.chatbot.text import detect_language, normalize
 
 
 class StubData:

@@ -13,7 +13,32 @@
       "problemMatcher": []
     },
     {
-      "label": "Smart Ration: Full Stack",
+      "label": "Smart Ration: Build All",
+      "detail": "C# (SmartRation.sln, Release), frontend production build, Python import check",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File sr.ps1 build",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": ["$msCompile"],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "Smart Ration: Synthetic Data",
+      "detail": "Synthetic citizens + bookings + past collections into smartration_test (never the real database)",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File sr.ps1 synthetic --users ${input:syntheticUsers} --seed ${input:syntheticSeed} --insert --bookings --collections 0.5",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Smart Ration: E2E Tests",
+      "detail": "Playwright browser tests against the running stack (start it first: Smart Ration: Run Full Stack)",
+      "type": "shell",
+      "command": "npm run test:e2e",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Smart Ration: Run Full Stack",
       "detail": "C# :5188, AI :8001, Python :8000, frontend :5173 — each in its own window; skips what's running",
       "type": "shell",
       "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/start-all.ps1",
@@ -69,7 +94,7 @@
       "problemMatcher": ["$eslint-stylish"]
     },
     {
-      "label": "Frontend: Test",
+      "label": "Smart Ration: Frontend Tests",
       "type": "shell",
       "command": "npm test",
       "options": { "cwd": "${workspaceFolder}/frontend" },
@@ -79,7 +104,7 @@
 
     // ---------------------------------------------------------------- C# backend
     {
-      "label": "Smart Ration: .NET",
+      "label": "Smart Ration: .NET API",
       "type": "shell",
       "command": "dotnet run --launch-profile http",
       "isBackground": true,
@@ -95,7 +120,7 @@
       "group": "build"
     },
     {
-      "label": "Backend: Test",
+      "label": "Smart Ration: .NET Tests",
       "type": "shell",
       "command": "dotnet test SmartRation.sln -c Release",
       "options": { "cwd": "${workspaceFolder}" },
@@ -105,7 +130,7 @@
 
     // ---------------------------------------------------------------- Python API (gateway, auth, public help, chatbot)
     {
-      "label": "Smart Ration: Python",
+      "label": "Smart Ration: Python API",
       "type": "shell",
       "command": ".venv/Scripts/python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 --reload",
       "isBackground": true,
@@ -113,7 +138,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Python: Test",
+      "label": "Smart Ration: Python Tests",
       "type": "shell",
       "command": ".venv/Scripts/python -m pytest",
       "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
@@ -182,7 +207,7 @@
 
     // ---------------------------------------------------------------- everything
     {
-      "label": "Smart Ration: Tests",
+      "label": "Smart Ration: All Tests",
       "detail": "Python, chatbot evaluation, AI service, C# (SmartRation.sln), frontend lint + tests + build, database health",
       "type": "shell",
       "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/run-tests.ps1",
@@ -197,5 +222,9 @@
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     }
+  ],
+  "inputs": [
+    { "id": "syntheticUsers", "type": "promptString", "description": "How many synthetic citizens?", "default": "1000" },
+    { "id": "syntheticSeed", "type": "promptString", "description": "Seed (same seed = same data; a seed already in the test database is refused)", "default": "2026" }
   ]
 }

@@ -6,7 +6,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
-  { ignores: ["dist", "coverage"] },
+  { ignores: ["dist", "coverage", "test-results", "playwright-report"] },
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {
@@ -23,7 +23,7 @@ export default [
     },
   },
   {
-    files: ["tests/**/*.{js,jsx}", "vite.config.js", "vitest.config.js", "eslint.config.js"],
+    files: ["tests/**/*.{js,jsx}", "e2e/**/*.js", "vite.config.js", "vitest.config.js", "eslint.config.js", "playwright.config.js"],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
 ];

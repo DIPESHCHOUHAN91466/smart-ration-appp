@@ -12,6 +12,8 @@ generous upper bounds, never exact speeds.
 from __future__ import annotations
 
 import time
+from datetime import datetime, timedelta
+from datetime import time as clock
 from decimal import Decimal
 
 import pytest
@@ -27,14 +29,17 @@ from app.db.models import (
     Family,
     FamilyMember,
     Inventory,
+    InventoryMovement,
     MobileVerification,
     PassbookVerification,
+    RationCollection,
+    RationCollectionItem,
     RationShop,
     TimeSlot,
     Token,
     User,
 )
-from app.synthetic import SOURCE, generate, insert
+from app.synthetic import SOURCE, collect, generate, insert
 from mysql_suite.support import new_session, stats
 from mysql_suite.test_05_concurrency import run_parallel
 
@@ -311,3 +316,57 @@ def test_concurrent_stock_issue_never_goes_negative(db, stock_row, level):
     db.rollback()
     assert results.count("issued") == level // 2 and results.count("insufficient") == level - level // 2
     assert db.scalar(select(Inventory.AvailableQuantity).where(Inventory.Id == item_id)) == 0
+
+
+# ------------------------------------------------------------------ collections at scale (transactions + stock ledger)
+
+@pytest.fixture
+def past_slots_and_stock(db):
+    """Past slots (reference data is seeded for today onwards) and a snapshot of every stock row;
+    both put back afterwards so later tests see the reference data unchanged."""
+    stock = {i.Id: (i.AvailableQuantity, i.AllocatedQuantity) for i in db.scalars(select(Inventory))}
+    today = datetime.combine(utc_now().date(), clock())
+    shops = list(db.scalars(select(RationShop.Id)))
+    db.add_all(TimeSlot(RationShopId=shop, SlotDate=today - timedelta(days=day), StartTime=clock(9 + n // 12, (n % 12) * 5),
+                        EndTime=clock(9 + (n + 1) // 12, ((n + 1) % 12) * 5), Capacity=2, BookedCount=0)
+               for shop in shops for day in range(1, 6) for n in range(24))
+    db.commit()
+    yield
+    db.rollback()
+    for model in (InventoryMovement, RationCollectionItem, RationCollection):
+        db.execute(delete(model))
+    db.execute(delete(Token).where(Token.TimeSlotId.in_(select(TimeSlot.Id).where(TimeSlot.SlotDate < today))))
+    db.execute(delete(TimeSlot).where(TimeSlot.SlotDate < today))
+    for item_id, (available, allocated) in stock.items():
+        db.execute(update(Inventory).where(Inventory.Id == item_id).values(AvailableQuantity=available, AllocatedQuantity=allocated))
+    db.commit()
+
+
+def test_collections_for_1000_citizens_keep_stock_and_ledger_consistent(db, password_hash, past_slots_and_stock, record):
+    people = generate(1000, seed=4242)
+    insert(db, people, password_hash)
+    db.commit()
+    before = {(i.RationShopId, i.RationType): i.AvailableQuantity for i in db.scalars(select(Inventory))}
+
+    t = time.perf_counter()
+    counts = collect(db, people, share=1.0)
+    db.commit()
+    record("collect for 1000 citizens (tokens, collections, ledger)", time.perf_counter() - t,
+           f"{counts['Collections']} collections, {counts['NotCollected']} not collected")
+
+    assert counts["Collections"] > 0 and counts["Collections"] + counts["NotCollected"] == 1000
+    assert db.scalar(select(func.count()).select_from(RationCollection)) == counts["Collections"]
+    assert db.scalar(select(func.count(func.distinct(RationCollection.TokenId)))) == counts["Collections"]
+    assert db.scalar(select(func.count()).select_from(TimeSlot).where(TimeSlot.BookedCount > TimeSlot.Capacity)) == 0
+    # stock went down by exactly what was issued, per shop and item; the ledger says the same; nothing negative
+    issued = dict(((shop, kind), qty) for shop, kind, qty in db.execute(
+        select(RationCollection.RationShopId, RationCollectionItem.RationType, func.sum(RationCollectionItem.Quantity))
+        .join(RationCollectionItem, RationCollectionItem.RationCollectionId == RationCollection.Id)
+        .group_by(RationCollection.RationShopId, RationCollectionItem.RationType)))
+    ledger = dict(((shop, kind), qty) for shop, kind, qty in db.execute(
+        select(InventoryMovement.RationShopId, InventoryMovement.RationType, func.sum(InventoryMovement.Quantity))
+        .where(InventoryMovement.MovementType == 2).group_by(InventoryMovement.RationShopId, InventoryMovement.RationType)))
+    assert issued == ledger
+    for (shop, kind), available in ((k, i.AvailableQuantity) for k, i in
+                                    (((i.RationShopId, i.RationType), i) for i in db.scalars(select(Inventory)))):
+        assert available == before[(shop, kind)] - issued.get((shop, kind), 0) and available >= 0
