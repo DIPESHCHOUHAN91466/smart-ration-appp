@@ -31,9 +31,10 @@ from app.core.security import (
     utc_now,
     verify_password,
 )
+from app.data_providers import get_data_provider
 from app.db.enums import UserRole
 from app.db.models import RefreshToken, User
-from app.services import audit_service, provisioning_service
+from app.services import audit_service
 
 log = logging.getLogger("smartration.auth")
 
@@ -78,7 +79,7 @@ def register(db: Session, settings: Settings, ctx: RequestContext, full_name: st
     db.add(user)
     try:
         db.flush()
-        beneficiary = provisioning_service.provision(db, user)
+        beneficiary = get_data_provider(settings.data_mode).provision_citizen(db, user)
         audit_service.record(db, user.Id, "REGISTER", "User", str(user.Id), ip_address=ctx.ip_address)
         response = _issue_tokens(db, user, settings)
         db.commit()

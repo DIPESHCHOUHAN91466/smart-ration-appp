@@ -47,9 +47,16 @@ public static class DbInitializer
         ("Saoner Ration Shop", "Saoner", "Saoner", 21.3833, 78.9167)
     ];
 
-    public static async Task InitializeAsync(SmartRationDbContext db, string qrSecret)
+    public static async Task InitializeAsync(SmartRationDbContext db, string qrSecret, bool seedSyntheticData = true)
     {
         await db.Database.MigrateAsync();
+
+        // Everything below is SYNTHETIC demo data (DataSource = "SYNTHETIC_DEMO").
+        // It must never be written into a real-data database.
+        if (!seedSyntheticData)
+        {
+            return;
+        }
 
         if (!await db.RationItems.AnyAsync())
         {

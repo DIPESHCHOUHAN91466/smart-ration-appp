@@ -1,4 +1,4 @@
-"""Loads and validates the Public Help knowledge base (app/chatbot/knowledge/*.json).
+"""Loads and validates the Public Help knowledge base (<repo>/ai/chatbot/knowledge/*.json).
 
 The content is data, not code: reviewed in git, loaded once at startup, and validated so a
 missing translation or a broken category reference fails fast (and in the test suite) instead
@@ -8,12 +8,15 @@ of showing a half-empty answer to a citizen.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
 LANGUAGES = ("en", "hi", "mr")
-KNOWLEDGE_DIR = Path(__file__).resolve().parent / "knowledge"
+# The knowledge lives outside the code, in <repo>/ai/chatbot/knowledge (content is reviewed
+# separately from code). CHATBOT_KNOWLEDGE_DIR overrides it (e.g. in the Docker image).
+KNOWLEDGE_DIR = Path(os.environ.get("CHATBOT_KNOWLEDGE_DIR") or Path(__file__).resolve().parents[4] / "ai" / "chatbot" / "knowledge")
 ARTICLE_FILES = ("ration-help.json", "faq.json", "schemes.json")
 RESPONSE_KEYS = ("welcome", "greeting", "thanks", "fallback", "private_data", "sensitive_input", "internal", "health")
 

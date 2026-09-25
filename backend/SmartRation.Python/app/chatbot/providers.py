@@ -14,7 +14,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Protocol
 
-from app.chatbot.engine import Assistant, PublicData, Reply
+from app.chatbot.engine import Assistant, PersonalData, PublicData, Reply
 from app.chatbot.knowledge_base import get_knowledge_base
 
 
@@ -22,7 +22,7 @@ class ChatProvider(Protocol):
     name: str
 
     def reply(self, message: str | None, language: str | None, data: PublicData | None,
-              topic: str | None = None, article_id: str | None = None) -> Reply: ...
+              topic: str | None = None, article_id: str | None = None, personal: PersonalData | None = None) -> Reply: ...
 
     def welcome(self, language: str) -> Reply: ...
 
@@ -33,8 +33,8 @@ class KnowledgeBaseProvider:
     def __init__(self) -> None:
         self.assistant = Assistant(get_knowledge_base())
 
-    def reply(self, message, language, data, topic=None, article_id=None) -> Reply:
-        return self.assistant.reply(message, language, data, topic=topic, article_id=article_id)
+    def reply(self, message, language, data, topic=None, article_id=None, personal=None) -> Reply:
+        return self.assistant.reply(message, language, data, topic=topic, article_id=article_id, personal=personal)
 
     def welcome(self, language: str) -> Reply:
         return self.assistant.welcome(language)

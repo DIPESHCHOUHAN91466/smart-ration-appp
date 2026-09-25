@@ -37,9 +37,15 @@ class PublicData(Protocol):
     def schemes(self) -> list[dict]: ...  # {code, name, items: [{name, vernacular, unit, quota}]}
 
 
+class PersonalData(Protocol):
+    """The signed-in citizen's OWN records, available only with a valid access token."""
+
+    def upcoming_bookings(self) -> list[dict]: ...  # {id, token, date, start, end, shop, status}
+
+
 @dataclass
 class Reply:
-    kind: str                       # answer | fallback | welcome | greeting | thanks | private_data | sensitive_input | internal | health
+    kind: str                       # answer | fallback | welcome | greeting | thanks | private_data | personal | sensitive_input | internal | health
     language: str
     text: str
     article_id: str | None = None
@@ -75,6 +81,8 @@ OWN_RECORDS = {
     "family", "status", "profile", "details", "entitlement", "balance",
     "टोकन", "बुकिंग", "आधार", "ओटीपी", "परिवार", "कुटुंब", "इतिहास", "स्थिति", "स्थिती", "प्रोफाइल", "तपशील",
 }
+BOOKING_WORDS = {"token", "booking", "bookings", "slot", "appointment", "qr", "time", "date", "when",
+                 "टोकन", "बुकिंग", "स्लॉट", "अपॉइंटमेंट", "समय", "वेळ", "तारीख", "कब", "केव्हा"}
 HOW_WORDS = {"how", "kaise", "kaisa", "steps", "process", "apply", "book", "cancel", "reschedule", "lost", "change",
              "कैसे", "कसे", "कसा", "कशी", "प्रक्रिया", "बुक", "रद्द", "बदल", "बदलना"}
 INTERNAL_PHRASES = (
@@ -178,7 +186,7 @@ class Assistant:
                 for c in self.kb.categories if c.quick and c.id != exclude][:limit]
 
     def reply(self, message: str | None, language: str | None, data: PublicData | None = None,
-              topic: str | None = None, article_id: str | None = None) -> Reply:
+              topic: str | None = None, article_id: str | None = None, personal: PersonalData | None = None) -> Reply:
         text = clean_input(message or "")
         lang = detect_language(text, language)
 
@@ -200,6 +208,8 @@ class Assistant:
         if any(phrase in norm for phrase in INTERNAL_PHRASES):
             return self._fixed("internal", lang)
         if token_set & self._own and token_set & self._records and not token_set & self._how:
+            if personal is not None:
+                return self._personal(token_set, lang, personal)
             reply = self._fixed("private_data", lang)
             reply.requires_login = True
             reply.links = [{"path": "/login", "label": {"en": "Log in securely", "hi": "सुरक्षित लॉग इन करें", "mr": "सुरक्षित लॉग इन करा"}[lang]}]
@@ -239,6 +249,24 @@ class Assistant:
         return self._answer(article, lang, data, 1.0) if article else None
 
     # ---------------------------------------------------------------- internals
+
+    def _personal(self, token_set: set[str], lang: str, personal: PersonalData) -> Reply:
+        """Signed-in citizen asking about their own records. Only bookings are answered in chat;
+        family, Aadhaar and passbook details stay on the secured verification page."""
+        if token_set & {normalize(w) for w in BOOKING_WORDS}:
+            bookings = personal.upcoming_bookings()
+            if not bookings:
+                return Reply(kind="personal", language=lang, text=_NO_BOOKINGS[lang],
+                             links=[{"path": "/rural/book", "label": _BOOK_LABEL[lang]}], confidence=1.0)
+            lines = [_YOUR_BOOKINGS[lang]]
+            for b in bookings:
+                status = _STATUS[lang].get(b["status"], b["status"])
+                lines.append(f"• {b['token']} — {b['date']} {b['start']}–{b['end']}, {b['shop']} ({status})")
+            lines.append(_SHOW_QR[lang])
+            return Reply(kind="personal", language=lang, text="\n".join(lines), confidence=1.0,
+                         links=[{"path": f"/rural/token/{bookings[0]['id']}", "label": _TOKEN_LABEL[lang]}])
+        return Reply(kind="personal", language=lang, text=_SEE_VERIFICATION[lang], confidence=1.0,
+                     links=[{"path": "/rural/verification", "label": _VERIFICATION_LABEL[lang]}])
 
     def _scores(self, norm: str, tokens: list[str]) -> list[tuple[float, Article]]:
         content = [t for t in tokens if t not in self._stop]
@@ -285,6 +313,25 @@ class Assistant:
             links=[{"path": link.path, "label": link.label[lang]} for link in article.links],
             suggestions=self.quick_suggestions(lang, exclude=article.category, limit=4), confidence=round(confidence, 2),
         )
+
+
+# ------------------------------------------------------------------ signed-in replies
+
+_YOUR_BOOKINGS = {"en": "Your upcoming bookings:", "hi": "आपकी आने वाली बुकिंग:", "mr": "तुमची आगामी बुकिंग:"}
+_NO_BOOKINGS = {"en": "You have no upcoming bookings. You can book a 5-minute slot from “Book Ration”.",
+                "hi": "आपकी कोई आने वाली बुकिंग नहीं है। “राशन बुक करें” से 5 मिनट का स्लॉट बुक करें।",
+                "mr": "तुमची कोणतीही आगामी बुकिंग नाही. “रेशन बुक करा” मधून 5 मिनिटांचा स्लॉट बुक करा."}
+_SHOW_QR = {"en": "Show the QR code from “My Token” at the shop.", "hi": "दुकान पर “मेरा टोकन” से QR कोड दिखाएँ।",
+            "mr": "दुकानात “माझे टोकन” मधील QR कोड दाखवा."}
+_SEE_VERIFICATION = {"en": "Your family members, masked Aadhaar and passbook details are on your secure “My Verification” page.",
+                     "hi": "आपके परिवार के सदस्य, छिपा हुआ आधार और पासबुक विवरण आपके सुरक्षित “मेरा सत्यापन” पेज पर हैं।",
+                     "mr": "तुमचे कुटुंबातील सदस्य, लपवलेला आधार आणि पासबुक तपशील तुमच्या सुरक्षित “माझी पडताळणी” पानावर आहेत."}
+_BOOK_LABEL = {"en": "Book a slot", "hi": "स्लॉट बुक करें", "mr": "स्लॉट बुक करा"}
+_TOKEN_LABEL = {"en": "Show my token", "hi": "मेरा टोकन दिखाएँ", "mr": "माझे टोकन दाखवा"}
+_VERIFICATION_LABEL = {"en": "Open My Verification", "hi": "मेरा सत्यापन खोलें", "mr": "माझी पडताळणी उघडा"}
+_STATUS = {"en": {"Pending": "pending", "Confirmed": "confirmed"},
+           "hi": {"Pending": "लंबित", "Confirmed": "पुष्ट"},
+           "mr": {"Pending": "प्रलंबित", "Confirmed": "निश्चित"}}
 
 
 # ------------------------------------------------------------------ live public data

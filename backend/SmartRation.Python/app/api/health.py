@@ -1,6 +1,6 @@
 """Health endpoints for the Python backend itself.
 
-GET /health        -> liveness + database + legacy C# API reachability.
+GET /health        -> overall status: database, legacy C# API, AI service, chatbot, data mode.
 GET /health/live   -> process is up (no dependencies checked).
 GET /ready         -> 200 only when the app can serve traffic: database reachable,
                       schema at the Alembic head this code expects, and (while
@@ -20,6 +20,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from app.chatbot.knowledge_base import get_knowledge_base
+from app.chatbot.providers import get_provider
 from app.db.database import alembic_head, current_revision, database_is_reachable
 
 router = APIRouter(tags=["health"])
@@ -29,11 +31,33 @@ class HealthResponse(BaseModel):
     status: str = Field(description="healthy | degraded | unhealthy")
     database: str = Field(description="healthy | unhealthy")
     legacyApi: str = Field(description="healthy | unhealthy | disabled — the C# API behind the fallback proxy")
+    aiService: str = Field(description="healthy | unhealthy | disabled — the Python AI/analytics service")
+    chatbot: str = Field(description="healthy | unhealthy — knowledge base loaded and provider available")
+    dataMode: str = Field(description="synthetic | real")
 
 
 class ReadyResponse(BaseModel):
     ready: bool
     checks: dict[str, str] = Field(description="database, migrations, legacyApi: ok | failing | disabled (+ detail)")
+
+
+async def _probe(client: httpx.AsyncClient | None, path: str = "/health") -> str:
+    if client is None:
+        return "disabled"
+    try:
+        reply = await client.get(path, timeout=3.0)
+        return "healthy" if reply.status_code == 200 else "unhealthy"
+    except httpx.HTTPError:
+        return "unhealthy"
+
+
+def _chatbot_status(settings) -> str:
+    try:
+        get_knowledge_base()
+        get_provider(settings.chatbot_provider)
+        return "healthy"
+    except Exception:
+        return "unhealthy"
 
 
 async def _legacy_status(request: Request) -> str:
@@ -82,6 +106,11 @@ async def health(request: Request):
     database = await asyncio.to_thread(database_is_reachable)
 
     legacy = await _legacy_status(request)
-    status = "unhealthy" if not database else "healthy" if legacy in ("healthy", "disabled") else "degraded"
-    body = HealthResponse(status=status, database="healthy" if database else "unhealthy", legacyApi=legacy)
+    ai = await _probe(request.app.state.ai_client)
+    settings = request.app.state.settings
+    chatbot = _chatbot_status(settings)
+    dependencies_ok = legacy in ("healthy", "disabled") and ai in ("healthy", "disabled") and chatbot == "healthy"
+    status = "unhealthy" if not database else "healthy" if dependencies_ok else "degraded"
+    body = HealthResponse(status=status, database="healthy" if database else "unhealthy", legacyApi=legacy,
+                          aiService=ai, chatbot=chatbot, dataMode=settings.data_mode)
     return JSONResponse(status_code=200 if database else 503, content=body.model_dump())

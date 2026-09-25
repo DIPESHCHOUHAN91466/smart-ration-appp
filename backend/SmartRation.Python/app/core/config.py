@@ -20,12 +20,19 @@ class Settings(BaseSettings):
 
     environment: str = Field(default="development", description="development | production")
 
+    # synthetic (demo data, the default) | real (refused until real integrations exist).
+    # See app/data_providers and data/real/README.md.
+    data_mode: str = Field(default="synthetic", description="synthetic | real")
+
     # MySQL (the same database the C# API uses). Required.
     database_url: str = Field(description="mysql+pymysql://USER:PASSWORD@localhost:3306/smartration?charset=utf8mb4")
 
     # Side-by-side migration: routes not yet migrated are forwarded here.
     legacy_api_url: str = Field(default="http://localhost:5188", description="C# API base URL; empty disables the fallback proxy")
     legacy_api_timeout_seconds: float = 30.0
+
+    # The Python AI/analytics service (backend/SmartRation.AI). Only checked by /health; empty disables.
+    ai_service_url: str = Field(default="http://localhost:8001", description="AI service base URL; empty disables the check")
 
     # Comma-separated in the environment (NoDecode: not parsed as JSON).
     cors_origins: Annotated[list[str], NoDecode] = Field(default=["http://localhost:5173"])

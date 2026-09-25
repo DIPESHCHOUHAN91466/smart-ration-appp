@@ -24,6 +24,7 @@ from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import install_middleware
 from app.core.rate_limit import FixedWindowLimiter
+from app.data_providers import check_data_mode
 from app.db.database import configure_database
 
 API_DESCRIPTION = """
@@ -35,10 +36,12 @@ Python backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET A
 """
 
 
-def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBaseTransport | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBaseTransport | None = None,
+               ai_transport: httpx.AsyncBaseTransport | None = None) -> FastAPI:
     settings = settings or get_settings()
     if not settings.jwt_secret_key:
         raise RuntimeError("JWT_SECRET_KEY is not set (it must equal the C# API's user-secret Jwt:Key). See .env.example.")
+    check_data_mode(settings.data_mode)  # real mode is BLOCKED until real integrations exist
     get_provider(settings.chatbot_provider)  # fail at startup on an unknown CHATBOT_PROVIDER
     get_knowledge_base()  # validate the Public Help content at startup, not on the first question
     configure_logging(settings.log_level)
@@ -55,11 +58,18 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
         else None
     )
 
+    ai_client = (
+        httpx.AsyncClient(base_url=settings.ai_service_url.rstrip("/"), timeout=3.0, transport=ai_transport)
+        if settings.ai_service_url
+        else None
+    )
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         yield
-        if legacy_client is not None:
-            await legacy_client.aclose()
+        for client in (legacy_client, ai_client):
+            if client is not None:
+                await client.aclose()
 
     app = FastAPI(
         title="Smart Ration HSD2C API (Python)",
@@ -71,6 +81,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     )
     app.state.settings = settings
     app.state.legacy_client = legacy_client
+    app.state.ai_client = ai_client
     app.state.rate_limiter = FixedWindowLimiter()
 
     install_exception_handlers(app)

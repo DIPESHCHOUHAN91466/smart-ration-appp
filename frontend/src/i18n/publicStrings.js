@@ -118,6 +118,7 @@ export const publicStrings = {
     chat_empty_text: "Pick a quick question or type your own.",
     chat_messages_label: "Conversation",
     chat_chars_left: "characters left",
+    chat_offline: "You're offline. The assistant will work again when you reconnect.",
 
     quick_ration_card: "Ration Card",
     quick_eligibility: "Eligibility",
@@ -245,6 +246,7 @@ export const publicStrings = {
     chat_empty_text: "कोई त्वरित सवाल चुनें या अपना सवाल लिखें।",
     chat_messages_label: "बातचीत",
     chat_chars_left: "अक्षर बाकी",
+    chat_offline: "आप ऑफ़लाइन हैं। कनेक्शन वापस आने पर सहायक फिर काम करेगा।",
 
     quick_ration_card: "राशन कार्ड",
     quick_eligibility: "पात्रता",
@@ -372,6 +374,7 @@ export const publicStrings = {
     chat_empty_text: "झटपट प्रश्न निवडा किंवा तुमचा प्रश्न लिहा.",
     chat_messages_label: "संभाषण",
     chat_chars_left: "अक्षरे शिल्लक",
+    chat_offline: "तुम्ही ऑफलाइन आहात. कनेक्शन परत आल्यावर सहाय्यक पुन्हा काम करेल.",
 
     quick_ration_card: "रेशन कार्ड",
     quick_eligibility: "पात्रता",

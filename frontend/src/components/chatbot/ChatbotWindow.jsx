@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search, WifiOff, X } from "lucide-react";
+import { useOnlineStatus } from "../../hooks/useOnlineStatus";
 import ChatbotHeader from "./ChatbotHeader";
 import ChatbotMessage from "./ChatbotMessage";
 import ChatbotInput from "./ChatbotInput";
@@ -9,6 +10,7 @@ import { useTranslation } from "../../i18n/useTranslation";
 
 export default function ChatbotWindow({ chat, expanded, onToggleExpand, onMinimize, onClose, inputRef }) {
   const { t } = useTranslation();
+  const online = useOnlineStatus();
   const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState("");
   const listRef = useRef(null);
@@ -64,6 +66,10 @@ export default function ChatbotWindow({ chat, expanded, onToggleExpand, onMinimi
         </div>
       )}
 
+      {!online && (
+        <p className="chat-offline" role="status"><WifiOff size={15} aria-hidden="true" /> {t("chat_offline")}</p>
+      )}
+
       <div className="chat-messages" ref={listRef} role="log" aria-live="polite" aria-relevant="additions" aria-label={t("chat_messages_label")}>
         {messages.length === 0 && !pending && (
           <div className="chat-empty">
@@ -91,13 +97,13 @@ export default function ChatbotWindow({ chat, expanded, onToggleExpand, onMinimi
             </div>
           </div>
         )}
-        {showQuick && <ChatbotSuggestions suggestions={suggestions} onChoose={chat.choose} disabled={pending} />}
+        {showQuick && <ChatbotSuggestions suggestions={suggestions} onChoose={chat.choose} disabled={pending || !online} />}
       </div>
 
       {!showQuick && !searching && suggestions.length > 0 && (
-        <ChatbotSuggestions suggestions={suggestions.slice(0, 4)} onChoose={chat.choose} disabled={pending} compact />
+        <ChatbotSuggestions suggestions={suggestions.slice(0, 4)} onChoose={chat.choose} disabled={pending || !online} compact />
       )}
-      <ChatbotInput ref={inputRef} onSend={chat.send} disabled={pending} />
+      <ChatbotInput ref={inputRef} onSend={chat.send} disabled={pending || !online} />
       <p className="chat-disclaimer">{t("chat_disclaimer")}</p>
     </section>
   );

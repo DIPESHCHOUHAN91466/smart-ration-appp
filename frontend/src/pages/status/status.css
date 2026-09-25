@@ -1,0 +1,17 @@
+.status-page { max-width: 880px; margin: 0 auto; padding: 40px 20px 80px; color: var(--text); }
+.status-page header { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-bottom: 20px; }
+.status-page h1 { display: flex; align-items: center; gap: 10px; margin: 0; color: #063B7A; font-size: 26px; width: 100%; }
+.status-page header p { margin: 0; color: var(--muted); flex: 1; }
+.status-refresh { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); background: #fff; font-weight: 600; color: var(--blue); }
+.status-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+.status-table th, .status-table td { text-align: left; padding: 13px 16px; border-bottom: 1px solid #eef3f9; font-size: 14px; }
+.status-table thead th { background: #f5f9fe; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+.status-table tbody tr:last-child th, .status-table tbody tr:last-child td { border-bottom: 0; }
+.status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 13px; }
+.status-pill.good { color: #166534; background: #dcfce7; }
+.status-pill.bad { color: #991b1b; background: #fee2e2; }
+.status-pill.muted { color: #475569; background: #f1f5f9; }
+.status-pill.info { color: #1e40af; background: #dbeafe; }
+.status-detail { color: var(--muted); font-size: 13px; }
+.status-time { color: var(--muted); font-size: 13px; }
+@media (max-width: 760px) { .status-detail { display: none; } }

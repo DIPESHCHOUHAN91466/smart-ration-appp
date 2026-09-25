@@ -12,6 +12,9 @@ import ChatbotWidget from "./components/chatbot/ChatbotWidget";
 // Public pages (no login): loaded on demand so the dashboards bundle stays the same size.
 const LandingPage = lazy(() => import("./pages/landing/LandingPage"));
 const PublicHelpPage = lazy(() => import("./pages/public-help/PublicHelpPage"));
+// Developer status page: only in development builds (or VITE_SHOW_STATUS=true).
+const SHOW_STATUS = import.meta.env.DEV || import.meta.env.VITE_SHOW_STATUS === "true";
+const StatusPage = lazy(() => import("./pages/status/StatusPage"));
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -136,6 +139,8 @@ export default function App() {
               <Route path="/gov/notifications" element={<NotificationsPage />} />
             </Route>
           </Route>
+
+          {SHOW_STATUS && <Route path="/status" element={<Suspense fallback={publicFallback}><StatusPage /></Suspense>} />}
 
           <Route path="*" element={<NotFound />} />
         </Routes>

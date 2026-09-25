@@ -96,6 +96,15 @@ builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection(SmsOptio
 var demoOptions = builder.Configuration.GetSection(DemoModeOptions.SectionName).Get<DemoModeOptions>() ?? new DemoModeOptions();
 var smsOptions = builder.Configuration.GetSection(SmsOptions.SectionName).Get<SmsOptions>() ?? new SmsOptions();
 
+// Synthetic vs real data (DATA_MODE). Real mode is refused until real integrations exist,
+// so synthetic and real personal data can never be mixed by accident.
+var dataMode = DataModeGuard.Resolve(Environment.GetEnvironmentVariable("DATA_MODE"), builder.Configuration["DataMode"]);
+var dataModeProblems = DataModeGuard.Problems(dataMode, demoOptions);
+if (dataModeProblems.Count > 0)
+{
+    throw new InvalidOperationException(string.Join(Environment.NewLine, dataModeProblems));
+}
+
 // Production must never silently fall back to a fixed demo OTP or a mock SMS
 // provider that sends nothing. Fail fast at startup instead.
 if (!builder.Environment.IsDevelopment())
@@ -317,7 +326,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<SmartRationDbContext>();
-    await DbInitializer.InitializeAsync(db, qrOptions.Secret);
+    // Synthetic demo data is seeded only in synthetic mode (real mode is refused at startup today).
+    await DbInitializer.InitializeAsync(db, qrOptions.Secret, seedSyntheticData: dataMode == DataMode.Synthetic);
+    app.Logger.LogInformation("DATA_MODE={DataMode}: identity verification, passbooks and seed data are synthetic demo data.", dataMode);
 }
 
 // --------------------------------------------------

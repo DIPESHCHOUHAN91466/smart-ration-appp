@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.database import Base, get_engine
@@ -156,3 +157,58 @@ def test_unknown_provider_fails_at_startup(tmp_path):
 
     with pytest.raises(UnsupportedProvider):
         create_app(make_settings(tmp_path, chatbot_provider="some-llm"))
+
+
+# ---------------------------------------------------------------- signed-in citizens: their OWN bookings only
+
+def _seed_bookings(tmp_path):
+    from datetime import time, timedelta
+
+    from py_testkit import make_settings
+
+    from app.core.security import TokenUser, create_access_token, utc_now
+    from app.db.models import RationShop, TimeSlot, Token, User
+
+    settings = make_settings(tmp_path)
+    now = utc_now()
+    with Session(get_engine()) as db, db.begin():
+        shop = db.scalar(select(RationShop).where(RationShop.ShopCode == "SR-SATNAVARI-001"))
+        slot = TimeSlot(RationShopId=shop.Id, SlotDate=now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1),
+                        StartTime=time(10, 5), EndTime=time(10, 10), Capacity=2, BookedCount=2)
+        db.add(slot)
+        users = [User(FullName=f"Citizen {i}", Email=f"c{i}@example.test", MobileNumber=f"700000000{i}", PasswordHash="x",
+                      Role=1, IsActive=True, CreatedAt=now) for i in (1, 2)]
+        owner = User(FullName="Owner", Email="o@example.test", MobileNumber="7000000009", PasswordHash="x", Role=2,
+                     IsActive=True, CreatedAt=now, RationShopId=shop.Id)
+        db.add_all([*users, owner])
+        db.flush()
+        for u, number in zip(users, ("TKN-MINE-001", "TKN-OTHER-002"), strict=True):
+            db.add(Token(TokenNumber=number, UserId=u.Id, RationShopId=shop.Id, TimeSlotId=slot.Id, Status=2, CreatedAt=now))
+        tokens = {name: create_access_token(TokenUser(u.Id, u.Email, u.FullName, role, u.RationShopId), settings)[0]
+                  for name, u, role in (("mine", users[0], "RuralUser"), ("owner", owner, "ShopOwner"))}
+    return tokens
+
+
+def test_signed_in_citizen_sees_only_their_own_booking(api, tmp_path):
+    tokens = _seed_bookings(tmp_path)
+    reply = data(api.post("/api/chatbot/message", json={"message": "What is my appointment?"},
+                          headers={"Authorization": f"Bearer {tokens['mine']}"}))
+    assert reply["kind"] == "personal"
+    assert "TKN-MINE-001" in reply["text"] and "10:05–10:10" in reply["text"] and "Satnavari" in reply["text"]
+    assert "TKN-OTHER-002" not in reply["text"]
+    assert reply["links"][0]["path"].startswith("/rural/token/")
+
+
+def test_signed_in_family_question_links_to_the_secure_page_without_data(api, tmp_path):
+    tokens = _seed_bookings(tmp_path)
+    reply = data(api.post("/api/chatbot/message", json={"message": "show my family members", "language": "mr"},
+                          headers={"Authorization": f"Bearer {tokens['mine']}"}))
+    assert reply["kind"] == "personal" and reply["links"] == [{"path": "/rural/verification", "label": "माझी पडताळणी उघडा"}]
+
+
+@pytest.mark.parametrize("header", ["Bearer not-a-token", None, "owner"])
+def test_others_get_the_generic_login_reply(api, tmp_path, header):
+    tokens = _seed_bookings(tmp_path)
+    headers = {} if header is None else {"Authorization": f"Bearer {tokens['owner']}" if header == "owner" else header}
+    reply = data(api.post("/api/chatbot/message", json={"message": "What is my appointment?"}, headers=headers))
+    assert reply["kind"] == "private_data" and "TKN-" not in reply["text"]

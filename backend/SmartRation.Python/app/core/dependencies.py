@@ -41,6 +41,15 @@ def get_current_user(request: Request) -> CurrentUser:
     return user
 
 
+def optional_current_user(request: Request) -> CurrentUser | None:
+    """The signed-in user if the request carries a valid access token, else None (never raises).
+    For public endpoints that may add something for signed-in users — never for access control."""
+    try:
+        return get_current_user(request)
+    except Unauthorized:
+        return None
+
+
 def require_roles(*roles: UserRole):
     def dependency(user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
         if user.role not in roles:

@@ -6,8 +6,9 @@
   GET  /api/chatbot/welcome               the assistant's greeting and quick buttons
   POST /api/chatbot/message               ask the assistant
 
-Privacy: these routes never read personal data, ignore any Authorization header, and never log
-message text (only the outcome, language and length). Rate-limited per client IP.
+Privacy: anonymous by default — no personal data. One exception: a signed-in citizen (valid
+access token, RuralUser role) asking about *their own* bookings gets them, looked up by the user
+id in the token. Message text is never logged. Rate-limited per client IP.
 """
 
 from __future__ import annotations
@@ -24,11 +25,13 @@ from sqlalchemy.orm import Session
 from app.chatbot.engine import MAX_MESSAGE_LENGTH, Reply
 from app.chatbot.knowledge_base import LANGUAGES, get_knowledge_base
 from app.chatbot.providers import get_provider
+from app.core.dependencies import optional_current_user
 from app.core.errors import NotFound, ok
 from app.core.rate_limit import rate_limit
 from app.core.validation import ValidationFailed
 from app.db.database import get_db
-from app.services.public_help_service import DatabasePublicData
+from app.db.enums import UserRole
+from app.services.public_help_service import DatabasePublicData, UserBookings
 
 log = logging.getLogger("smartration.chatbot")
 router = APIRouter(tags=["public help"])
@@ -101,12 +104,14 @@ async def message(body: ChatRequest, request: Request, db: Session = Depends(get
 
     started = time.perf_counter()
     provider = get_provider(request.app.state.settings.chatbot_provider)
+    user = optional_current_user(request)
+    personal = UserBookings(db, user.user_id) if user is not None and user.role == UserRole.RuralUser else None
     reply = await run_in_threadpool(provider.reply, text, _lang(body.language), DatabasePublicData(db),
-                                    (body.topic or "")[:40] or None, (body.articleId or "")[:64] or None)
+                                    (body.topic or "")[:40] or None, (body.articleId or "")[:64] or None, personal)
     # Outcome only — never the message itself (it may contain personal data despite our warnings).
     log.info("chatbot reply", extra={"fields": {
         "kind": reply.kind, "article": reply.article_id, "language": reply.language, "chars": len(text),
-        "via": "topic" if body.topic else "article" if body.articleId else "message",
+        "via": "topic" if body.topic else "article" if body.articleId else "message", "signed_in": personal is not None,
         "confidence": reply.confidence, "duration_ms": round((time.perf_counter() - started) * 1000, 1),
     }})
     return ok(_reply_dto(reply))

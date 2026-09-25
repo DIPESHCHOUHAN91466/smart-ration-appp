@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import ChatbotWidget from "../../src/components/chatbot/ChatbotWidget";
@@ -212,6 +212,19 @@ describe("Public Help chatbot", () => {
     openChatbot("What documents are required?");
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
     await waitFor(() => expect(chatbotService.send).toHaveBeenCalledWith({ message: "What documents are required?", language: "en" }));
+  });
+
+  it("shows an offline notice and pauses sending while the browser is offline", async () => {
+    const user = userEvent.setup();
+    renderWidget();
+    const dialog = await openWidget(user);
+    act(() => { Object.defineProperty(navigator, "onLine", { configurable: true, value: false }); window.dispatchEvent(new Event("offline")); });
+    expect(within(dialog).getByRole("status")).toHaveTextContent("You're offline");
+    await user.type(within(dialog).getByRole("textbox"), "documents");
+    expect(within(dialog).getByRole("button", { name: "Send message" })).toBeDisabled();
+    act(() => { Object.defineProperty(navigator, "onLine", { configurable: true, value: true }); window.dispatchEvent(new Event("online")); });
+    expect(within(dialog).queryByText(/You're offline/)).not.toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "Send message" })).toBeEnabled();
   });
 
   it("stays out of the way on the full-screen QR scanner", () => {

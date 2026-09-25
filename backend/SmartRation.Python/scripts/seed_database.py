@@ -152,6 +152,12 @@ def seed(db: Session) -> list[str]:
 
 
 def main() -> int:
+    from app.core.config import get_settings
+
+    if get_settings().data_mode != "synthetic":
+        # Synthetic demo records must never be written into a real-data database.
+        print("Refusing: DATA_MODE is not 'synthetic'; synthetic seed data can't be loaded.")
+        return 1
     print(f"Database: {safe_url(database_url())}")
     eng = engine()
     with Session(eng) as db, db.begin():  # one transaction: all or nothing

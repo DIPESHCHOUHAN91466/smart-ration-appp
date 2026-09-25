@@ -13,7 +13,8 @@ from collections.abc import Callable
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import RationItem, RationScheme, RationShop, SchemeEntitlementItem
+from app.core.security import utc_now
+from app.db.models import RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, Token
 
 CACHE_SECONDS = 300
 _cache: dict[str, tuple[float, list[dict]]] = {}
@@ -65,3 +66,29 @@ class DatabasePublicData:
                 })
             return result
         return _cached("schemes", load)
+
+
+UPCOMING_STATUSES = {1: "Pending", 2: "Confirmed"}  # TokenStatus values still to be collected
+
+
+class UserBookings:
+    """Implements engine.PersonalData for ONE signed-in user: every query is filtered by that
+    user's id, taken from their verified access token — never from the message text."""
+
+    def __init__(self, db: Session, user_id: int):
+        self.db = db
+        self.user_id = user_id
+
+    def upcoming_bookings(self, limit: int = 3) -> list[dict]:
+        today = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
+        rows = self.db.execute(
+            select(Token.Id, Token.TokenNumber, Token.Status, TimeSlot.SlotDate, TimeSlot.StartTime, TimeSlot.EndTime, RationShop.ShopName)
+            .join(TimeSlot, TimeSlot.Id == Token.TimeSlotId)
+            .join(RationShop, RationShop.Id == Token.RationShopId)
+            .where(Token.UserId == self.user_id, Token.Status.in_(UPCOMING_STATUSES), TimeSlot.SlotDate >= today)
+            .order_by(TimeSlot.SlotDate, TimeSlot.StartTime)
+            .limit(limit)
+        ).all()
+        return [{"id": r.Id, "token": r.TokenNumber, "status": UPCOMING_STATUSES[r.Status], "shop": r.ShopName,
+                 "date": r.SlotDate.strftime("%d-%m-%Y"), "start": r.StartTime.strftime("%H:%M"), "end": r.EndTime.strftime("%H:%M")}
+                for r in rows]

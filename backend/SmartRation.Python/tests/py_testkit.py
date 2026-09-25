@@ -30,6 +30,7 @@ def make_settings(tmp_path, **overrides) -> Settings:
         max_request_bytes=1024,
         jwt_secret_key="unit-test-signing-key-0123456789abcdef-0123456789",
         log_level="WARNING",
+        ai_service_url="",  # unit tests never depend on a running AI service
     )
     values.update(overrides)
     return Settings(_env_file=None, **values)
