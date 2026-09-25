@@ -13,8 +13,7 @@ from sqlalchemy import create_engine
 from smartration_ai.config import Settings
 from smartration_ai.repository import Repository
 
-NOW = datetime(2026, 9, 24, 6, 0, 0)  # naive UTC (11:30 IST)
-API_KEY = "test-api-key-000000000000000000"
+from ai_testkit import API_KEY, NOW  # noqa: F401  (shared with the test modules)
 
 SCHEMA = """
 CREATE TABLE RationShops (Id INTEGER PRIMARY KEY, ShopName TEXT, ShopCode TEXT, District TEXT, IsActive INTEGER);

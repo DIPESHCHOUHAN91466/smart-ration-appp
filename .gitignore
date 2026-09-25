@@ -42,3 +42,8 @@ __pycache__/
 
 # Database backups (contain personal data)
 database/mysql/backups/
+
+# Test and log output
+.pytest_cache/
+*.log
+

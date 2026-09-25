@@ -15,9 +15,8 @@ from app.core.errors import ApiError
 from app.db.models import Beneficiary, Family, TimeSlot, User
 from app.services import auth_service
 from app.services.auth_service import RequestContext
-
-from .conftest import KEY, new_session
-from .sample_data import people
+from mysql_suite.sample_data import people
+from mysql_suite.support import KEY, new_session
 
 THREADS = 20
 

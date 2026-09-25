@@ -7,12 +7,12 @@ C# through the proxy work on :8000 but appear in Swagger only once migrated.
 ## Conventions
 
 - Envelope on every `/api/*` response:
-  `{"success": bool, "message": str|null, "data": any, "errors": {field: [msg]}|null}`, plus
+  `{"success": bool, "message": str|null, "data": any, "errors": [str]|null}` (validation errors are a list of `"Field: message"` strings, as in the C# API), plus
   `"errorCode"` on failures that have one (e.g. `ALREADY_COLLECTED`, `PAYLOAD_TOO_LARGE`).
 - JSON keys are camelCase; enums are names (`"ShopOwner"`); datetimes are UTC ISO-8601 with `Z`;
   time-of-day values are `"HH:MM:SS"`; quantities are decimals.
 - Auth: `Authorization: Bearer <accessToken>` (15 min). Renew with `POST /api/auth/refresh`.
-- Status codes: 200/201 success · 400 validation (field errors in `errors`) · 401 not authenticated ·
+- Status codes: 200/201 success · 400 validation (messages in `errors`) · 401 not authenticated ·
   403 wrong role/not owner · 404 · 409 conflict · 413 body too large · 429 rate limited · 503 not ready.
 - Every response carries `X-Request-ID`; send your own to correlate logs.
 

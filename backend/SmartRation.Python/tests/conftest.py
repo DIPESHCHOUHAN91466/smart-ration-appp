@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import os
 from collections.abc import Callable
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+from py_testkit import live_database_url  # noqa: F401  (re-exported for older imports)
 
 from app.core.config import Settings
 from app.main import create_app
@@ -38,9 +38,3 @@ def make_client(tmp_path) -> Callable[..., TestClient]:
     return build
 
 
-def live_database_url() -> str | None:
-    """The real MySQL URL from backend/SmartRation.Python/.env, for integration tests."""
-    try:
-        return Settings().database_url
-    except Exception:
-        return os.environ.get("DATABASE_URL")

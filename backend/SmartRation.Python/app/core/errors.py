@@ -69,6 +69,12 @@ class ServiceUnavailable(ApiError):
     status_code = 503
 
 
+def unexpected_error_response(request: Request, exc: BaseException) -> JSONResponse:
+    """Log the full error server-side (with the request id) and give the client a generic 500."""
+    log.error("Unhandled error", exc_info=(type(exc), exc, exc.__traceback__), extra={"fields": {"path": request.url.path}})
+    return JSONResponse(status_code=500, content=fail_body("An unexpected error occurred. Please try again later.", error_code="INTERNAL_ERROR"))
+
+
 def install_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
     async def handle_api_error(_: Request, exc: ApiError):
@@ -89,5 +95,5 @@ def install_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def handle_unexpected(request: Request, exc: Exception):
-        log.exception("Unhandled error", extra={"fields": {"path": request.url.path}})
-        return JSONResponse(status_code=500, content=fail_body("An unexpected error occurred. Please try again later.", error_code="INTERNAL_ERROR"))
+        # Last resort: normally the request middleware catches the error first (and adds the request id).
+        return unexpected_error_response(request, exc)

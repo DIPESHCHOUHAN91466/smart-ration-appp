@@ -7,8 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import DataError, IntegrityError, OperationalError
 
 from app.db.models import Beneficiary, User
-
-from .sample_data import long_email, people
+from mysql_suite.sample_data import long_email, people
 
 
 def count_users(db) -> int:
@@ -77,7 +76,7 @@ def test_api_rejects_invalid_input_without_touching_the_database(api, db, field,
     body[field] = value
     r = api.post("/api/auth/register", json=body)
     assert r.status_code == 400
-    assert message in sum(r.json()["errors"].values(), [])
+    assert any(e.endswith(": " + message) for e in r.json()["errors"])  # list of "Field: message", as in the C# API
     assert count_users(db) == 0
 
 

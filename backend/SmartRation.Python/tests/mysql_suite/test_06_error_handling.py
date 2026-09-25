@@ -17,8 +17,7 @@ from app.core.config import Settings
 from app.db import database
 from app.db.models import User
 from app.main import create_app
-
-from .conftest import KEY, new_session
+from mysql_suite.support import KEY, new_session
 
 
 @pytest.fixture

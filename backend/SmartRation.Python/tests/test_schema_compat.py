@@ -9,14 +9,13 @@ from __future__ import annotations
 import pytest
 from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
+from py_testkit import live_database_url
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import OperationalError
 
 import app.db.models  # noqa: F401
 from app.db.database import Base
 from app.db.schema_utils import comparable_metadata
-
-from .conftest import live_database_url
 
 URL = live_database_url()
 

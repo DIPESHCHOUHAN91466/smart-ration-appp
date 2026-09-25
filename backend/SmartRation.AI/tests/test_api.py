@@ -13,7 +13,7 @@ from smartration_ai.main import create_app
 from smartration_ai.repository import Repository
 from smartration_ai.service import AnalyticsService
 
-from .conftest import API_KEY, NOW
+from ai_testkit import API_KEY, NOW
 
 H = {"X-Api-Key": API_KEY}
 

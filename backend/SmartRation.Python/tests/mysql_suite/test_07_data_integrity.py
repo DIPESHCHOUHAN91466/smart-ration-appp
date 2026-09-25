@@ -24,8 +24,7 @@ from app.db.models import (
     RefreshToken,
     User,
 )
-
-from .sample_data import people
+from mysql_suite.sample_data import people
 
 
 def fingerprint(db, prefix: str) -> str:

@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import os
 import sys
-import time
 from collections.abc import Callable, Iterator
 from pathlib import Path
 
@@ -30,10 +29,10 @@ from app.db.database import Base
 from app.db.enums import UserRole
 from app.db.models import User
 from app.main import create_app
+from mysql_suite.support import _REPORT, KEY, new_session, record_fixture  # noqa: F401
 
 ROOT = Path(__file__).resolve().parents[2]
 REFERENCE_TABLES = {"rationitems", "rationschemes", "schemeentitlementitems", "rationshops", "inventory", "timeslots"}
-KEY = "mysql-suite-signing-key-0123456789abcdef-0123456789"
 
 _URL = os.environ.get("TEST_DATABASE_URL", "")
 
@@ -116,10 +115,6 @@ def make_user(password_hash) -> Callable[..., User]:
     return build
 
 
-def new_session() -> Session:
-    return database.get_session_factory()()
-
-
 # ------------------------------------------------------------------ HTTP API on the test DB
 
 @pytest.fixture
@@ -132,23 +127,9 @@ def api(db, test_url) -> Iterator[TestClient]:
 
 # ------------------------------------------------------------------ performance report
 
-_REPORT: list[tuple[str, float, str]] = []
-
-
 @pytest.fixture
 def record() -> Callable[[str, float, str], None]:
-    def add(name: str, seconds: float, note: str = "") -> None:
-        _REPORT.append((name, seconds, note))
-    return add
-
-
-class Timer:
-    def __enter__(self):
-        self.start = time.perf_counter()
-        return self
-
-    def __exit__(self, *exc):
-        self.seconds = time.perf_counter() - self.start
+    return record_fixture()
 
 
 def pytest_terminal_summary(terminalreporter):

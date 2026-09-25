@@ -15,9 +15,8 @@ from sqlalchemy.pool import NullPool
 from app.core.security import utc_now
 from app.db.enums import UserRole
 from app.db.models import User
-
-from .conftest import Timer
-from .sample_data import people
+from mysql_suite.sample_data import people
+from mysql_suite.support import Timer
 
 
 def rows(prefix: str, password_hash: str) -> list[dict]:

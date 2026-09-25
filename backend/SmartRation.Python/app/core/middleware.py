@@ -9,7 +9,7 @@ import uuid
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from app.core.errors import fail_body
+from app.core.errors import fail_body, unexpected_error_response
 from app.core.logging import request_id_var
 
 log = logging.getLogger("smartration.access")
@@ -35,7 +35,10 @@ def install_middleware(app: FastAPI, max_request_bytes: int) -> None:
             if length and length.isdigit() and int(length) > max_request_bytes:
                 response = JSONResponse(status_code=413, content=fail_body("Request body is too large.", error_code="PAYLOAD_TOO_LARGE"))
             else:
-                response = await call_next(request)
+                try:
+                    response = await call_next(request)
+                except Exception as exc:  # unhandled: log with this request's id, answer with a clean 500
+                    response = unexpected_error_response(request, exc)
             response.headers["X-Request-ID"] = request_id
             for name, value in SECURITY_HEADERS.items():
                 response.headers.setdefault(name, value)

@@ -13,8 +13,7 @@ from sqlalchemy import func, inspect, select, text
 from sqlalchemy.dialects import mysql
 
 from app.db.models import User
-
-from .sample_data import INJECTION_PAYLOADS
+from mysql_suite.sample_data import INJECTION_PAYLOADS
 
 
 @pytest.fixture

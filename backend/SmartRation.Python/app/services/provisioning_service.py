@@ -8,6 +8,7 @@ masked, fabricated reference (XXXX-XXXX-####), never a real number.
 
 from __future__ import annotations
 
+import uuid
 from datetime import datetime
 
 from sqlalchemy import select
@@ -39,6 +40,13 @@ SOURCE = "SYNTHETIC_DEMO"
 DOTNET_MIN_DATE = datetime(1, 1, 1)  # C# default(DateTime), what the C# API stores for DateOfBirth
 
 
+def _pending_code() -> str:
+    """A unique placeholder until the row has an id and gets its real code (FAM-DEMO-0001, ...).
+    Never "": the code columns are UNIQUE, so concurrent registrations inserting the same ""
+    would queue on each other's index locks and deadlock (seen as MySQL error 1213)."""
+    return f"PENDING-{uuid.uuid4().hex}"
+
+
 def mask_mobile(mobile: str) -> str:
     return "****" if not mobile or len(mobile) < 4 else "******" + mobile[-4:]
 
@@ -54,7 +62,7 @@ def provision(db: Session, user: User) -> Beneficiary:
         raise BadRequest("No active ration scheme is configured to assign this beneficiary to.")
 
     now = utc_now()
-    family = Family(FamilyCode="", RationShopId=shop_id, RationSchemeId=scheme_id, DataSource=SOURCE, CreatedAt=now)
+    family = Family(FamilyCode=_pending_code(), RationShopId=shop_id, RationSchemeId=scheme_id, DataSource=SOURCE, CreatedAt=now)
     db.add(family)
     db.flush()
     family.FamilyCode = f"FAM-DEMO-{family.Id:04d}"
@@ -63,7 +71,7 @@ def provision(db: Session, user: User) -> Beneficiary:
                         Eligibility=int(EligibilityStatus.Eligible), DataSource=SOURCE))
 
     beneficiary = Beneficiary(
-        BeneficiaryCode="", Address="Demo Village", UserId=user.Id, FamilyId=family.Id, IsActive=True, IsBlocked=False,
+        BeneficiaryCode=_pending_code(), Address="Demo Village", UserId=user.Id, FamilyId=family.Id, IsActive=True, IsBlocked=False,
         DataSource=SOURCE, CreatedAt=now, Gender=int(Gender.Other), DateOfBirth=DOTNET_MIN_DATE,
         Village="", District="", State="", Pincode="", ProfilePhotoUrl=None,
     )

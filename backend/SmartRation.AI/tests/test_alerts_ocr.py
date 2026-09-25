@@ -11,7 +11,7 @@ from smartration_ai import alerts, forecasting, ocr
 from smartration_ai.main import create_app
 from smartration_ai.service import AnalyticsService
 
-from .conftest import API_KEY, NOW
+from ai_testkit import API_KEY, NOW
 
 H = {"X-Api-Key": API_KEY}
 PNG = base64.b64encode(b"\x89PNG\r\n\x1a\n" + b"\x00" * 64).decode()
