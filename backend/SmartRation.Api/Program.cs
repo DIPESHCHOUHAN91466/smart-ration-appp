@@ -2,6 +2,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -332,6 +333,11 @@ if (app.Environment.IsDevelopment())
 // --------------------------------------------------
 // MIDDLEWARE
 // --------------------------------------------------
+
+// Requests forwarded by the Python backend's proxy arrive from 127.0.0.1. Take the client
+// address from X-Forwarded-For so per-IP rate limits and audit IPs see the real client.
+// Only loopback proxies are trusted (ASP.NET default), so remote callers can't spoof it.
+app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor });
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

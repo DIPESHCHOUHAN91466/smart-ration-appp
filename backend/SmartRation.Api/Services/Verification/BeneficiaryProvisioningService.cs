@@ -35,7 +35,9 @@ public class BeneficiaryProvisioningService(
 
         var family = new Family
         {
-            FamilyCode = string.Empty,
+            // Unique placeholder until the row has an id: "" on a UNIQUE column makes concurrent
+            // registrations queue on the same index entry and deadlock (MySQL 1213).
+            FamilyCode = $"PENDING-{Guid.NewGuid():N}",
             RationShopId = shopId,
             RationSchemeId = schemeId,
             DataSource = "SYNTHETIC_DEMO"
@@ -57,7 +59,7 @@ public class BeneficiaryProvisioningService(
 
         var beneficiary = new Beneficiary
         {
-            BeneficiaryCode = string.Empty,
+            BeneficiaryCode = $"PENDING-{Guid.NewGuid():N}",
             Address = address ?? "Demo Village",
             UserId = user.Id,
             FamilyId = family.Id,
