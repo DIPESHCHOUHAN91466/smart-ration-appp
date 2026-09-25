@@ -8,6 +8,18 @@ The backend is being migrated from ASP.NET Core 8 (`backend/SmartRation.Api`, po
 Python/FastAPI (`backend/SmartRation.Python`, port 8000), side by side on the same MySQL 8
 database. Routes not yet migrated are proxied from Python to C#.
 
+**New:** a public landing page (`/`), **Public Help** (`/help`) and the **Smart Ration AI Assistant**
+— a floating help chatbot (bottom-right) that answers questions about ration cards, eligibility,
+documents, tokens and QR verification in English, हिंदी and मराठी, without login.
+
+Quick start (Windows, after the one-time setup in each backend's README):
+
+```
+start the C# API:        dotnet run --project backend/SmartRation.Api --launch-profile http
+start the Python API:    cd backend\SmartRation.Python && .venv\Scripts\python -m uvicorn app.main:create_app --factory --port 8000
+start the frontend:      cd frontend && npm run dev          → http://localhost:5173
+```
+
 | Doc | Contents |
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | components, request flow, decisions |
@@ -18,6 +30,10 @@ database. Routes not yet migrated are proxied from Python to C#.
 | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | local run, Docker, env vars, CI |
 | [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md) | MySQL backup and restore |
 | [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md) | compiled packages (there is no C code) |
+| [docs/CHATBOT.md](docs/CHATBOT.md) | the Smart Ration AI Assistant (Public Help chatbot) |
+| [docs/TESTING.md](docs/TESTING.md) | every test suite and how to run it |
+| [PROJECT_STATUS.md](PROJECT_STATUS.md) · [PROJECT_AUDIT.md](PROJECT_AUDIT.md) | current status (PASS/PARTIAL/…) and the latest audit |
+| [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) · [SECURITY.md](SECURITY.md) | how to contribute, what changed, reporting security issues |
 | [docs/DB_TESTING.md](docs/DB_TESTING.md) | step-by-step MySQL test plan (100 records: CRUD, security, performance, concurrency, errors, integrity) |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | common errors and fixes |
 | [MIGRATION_AUDIT.md](MIGRATION_AUDIT.md) | Phase 0 audit of the C# system |

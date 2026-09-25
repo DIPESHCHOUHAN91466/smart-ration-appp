@@ -115,15 +115,15 @@ JSON knowledge files first (reviewable in git); a table is only worth adding onc
 | Frontend | build OK; **no tests** |
 | E2E / browser automation | none |
 
-## 8. Recommended implementation order
+## 8. Recommended implementation order (status after this work: see PROJECT_STATUS.md)
 
 1. ✅ Fix test collection and the bugs the MySQL suite exposed.
-2. Public Help + Chatbot backend (Python): knowledge base, search, rate limit, privacy guard, tests.
-3. Frontend: route through the Python backend; landing page; Public Help page; chatbot widget +
+2. ✅ Public Help + Chatbot backend (Python): knowledge base, search, rate limit, privacy guard, tests.
+3. ✅ Frontend: route through the Python backend; landing page; Public Help page; chatbot widget +
    branding assets; all new UI in en/hi/mr.
-4. Frontend test runner + chatbot/landing tests.
-5. Browser verification on desktop and mobile widths; fix console errors.
-6. Docs: `PROJECT_STATUS.md`, `docs/CHATBOT.md`, `docs/TESTING.md`, `CONTRIBUTING.md`,
+4. ✅ Frontend test runner + chatbot/landing tests.
+5. ✅ Browser verification on desktop and mobile widths; fix console errors.
+6. ✅ Docs: `PROJECT_STATUS.md`, `docs/CHATBOT.md`, `docs/TESTING.md`, `CONTRIBUTING.md`,
    `CHANGELOG.md`, root `SECURITY.md`; nginx example.
 7. Next: translate the remaining dashboards; refresh token → HttpOnly cookie; complaints module;
    continue the C# → Python migration (users, items, slots…).

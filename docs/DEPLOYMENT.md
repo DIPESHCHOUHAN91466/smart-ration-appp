@@ -8,7 +8,7 @@
 | C# API (legacy) | 5188 | `dotnet run --project backend/SmartRation.Api --launch-profile http` |
 | Python API | 8000 | `cd backend\SmartRation.Python` → `.venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000` |
 | AI service | 8001 | `cd backend\SmartRation.AI` → `.venv\Scripts\python -m uvicorn smartration_ai.main:create_app --factory --port 8001` |
-| Frontend | 5173 | `cd frontend` → `npm run dev` |
+| Frontend | 5173 | `cd frontend` → `npm run dev` (calls the Python API on :8000) |
 
 `start-dev.bat` starts the C# API and frontend. First-time Python setup:
 [backend/SmartRation.Python/README.md](../backend/SmartRation.Python/README.md).
@@ -46,6 +46,9 @@ Probes: liveness `GET /health/live`; readiness `GET /ready` (database, migration
 | `ACCESS_TOKEN_EXPIRE_MINUTES` / `REFRESH_TOKEN_EXPIRE_DAYS` | no | 15 / 7 | |
 | `PASSWORD_UPGRADE_TO_ARGON2` | no | true | |
 | `AUTH_RATE_LIMIT_PER_MINUTE` | no | 10 | |
+| `CHATBOT_PROVIDER` | no | `knowledge` | anything else stops startup (see CHATBOT.md) |
+| `CHATBOT_API_KEY` | no | — | reserved for a future generative provider |
+| `CHATBOT_RATE_LIMIT_PER_MINUTE` / `PUBLIC_HELP_RATE_LIMIT_PER_MINUTE` | no | 30 / 120 | per client IP |
 | `RUN_DB_SETUP` / `RUN_DB_SEED` | no | false / false | container entrypoint only |
 | `SEED_DEMO_PASSWORD`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | no | — | seeding only |
 | `RESET_DATABASE`, `CONFIRM_RESET` | no | — | reset script only |
@@ -54,7 +57,11 @@ Probes: liveness `GET /health/live`; readiness `GET /ready` (database, migration
 
 `.github/workflows/ci.yml` runs on pushes to `main` and `feature/**` and on pull requests:
 Python (3.13 and 3.14) lint + type check + schema setup/seed/verify against a MySQL 8 service
-container + pytest; C# tests; frontend build; Docker image build, content check and start-up smoke test.
+container + pytest; C# tests; frontend tests + build; Docker image build, content check and start-up smoke test.
+
+## Reverse proxy
+
+`deployment/nginx/smartration.conf.example`: TLS, security headers, SPA fallback, `/api` → Python.
 
 ## Production checklist
 

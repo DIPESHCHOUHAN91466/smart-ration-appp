@@ -29,8 +29,13 @@ accepts the old secret for verification during a transition window.
   the next successful login. Login failures give one generic message (no account enumeration) and
   are audited with a masked email.
 - Rate limiting: login + register share 10 requests/minute per client IP (as in C#).
-  Known gap: requests the Python proxy forwards reach the C# limiter from 127.0.0.1; the per-client
-  limit applies only to routes Python serves. Resolved as areas move to Python.
+  Requests the Python proxy forwards carry `X-Forwarded-For`; the C# API trusts it from loopback
+  proxies only (`UseForwardedHeaders`, fixed 2026-09-25), so its per-IP limits (QR scan, OTP) see the
+  real client. The Python limiter keys on the socket address: run uvicorn with `--proxy-headers`
+  behind a reverse proxy.
+- Token storage: the frontend keeps the access and refresh tokens in `localStorage` (zustand persist).
+  Any XSS bug could read them; React escaping and the absence of `dangerouslySetInnerHTML` reduce the
+  risk, but moving the refresh token to an HttpOnly, SameSite cookie is the planned fix (HIGH).
 - Roles: `RuralUser`, `ShopOwner`, `GovernmentOfficial`, `Admin`, enforced per route with
   `require_roles(...)`, and ownership checks inside services (a user sees only their own data).
 
@@ -42,6 +47,16 @@ accepts the old secret for verification during a transition window.
 - QR codes carry an HMAC-signed reference (`SRQR-{tokenId}-{16 hex}`), not personal data.
 - Ration collection is transactional and idempotent (unique idempotency key and one collection per token).
 - Administrative actions and verification events are written to `AuditLogs` / `VerificationAuditLogs`.
+
+## Public Help chatbot
+
+Public and anonymous by design: it never reads personal data and ignores any `Authorization` header.
+Questions about "my token / family / Aadhaar" get a log-in prompt; Aadhaar-like numbers, OTPs and
+passwords typed into the chat trigger a warning and aren't processed; requests for internals or other
+people's data are refused; health questions get general guidance only. Message text is never logged
+(only kind, article id, language, length, duration). Replies are plain text rendered without HTML,
+links are in-app paths only (validated server- and client-side). 30 messages/minute per client IP.
+The conversation lives in the browser's `sessionStorage` only. Details: [CHATBOT.md](CHATBOT.md).
 
 ## Logging and errors
 

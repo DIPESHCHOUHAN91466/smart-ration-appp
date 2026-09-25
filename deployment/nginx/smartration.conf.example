@@ -1,0 +1,56 @@
+# Example reverse proxy for Smart Ration (not used in local development).
+# Serves the built frontend (frontend/dist) and forwards /api to the Python backend,
+# which in turn forwards not-yet-migrated routes to the C# API.
+# Replace smartration.example.org and the certificate paths. Test with `nginx -t`.
+
+upstream smartration_api {
+    server 127.0.0.1:8000;      # uvicorn / the `api` container
+    keepalive 16;
+}
+
+server {
+    listen 80;
+    server_name smartration.example.org;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name smartration.example.org;
+
+    ssl_certificate     /etc/ssl/smartration/fullchain.pem;
+    ssl_certificate_key /etc/ssl/smartration/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy no-referrer always;
+    add_header Permissions-Policy "camera=(self), microphone=(), geolocation=(self)" always;  # camera: QR scanner
+
+    client_max_body_size 6m;          # = MAX_REQUEST_BYTES (OCR uploads)
+
+    root /var/www/smartration;        # contents of frontend/dist
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://smartration_api;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  # run uvicorn with --proxy-headers
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Request-ID $request_id;
+        proxy_read_timeout 60s;
+    }
+
+    location = /health { proxy_pass http://smartration_api; }
+    location = /ready  { proxy_pass http://smartration_api; access_log off; }
+
+    # Hashed build assets: cache for a year. index.html: never cache (new releases take effect).
+    location /assets/ { expires 1y; add_header Cache-Control "public, immutable"; }
+    location = /index.html { add_header Cache-Control "no-store"; }
+
+    # Single-page app: unknown paths (e.g. /help, /rural/dashboard) serve index.html.
+    location / { try_files $uri /index.html; }
+}

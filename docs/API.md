@@ -1,6 +1,6 @@
 # API
 
-Base URL: `http://localhost:8000` (Python; recommended) or `http://localhost:5188` (C#, legacy).
+Base URL: `http://localhost:8000` (Python — what the frontend uses) or `http://localhost:5188` (C#, legacy).
 Interactive docs for routes Python serves: `/docs` (Swagger) and `/redoc`. Routes still served by
 C# through the proxy work on :8000 but appear in Swagger only once migrated.
 
@@ -23,6 +23,20 @@ C# through the proxy work on :8000 but appear in Swagger only once migrated.
 | GET | `/health/live` | — | process is up |
 | GET | `/health` | — | `{status, database, legacyApi}`; 503 if the DB is down |
 | GET | `/ready` | — | 200 only if DB reachable, schema at the expected Alembic head, legacy API up |
+
+## Public Help and chatbot (Python, no login)
+
+| Method | Path | Limit | Purpose |
+|---|---|---|---|
+| GET | `/api/public-help/categories?language=` | 120/min | help sections with their articles and `primaryArticle` |
+| GET | `/api/public-help/articles/{id}?language=` | 120/min | one article (`title`, `text`, `links`, `related`); 404 if unknown |
+| GET | `/api/public-help/search?q=&language=` | 120/min | `[{id, category, title, excerpt, score}]`; `q` 1–100 characters |
+| GET | `/api/chatbot/welcome?language=` | 120/min | greeting + quick buttons |
+| POST | `/api/chatbot/message` | 30/min | body `{message | topic | articleId, language}` → `{kind, text, title, articleId, links, related, suggestions, requiresLogin, confidence}` |
+
+`kind` is one of `answer`, `fallback`, `welcome`, `greeting`, `thanks`, `private_data`,
+`sensitive_input`, `internal`, `health`. `language` is `en`, `hi` or `mr`. Messages over 500 characters
+or empty → 400. See [CHATBOT.md](CHATBOT.md).
 
 ## Endpoints
 
@@ -54,7 +68,7 @@ that will migrate it. Required roles are unchanged from the C# `[Authorize]` att
 | OCR | `POST /api/ocr/extract` · `parse-text` | C# (12) |
 | Health | `GET /api/health` | C# (13) |
 
-81 C# endpoints in 25 controllers; 4 migrated so far. Routes from the migration brief that map to
+81 C# endpoints in 25 controllers; 4 migrated so far, plus 5 new public endpoints that exist only in Python. Routes from the migration brief that map to
 existing features will be added as aliases (e.g. `GET /api/users/me` → profile) in the step that
 migrates the area; existing paths never change. Payments are not implemented (no such feature exists).
 

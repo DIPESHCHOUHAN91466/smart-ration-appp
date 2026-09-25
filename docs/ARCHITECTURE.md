@@ -8,7 +8,7 @@ which backend answered.
 ```
                      ┌───────────────────────────── Python API :8000 (FastAPI) ─────────────────────────────┐
 React/Vite :5173 ──► │ middleware: request id · body-size limit · CORS · JSON logs · error envelope          │
-                     │ routers:  /health /health/live /ready   /api/auth/*   (more each migration step)      │
+                     │ routers:  /health /health/live /ready  /api/auth/*  /api/public-help/*  /api/chatbot/* │
                      │ fallback proxy: any other /api/* ──────────────────────────────► C# API :5188 (legacy) │
                      └──────────────┬──────────────────────────────────────────────────────────┬────────────┘
                                     │ SQLAlchemy 2 (PyMySQL)                                   │ EF Core 8 (Pomelo)
@@ -18,9 +18,11 @@ React/Vite :5173 ──► │ middleware: request id · body-size limit · CORS
                                                                    Python AI service :8001 ◄───┘ (to be merged)
 ```
 
-Today the frontend still calls the C# API directly (`VITE_API_BASE_URL=http://localhost:5188/api`).
-It switches to :8000 once enough areas are migrated; because of the proxy, that switch can happen
-at any point without losing a route.
+The frontend calls the Python backend (`VITE_API_BASE_URL=http://localhost:8000/api`); routes not
+yet migrated reach the C# API through the proxy (parity verified 36/36), so no route was lost.
+
+New public features are built in Python only: the Public Help pages and the Public Help chatbot
+(`app/chatbot/`, `app/api/public_help.py`; see [CHATBOT.md](CHATBOT.md)).
 
 ## Python backend layout (`backend/SmartRation.Python`)
 
@@ -39,6 +41,7 @@ at any point without losing a route.
 | `app/schemas/` | Pydantic request/response models | DTOs |
 | `app/db/models.py` | 25 SQLAlchemy models = the existing tables, column for column | EF entities |
 | `app/db/migrations/` | Alembic | EF migrations |
+| `app/chatbot/` | Public Help assistant: knowledge base (JSON, en/hi/mr), safety rules, retrieval | — (new) |
 | `scripts/` | setup / verify / seed / reset database | `DbInitializer` |
 | `tests/` | pytest; `tests/contract/` compares both live backends | `SmartRation.Api.Tests` |
 
@@ -72,6 +75,21 @@ valid). Verified by `tests/contract/compare_proxy.py` (36/36) and `tests/contrac
 | Computer vision | OpenCV / PyTorch / YOLO not used |
 | Payments | not implemented (no payments feature exists); documented as future work |
 | Native code | none — see [NATIVE_DEPENDENCIES.md](NATIVE_DEPENDENCIES.md) |
+| Chatbot | retrieval over reviewed articles (no LLM, no external calls); provider interface ready for one |
+| Frontend API | through the Python backend (:8000) since 2026-09-25 |
+
+## Frontend layout (`frontend/src`)
+
+| Path | Role |
+|---|---|
+| `App.jsx` | routes: public (`/`, `/help`, `/login`, `/register`, `/profile/:ref`), role areas (`/rural`, `/shop`, `/gov`); mounts the chatbot once |
+| `components/layout/` | public header/footer, language switcher |
+| `components/chatbot/` | the floating Public Help assistant |
+| `pages/landing/`, `pages/public-help/` | public pages |
+| `pages/rural/`, `shop/`, `government/`, `shared/` | role dashboards |
+| `services/` | one module per API area (`api.js` = axios client with token refresh) |
+| `store/` | zustand stores (auth, preferences, QR scanner, chatbot) |
+| `i18n/` | `translations.js` (+ `publicStrings.js`), `useTranslation()` — en/hi/mr |
 
 See also: [DATABASE.md](DATABASE.md) · [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) · [API.md](API.md) ·
 [SECURITY.md](SECURITY.md) · [DEPLOYMENT.md](DEPLOYMENT.md).

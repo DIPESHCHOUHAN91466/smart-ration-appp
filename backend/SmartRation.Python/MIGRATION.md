@@ -33,6 +33,8 @@ area is migrated and end-to-end testing passes.
 | 1b | Foundation: app, config, logging, errors, `/health`, docs, models, fallback proxy | — | done |
 | 2b | Ops: Alembic owns the schema (`0001_initial`, live DB stamped), setup/verify/seed/reset scripts, backup/restore, `/ready`, Docker, CI, docs | — | done |
 | 2 | Auth (register, login, refresh, logout) | 4 | **Python** |
+| — | Public Help + chatbot (new, Python-only) | 5 new | **Python** |
+| 14* | Frontend → :8000 (done early, 2026-09-25; everything else proxied) | — | **done** |
 | 3 | Users, ration items, slots | 8 | proxied |
 | 4 | Bookings + tokens | 9 | proxied |
 | 5 | QR (generate, verify, payload, scan) | 4 | proxied |

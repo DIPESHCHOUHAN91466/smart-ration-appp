@@ -13,7 +13,9 @@
 | `setup_database.py` says *Refusing to adopt: … differs* | the existing schema drifted from the models | read the listed differences; add an Alembic revision or fix the DB, then rerun |
 | `verify_database.py` fails with `No ration items found` | empty reference tables | `python scripts\seed_database.py` |
 | `alembic downgrade` raises *Refusing to drop every Smart Ration table* | safety guard on `0001_initial` | intentional; use `reset_database.py` in development |
-| Proxied requests get **429** from C# | the C# limiter sees all proxied traffic as 127.0.0.1 | wait a minute; the limit is shared (known gap, see SECURITY.md) |
+| Proxied requests get **429** from C# | per-client limit reached (QR scan, OTP) | wait a minute; the C# API keys limits on `X-Forwarded-For` from the local proxy |
+| Chatbot says it can't reach the help service | Python API (:8000) not running, or `VITE_API_BASE_URL` still points at :5188 | start the Python API; set `VITE_API_BASE_URL=http://localhost:8000/api` in `frontend/.env` |
+| Chatbot answers in the wrong language | the interface language decides; Devanagari text is detected as Hindi or Marathi | switch the language at the top of the page |
 | mysqldump: `Access denied; you need the PROCESS privilege` | app account lacks PROCESS | the backup script already passes `--no-tablespaces`; use it rather than a raw mysqldump |
 | `backup.ps1`: output lands in the wrong place | older PowerShell: `$PSScriptRoot` empty in param defaults | fixed in the script; pass `-OutputDir` explicitly if needed |
 | Tables appear lowercase (`users`) in MySQL | Windows `lower_case_table_names=1` | expected; the tooling compares case-insensitively |
