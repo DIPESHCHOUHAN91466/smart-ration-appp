@@ -38,6 +38,7 @@ if ($MySql) {
     if ($LASTEXITCODE -ne 0 -or -not $url) { throw "Could not build TEST_DATABASE_URL from backend\SmartRation.Python\.env" }
     $env:TEST_DATABASE_URL = $url
     Run "MySQL suite (smartration_test)" $py { & .venv\Scripts\python -m pytest tests/mysql_suite -p no:warnings }
+    Run "Root MySQL tests (tests/mysql)" $root { & "$py\.venv\Scripts\python" -m pytest tests/mysql -p no:warnings }
     Remove-Item Env:TEST_DATABASE_URL
 }
 

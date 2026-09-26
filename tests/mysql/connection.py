@@ -1,7 +1,7 @@
 """Connections for the root-level MySQL tests (tests/mysql).
 
-Settings come from config.DB_CONFIG (the repository-root .env: DB_HOST, DB_PORT, DB_USER,
-DB_PASSWORD, DB_NAME). Only databases whose name ends in `_test` are allowed, so these tests can
+Settings come from config.DB_CONFIG (TEST_DATABASE_URL, else the backend's DATABASE_URL pointed at
+smartration_test, else legacy DB_* - see config.py). Only databases whose name ends in `_test` are allowed, so these tests can
 never write to the real `smartration` database. The password is never printed.
 """
 

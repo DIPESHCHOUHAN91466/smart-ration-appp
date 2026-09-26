@@ -17,14 +17,14 @@ Unlike unit tests that mock database contexts, this test suite connects directly
 
 1. MySQL 8 running locally on port 3306.
 2. The `smartration_test` database created.
-3. Database credentials specified in the project root `.env` or environment variables:
-   ```env
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_USER=smartration_app
-   DB_PASSWORD=your_password_here
-   DB_NAME=smartration_test
-   ```
+3. Nothing extra to configure: the connection comes from the project's one database setting
+   (`tests/mysql/config.py`), in this order:
+   1. `TEST_DATABASE_URL` (what `run-tests.ps1 -MySql` and CI set),
+   2. otherwise `DATABASE_URL` in `backend/SmartRation.Python/.env`, pointed at `smartration_test`,
+   3. otherwise the legacy `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASSWORD` / `DB_NAME` in the root `.env`.
+
+   Run: `.\scripts\development\run-tests.ps1 -MySql`, or from the repository root
+   `backend\SmartRation.Python\.venv\Scripts\python -m pytest tests/mysql`.
 
 > **Safety Guard:** Every test in this suite validates that the database name ends with `_test`. Tests will immediately refuse to execute against any production or default database name.
 

@@ -1,25 +1,26 @@
 """Fixtures for the root-level MySQL tests. Skips everything if the test database isn't configured
-or reachable; refuses (fails loudly) if DB_NAME doesn't end in _test."""
+or reachable; refuses (fails loudly) if the database name doesn't end in _test. Where the settings
+come from: see config.py (TEST_DATABASE_URL, then the backend's DATABASE_URL, then legacy DB_*)."""
 
 from __future__ import annotations
 
 import pymysql
 import pytest
-from config import DB_CONFIG
+from config import DB_CONFIG, SOURCE
 from connection import PREFIX, check_safe, connect, describe
 
 
 @pytest.fixture(scope="session")
 def db_available() -> None:
     if not DB_CONFIG["password"]:
-        pytest.skip("DB_PASSWORD not set (repository-root .env)")
+        pytest.skip(f"no database password configured (source: {SOURCE})")
     check_safe()
     try:
         connect().close()
     except pymysql.err.OperationalError as exc:
         if exc.args[0] in (1044, 1045, 1049):  # denied / wrong password / no such database: a config error
             pytest.fail(f"MySQL test database misconfigured at {describe()}: error {exc.args[0]} "
-                        "(check DB_USER / DB_PASSWORD / DB_NAME in the repository-root .env)", pytrace=False)
+                        f"(settings from {SOURCE})", pytrace=False)
         pytest.skip(f"MySQL test database not reachable at {describe()}: error {exc.args[0]}")
 
 
