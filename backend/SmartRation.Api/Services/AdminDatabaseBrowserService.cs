@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.Admin;
 using SmartRation.Api.DTOs.Verification;
+using SmartRation.Api.Mapping;
 
 namespace SmartRation.Api.Services;
 
@@ -213,20 +214,7 @@ public class AdminDatabaseBrowserService(SmartRationDbContext db) : IAdminDataba
             TotalCount = totalCount,
             Page = page,
             PageSize = pageSize,
-            Items = items.Select(l => new VerificationAuditLogDto
-            {
-                Id = l.Id,
-                VerificationReference = l.VerificationReference,
-                Action = l.Action.ToString(),
-                VerificationMethod = l.VerificationMethod,
-                TokenNumber = l.TokenNumber,
-                BeneficiaryId = l.BeneficiaryId,
-                ShopId = l.ShopId,
-                OperatorId = l.OperatorId,
-                Status = l.Status,
-                Reason = l.Reason,
-                Timestamp = l.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")
-            }).ToList()
+            Items = items.Select(l => l.ToDto()).ToList()
         };
     }
 }

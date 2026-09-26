@@ -11,7 +11,7 @@ namespace SmartRation.Api.Services;
 
 // Everything BeneficiariesController serves: loading a beneficiary with the access rule applied,
 // the verification bundle, family, entitlement, collection history and the 360° profile.
-// Access rule: a RuralUser sees only their own beneficiary; shop owners, officials and admins see any.
+// Access rule: BeneficiaryAccess (a citizen sees only their own beneficiary; staff roles see any).
 public interface IBeneficiaryProfileService
 {
     Task<int> GetMyBeneficiaryIdAsync();
@@ -66,7 +66,7 @@ public class BeneficiaryProfileService(
     public async Task<List<CollectionHistoryItemDto>> GetCollectionHistoryAsync(int beneficiaryId)
     {
         await LoadAndAuthorizeAsync(beneficiaryId);
-        return (await LoadCollectionsAsync(beneficiaryId)).Select(ToCollectionDto).ToList();
+        return (await LoadCollectionsAsync(beneficiaryId)).Select(c => c.ToHistoryDto()).ToList();
     }
 
     // Beneficiary 360° — everything one screen needs in a single call.
@@ -154,9 +154,9 @@ public class BeneficiaryProfileService(
             MobileVerification = mobile.ToDto(),
             Entitlement = entitlement,
             CurrentQr = currentQr,
-            CollectionHistory = collections.Select(ToCollectionDto).ToList(),
-            VerificationHistory = auditLogs.Select(ToAuditDto).ToList(),
-            QrScanHistory = auditLogs.Where(l => l.Action == VerificationAction.QrScanned).Select(ToAuditDto).ToList(),
+            CollectionHistory = collections.Select(c => c.ToHistoryDto()).ToList(),
+            VerificationHistory = auditLogs.Select(l => l.ToDto()).ToList(),
+            QrScanHistory = auditLogs.Where(l => l.Action == VerificationAction.QrScanned).Select(l => l.ToDto()).ToList(),
             AIInsight = aiInsight
         };
     }
@@ -169,29 +169,6 @@ public class BeneficiaryProfileService(
             .OrderByDescending(c => c.CollectedAt)
             .ToListAsync();
 
-    private static CollectionHistoryItemDto ToCollectionDto(RationCollection c) => new()
-    {
-        CollectionCode = c.CollectionCode,
-        CollectedAt = c.CollectedAt.ToString("yyyy-MM-dd HH:mm"),
-        ShopName = c.RationShop.ShopName,
-        Items = c.Items.Select(i => new CollectedItemDto { RationType = i.RationType.ToString(), Quantity = i.Quantity }).ToList()
-    };
-
-    private static VerificationAuditLogDto ToAuditDto(VerificationAuditLog l) => new()
-    {
-        Id = l.Id,
-        VerificationReference = l.VerificationReference,
-        TokenNumber = l.TokenNumber,
-        BeneficiaryId = l.BeneficiaryId,
-        ShopId = l.ShopId,
-        Action = l.Action.ToString(),
-        VerificationMethod = l.VerificationMethod,
-        Status = l.Status,
-        Reason = l.Reason,
-        OperatorId = l.OperatorId,
-        Timestamp = l.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")
-    };
-
     private async Task<Beneficiary> LoadAndAuthorizeAsync(int beneficiaryId)
     {
         var beneficiary = await db.Beneficiaries
@@ -202,14 +179,7 @@ public class BeneficiaryProfileService(
             .FirstOrDefaultAsync(b => b.Id == beneficiaryId)
             ?? throw new NotFoundException("Beneficiary not found.");
 
-        var allowed = currentUser.Role switch
-        {
-            UserRole.RuralUser => beneficiary.UserId == currentUser.UserId,
-            UserRole.ShopOwner or UserRole.GovernmentOfficial or UserRole.Admin => true,
-            _ => false
-        };
-
-        if (!allowed)
+        if (!BeneficiaryAccess.CanSee(currentUser, beneficiary.UserId))
         {
             throw new ForbiddenException("You do not have access to this beneficiary.");
         }

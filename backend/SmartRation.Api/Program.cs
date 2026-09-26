@@ -221,6 +221,10 @@ builder.Services.AddScoped<IShopInsightService, ShopInsightService>();
 builder.Services.AddScoped<IBeneficiaryInsightService, BeneficiaryInsightService>();
 builder.Services.AddScoped<IBeneficiaryProfileService, BeneficiaryProfileService>();
 builder.Services.AddScoped<IAdminDatabaseBrowserService, AdminDatabaseBrowserService>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IFamilyService, FamilyService>();
+builder.Services.AddScoped<IPublicProfileService, PublicProfileService>();
+builder.Services.AddScoped<IShopDirectoryService, ShopDirectoryService>();
 builder.Services.AddScoped<IAIIntelligenceService, AIIntelligenceService>();
 
 // --------------------------------------------------

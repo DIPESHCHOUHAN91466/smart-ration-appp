@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SmartRation.Api.Common;
 using SmartRation.Api.Configuration;
-using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.Verification;
 using SmartRation.Api.Models;
 using SmartRation.Api.Services;
@@ -20,7 +18,6 @@ public class VerificationController(
     IBeneficiaryVerificationService verificationService,
     IOtpService otpService,
     ICurrentUserService currentUser,
-    SmartRationDbContext db,
     IOptions<DemoModeOptions> demoOptions) : ControllerBase
 {
     [HttpGet("qr/{reference}")]
@@ -34,13 +31,7 @@ public class VerificationController(
     [EnableRateLimiting("otp")]
     public async Task<ActionResult<ApiResponse<OtpRequestResponseDto>>> RequestOtp(OtpRequestRequestDto request)
     {
-        var beneficiaryId = await db.Beneficiaries
-            .Where(b => b.User.MobileNumber == request.MobileNumber)
-            .Select(b => (int?)b.Id)
-            .FirstOrDefaultAsync()
-            ?? throw new NotFoundException("No beneficiary is registered with this mobile number.");
-
-        var otp = await otpService.RequestOtpAsync(beneficiaryId, currentUser.UserId);
+        var otp = await otpService.RequestOtpForMobileAsync(request.MobileNumber, currentUser.UserId);
 
         var response = new OtpRequestResponseDto
         {

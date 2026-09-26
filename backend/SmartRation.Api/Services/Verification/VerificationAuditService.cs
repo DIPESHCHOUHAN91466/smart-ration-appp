@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using SmartRation.Api.Data;
+using SmartRation.Api.DTOs.Verification;
+using SmartRation.Api.Mapping;
 using SmartRation.Api.Models;
 using SmartRation.Api.Services;
 
@@ -51,5 +54,19 @@ public class VerificationAuditService(
         });
 
         await db.SaveChangesAsync();
+    }
+
+    public async Task<List<VerificationAuditLogDto>> QueryAsync(int? shopId, int? beneficiaryId, string? status, int take)
+    {
+        var query = db.VerificationAuditLogs.AsQueryable();
+        if (shopId.HasValue) query = query.Where(l => l.ShopId == shopId);
+        if (beneficiaryId.HasValue) query = query.Where(l => l.BeneficiaryId == beneficiaryId);
+        if (!string.IsNullOrWhiteSpace(status)) query = query.Where(l => l.Status == status);
+
+        var logs = await query
+            .OrderByDescending(l => l.Timestamp)
+            .Take(Math.Clamp(take, 1, 500))
+            .ToListAsync();
+        return logs.Select(l => l.ToDto()).ToList();
     }
 }

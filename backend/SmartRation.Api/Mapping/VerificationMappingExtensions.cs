@@ -64,4 +64,29 @@ public static class VerificationMappingExtensions
             Members = f.Members.Select(m => m.ToDto()).ToList()
         };
     }
+
+    // Shared by the audit screen, the beneficiary 360° profile and the admin database viewer.
+    public static VerificationAuditLogDto ToDto(this VerificationAuditLog l) => new()
+    {
+        Id = l.Id,
+        VerificationReference = l.VerificationReference,
+        TokenNumber = l.TokenNumber,
+        BeneficiaryId = l.BeneficiaryId,
+        ShopId = l.ShopId,
+        Action = l.Action.ToString(),
+        VerificationMethod = l.VerificationMethod,
+        Status = l.Status,
+        Reason = l.Reason,
+        OperatorId = l.OperatorId,
+        Timestamp = l.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")
+    };
+
+    // A collection as shown in a beneficiary's history (needs Items and RationShop loaded).
+    public static CollectionHistoryItemDto ToHistoryDto(this RationCollection c) => new()
+    {
+        CollectionCode = c.CollectionCode,
+        CollectedAt = c.CollectedAt.ToString("yyyy-MM-dd HH:mm"),
+        ShopName = c.RationShop.ShopName,
+        Items = c.Items.Select(i => new CollectedItemDto { RationType = i.RationType.ToString(), Quantity = i.Quantity }).ToList()
+    };
 }

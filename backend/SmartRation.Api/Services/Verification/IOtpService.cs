@@ -9,5 +9,8 @@ public interface IOtpService
     // an AuthorizedSmsOtpService would dispatch a real SMS here instead.
     Task<OtpVerification> RequestOtpAsync(int beneficiaryId, int requestedByUserId);
 
+    // The shop counter only knows the citizen's mobile number: find their beneficiary, then RequestOtpAsync.
+    Task<OtpVerification> RequestOtpForMobileAsync(string mobileNumber, int requestedByUserId);
+
     Task<OtpVerification> VerifyOtpAsync(int otpVerificationId, string code);
 }

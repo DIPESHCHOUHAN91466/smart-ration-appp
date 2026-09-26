@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SmartRation.Api.Common;
-using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.Map;
 using SmartRation.Api.DTOs.Shop;
 using SmartRation.Api.Models;
+using SmartRation.Api.Services;
 using SmartRation.Api.Services.Verification;
 
 namespace SmartRation.Api.Controllers;
@@ -16,27 +15,12 @@ namespace SmartRation.Api.Controllers;
 [ApiController]
 [Route("api/shops")]
 [Authorize]
-public class ShopsController(SmartRationDbContext db, IMapService mapService) : ControllerBase
+public class ShopsController(IShopDirectoryService directory, IMapService mapService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<ApiResponse<List<RationShopDto>>>> GetShops()
     {
-        var shops = await db.RationShops
-            .Where(s => s.IsActive)
-            .OrderBy(s => s.ShopName)
-            .Select(s => new RationShopDto
-            {
-                Id = s.Id,
-                ShopName = s.ShopName,
-                ShopCode = s.ShopCode,
-                Address = s.Address,
-                District = s.District,
-                State = s.State,
-                IsActive = s.IsActive
-            })
-            .ToListAsync();
-
-        return Ok(ApiResponse<List<RationShopDto>>.Ok(shops));
+        return Ok(ApiResponse<List<RationShopDto>>.Ok(await directory.GetActiveShopsAsync()));
     }
 
     // DEMO MAP DATA — see MapService for what's real vs synthetic.

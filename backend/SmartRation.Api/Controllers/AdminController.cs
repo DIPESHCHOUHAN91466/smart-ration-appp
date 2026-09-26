@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SmartRation.Api.Common;
-using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.Government;
 using SmartRation.Api.DTOs.Users;
-using SmartRation.Api.Mapping;
 using SmartRation.Api.Models;
 using SmartRation.Api.Services;
 
@@ -14,7 +11,7 @@ namespace SmartRation.Api.Controllers;
 [ApiController]
 [Route("api/admin")]
 [Authorize(Roles = $"{nameof(UserRole.GovernmentOfficial)},{nameof(UserRole.Admin)}")]
-public class AdminController(IGovernmentService governmentService, SmartRationDbContext db) : ControllerBase
+public class AdminController(IGovernmentService governmentService, IUserAccountService accounts) : ControllerBase
 {
     [HttpGet("dashboard")]
     public async Task<ActionResult<ApiResponse<GovernmentDashboardDto>>> GetDashboard()
@@ -40,19 +37,6 @@ public class AdminController(IGovernmentService governmentService, SmartRationDb
     [HttpGet("users")]
     public async Task<ActionResult<ApiResponse<List<UserSummaryDto>>>> GetUsers([FromQuery] string? role)
     {
-        var query = db.Users.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(role))
-        {
-            if (!Enum.TryParse<UserRole>(role, ignoreCase: true, out var parsedRole))
-            {
-                throw new BadRequestException($"Unknown role '{role}'.");
-            }
-
-            query = query.Where(u => u.Role == parsedRole);
-        }
-
-        var users = await query.OrderBy(u => u.FullName).ToListAsync();
-        return Ok(ApiResponse<List<UserSummaryDto>>.Ok(users.Select(u => u.ToSummaryDto()).ToList()));
+        return Ok(ApiResponse<List<UserSummaryDto>>.Ok(await accounts.ListUsersAsync(role)));
     }
 }

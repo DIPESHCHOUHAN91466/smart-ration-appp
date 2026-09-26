@@ -13,4 +13,7 @@ public interface IVerificationAuditService
         int? beneficiaryId = null,
         int? shopId = null,
         string? reason = null);
+
+    // Newest first, optionally filtered; take is clamped to 1-500.
+    Task<List<DTOs.Verification.VerificationAuditLogDto>> QueryAsync(int? shopId, int? beneficiaryId, string? status, int take);
 }

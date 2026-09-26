@@ -20,6 +20,16 @@ public class SyntheticOtpService(SmartRationDbContext db, IOptions<DemoModeOptio
 {
     private readonly DemoModeOptions _options = options.Value;
 
+    public async Task<OtpVerification> RequestOtpForMobileAsync(string mobileNumber, int requestedByUserId)
+    {
+        var beneficiaryId = await db.Beneficiaries
+            .Where(b => b.User.MobileNumber == mobileNumber)
+            .Select(b => (int?)b.Id)
+            .FirstOrDefaultAsync()
+            ?? throw new NotFoundException("No beneficiary is registered with this mobile number.");
+        return await RequestOtpAsync(beneficiaryId, requestedByUserId);
+    }
+
     public async Task<OtpVerification> RequestOtpAsync(int beneficiaryId, int requestedByUserId)
     {
         var beneficiary = await db.Beneficiaries.Include(b => b.User).FirstOrDefaultAsync(b => b.Id == beneficiaryId)
