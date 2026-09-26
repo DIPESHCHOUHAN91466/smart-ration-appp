@@ -5,6 +5,8 @@ All notable changes. Dates are commit dates; hashes refer to this repository.
 ## 2026-09-26 — Move to `D:\`, third audit, dependency security, C# cleanup, `/api/v1`
 
 ### Added
+- **HTTP load test** (`sr.ps1 load`): 10 / 100 / 1000 concurrent citizens through the gateway, 0 failures;
+  a rate-limit burst is answered with clean 429s. Method and results: `docs/testing/LOAD_TESTING.md`.
 - **My profile** (Settings page, every role): edit your own name and mobile number; the email is shown
   read-only. English, Hindi and Marathi; 4 tests. Uses the existing `GET/PUT /api/v1/users/profile`.
 - Disabled buttons now look disabled (before, "Save" / "Apply Language" looked clickable when they weren't).
@@ -24,6 +26,9 @@ All notable changes. Dates are commit dates; hashes refer to this repository.
 - C# packages patched (EF Core / JwtBearer 8.0.31, Pomelo 8.0.3, test-project pins): no known vulnerabilities.
 
 ### Fixed
+- **Gateway throughput** (found by the load test): `sniffio` was missing, so every request proxied to C#
+  searched the Python path on disk; and one large httpx pool slowed down as it grew. Now `sniffio` is pinned
+  and the proxy uses 8 small pools in turn: at 100 users 133 → 371 req/s, p95 1.97 s → 0.46 s.
 - Updating your profile with a space-padded mobile number that another account uses returned 500; now 409.
 - Search: a role other than the four known ones would have seen unscoped results; it now sees nothing.
 

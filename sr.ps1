@@ -37,6 +37,7 @@ switch ($Command.ToLowerInvariant()) {
     "audit"     { Script "audit-dependencies.ps1" }             # known vulnerabilities in every dependency
     "test"      { Script "run-tests.ps1" }                   # add -MySql / -Quick
     "e2e"       { InDir (Join-Path $root "frontend") { npm run test:e2e @Rest }; exit $LASTEXITCODE }
+    "load"      { InDir $py { & $pyExe scripts\load_test.py @Rest }; exit $LASTEXITCODE }          # --users 10 100 1000 (the stack must be running)
     "build" {
         Step "C# (SmartRation.sln, Release)" { InDir $root { dotnet build SmartRation.sln -c Release --nologo -v q } }
         Step "Frontend (vite build)" { InDir (Join-Path $root "frontend") { npm run build --silent } }
@@ -71,6 +72,7 @@ Smart Ration developer commands (.\sr.ps1 <command>):
   audit                 known vulnerabilities in Python, npm and C# dependencies (needs internet)
   test [-MySql|-Quick]  every test suite + lint + build + database health
   e2e                   end-to-end browser tests (Playwright; the stack must be running)
+  load                  HTTP load test: 10/100/1000 concurrent citizens (the stack must be running)
   build                 C# (Release), frontend production build, Python import check
   lint                  ruff + mypy + ESLint
   db verify|seed|schema read-only database check | seed empty tables | regenerate database/schema SQL

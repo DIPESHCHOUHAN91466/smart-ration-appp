@@ -134,11 +134,12 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Suite | Result |
 |---|---|
-| Python 201 · MySQL 146 · evaluation 67 · AI 46 · C# 104 (`SmartRation.sln`) · frontend 39 + ESLint (0 errors) + build · database health · E2E 9 | PASS (`run-tests.ps1 -MySql -E2E`, exit 0, 10/10 steps, 612 tests) |
+| Python 221 · MySQL 146 · root MySQL 24 · evaluation 67 · AI 46 · C# 130 (`SmartRation.sln`) · frontend 45 + ESLint (0 errors) + build · database health · E2E 9 | PASS (`run-tests.ps1 -MySql -E2E`, exit 0, 11/11 steps, 688 tests, 2026-09-26) |
 | Fresh clone (no venvs, packages or `.env`): `setup.ps1`, then Python/AI/C#/frontend lint, tests, build | PASS (192 Python — the 3 live-MySQL schema tests skip without a database — 46 AI, 94 C#, 39 frontend, build) |
 | Contract (proxy 36/36, auth interop 23/23) | PASS (earlier today; needs both servers) |
 | E2E | PASS (9 Playwright tests, local; not in CI — it needs the whole stack running) |
-| Load testing, accessibility tooling | NOT TESTED |
+| HTTP load: 10 / 100 / 1000 concurrent citizens through the gateway (`sr.ps1 load`) | PASS, 0 failures (2026-09-26, one machine); p95 53 ms / 463 ms / 8.7 s — see [LOAD_TESTING.md](testing/LOAD_TESTING.md) |
+| Accessibility tooling | NOT TESTED |
 
 ## Security
 

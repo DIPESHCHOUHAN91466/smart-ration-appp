@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     # Side-by-side migration: routes not yet migrated are forwarded here.
     legacy_api_url: str = Field(default="http://localhost:5188", description="C# API base URL; empty disables the fallback proxy")
     legacy_api_timeout_seconds: float = 30.0
+    # Connections to the C# API: several small pools used in turn. httpcore's pool scans every waiting
+    # request against every connection, so one large pool gets slower as it grows (docs/testing/LOAD_TESTING.md).
+    legacy_api_pools: int = Field(default=8, ge=1, le=64)
+    legacy_api_connections_per_pool: int = Field(default=8, ge=1, le=100)
 
     # The Python AI/analytics service (backend/SmartRation.AI). Only checked by /health; empty disables.
     ai_service_url: str = Field(default="http://127.0.0.1:8001", description="AI service base URL; empty disables the check")

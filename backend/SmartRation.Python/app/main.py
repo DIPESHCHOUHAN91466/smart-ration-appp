@@ -50,16 +50,18 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     configure_logging(settings.log_level)
     configure_database(settings.database_url)
 
-    legacy_client = (
+    per_pool = settings.legacy_api_connections_per_pool
+    legacy_clients = [
         httpx.AsyncClient(
             base_url=settings.legacy_api_url.rstrip("/"),
             timeout=settings.legacy_api_timeout_seconds,
             transport=legacy_transport,
             follow_redirects=False,
+            limits=httpx.Limits(max_connections=per_pool, max_keepalive_connections=per_pool),
         )
-        if settings.legacy_api_url
-        else None
-    )
+        for _ in range(settings.legacy_api_pools if settings.legacy_api_url else 0)
+    ]
+    legacy_client = legacy_clients[0] if legacy_clients else None  # health checks use the first one
 
     ai_client = (
         httpx.AsyncClient(base_url=settings.ai_service_url.rstrip("/"), timeout=3.0, transport=ai_transport)
@@ -70,7 +72,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         yield
-        for client in (legacy_client, ai_client):
+        for client in (*legacy_clients, ai_client):
             if client is not None:
                 await client.aclose()
 
@@ -106,7 +108,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
 
     # ---- Fallback proxy: MUST stay last ----
     if legacy_client is not None:
-        app.include_router(legacy_proxy.build_router(legacy_client))
+        app.include_router(legacy_proxy.build_router(legacy_clients))
 
     # ---- The built website (optional): registered after every API route ----
     if settings.frontend_dist_dir:

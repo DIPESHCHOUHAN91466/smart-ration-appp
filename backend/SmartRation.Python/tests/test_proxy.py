@@ -130,3 +130,32 @@ def test_proxy_disabled_gives_404_envelope(make_client):
 def test_security_headers_present(make_client):
     r = make_client(echo_upstream).get("/api/shops")
     assert r.headers["X-Content-Type-Options"] == "nosniff" and r.headers["X-Frame-Options"] == "DENY"
+
+
+def test_requests_take_turns_across_the_connection_pools():
+    """Several small pools, used in turn (one big httpcore pool slows down as it grows)."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from app.api import legacy_proxy
+
+    served: list[int] = []
+
+    def pool(n: int) -> httpx.AsyncClient:
+        def handler(_: httpx.Request) -> httpx.Response:
+            served.append(n)
+            return httpx.Response(200, json={"success": True, "message": None, "data": n, "errors": None})
+        return httpx.AsyncClient(base_url="http://csharp", transport=httpx.MockTransport(handler))
+
+    app = FastAPI()
+    app.include_router(legacy_proxy.build_router([pool(0), pool(1), pool(2)]))
+    c = TestClient(app)
+    for _ in range(6):
+        assert c.get("/api/shops").status_code == 200
+    assert served == [0, 1, 2, 0, 1, 2]
+
+
+def test_pool_settings_create_that_many_clients(make_client):
+    c = make_client(echo_upstream, legacy_api_pools=3, legacy_api_connections_per_pool=4)
+    assert c.get("/api/shops").status_code == 200
+    assert c.app.state.legacy_client is not None  # health checks use the first pool

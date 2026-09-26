@@ -13,7 +13,9 @@ body and headers come back unchanged, marked `X-Served-By: legacy-dotnet`.
 
 from __future__ import annotations
 
+import itertools
 import logging
+from collections.abc import Sequence
 
 import httpx
 from fastapi import APIRouter, Request
@@ -38,8 +40,10 @@ RESPONSE_OWNED = {"date", "server"}
 METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
 
-def build_router(client: httpx.AsyncClient) -> APIRouter:
+def build_router(clients: Sequence[httpx.AsyncClient]) -> APIRouter:
+    """clients: connection pools to the C# API, used in turn (see Settings.legacy_api_pools)."""
     router = APIRouter(include_in_schema=False)
+    next_client = itertools.cycle(clients).__next__
 
     @router.api_route("/api/{path:path}", methods=METHODS)
     async def forward(path: str, request: Request) -> Response:
@@ -50,6 +54,7 @@ def build_router(client: httpx.AsyncClient) -> APIRouter:
         headers["X-Forwarded-For"] = f"{prior}, {client_ip}" if prior else client_ip
         headers["X-Request-ID"] = request_id_var.get()
 
+        client = next_client()
         upstream = client.build_request(
             request.method,
             f"/api/{path}",

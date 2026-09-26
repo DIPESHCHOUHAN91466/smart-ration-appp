@@ -4,13 +4,14 @@
 
 | Suite | Where | Runs against | Count | Command |
 |---|---|---|---|---|
-| Python backend unit/API | `backend/SmartRation.Python/tests/` | SQLite temp files | 201 | `.venv\Scripts\python -m pytest` (in that folder) |
+| Python backend unit/API | `backend/SmartRation.Python/tests/` | SQLite temp files | 221 | `.venv\Scripts\python -m pytest` (in that folder) |
 | MySQL suite (100 adversarial + 1000 generated records; concurrency 10/25/50/100) | `backend/SmartRation.Python/tests/mysql_suite/` | `smartration_test` | 146 | set `TEST_DATABASE_URL`, then `… -m pytest tests/mysql_suite` |
 | Root MySQL tests | `tests/mysql/` | `smartration_test` (root `.env`) | 24 | from the repo root: `backend\SmartRation.Python\.venv\Scripts\python -m pytest tests/mysql` |
 | AI service | `backend/SmartRation.AI/tests/` | SQLite | 46 | `.venv\Scripts\python -m pytest` (in that folder) |
-| C# API | `backend/SmartRation.Api.Tests/` | in-memory | 104 | `dotnet test SmartRation.sln -c Release` (repository root) |
-| Frontend | `frontend/tests/unit/` | jsdom | 39 | `npm test` (in `frontend`) |
+| C# API | `backend/SmartRation.Api.Tests/` | in-memory (SQLite) | 130 | `dotnet test SmartRation.sln -c Release` (repository root) |
+| Frontend | `frontend/tests/unit/` | jsdom | 45 | `npm test` (in `frontend`) |
 | Contract (live) | `backend/SmartRation.Python/tests/contract/` | both running APIs | 36 + 23 | `compare_proxy.py`, `auth_interop.py` |
+| HTTP load (10/100/1000 concurrent citizens + rate-limit burst) | `backend/SmartRation.Python/scripts/load_test.py` | the running stack | — | `.\sr.ps1 load` — results: [LOAD_TESTING.md](LOAD_TESTING.md) |
 | Database verify | `backend/SmartRation.Python/scripts/verify_database.py` | the configured DB | — | read-only check |
 
 Everything Python can also be collected from the repository root with the Python backend's virtualenv
@@ -35,10 +36,10 @@ Everything Python can also be collected from the repository root with the Python
 
 ## Gaps (honest list)
 
-- **No end-to-end browser automation** (Playwright/Cypress). Browser checks were done manually for
-  this release (see PROJECT_STATUS.md).
+- End-to-end browser tests (Playwright, 9) run locally against the running stack, not in CI.
 - Frontend tests cover the new public pages and chatbot only; existing dashboards have none.
-- No HTTP load tests; database-level scale is covered up to 1000 records and 100 concurrent operations.
+- HTTP load tests are read-only and run on one machine ([LOAD_TESTING.md](LOAD_TESTING.md)); write paths under
+  concurrency are covered at the database level (up to 1000 records and 100 concurrent operations).
 - Restore of a MySQL backup has not been rehearsed (see BACKUP_RESTORE.md).
 
 ## CI
