@@ -2,6 +2,7 @@
 
 | Document | Explains |
 |---|---|
+| [DIAGRAMS.md](DIAGRAMS.md) | ten diagrams: system, frontend, backend, API flow, database, AI, authentication, QR verification, deployment, CI/CD |
 | [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md) | the whole system: components, request flow, decisions |
 | [FRONTEND_ARCHITECTURE.md](FRONTEND_ARCHITECTURE.md) | React app structure, data flow, routing, i18n |
 | [BACKEND_ARCHITECTURE.md](BACKEND_ARCHITECTURE.md) | C# business API vs. Python API (frozen hybrid), feature reference |
