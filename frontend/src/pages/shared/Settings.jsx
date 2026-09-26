@@ -8,6 +8,7 @@ import { LANGUAGE_OPTIONS } from "../../i18n/translations";
 import { useLanguageStore } from "../../i18n/useTranslation";
 import { usePreferencesStore } from "../../store/preferencesStore";
 import { useToast } from "../../context/ToastContext";
+import ProfileSection from "./ProfileSection";
 
 const ROLE_LABEL_KEY = {
   RuralUser: "role_rural_user",
@@ -108,6 +109,8 @@ export default function Settings() {
       <PageHeader title={t("settings_title")} subtitle={t("settings_subtitle")} />
 
       <div className="settings-grid">
+        <ProfileSection />
+
         {/* Language */}
         <section className="panel">
           <div className="settings-section-title">

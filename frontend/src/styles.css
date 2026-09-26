@@ -87,3 +87,5 @@
 .brand-mark.emblem{width:44px;height:44px;padding:0;border-radius:12px;background:#000;overflow:hidden;flex:none;box-shadow:0 4px 14px #001f4e33}
 .brand-mark.emblem img{width:100%;height:100%;object-fit:contain;display:block}
 .sidebar-bottom .powered-by{font-size:10px;letter-spacing:.3px;color:#7fa9d7;padding:8px 12px 0}
+/* Disabled buttons look disabled (they used to look identical to enabled ones). */
+.primary-btn:disabled,.secondary-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}

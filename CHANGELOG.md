@@ -5,6 +5,9 @@ All notable changes. Dates are commit dates; hashes refer to this repository.
 ## 2026-09-26 — Move to `D:\`, third audit, dependency security, C# cleanup, `/api/v1`
 
 ### Added
+- **My profile** (Settings page, every role): edit your own name and mobile number; the email is shown
+  read-only. English, Hindi and Marathi; 4 tests. Uses the existing `GET/PUT /api/v1/users/profile`.
+- Disabled buttons now look disabled (before, "Save" / "Apply Language" looked clickable when they weren't).
 - **API versioning:** every gateway route answers under `/api/v1/...`; `/api/...` stays as an alias
   (`app/core/api_version.py`, 11 tests). The frontend calls `/api/v1` (a bare `/api` base gets `/v1` added).
 - Dependency audit: `sr.ps1 audit` (pip-audit, npm audit, `dotnet list package --vulnerable`) and a CI

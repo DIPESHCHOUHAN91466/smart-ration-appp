@@ -50,7 +50,8 @@ Triggered by the "Super Master Prompt" brief. The project was moved from
   (`BeneficiaryAccess`), while search limits them to their own shop's. Which one is intended is the owner's call.
 - **Missing feature:** `GET/PUT /api/users/profile` (edit own name + mobile) exists in the C# API, and
   `frontend/src/services/usersService.js` wraps it, but **no page uses it** — the only unimported frontend
-  file. Classification MODIFY (build the screen), not DELETE.
+  file. Classification MODIFY (build the screen), not DELETE. **Fixed (2026-09-26):** Settings → *My profile*
+  (English/Hindi/Marathi, 4 tests); verified in the browser against the running stack (save, then restore).
 - No API versioning (`/api/...`, no `/api/v1`). **Fixed (2026-09-26):** `/api/v1/*` alias at the gateway,
   frontend switched, `/api/*` still works; see [API.md](api/API.md#versioning).
 - Python: clean layering (`api → services → db`), lint + types clean, 45 source files.
@@ -69,7 +70,7 @@ Triggered by the "Super Master Prompt" brief. The project was moved from
 | Path | Type | Purpose | Status | Recommendation | Reason / risk |
 |---|---|---|---|---|---|
 | `frontend/` | React 18 + Vite (JS) | web app | working, 39 tests, 9 E2E | KEEP | TypeScript would be a rewrite of ~130 files; no defect requires it |
-| `frontend/src/services/usersService.js` | API client | own-profile API | unused | MODIFY | build the missing "My profile" screen |
+| `frontend/src/services/usersService.js` | API client | own-profile API | used by Settings → My profile (2026-09-26) | MODIFY (done) | the missing screen is built |
 | `backend/SmartRation.Python/` | FastAPI | gateway, auth, chatbot, website serving, data tools | working, 208 tests | KEEP | primary backend (Python-first) |
 | `backend/SmartRation.Api/` | ASP.NET Core 8 | business core | working, 130 tests | KEEP + MODIFY (done) | justified above; DB access moved out of 12 controllers; vulnerable packages patched |
 | `backend/SmartRation.Api/Repositories/`, `Validators/` | empty folders (untracked) | none | empty | DELETE | nothing references them; empty folders mislead |
