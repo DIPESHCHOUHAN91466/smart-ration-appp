@@ -19,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, health, legacy_proxy, public_help
 from app.chatbot.knowledge_base import get_knowledge_base
 from app.chatbot.providers import get_provider
+from app.core.api_version import ApiVersionAliasMiddleware
 from app.core.config import Settings, get_settings
 from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
@@ -31,6 +32,7 @@ from app.web import mount_frontend
 API_DESCRIPTION = """
 Python backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET API).
 
+* Versioned: every route below answers under `/api/v1/...` as well as `/api/...` (same behaviour).
 * Every response uses the envelope `{success, message, data, errors}`; failures add `errorCode`.
 * `/api/*` routes that are not yet migrated are transparently served by the C# API
   (fallback proxy); those do not appear in this document yet.
@@ -94,6 +96,8 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
         allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "X-Request-ID"],
         expose_headers=["X-Request-ID"],
     )
+    # Outermost: /api/v1/* is rewritten to /api/* before anything else sees the request.
+    app.add_middleware(ApiVersionAliasMiddleware)
 
     # ---- Python-native routes (grow with each migration phase) ----
     app.include_router(health.router)

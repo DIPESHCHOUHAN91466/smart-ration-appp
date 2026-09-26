@@ -22,7 +22,7 @@ React/Vite :5173 ──► │ middleware: request id · body-size limit · CORS
                                                                    Python AI service :8001 ◄───┘ (to be merged)
 ```
 
-The frontend calls the Python backend (`VITE_API_BASE_URL=http://localhost:8000/api`); routes not
+The frontend calls the Python backend (`VITE_API_BASE_URL=http://localhost:8000/api/v1`); routes not
 yet migrated reach the C# API through the proxy (parity verified 36/36), so no route was lost.
 
 New public features are built in Python only: the Public Help pages and the Public Help chatbot

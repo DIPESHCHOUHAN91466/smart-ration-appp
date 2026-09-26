@@ -31,7 +31,7 @@ Nothing secret is in the repository. Each component reads its own git-ignored fi
 | C# API | .NET user-secrets (in your Windows profile) | `ConnectionStrings:MySql`, `Database:Provider=MySql`, `Jwt:Key`, `Qr:Secret`, `AiService:ApiKey` |
 | Python API | `backend/SmartRation.Python/.env` (from `.env.example`) | `DATABASE_URL`, `JWT_SECRET_KEY` (= C# `Jwt:Key`) |
 | AI service | `backend/SmartRation.AI/.env` (from `.env.example`) | `SMARTRATION_AI_DB_URL`, `SMARTRATION_AI_API_KEY` (= C# `AiService:ApiKey`) |
-| Frontend | `frontend/.env` (from `.env.example`) | `VITE_API_BASE_URL=http://localhost:8000/api` |
+| Frontend | `frontend/.env` (from `.env.example`) | `VITE_API_BASE_URL=http://localhost:8000/api/v1` |
 | Root MySQL tests | `.env` at the repository root | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME=smartration_test` |
 
 The root [`.env.example`](../../.env.example) lists every variable in one place.

@@ -1,8 +1,20 @@
 # API
 
-Base URL: `http://localhost:8000` (Python — what the frontend uses) or `http://localhost:5188` (C#, legacy).
+Base URL: `http://localhost:8000/api/v1` (Python — what the frontend uses) or `http://localhost:5188/api`
+(C#, internal: only the Python gateway calls it).
 Interactive docs for routes Python serves: `/docs` (Swagger) and `/redoc`. Routes still served by
 C# through the proxy work on :8000 but appear in Swagger only once migrated.
+
+## Versioning
+
+- **`/api/v1/...` is the current, versioned API**; every route in this document answers there. The
+  unversioned `/api/...` is kept as an alias with identical behaviour, so older clients keep working.
+  Paths below are written `/api/...`; put `/v1` after `/api` for the versioned form.
+- The gateway rewrites `/api/v1/x` to `/api/x` before routing (`app/core/api_version.py`), so auth,
+  rate limits, errors and logs are the same under both prefixes. The C# API only ever sees `/api/...`.
+- Other versions are not mapped: `/api/v2/...` is 404 until a v2 exists. A breaking change gets a new
+  version with its own routes; v1 keeps meaning today's contract.
+- Operational endpoints (`/health`, `/ready`, `/health/live`, `/health/db`) are unversioned.
 
 ## Conventions
 

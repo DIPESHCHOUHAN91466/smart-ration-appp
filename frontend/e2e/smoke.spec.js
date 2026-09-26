@@ -50,14 +50,14 @@ test("language switch: English -> Hindi -> Marathi, and it survives a reload", a
 });
 
 test("public help loads its topics from the API and answers one", async ({ page }) => {
-  const categories = page.waitForResponse((r) => r.url().includes("/api/public-help/categories") && r.status() === 200);
+  const categories = page.waitForResponse((r) => r.url().includes("/api/v1/public-help/categories") && r.status() === 200);
   await page.goto("/help");
   await categories;
   const category = page.getByRole("button", { name: /^Required Documents/ });
   await expect(category).toContainText("1 topic");          // singular: "1 topics" was a bug
   await category.click();
   await expect(category).toHaveAttribute("aria-expanded", "true");
-  const article = page.waitForResponse((r) => r.url().includes("/api/public-help/") && !r.url().includes("categories") && r.status() === 200);
+  const article = page.waitForResponse((r) => r.url().includes("/api/v1/public-help/") && !r.url().includes("categories") && r.status() === 200);
   await page.locator(`#${await category.getAttribute("aria-controls")}`).getByRole("button").first().click();
   await article;
   await expect(page.getByText(/aadhaar/i).first()).toBeVisible();
@@ -70,14 +70,14 @@ test("chatbot answers a question through the real API and refuses an Aadhaar-lik
   await expect(dialog).toBeVisible();
   const input = dialog.getByRole("textbox");
 
-  const answer = page.waitForResponse((r) => r.url().includes("/api/chatbot/message") && r.status() === 200);
+  const answer = page.waitForResponse((r) => r.url().includes("/api/v1/chatbot/message") && r.status() === 200);
   await input.fill("which documents do I need for a ration card?");
   await input.press("Enter");
   const body = await (await answer).json();
   expect(body.data.kind).toBe("answer");
   await expect(dialog.getByText(body.data.text.split("\n")[0]).first()).toBeVisible();
 
-  const refusal = page.waitForResponse((r) => r.url().includes("/api/chatbot/message"));
+  const refusal = page.waitForResponse((r) => r.url().includes("/api/v1/chatbot/message"));
   await input.fill("my aadhaar is 1234 5678 9012");
   await input.press("Enter");
   expect((await (await refusal).json()).data.kind).toBe("sensitive_input");

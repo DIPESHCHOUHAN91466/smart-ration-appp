@@ -367,7 +367,7 @@
     }
   },
   "info": {
-    "description": "\nPython backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET API).\n\n* Every response uses the envelope `{success, message, data, errors}`; failures add `errorCode`.\n* `/api/*` routes that are not yet migrated are transparently served by the C# API\n  (fallback proxy); those do not appear in this document yet.\n",
+    "description": "\nPython backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET API).\n\n* Versioned: every route below answers under `/api/v1/...` as well as `/api/...` (same behaviour).\n* Every response uses the envelope `{success, message, data, errors}`; failures add `errorCode`.\n* `/api/*` routes that are not yet migrated are transparently served by the C# API\n  (fallback proxy); those do not appear in this document yet.\n",
     "title": "Smart Ration HSD2C API (Python)",
     "version": "0.1.0"
   },

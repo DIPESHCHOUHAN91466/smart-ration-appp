@@ -3,7 +3,7 @@
 | Symptom | Cause | Fix |
 |---|---|---|
 | Frontend shows **"Network Error"** | the Python API (:8000) isn't running — the frontend sends every request to it (it forwards business routes to the C# API :5188) | `.\scripts\development\start-all.ps1` (or `start-dev.bat`), then `.\scripts\development\health-check.ps1` |
-| "Network Error" / `ERR_FAILED` although the Python API is healthy; `health-check.ps1` says **Port 8000 shared** | another program publishes the same port (seen: a Docker container from another project on `[::]:8000`); `localhost` resolves to IPv6 first and reaches it | stop that program/container, **or** keep `VITE_API_BASE_URL=http://127.0.0.1:8000/api` in `frontend/.env` (the default since 2026-09-25) and restart the frontend |
+| "Network Error" / `ERR_FAILED` although the Python API is healthy; `health-check.ps1` says **Port 8000 shared** | another program publishes the same port (seen: a Docker container from another project on `[::]:8000`); `localhost` resolves to IPv6 first and reaches it | stop that program/container, **or** keep `VITE_API_BASE_URL=http://127.0.0.1:8000/api/v1` in `frontend/.env` (the default since 2026-09-25) and restart the frontend |
 | `start-all.ps1` prints `SERVICE FAILED` | the service didn't start listening in time, crashed, or its port belongs to another program | read the `REASON` line; the service's own window shows its error; run the printed `COMMAND` by hand to see it |
 | `dotnet build` fails: file is locked by `SmartRation.Api` | the running C# API locks its Debug build | stop it first, or build/test with `-c Release` (what `run-tests.ps1` does) |
 | `dotnet build` from the root: *specify a project or solution* | older checkout without `SmartRation.sln` | pull; the solution file is at the repository root |
@@ -18,7 +18,7 @@
 | `verify_database.py` fails with `No ration items found` | empty reference tables | `python scripts\seed_database.py` |
 | `alembic downgrade` raises *Refusing to drop every Smart Ration table* | safety guard on `0001_initial` | intentional; use `reset_database.py` in development |
 | Proxied requests get **429** from C# | per-client limit reached (QR scan, OTP) | wait a minute; the C# API keys limits on `X-Forwarded-For` from the local proxy |
-| Chatbot says it can't reach the help service | Python API (:8000) not running, or `VITE_API_BASE_URL` still points at :5188 | start the Python API; set `VITE_API_BASE_URL=http://localhost:8000/api` in `frontend/.env` |
+| Chatbot says it can't reach the help service | Python API (:8000) not running, or `VITE_API_BASE_URL` still points at :5188 | start the Python API; set `VITE_API_BASE_URL=http://localhost:8000/api/v1` in `frontend/.env` |
 | Chatbot answers in the wrong language | the interface language decides; Devanagari text is detected as Hindi or Marathi | switch the language at the top of the page |
 | API won't start: "ConnectionStrings:MySql is not set" | C# user-secrets missing | set it (LOCAL_SETUP.md §3), or remove `Database:Provider` for the SQLite fallback |
 | MySQL "Access denied" (1045) | setup script not run, or passwords differ from secrets/.env | re-check `database/mysql-setup.local.sql` and each component's secret |

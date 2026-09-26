@@ -51,7 +51,8 @@ Triggered by the "Super Master Prompt" brief. The project was moved from
 - **Missing feature:** `GET/PUT /api/users/profile` (edit own name + mobile) exists in the C# API, and
   `frontend/src/services/usersService.js` wraps it, but **no page uses it** — the only unimported frontend
   file. Classification MODIFY (build the screen), not DELETE.
-- No API versioning (`/api/...`, no `/api/v1`).
+- No API versioning (`/api/...`, no `/api/v1`). **Fixed (2026-09-26):** `/api/v1/*` alias at the gateway,
+  frontend switched, `/api/*` still works; see [API.md](api/API.md#versioning).
 - Python: clean layering (`api → services → db`), lint + types clean, 45 source files.
 
 ### Why C# stays (the brief's Python-first rule, §7)

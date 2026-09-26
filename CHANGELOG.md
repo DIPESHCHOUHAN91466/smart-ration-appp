@@ -2,6 +2,28 @@
 
 All notable changes. Dates are commit dates; hashes refer to this repository.
 
+## 2026-09-26 — Move to `D:\`, third audit, dependency security, C# cleanup, `/api/v1`
+
+### Added
+- **API versioning:** every gateway route answers under `/api/v1/...`; `/api/...` stays as an alias
+  (`app/core/api_version.py`, 11 tests). The frontend calls `/api/v1` (a bare `/api` base gets `/v1` added).
+- Dependency audit: `sr.ps1 audit` (pip-audit, npm audit, `dotnet list package --vulnerable`) and a CI
+  `security` job. CI's docker job checks the built website and that the C# image runs as non-root.
+- Moved-virtualenv detection and repair in `setup.ps1` / `health-check.ps1`.
+
+### Changed
+- **C# API layering:** 12 controllers call services instead of the database (`UserAccountService`,
+  `FamilyService`, `PublicProfileService`, `ShopDirectoryService`, `RationCatalogService`, `SearchService`, …);
+  one access rule (`BeneficiaryAccess`) instead of four copies; the synthetic-data list reuses the database
+  viewer's query. 16 new C# tests (130 total).
+- Root MySQL tests (`tests/mysql`) use `TEST_DATABASE_URL` / the backend's `DATABASE_URL`, not their own
+  `DB_*` settings; `run-tests.ps1 -MySql` runs them.
+- C# packages patched (EF Core / JwtBearer 8.0.31, Pomelo 8.0.3, test-project pins): no known vulnerabilities.
+
+### Fixed
+- Updating your profile with a space-padded mobile number that another account uses returned 500; now 409.
+- Search: a role other than the four known ones would have seen unscoped results; it now sees nothing.
+
 ## 2026-09-25 (late night) — Thin controllers, chatbot modules, collections, contracts, E2E, `sr.ps1`
 
 Most of this was committed in `583792e` (together with new READMEs); the rest in the following commit.
