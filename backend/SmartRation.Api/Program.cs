@@ -26,6 +26,8 @@ var builder = WebApplication.CreateBuilder(args);
 // "MySql". MySQL's connection string comes from ConnectionStrings:MySql —
 // set it via user-secrets or the ConnectionStrings__MySql environment
 // variable, never in a committed appsettings file.
+// On a hosting platform the Python API's DATABASE_URL / JWT_SECRET_KEY are accepted too (SharedEnvironment).
+SharedEnvironment.Apply(builder.Configuration, Environment.GetEnvironmentVariable);
 var databaseProvider = builder.Configuration["Database:Provider"] ?? "Sqlite";
 
 if (string.Equals(databaseProvider, "MySql", StringComparison.OrdinalIgnoreCase))
@@ -107,17 +109,12 @@ if (dataModeProblems.Count > 0)
 
 // Production must never silently fall back to a fixed demo OTP or a mock SMS
 // provider that sends nothing. Fail fast at startup instead.
-if (!builder.Environment.IsDevelopment())
+var productionProblems = ProductionGuard.Problems(builder.Environment.IsDevelopment(), dataMode, demoOptions, smsOptions);
+if (productionProblems.Count > 0)
 {
-    if (demoOptions.DemoOtpEnabled)
-    {
-        throw new InvalidOperationException("Demo:DemoOtpEnabled must be false outside Development (set Demo__DemoOtpEnabled=false).");
-    }
-    if (!string.Equals(smsOptions.Provider, "Http", StringComparison.OrdinalIgnoreCase))
-    {
-        throw new InvalidOperationException("Sms:Provider must be 'Http' (a real gateway) outside Development.");
-    }
+    throw new InvalidOperationException(string.Join(Environment.NewLine, productionProblems));
 }
+var syntheticDemoSms = ProductionGuard.UsesSyntheticDemoSms(builder.Environment.IsDevelopment(), dataMode, smsOptions);
 
 // --------------------------------------------------
 // AUTHENTICATION / AUTHORIZATION
@@ -331,6 +328,10 @@ using (var scope = app.Services.CreateScope())
     // Synthetic demo data is seeded only in synthetic mode (real mode is refused at startup today).
     await DbInitializer.InitializeAsync(db, qrOptions.Secret, seedSyntheticData: dataMode == DataMode.Synthetic);
     app.Logger.LogInformation("DATA_MODE={DataMode}: identity verification, passbooks and seed data are synthetic demo data.", dataMode);
+    if (syntheticDemoSms)
+    {
+        app.Logger.LogWarning("SYNTHETIC DEMO: Sms:AllowMockOutsideDevelopment=true - OTP messages are NOT delivered to anyone.");
+    }
 }
 
 // --------------------------------------------------

@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     # Comma-separated in the environment (NoDecode: not parsed as JSON).
     cors_origins: Annotated[list[str], NoDecode] = Field(default=["http://localhost:5173"])
 
+    # Serve the built frontend from this API (single-service deployments, e.g. Render). Empty = don't.
+    frontend_dist_dir: str = Field(default="", description="path to frontend/dist; the Docker image sets it")
+
     # Largest request body accepted (OCR uploads are up to 5 MB).
     max_request_bytes: int = 6 * 1024 * 1024
 
@@ -70,6 +73,13 @@ class Settings(BaseSettings):
         if isinstance(value, str) and not value.startswith("["):
             return [v.strip() for v in value.split(",") if v.strip()]
         return value
+
+    @field_validator("legacy_api_url", "ai_service_url")
+    @classmethod
+    def default_scheme(cls, value: str) -> str:
+        # Hosting blueprints (Render's fromService "host") give a bare host name: assume HTTPS.
+        value = value.strip()
+        return f"https://{value}" if value and "://" not in value else value
 
     @field_validator("jwt_secret_key")
     @classmethod

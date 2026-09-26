@@ -93,6 +93,10 @@ test("a protected page sends a signed-out visitor to the login page", async ({ p
 
 test("status page reports every service", async ({ page }) => {
   await page.goto("/status");
+  // Production builds hide the developer status page (VITE_SHOW_STATUS); nothing to check there.
+  if (await page.getByText("Page not found").isVisible()) {
+    test.skip(true, "status page is disabled in this (production) build");
+  }
   const table = page.getByRole("table");
   await expect(table.getByRole("row", { name: /^Python API/ })).toContainText(/healthy|ok/i);
   await expect(table.getByRole("row", { name: /^C# API/ })).toBeVisible();

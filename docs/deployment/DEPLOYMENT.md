@@ -1,5 +1,7 @@
 # Deployment
 
+> **Public demo link:** follow [RENDER.md](RENDER.md) — Render Blueprint (`render.yaml`) + a free Aiven MySQL.
+
 ## Local development (Windows, what runs today)
 
 | Service | Port | Start |

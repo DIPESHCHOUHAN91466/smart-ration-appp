@@ -26,6 +26,7 @@ from app.core.middleware import install_middleware
 from app.core.rate_limit import FixedWindowLimiter
 from app.data_providers import check_data_mode
 from app.db.database import configure_database
+from app.web import mount_frontend
 
 API_DESCRIPTION = """
 Python backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET API).
@@ -102,5 +103,9 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     # ---- Fallback proxy: MUST stay last ----
     if legacy_client is not None:
         app.include_router(legacy_proxy.build_router(legacy_client))
+
+    # ---- The built website (optional): registered after every API route ----
+    if settings.frontend_dist_dir:
+        mount_frontend(app, settings.frontend_dist_dir)
 
     return app
