@@ -24,6 +24,7 @@
 #>
 param([switch]$SkipServices, [switch]$Deep)
 $root = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+. (Join-Path $PSScriptRoot "_common.ps1")
 $script:counts = @{ PASS = 0; FAIL = 0; WARNING = 0; "NOT CONFIGURED" = 0 }
 $script:blocking = 0   # FAIL, or a required part NOT CONFIGURED
 
@@ -97,6 +98,11 @@ if (Test-Path $pyExe) {
     Check ("$pytest" -match "^pytest \d") "pytest" $(if ("$pytest" -match "^pytest \d") { "$pytest" } else { "missing - pip install -r requirements-dev.txt" }) "NOT CONFIGURED"
 }
 $aiExe = Join-Path $root "backend\SmartRation.AI\.venv\Scripts\python.exe"
+foreach ($venv in @((Join-Path $pyDir ".venv"), (Join-Path $root "backend\SmartRation.AI\.venv"))) {
+    if ((Test-Path $venv) -and (Test-VenvMoved $venv)) {
+        Report "WARNING" "Virtualenv location" "$(Split-Path (Split-Path $venv) -Leaf)\.venv was created in $(Split-Path (Get-VenvOrigin $venv)) - pytest.exe/uvicorn.exe/activate are broken; run scripts\development\setup.ps1 to rebuild"
+    }
+}
 Check (Test-Path $aiExe) "AI service virtualenv" $(if (Test-Path $aiExe) { ".venv present" } else { "missing - run scripts\development\setup.ps1 (optional service)" }) "NOT CONFIGURED" -Optional
 $modules = Join-Path $root "frontend\node_modules"
 Check (Test-Path $modules) "Frontend packages" $(if (Test-Path $modules) { "node_modules present" } else { "missing - run scripts\development\setup.ps1" }) "NOT CONFIGURED"

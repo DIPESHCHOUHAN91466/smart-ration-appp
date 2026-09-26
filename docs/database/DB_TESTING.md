@@ -44,7 +44,7 @@ In PowerShell, from the Python backend folder, use the **same password as in you
 database name `smartration_test`:
 
 ```powershell
-cd C:\Users\dipes\OneDrive\Desktop\Smart_Ration_HSD2C_Final\backend\SmartRation.Python
+cd backend\SmartRation.Python        # from the repository root, wherever it is on your machine
 $env:TEST_DATABASE_URL = "mysql+pymysql://smartration_app:<password>@localhost:3306/smartration_test?charset=utf8mb4"
 ```
 

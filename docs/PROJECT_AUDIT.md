@@ -1,11 +1,92 @@
 # Smart Ration HSD2C — Project Audit
 
-Date: 2026-09-25 · Branch `feature/python-backend-migration` · Previous audits:
+Latest: third audit, 2026-09-26 (below) · First audits: 2026-09-25 · Previous audits:
 [docs/archive/PROJECT_AUDIT_2026-09-21.md](archive/PROJECT_AUDIT_2026-09-21.md) (pre-cleanup state, now outdated) and
 [MIGRATION_AUDIT.md](migration/MIGRATION_AUDIT.md) (C# → Python migration, Phase 0).
 
 Everything below was checked against the code, the running services and the database on this date;
 items marked *fixed* were fixed during this audit and committed.
+
+## Third audit — after the move to `D:\` (2026-09-26)
+
+Triggered by the "Super Master Prompt" brief. The project was moved from
+`C:\Users\…\Desktop\Smart_Ration_HSD2C_Final` to `D:\Smart_Ration_HSD2C_Final` (same git history,
+`main` at `75ae91c`, 2 commits not yet pushed).
+
+### Baseline in the new location (measured, not assumed)
+
+| Check | Result |
+|---|---|
+| `health-check.ps1 -SkipServices` | HEALTHY — every script finds the project from its own location |
+| `run-tests.ps1 -MySql` | 9/9 steps PASS: Python 208, MySQL 146, AI 46, C# 114, frontend 39, chatbot evaluation 67/67, lint, build, database health |
+| Python virtualenvs | **broken by the move**: `pytest.exe`, `uvicorn.exe`, `activate` pointed to the old `C:` path (only `python -m …` worked) — **fixed**: `setup.ps1` now detects a moved `.venv` and rebuilds it; `health-check.ps1` warns (`scripts/development/_common.ps1`) |
+| Absolute paths in tracked files | none in code; 2 in docs (**fixed**) |
+| Root `tests/mysql` (24) | still 23 errors: *Access denied* — the root `.env` `DB_PASSWORD` is wrong, and this suite keeps its **own** DB settings (`DB_*`) instead of the project's `DATABASE_URL` (a duplicate configuration system) |
+
+### Dependency security (first time checked)
+
+| Stack | Tool | Result |
+|---|---|---|
+| Python API, AI service | `pip-audit` (scratch venv) | no known vulnerabilities |
+| Frontend, production deps | `npm audit --omit=dev` | 0 |
+| Frontend, dev deps | `npm audit` | 2 moderate (Vitest's `@vitest/mocker`; test tooling only; fix needs a Vitest major upgrade) |
+| C# API (**ships in the production image**) | `dotnet list package --vulnerable --include-transitive` | **3 high**, transitive: `Microsoft.Extensions.Caching.Memory 8.0.0`, `System.Text.Json 8.0.4`, `SQLitePCLRaw.lib.e_sqlite3 2.1.6` (via EF Core / JwtBearer 8.0.8, EF Sqlite) |
+| C# tests | same | the 3 above + `System.Net.Http 4.3.0`, `System.Text.RegularExpressions 4.3.0` |
+
+### Architecture findings
+
+- **13 of 25 C# controllers still query the database directly** (`AI`, `Admin`, `Audit`, `Families`,
+  `Health`, `Public`, `RationCollection`, `Ration`, `Search`, `Shops`, `SyntheticData`, `Users`,
+  `Verification`). Health's connectivity probe is legitimate; the rest is the same layering debt fixed for
+  `Beneficiaries`/`AdminDatabase` in the previous round.
+- **Missing feature:** `GET/PUT /api/users/profile` (edit own name + mobile) exists in the C# API, and
+  `frontend/src/services/usersService.js` wraps it, but **no page uses it** — the only unimported frontend
+  file. Classification MODIFY (build the screen), not DELETE.
+- No API versioning (`/api/...`, no `/api/v1`).
+- Python: clean layering (`api → services → db`), lint + types clean, 45 source files.
+
+### Why C# stays (the brief's Python-first rule, §7)
+
+| Question | Answer |
+|---|---|
+| What does it do? | the business core: bookings + 5-minute slots, QR signing/verification, OTP, entitlement, collections, inventory ledger, AI panels' data, 75 endpoints, 114 tests |
+| Why not Python? | it isn't *better* in Python, it's already built and tested there; porting 75 endpoints means re-deriving concurrency rules (optimistic concurrency on slots and stock), QR signatures and EF migrations, with regression risk and no user-visible gain. The owner chose "freeze as hybrid" on 2026-09-25 |
+| How does it integrate? | only through the Python gateway (`LEGACY_API_URL`), same MySQL, same JWT key; the browser never calls it directly |
+| When would it move? | per route area, behind the existing proxy, when its tests and the contract check (`tests/contract/compare_proxy.py`) pass — see `backend/SmartRation.Python/MIGRATION.md` |
+
+### Classification of important paths
+
+| Path | Type | Purpose | Status | Recommendation | Reason / risk |
+|---|---|---|---|---|---|
+| `frontend/` | React 18 + Vite (JS) | web app | working, 39 tests, 9 E2E | KEEP | TypeScript would be a rewrite of ~130 files; no defect requires it |
+| `frontend/src/services/usersService.js` | API client | own-profile API | unused | MODIFY | build the missing "My profile" screen |
+| `backend/SmartRation.Python/` | FastAPI | gateway, auth, chatbot, website serving, data tools | working, 208 tests | KEEP | primary backend (Python-first) |
+| `backend/SmartRation.Api/` | ASP.NET Core 8 | business core | working, 114 tests | KEEP + MODIFY | justified above; move DB access out of 11 controllers; patch vulnerable packages |
+| `backend/SmartRation.Api/Repositories/`, `Validators/` | empty folders (untracked) | none | empty | DELETE | nothing references them; empty folders mislead |
+| `backend/SmartRation.AI/` | FastAPI | forecasting, risk, alerts, OCR | working, 46 tests | KEEP | isolated, fails gracefully (panels show "unavailable") |
+| `backend/SmartRation.Python/MIGRATION.md` | doc | paused migration tracker | referenced by `app/main.py`, READMEs | KEEP | historical record of the hybrid decision |
+| `ai/`, `data/`, `database/`, `api/` | content | knowledge base, synthetic data, schema snapshot, API contracts | current, drift-tested | KEEP | — |
+| `tests/mysql/` | pytest | root MySQL tests (24) | broken (config) | MODIFY | use the project's `DATABASE_URL`/`TEST_DATABASE_URL`, drop the duplicate `DB_*` settings |
+| `mobile/` | Expo template | planned mobile app | not integrated | KEEP (marked planned) | owner's decision; README states it's a template |
+| `scripts/start-backend.ps1`, `start-frontend.ps1` | PowerShell | start one service | work, relative paths | KEEP | small, documented; `sr.ps1 run` / VS Code tasks are the main path |
+| `start-dev.bat`, `sr.ps1` | entry points | double-click start; one CLI | working | KEEP | — |
+| `docs/archive/` | docs | superseded audits | historical | KEEP | clearly labelled archive |
+| `DATABASE_TESTING_COMPLETION_REPORT.md` | report | database testing results | current | KEEP | requested at the root by an earlier brief |
+| `render.yaml`, both `Dockerfile`s | deployment | Render blueprint, images | verified locally | KEEP | Render itself NOT VERIFIED (needs the owner's accounts) |
+
+### Brief's target structure vs. what exists
+
+The brief's tree is a *target*, not an instruction to create empty folders. Where a folder it names has an
+existing equivalent, that equivalent is kept:
+
+| Brief | Existing equivalent |
+|---|---|
+| `backend/SmartRation/app/{api,core,config,models,schemas,services,database,security,middleware}` | `backend/SmartRation.Python/app/{api,core,db,schemas,services,…}` (config/security/middleware live in `app/core`) |
+| `app/repositories` | SQLAlchemy sessions used in services (no separate repository layer: 13 short services, no second data source) |
+| `ai/{models,inference,evaluation,…}` | `backend/SmartRation.AI/smartration_ai/*` (service) + `ai/chatbot/{knowledge,evaluation,prompts}` |
+| `database/{migrations,schema,seeds}` | Alembic in `backend/SmartRation.Python/app/db/migrations`, `database/schema/`, `data/synthetic` |
+| `tests/{e2e,smoke,…}` | `frontend/e2e` (Playwright), `tests/mysql`, per-service `tests/` folders |
+| root `ARCHITECTURE.md`, `TESTING.md`, `DEPLOYMENT.md`, `DEVELOPMENT.md` | `docs/architecture/`, `docs/testing/TESTING.md`, `docs/deployment/`, `docs/development/LOCAL_SETUP.md` |
 
 ## 0. Second audit — workspace, data separation, documentation (2026-09-25, later)
 

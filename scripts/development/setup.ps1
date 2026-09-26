@@ -4,7 +4,8 @@
 
 .DESCRIPTION
   1. Checks the required tools: Python 3.12+, .NET 8 SDK, Node.js 18+ and npm (stops if one is missing).
-  2. Python API and AI service: creates each .venv if missing, then installs its requirements.
+  2. Python API and AI service: creates each .venv if missing (or rebuilds it if it was created in another
+     folder, i.e. the project was moved), then installs its requirements.
   3. Frontend: npm install.
   4. C#: dotnet restore SmartRation.sln.
   5. .env files: copies each .env.example to .env ONLY when .env does not exist (never overwrites).
@@ -18,6 +19,7 @@
 #>
 param([switch]$CheckOnly)
 $root = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+. (Join-Path $PSScriptRoot "_common.ps1")
 $script:failed = 0
 
 function Step([string]$Name) { Write-Host "`n== $Name" -ForegroundColor Cyan }
@@ -60,8 +62,13 @@ foreach ($svc in @(
     Step $svc.Name
     $dir = Join-Path $root $svc.Dir
     $venvPython = Join-Path $dir ".venv\Scripts\python.exe"
-    if (Test-Path $venvPython) { Info ".venv exists" }
-    else { Invoke-Checked "python -m venv .venv" $dir { python -m venv .venv } }
+    if (-not (Test-Path $venvPython)) { Invoke-Checked "python -m venv .venv" $dir { python -m venv .venv } }
+    elseif (Test-VenvMoved (Join-Path $dir ".venv")) {
+        # Created in another folder (project moved/copied): its .exe launchers point there. Rebuild in place.
+        Todo ".venv was created in $(Get-VenvOrigin (Join-Path $dir '.venv')) - rebuilding it here"
+        Invoke-Checked "python -m venv --clear .venv" $dir { python -m venv --clear .venv }
+    }
+    else { Info ".venv exists" }
     Invoke-Checked "pip install -r $($svc.Requirements)" $dir { & .venv\Scripts\python -m pip install --disable-pip-version-check -q -r $svc.Requirements }
 }
 

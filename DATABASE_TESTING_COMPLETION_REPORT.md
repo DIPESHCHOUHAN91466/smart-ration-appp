@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Project | Smart_Ration_HSD2C_Final (Ration Mitra) |
-| Location | `C:\Users\dipes\OneDrive\Desktop\Smart_Ration_HSD2C_Final` |
+| Location | the repository root (tests were run at `C:\Users\…\Desktop\Smart_Ration_HSD2C_Final` on 2026-09-25; the project now lives at `D:\Smart_Ration_HSD2C_Final`, where the same suites pass — 2026-09-26) |
 | Branch / date | `feature/python-backend-migration` · 2026-09-25 |
 | Environment | Windows 11, MySQL 8 (local, InnoDB, `utf8mb4_0900_ai_ci`), Python 3.14, .NET 8, Node/Vite 6 |
 | Architecture | React/Vite frontend → Python FastAPI gateway (:8000: auth, public help, chatbot, data providers, proxy) → C# ASP.NET Core 8 business API (:5188: bookings, QR, OTP, inventory, collections) → MySQL 8; Python AI service (:8001) |
