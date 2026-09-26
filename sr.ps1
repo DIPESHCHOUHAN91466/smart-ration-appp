@@ -34,6 +34,7 @@ switch ($Command.ToLowerInvariant()) {
     "run"       { Script "start-all.ps1" }                   # all four services, each in its own window
     "stop"      { Script "stop-all.ps1" }
     "health"    { Script "health-check.ps1" }
+    "audit"     { Script "audit-dependencies.ps1" }             # known vulnerabilities in every dependency
     "test"      { Script "run-tests.ps1" }                   # add -MySql / -Quick
     "e2e"       { InDir (Join-Path $root "frontend") { npm run test:e2e @Rest }; exit $LASTEXITCODE }
     "build" {
@@ -67,6 +68,7 @@ Smart Ration developer commands (.\sr.ps1 <command>):
   setup                 first-time / refresh setup (virtualenvs, packages, dotnet restore, .env templates)
   run | stop            start / stop C# :5188, AI :8001, Python :8000, frontend :5173
   health                check tools, setup, services, ports and database  [PASS] [WARNING] [FAIL] [NOT CONFIGURED]
+  audit                 known vulnerabilities in Python, npm and C# dependencies (needs internet)
   test [-MySql|-Quick]  every test suite + lint + build + database health
   e2e                   end-to-end browser tests (Playwright; the stack must be running)
   build                 C# (Release), frontend production build, Python import check
