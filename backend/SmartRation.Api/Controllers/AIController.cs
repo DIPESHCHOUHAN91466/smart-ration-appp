@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartRation.Api.Common;
-using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.AI;
 using SmartRation.Api.Models;
 using SmartRation.Api.Services;
 using SmartRation.Api.Services.AI;
-using Microsoft.EntityFrameworkCore;
 
 namespace SmartRation.Api.Controllers;
 
@@ -22,7 +20,7 @@ public class AIController(
     IQueuePredictionService queuePredictionService,
     IAnomalyDetectionService anomalyDetectionService,
     IPythonAiClient pythonAi,
-    SmartRationDbContext db,
+    IBeneficiaryProfileService profiles,
     ICurrentUserService currentUser) : ControllerBase
 {
     [HttpGet("intelligence-center")]
@@ -88,14 +86,7 @@ public class AIController(
     [HttpGet("beneficiaries/{beneficiaryId:int}/insight")]
     public async Task<ActionResult<ApiResponse<BeneficiaryRiskInsightDto>>> GetBeneficiaryInsight(int beneficiaryId)
     {
-        if (currentUser.Role == UserRole.RuralUser)
-        {
-            var ownsProfile = await db.Beneficiaries.AnyAsync(b => b.Id == beneficiaryId && b.UserId == currentUser.UserId);
-            if (!ownsProfile)
-            {
-                throw new ForbiddenException("You can only view your own AI insight.");
-            }
-        }
+        await profiles.EnsureCanSeeAsync(beneficiaryId); // shared BeneficiaryAccess rule
 
         var result = await beneficiaryInsightService.GetBeneficiaryInsightAsync(beneficiaryId);
         return Ok(ApiResponse<BeneficiaryRiskInsightDto>.Ok(result));

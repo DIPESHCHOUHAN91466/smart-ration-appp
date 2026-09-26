@@ -3,15 +3,20 @@ using SmartRation.Api.Data;
 using SmartRation.Api.DTOs.Admin;
 using SmartRation.Api.DTOs.Verification;
 using SmartRation.Api.Mapping;
+using SmartRation.Api.Models;
 
 namespace SmartRation.Api.Services;
 
 // Read-only, paged views of the main tables for the Government/Admin "database viewer"
 // (AdminDatabaseController). No method writes anything. page >= 1 and 1 <= pageSize <= 100 are
 // enforced by the caller (the controller clamps them).
+// Extra beneficiary filters used by the synthetic-data screen (SyntheticDataController). Unknown
+// status names are ignored rather than rejected, as that screen always did.
+public record BeneficiaryFilter(string? District = null, string? AadhaarStatus = null, string? PassbookStatus = null, bool SearchMobile = false);
+
 public interface IAdminDatabaseBrowserService
 {
-    Task<PagedResultDto<SyntheticBeneficiaryRowDto>> GetBeneficiariesAsync(string? search, int page, int pageSize);
+    Task<PagedResultDto<SyntheticBeneficiaryRowDto>> GetBeneficiariesAsync(string? search, int page, int pageSize, BeneficiaryFilter? filter = null);
     Task<PagedResultDto<FamilyMemberRowDto>> GetFamilyMembersAsync(string? search, int page, int pageSize);
     Task<PagedResultDto<TokenRowDto>> GetTokensAsync(string? search, int page, int pageSize);
     Task<PagedResultDto<CollectionRowDto>> GetCollectionsAsync(string? search, int page, int pageSize);
@@ -22,7 +27,7 @@ public interface IAdminDatabaseBrowserService
 
 public class AdminDatabaseBrowserService(SmartRationDbContext db) : IAdminDatabaseBrowserService
 {
-    public async Task<PagedResultDto<SyntheticBeneficiaryRowDto>> GetBeneficiariesAsync(string? search, int page, int pageSize)
+    public async Task<PagedResultDto<SyntheticBeneficiaryRowDto>> GetBeneficiariesAsync(string? search, int page, int pageSize, BeneficiaryFilter? filter = null)
     {
         var query = db.Beneficiaries
             .Include(b => b.User)
@@ -36,7 +41,22 @@ public class AdminDatabaseBrowserService(SmartRationDbContext db) : IAdminDataba
         if (!string.IsNullOrWhiteSpace(search))
         {
             var term = search.Trim().ToLowerInvariant();
-            query = query.Where(b => b.BeneficiaryCode.ToLower().Contains(term) || b.User.FullName.ToLower().Contains(term));
+            var searchMobile = filter?.SearchMobile == true;
+            query = query.Where(b => b.BeneficiaryCode.ToLower().Contains(term) || b.User.FullName.ToLower().Contains(term)
+                || (searchMobile && b.User.MobileNumber.Contains(term)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter?.District))
+        {
+            query = query.Where(b => b.District == filter.District);
+        }
+        if (Enum.TryParse<AadhaarVerificationStatus>(filter?.AadhaarStatus, true, out var aadhaar))
+        {
+            query = query.Where(b => b.AadhaarVerification != null && b.AadhaarVerification.Status == aadhaar);
+        }
+        if (Enum.TryParse<PassbookVerificationStatus>(filter?.PassbookStatus, true, out var passbook))
+        {
+            query = query.Where(b => b.PassbookVerification != null && b.PassbookVerification.VerificationStatus == passbook);
         }
 
         var totalCount = await query.CountAsync();

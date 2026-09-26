@@ -12,6 +12,7 @@ namespace SmartRation.Api.Controllers;
 [ApiController]
 [Route("api/health")]
 [AllowAnonymous]
+// It keeps the DbContext on purpose: whether the database can be reached is the probe itself.
 public class HealthController(SmartRationDbContext db, IPythonAiClient pythonAi) : ControllerBase
 {
     // Root-level probe: { status, api, database, aiService } with Healthy /
@@ -47,16 +48,7 @@ public class HealthController(SmartRationDbContext db, IPythonAiClient pythonAi)
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken ct)
     {
-        bool database;
-        try
-        {
-            database = await db.Database.CanConnectAsync(ct);
-        }
-        catch
-        {
-            database = false;
-        }
-
+        var database = await CanReachDatabaseAsync(ct);
         var ai = await pythonAi.IsHealthyAsync(ct);
 
         var system = !database ? "UNHEALTHY" : ai ? "HEALTHY" : "DEGRADED";

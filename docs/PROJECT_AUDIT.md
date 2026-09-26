@@ -39,6 +39,15 @@ Triggered by the "Super Master Prompt" brief. The project was moved from
   `Health`, `Public`, `RationCollection`, `Ration`, `Search`, `Shops`, `SyntheticData`, `Users`,
   `Verification`). Health's connectivity probe is legitimate; the rest is the same layering debt fixed for
   `Beneficiaries`/`AdminDatabase` in the previous round.
+  **Fixed (2026-09-26):** 12 controllers now call services (`UserAccountService`, `FamilyService`,
+  `PublicProfileService`, `ShopDirectoryService`, `RationCatalogService`, `SearchService`, plus new methods
+  on the verification-audit, OTP, beneficiary-profile and database-browser services); only `Health` keeps
+  its DbContext, on purpose. One access rule (`BeneficiaryAccess`) replaces four copies; the synthetic-data
+  list reuses the database viewer's query. Found and fixed on the way: a profile update with a
+  space-padded duplicate mobile number returned 500 instead of 409. C# tests 114 → 130; 22 endpoint
+  checks (including every 403 boundary) passed against the running API and local MySQL.
+- **Open decision (not changed):** a ShopOwner can open *any* beneficiary's profile, family and history
+  (`BeneficiaryAccess`), while search limits them to their own shop's. Which one is intended is the owner's call.
 - **Missing feature:** `GET/PUT /api/users/profile` (edit own name + mobile) exists in the C# API, and
   `frontend/src/services/usersService.js` wraps it, but **no page uses it** — the only unimported frontend
   file. Classification MODIFY (build the screen), not DELETE.
@@ -49,7 +58,7 @@ Triggered by the "Super Master Prompt" brief. The project was moved from
 
 | Question | Answer |
 |---|---|
-| What does it do? | the business core: bookings + 5-minute slots, QR signing/verification, OTP, entitlement, collections, inventory ledger, AI panels' data, 75 endpoints, 114 tests |
+| What does it do? | the business core: bookings + 5-minute slots, QR signing/verification, OTP, entitlement, collections, inventory ledger, AI panels' data, 75 endpoints, 130 tests |
 | Why not Python? | it isn't *better* in Python, it's already built and tested there; porting 75 endpoints means re-deriving concurrency rules (optimistic concurrency on slots and stock), QR signatures and EF migrations, with regression risk and no user-visible gain. The owner chose "freeze as hybrid" on 2026-09-25 |
 | How does it integrate? | only through the Python gateway (`LEGACY_API_URL`), same MySQL, same JWT key; the browser never calls it directly |
 | When would it move? | per route area, behind the existing proxy, when its tests and the contract check (`tests/contract/compare_proxy.py`) pass — see `backend/SmartRation.Python/MIGRATION.md` |
@@ -61,7 +70,7 @@ Triggered by the "Super Master Prompt" brief. The project was moved from
 | `frontend/` | React 18 + Vite (JS) | web app | working, 39 tests, 9 E2E | KEEP | TypeScript would be a rewrite of ~130 files; no defect requires it |
 | `frontend/src/services/usersService.js` | API client | own-profile API | unused | MODIFY | build the missing "My profile" screen |
 | `backend/SmartRation.Python/` | FastAPI | gateway, auth, chatbot, website serving, data tools | working, 208 tests | KEEP | primary backend (Python-first) |
-| `backend/SmartRation.Api/` | ASP.NET Core 8 | business core | working, 114 tests | KEEP + MODIFY | justified above; move DB access out of 11 controllers; patch vulnerable packages |
+| `backend/SmartRation.Api/` | ASP.NET Core 8 | business core | working, 130 tests | KEEP + MODIFY (done) | justified above; DB access moved out of 12 controllers; vulnerable packages patched |
 | `backend/SmartRation.Api/Repositories/`, `Validators/` | empty folders (untracked) | none | empty | DELETE | nothing references them; empty folders mislead |
 | `backend/SmartRation.AI/` | FastAPI | forecasting, risk, alerts, OCR | working, 46 tests | KEEP | isolated, fails gracefully (panels show "unavailable") |
 | `backend/SmartRation.Python/MIGRATION.md` | doc | paused migration tracker | referenced by `app/main.py`, READMEs | KEEP | historical record of the hybrid decision |

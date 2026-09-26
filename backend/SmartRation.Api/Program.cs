@@ -225,6 +225,8 @@ builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IFamilyService, FamilyService>();
 builder.Services.AddScoped<IPublicProfileService, PublicProfileService>();
 builder.Services.AddScoped<IShopDirectoryService, ShopDirectoryService>();
+builder.Services.AddScoped<IRationCatalogService, RationCatalogService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IAIIntelligenceService, AIIntelligenceService>();
 
 // --------------------------------------------------

@@ -20,6 +20,9 @@ public interface IBeneficiaryProfileService
     Task<EntitlementSummaryDto> GetEntitlementAsync(int beneficiaryId);
     Task<List<CollectionHistoryItemDto>> GetCollectionHistoryAsync(int beneficiaryId);
     Task<BeneficiaryFullProfileDto> GetFullProfileAsync(int beneficiaryId);
+
+    // Throws NotFound/Forbidden unless the caller may see this beneficiary (used by AIController).
+    Task EnsureCanSeeAsync(int beneficiaryId);
 }
 
 public class BeneficiaryProfileService(
@@ -61,6 +64,16 @@ public class BeneficiaryProfileService(
     {
         var beneficiary = await LoadAndAuthorizeAsync(beneficiaryId);
         return await entitlementService.GetEntitlementAsync(beneficiary.FamilyId);
+    }
+
+    public async Task EnsureCanSeeAsync(int beneficiaryId)
+    {
+        var ownerUserId = await db.Beneficiaries.Where(b => b.Id == beneficiaryId).Select(b => (int?)b.UserId).FirstOrDefaultAsync()
+            ?? throw new NotFoundException("Beneficiary not found.");
+        if (!BeneficiaryAccess.CanSee(currentUser, ownerUserId))
+        {
+            throw new ForbiddenException("You do not have access to this beneficiary.");
+        }
     }
 
     public async Task<List<CollectionHistoryItemDto>> GetCollectionHistoryAsync(int beneficiaryId)
