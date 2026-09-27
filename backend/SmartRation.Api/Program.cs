@@ -36,9 +36,7 @@ if (string.Equals(databaseProvider, "MySql", StringComparison.OrdinalIgnoreCase)
     if (string.IsNullOrWhiteSpace(mySqlConnection))
     {
         throw new InvalidOperationException(
-            "Database:Provider is MySql but ConnectionStrings:MySql is not set. Set it with " +
-            "`dotnet user-secrets set ConnectionStrings:MySql \"Server=localhost;Database=smartration;User=...;Password=...\"` " +
-            "or the ConnectionStrings__MySql environment variable.");
+            DatabaseTarget.MissingMySqlConnectionMessage(builder.Environment.EnvironmentName, builder.Environment.IsDevelopment()));
     }
 
     // No EnableRetryOnFailure: RationCollectionService opens its own
@@ -327,6 +325,12 @@ var app = builder.Build();
 // --------------------------------------------------
 // DATABASE MIGRATION + SEED
 // --------------------------------------------------
+
+// Which database this run uses (no user name or password), logged before the first connection attempt.
+app.Logger.LogInformation("Database: {DatabaseTarget}", DatabaseTarget.Describe(databaseProvider,
+    string.Equals(databaseProvider, "MySql", StringComparison.OrdinalIgnoreCase)
+        ? builder.Configuration.GetConnectionString("MySql")
+        : builder.Configuration.GetConnectionString("DefaultConnection")));
 
 using (var scope = app.Services.CreateScope())
 {

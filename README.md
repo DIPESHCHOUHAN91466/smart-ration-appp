@@ -3,10 +3,10 @@
 [![GitHub Repository](https://img.shields.io/badge/GitHub-smart--ration--appp-181717?logo=github)](https://github.com/DIPESHCHOUHAN91466/smart-ration-appp)
 [![Frontend](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite%206-61DAFB?logo=react)](frontend/README.md)
 [![Core API](https://img.shields.io/badge/Core%20API-ASP.NET%20Core%208%20(C%23)-512BD4?logo=dotnet)](backend/SmartRation.Api/README.md)
-[![Gateway & AI](https://img.shields.io/badge/Gateway%20%26%20AI-FastAPI%20%7C%20Python%203.11-3776AB?logo=fastapi)](backend/SmartRation.Python/README.md)
+[![Gateway & AI](https://img.shields.io/badge/Gateway%20%26%20AI-FastAPI%20%7C%20Python%203.12%2B-3776AB?logo=fastapi)](backend/SmartRation.Python/README.md)
 [![Database](https://img.shields.io/badge/Database-MySQL%208-4479A1?logo=mysql)](database/README.md)
 [![Mobile](https://img.shields.io/badge/Mobile-Expo%20%7C%20React%20Native-000020?logo=expo)](mobile/README.md)
-[![Tests](https://img.shields.io/badge/Tests-612%20passing%20(104%20xUnit%20%7C%20247%20pytest%20%7C%20146%20MySQL%20%7C%2039%20vitest%20%7C%209%20E2E)-success)](tests/README.md)
+[![Tests](https://img.shields.io/badge/Tests-612%20passing%20(104%20xUnit%20%7C%20314%20pytest%20%7C%20146%20MySQL%20%7C%2039%20vitest%20%7C%209%20E2E)-success)](tests/README.md)
 
 A modern, transparent, and resilient digital **Public Distribution System (PDS)** for India. **Smart Ration** eliminates long queues at Fair Price Shops (FPS) through scheduled slot reservations, cryptographically signed offline-verifiable QR tokens, real-time stock ledgering, predictive supply chain analytics, and a multilingual AI assistant (**Ration Mitra**).
 
@@ -28,6 +28,7 @@ Supported Languages: **English**, **हिंदी (Hindi)**, and **मरा�
 - [Security & Cryptography](#security--cryptography)
 - [AI Analytics & Public Help Chatbot](#ai-analytics--public-help-chatbot)
 - [Quick Start & Setup](#quick-start--setup)
+- [Configuration & Secrets](#configuration--secrets)
 - [Default Demo Accounts](#default-demo-accounts)
 - [Developer CLI (`sr.ps1`)](#developer-cli-srps1)
 - [Testing Strategy](#testing-strategy)
@@ -225,7 +226,7 @@ Smart_Ration_HSD2C_Final/
 - **Knowledge Retrieval Engine**: Grounded in human-reviewed government guidelines stored in `ai/chatbot/knowledge/`.
 
 ### Predictive Analytics Engine (:8001)
-- **Stockout Risk Modeling**: Calculates buffer depletion rates and flags shops with under 14 days of remaining inventory.
+- **Stockout Risk Modeling**: Calculates days of stock remaining at current usage and flags shops below `LOW_STOCK_DAYS` (default 7) or `CRITICAL_STOCK_DAYS` (default 3).
 - **Queue & Demand Forecasting**: Analyzes historical slot bookings to recommend optimal staffing hours for shop owners.
 - **Anomaly Detection**: Flags anomalous collection volumes exceeding standard family quota thresholds.
 
@@ -239,16 +240,26 @@ Smart_Ration_HSD2C_Final/
 - [Node.js 18+ and npm](https://nodejs.org/)
 - [MySQL 8.0+](https://dev.mysql.com/downloads/mysql/) (running on localhost:3306)
 
-### One-Command Setup
+### Setup
 
-Run the developer CLI script from PowerShell:
+Run from PowerShell in the repository root:
+
 ```powershell
-# 1. Automatic environment setup (virtual environments, npm install, dotnet restore, .env files)
+# 1. Create the database and accounts (one time): copy database/mysql-setup.sql to
+#    database/mysql-setup.local.sql (git-ignored), replace the CHANGE_ME passwords, then:
+mysql -u root -p < database\mysql-setup.local.sql
+
+# 2. Virtual environments, npm install, dotnet restore and .env templates
 .\sr.ps1 setup
 
-# 2. Start all 4 services concurrently in separate windows
+# 3. Fill in the secrets (see Configuration & Secrets below)
+
+# 4. Check everything is in place, then start all 4 services in separate windows
+.\sr.ps1 health
 .\sr.ps1 run
 ```
+
+The full walkthrough is in [docs/development/LOCAL_SETUP.md](docs/development/LOCAL_SETUP.md). If something fails, see [docs/development/TROUBLESHOOTING.md](docs/development/TROUBLESHOOTING.md).
 
 Access the applications:
 - **Frontend Dashboard**: [http://localhost:5173](http://localhost:5173)
@@ -258,16 +269,45 @@ Access the applications:
 
 ---
 
+## Configuration & Secrets
+
+No real secret is committed. [`.env.example`](.env.example) documents every value in one place; each component reads its own git-ignored store:
+
+| Component | Where its settings live | Key values |
+|---|---|---|
+| Python gateway | `backend/SmartRation.Python/.env` | `DATABASE_URL`, `JWT_SECRET_KEY`, `LEGACY_API_URL`, `CORS_ORIGINS` |
+| C# business API | `dotnet user-secrets` (never a file) | `Database:Provider=MySql`, `ConnectionStrings:MySql`, `Jwt:Key`, `Qr:Secret`, `AiService:ApiKey` |
+| AI service | `backend/SmartRation.AI/.env` | `SMARTRATION_AI_DB_URL` (read-only account), `SMARTRATION_AI_API_KEY` |
+| Frontend | `frontend/.env` | `VITE_API_BASE_URL`, `VITE_DEMO_MODE` |
+| Docker Compose | `.env` at the repo root (from `deployment/docker/compose.env.example`) | `MYSQL_*`, `JWT_SECRET_KEY` |
+
+Values that must match across services:
+
+- `JWT_SECRET_KEY` (Python) = `Jwt:Key` (C#). Both backends issue and accept the same tokens.
+- `SMARTRATION_AI_API_KEY` (AI service) = `AiService:ApiKey` (C#).
+- `Qr:Secret`: keep the same value on an existing install, or every issued QR token becomes invalid.
+
+**Startup guards.** The backends refuse to start rather than run with unsafe settings:
+
+- `DATA_MODE=real` is refused until certified UIDAI / State PDS integrations exist.
+- Outside Development, the C# API requires `Demo:DemoOtpEnabled=false` and `Sms:Provider=Http`, so it never uses a fixed OTP or an SMS provider that sends nothing. The one exception is a public demo on synthetic data. It may set `Sms__AllowMockOutsideDevelopment=true`, and the API then logs a warning that OTPs are not delivered. This is never allowed with `DATA_MODE=real`.
+
+---
+
 ## Default Demo Accounts
 
-When running in development or demo mode (`VITE_DEMO_MODE=true`), quick-login buttons are available on the login page:
+In synthetic mode the C# API seeds these accounts on first start into an empty database. With `VITE_DEMO_MODE=true`, the login page shows a quick-login button for each:
 
 | Persona | Email | Password | Role | Description |
 |---|---|---|---|---|
 | **Citizen (Rural User)** | `rural@example.com` | `demo123` | `RuralUser` | Book slots, view family entitlements, view QR token |
 | **Fair Price Shop Owner** | `shop@example.com` | `demo123` | `ShopOwner` | Scan QR tokens, verify OTPs, manage shop stock |
 | **Government Official** | `officer@example.com` | `demo123` | `GovernmentOfficial` | Inspect district map, view stock alerts, view AI insights |
-| **System Admin** | `admin@example.com` | `admin123` | `Admin` | Full administrative database inspection & user management |
+
+No admin account ships with a default password. To create one, set `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` before seeding (`.\sr.ps1 db seed`, or `RUN_DB_SEED=true` in Docker). When the Python seeder creates the demo users, it takes their password from `SEED_DEMO_PASSWORD`.
+
+> [!WARNING]
+> These credentials are public. Never enable `VITE_DEMO_MODE` or seed demo users on a deployment that holds real data.
 
 ---
 
@@ -281,14 +321,18 @@ The repository includes a unified developer command line interface in the root d
 .\sr.ps1 run                          # Launch all 4 services in parallel
 .\sr.ps1 stop                         # Terminate all running service processes
 .\sr.ps1 health                       # Perform diagnostic health checks on tools, services & DB
-.\sr.ps1 test                         # Run all unit and API tests
-.\sr.ps1 test -MySql                  # Run all tests including live MySQL scale suite
-.\sr.ps1 e2e                          # Run Playwright end-to-end browser tests
+.\sr.ps1 test                         # Every test suite + lint + build + database health
+.\sr.ps1 test -Quick                  # Faster subset for the inner dev loop
+.\sr.ps1 test -MySql                  # Also run the live MySQL suite (needs smartration_test)
+.\sr.ps1 e2e                          # Playwright end-to-end browser tests (stack must be running)
 .\sr.ps1 build                        # Compile .NET, build Vite bundle, check Python imports
 .\sr.ps1 lint                         # Execute Ruff, mypy, and ESLint
-.\sr.ps1 db verify                    # Verify MySQL connection and schema state
+.\sr.ps1 db verify                    # Verify MySQL connection and schema state (read-only)
 .\sr.ps1 db seed                      # Seed reference and demo data into empty tables
+.\sr.ps1 db schema                    # Regenerate the SQL schema export in database/
 .\sr.ps1 synthetic --users 1000       # Generate 1000 synthetic citizen records & bookings
+.\sr.ps1 contracts                    # Export OpenAPI contracts to api/openapi/
+.\sr.ps1 docker                       # Build the Python gateway image locally
 ```
 
 ---
@@ -311,10 +355,15 @@ Smart Ration enforces high test coverage across all layers:
 | Component | Framework | Count | Command |
 |---|---|---|---|
 | **C# Business API** | xUnit | **104** | `dotnet test SmartRation.sln -c Release` |
-| **Python Gateway** | pytest | **201** (+ 46 AI service, + 67-case chatbot evaluation) | `backend\SmartRation.Python\.venv\Scripts\pytest` |
+| **Python Gateway** | pytest | **201** | `backend\SmartRation.Python\.venv\Scripts\pytest` |
+| **Chatbot Evaluation** | pytest (en / hi / mr cases) | **67** | run by `.\sr.ps1 test` |
+| **AI Analytics Service** | pytest | **46** | run by `.\sr.ps1 test` |
 | **Frontend Web** | Vitest, Testing Library | **39** | `cd frontend && npm test` |
-| **End-to-End** | Playwright (installed Edge) | **9** (stack must be running) | `cd frontend && npm run test:e2e` |
+| **End-to-End** | Playwright (installed Edge) | **9** (stack must be running) | `.\sr.ps1 e2e` |
 | **Direct MySQL** | pytest, SQLAlchemy | **146** | `.\sr.ps1 test -MySql` |
+| **Total** | | **612** | `.\sr.ps1 test -MySql` + E2E |
+
+These counts come from the last full run recorded in [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md). CI ([.github/workflows](.github/workflows)) runs every suite except E2E on each push, with Python 3.13 and 3.14 against MySQL 8. E2E is left out because it needs the whole stack running.
 
 ---
 
@@ -338,24 +387,32 @@ Smart Ration enforces high test coverage across all layers:
 
 ## Docker & Deployment
 
-A complete containerized stack is available via Docker Compose:
+**Public demo on Render:** [`render.yaml`](render.yaml) deploys the website + Python API and the C# API from this repository; the database is a free Aiven MySQL. Step by step: [docs/deployment/RENDER.md](docs/deployment/RENDER.md).
 
-```bash
-# Build and run the entire stack
-docker-compose up --build -d
+Docker Compose currently runs **MySQL 8 + the Python gateway**. The C# API, AI service and frontend are not part of the Compose stack yet.
 
-# Verify running containers
-docker-compose ps
+```powershell
+copy deployment\docker\compose.env.example .env   # fill in the values; .env is git-ignored
+docker compose up --build -d
+docker compose ps
 ```
 
-The stack runs:
-- `smartration-db`: MySQL 8.0 container on port `3306`
-- `smartration-python`: Python FastAPI Gateway on port `8000`
-- `smartration-csharp`: C# ASP.NET Core API on port `5188`
-- `smartration-ai`: AI Analytics Service on port `8001`
-- `smartration-frontend`: Nginx serving the React SPA bundle on port `80` / `5173`
+| Service | Host address | Notes |
+|---|---|---|
+| `mysql` | `127.0.0.1:3307` | Port 3307 avoids a clash with a host MySQL. Data lives in the `mysql-data` volume. `docker compose down -v` **deletes** it. |
+| `api` | `http://localhost:8000` | Creates, adopts or upgrades the schema on start and never drops data. Proxies business routes to the C# API at `LEGACY_API_URL` (default: the host's `:5188`). |
 
-Production deployment guides and Nginx reverse proxy configs are in [docs/deployment/DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md).
+**C# API image.** [`backend/SmartRation.Api/Dockerfile`](backend/SmartRation.Api/Dockerfile) builds the business API as a standalone image, from the repository root:
+
+```bash
+docker build -f backend/SmartRation.Api/Dockerfile -t smartration-csharp-api .
+```
+
+It runs as a non-root user and listens on `$PORT` (default `8080`). All configuration is passed as environment variables at run time: `Database__Provider`, `ConnectionStrings__MySql`, `Jwt__Key`, `Qr__Secret`, `DATA_MODE`, `Demo__DemoOtpEnabled=false`, `Sms__*`. Against an empty database it creates the schema with EF Core migrations and, in synthetic mode, seeds the demo data. When the Python gateway starts against the same fresh database, set `WAIT_FOR_URL` on the gateway to the C# API's `/health` URL, so the gateway waits until the schema exists.
+
+Both Dockerfiles use the repository root as their build context. The root [`.dockerignore`](.dockerignore) is an allow-list, so secrets, `.env` files, `bin/obj` and local databases cannot enter an image.
+
+For a production setup with TLS, the Nginx reverse proxy and health probes, see [docs/deployment/DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md) and [deployment/README.md](deployment/README.md).
 
 ---
 
