@@ -19,7 +19,7 @@ public static class ScenarioBuilder
 {
     private static int _mobileSequence;
 
-    // Synthetic block 9098xxxxxx (see backend/SmartRation.Python/app/synthetic): unique per test run,
+    // Synthetic block 9098xxxxxx (see backend/SmartRation/app/synthetic): unique per test run,
     // never a real subscriber's number, and the same sequence every run (no Random).
     public static string NextSyntheticMobile() => $"9098{Interlocked.Increment(ref _mobileSequence):D6}";
 

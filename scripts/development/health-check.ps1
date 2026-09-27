@@ -13,7 +13,7 @@
     Tools     Python, .NET 8 SDK, Node.js, npm, Git, MySQL server (+ optional mysql client, Docker)
     Project   solution, Python virtualenvs, imports, pytest, frontend packages, .env files (-Deep: C# + frontend builds)
     Services  frontend :5173, Python API :8000 (/health, /ready, /health/db, chatbot), C# API :5188, AI :8001, port clashes
-    Database  schema, migration version and reference data (backend\SmartRation.Python\scripts\verify_database.py)
+    Database  schema, migration version and reference data (backend\SmartRation\scripts\verify_database.py)
   Works from any current directory. Exit code 0 = no FAIL and nothing required NOT CONFIGURED.
   -SkipServices checks only tools, project and database. -Deep also builds C# and the frontend (slower).
 
@@ -86,7 +86,7 @@ else {
 # ------------------------------------------------------------------ project
 Write-Host "`nProject ($root)" -ForegroundColor Cyan
 Check (Test-Path (Join-Path $root "SmartRation.sln")) "Solution file" "SmartRation.sln"
-$pyDir = Join-Path $root "backend\SmartRation.Python"
+$pyDir = Join-Path $root "backend\SmartRation"
 $pyExe = Join-Path $pyDir ".venv\Scripts\python.exe"
 Check (Test-Path $pyExe) "Python API virtualenv" $(if (Test-Path $pyExe) { ".venv present" } else { "missing - run scripts\development\setup.ps1" }) "NOT CONFIGURED"
 if (Test-Path $pyExe) {
@@ -106,7 +106,7 @@ foreach ($venv in @((Join-Path $pyDir ".venv"), (Join-Path $root "backend\SmartR
 Check (Test-Path $aiExe) "AI service virtualenv" $(if (Test-Path $aiExe) { ".venv present" } else { "missing - run scripts\development\setup.ps1 (optional service)" }) "NOT CONFIGURED" -Optional
 $modules = Join-Path $root "frontend\node_modules"
 Check (Test-Path $modules) "Frontend packages" $(if (Test-Path $modules) { "node_modules present" } else { "missing - run scripts\development\setup.ps1" }) "NOT CONFIGURED"
-foreach ($envFile in @("backend\SmartRation.Python\.env", "frontend\.env")) {
+foreach ($envFile in @("backend\SmartRation\.env", "frontend\.env")) {
     $present = Test-Path (Join-Path $root $envFile)
     Check $present $envFile $(if ($present) { "present (values not shown)" } else { "missing - copy the .env.example next to it and fill in the values" }) "NOT CONFIGURED"
 }

@@ -28,7 +28,7 @@ yet migrated reach the C# API through the proxy (parity verified 36/36), so no r
 New public features are built in Python only: the Public Help pages and the Public Help chatbot
 (`app/chatbot/`, `app/api/public_help.py`; see [CHATBOT.md](../chatbot/CHATBOT_ARCHITECTURE.md)).
 
-## Python backend layout (`backend/SmartRation.Python`)
+## Python backend layout (`backend/SmartRation`)
 
 | Path | Role | C# equivalent |
 |---|---|---|

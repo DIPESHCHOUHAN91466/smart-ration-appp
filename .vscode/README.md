@@ -7,7 +7,7 @@ The Explorer then shows the project as numbered areas:
 |---|---|
 | 01 FRONTEND | `frontend` |
 | 02 BACKEND (C# API / tests) | `backend/SmartRation.Api`, `backend/SmartRation.Api.Tests` |
-| 03 PYTHON (gateway · auth · chatbot · data) / 03 PYTHON AI | `backend/SmartRation.Python`, `backend/SmartRation.AI` |
+| 03 PYTHON (gateway · auth · chatbot · data) / 03 PYTHON AI | `backend/SmartRation`, `backend/SmartRation.AI` |
 | 04 DATABASE · 05 AI · 06 DATA · 07 TESTS · 08 SCRIPTS · 09 DOCUMENTATION · 10 DEPLOYMENT | `database`, `ai`, `data`, `tests`, `scripts`, `docs`, `deployment` |
 | 99 REPOSITORY | the whole repo (root files; the tasks and debug configurations below) |
 
@@ -38,7 +38,7 @@ Format on save touches **only the lines you changed** (`formatOnSaveMode: modifi
 formatted on save (`src/styles.css` is one long line). Python is not formatted on save (linted with ruff).
 ESLint runs in `frontend/` (`npm run lint`); Test Explorer uses pytest via the root `pytest.ini`; the C#
 extension opens `SmartRation.sln`.
-Python and C# indent 4, the rest 2. `backend/SmartRation.Python/.vscode` and
+Python and C# indent 4, the rest 2. `backend/SmartRation/.vscode` and
 `backend/SmartRation.AI/.vscode` point VS Code at each project's own `.venv` and tests.
 
 Recommended extensions are suggested when you open the folder (`extensions.json`): C#, Python +

@@ -9,7 +9,7 @@ business routes to the C# API, which reads MySQL: the whole path is measured.
 A second, small phase bursts the rate-limited public-help endpoint and checks that the limiter
 answers 429 (a controlled refusal) rather than errors or timeouts.
 
-Usage (from backend/SmartRation.Python, with the stack running: .\\sr.ps1 run):
+Usage (from backend/SmartRation, with the stack running: .\\sr.ps1 run):
     .venv\\Scripts\\python scripts\\load_test.py                       # 10, 100 and 1000 users
     .venv\\Scripts\\python scripts\\load_test.py --users 10 100 --out ..\\..\\docs\\testing\\LOAD_TEST_RESULTS.md
 

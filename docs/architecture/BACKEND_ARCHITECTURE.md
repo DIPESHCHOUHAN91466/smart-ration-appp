@@ -2,7 +2,7 @@
 
 Two backends share one MySQL database. Since 2026-09-25 the split is fixed (**frozen hybrid**):
 
-| | C# API — `backend/SmartRation.Api` (:5188) | Python API — `backend/SmartRation.Python` (:8000) |
+| | C# API — `backend/SmartRation.Api` (:5188) | Python API — `backend/SmartRation` (:8000) |
 |---|---|---|
 | Owns | **business logic**: slots, bookings/tokens, QR, OTP, verification, entitlement, collection, inventory ledger, notifications, beneficiaries/families, search, audit, reports, admin, AI alert orchestration | **gateway** (every browser request enters here), **authentication**, **Public Help + chatbot**, **data providers** (synthetic/real), **database migrations** (Alembic), health/readiness |
 | Talks to | MySQL (EF Core), AI service (HTTP) | MySQL (SQLAlchemy), C# API (fallback proxy) |

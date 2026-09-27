@@ -12,7 +12,7 @@ from app.core.config import Settings
 
 
 def live_database_url() -> str | None:
-    """The real MySQL URL from backend/SmartRation.Python/.env, for integration tests."""
+    """The real MySQL URL from backend/SmartRation/.env, for integration tests."""
     try:
         return Settings().database_url
     except Exception:

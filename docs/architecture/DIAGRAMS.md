@@ -95,7 +95,7 @@ flowchart TB
         SVC --> MAP
         SVC --> EF
     end
-    subgraph PYG["Python gateway (backend/SmartRation.Python/app)"]
+    subgraph PYG["Python gateway (backend/SmartRation/app)"]
         PMW["Middleware: /api/v1 alias, request id,<br/>size limit, security headers, CORS"]
         API["api/: auth, health, public_help,<br/>legacy_proxy (last)"]
         PSV["services/: auth_service"]

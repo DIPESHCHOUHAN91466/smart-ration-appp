@@ -9,7 +9,7 @@ Safety rails, all required:
 
 Then: alembic downgrade base -> upgrade head -> seed -> verify.
 
-Usage (from backend/SmartRation.Python):
+Usage (from backend/SmartRation):
     $env:RESET_DATABASE="true"; $env:CONFIRM_RESET="SMART_RATION_RESET"
     .venv\\Scripts\\python scripts\\reset_database.py
 """

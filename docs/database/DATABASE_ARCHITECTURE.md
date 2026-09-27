@@ -3,7 +3,7 @@
 MySQL 8, database `smartration`, charset utf8mb4, InnoDB. The application connects with a
 least-privilege account (`smartration_app`: DML + DDL on `smartration` only; no global
 privileges such as PROCESS or CREATE DATABASE). The Python models in
-`backend/SmartRation.Python/app/db/models.py` match the tables column for column; any drift
+`backend/SmartRation/app/db/models.py` match the tables column for column; any drift
 fails `tests/test_schema_compat.py` and `scripts/verify_database.py`.
 
 On Windows, MySQL runs with `lower_case_table_names=1`, so tables are stored lowercase
@@ -20,7 +20,7 @@ which only added the `alembic_version` table. EF's `__EFMigrationsHistory` table
 New schema changes:
 
 ```
-cd backend\SmartRation.Python
+cd backend\SmartRation
 # 1. edit app/db/models.py
 .venv\Scripts\alembic revision --autogenerate -m "short description"
 # 2. review the generated file: reversible downgrade, no data loss, batch-safe for big tables
@@ -32,7 +32,7 @@ Rules for revisions: every `upgrade` has a working `downgrade`; destructive step
 column/table with data) need a data-preserving plan and explicit approval; the initial revision's
 downgrade is refused unless `RESET_DATABASE=true` and `CONFIRM_RESET=SMART_RATION_RESET`.
 
-## Scripts (`backend/SmartRation.Python/scripts`)
+## Scripts (`backend/SmartRation/scripts`)
 
 | Script | What it does | Destructive? |
 |---|---|---|

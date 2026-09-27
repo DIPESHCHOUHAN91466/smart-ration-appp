@@ -11,7 +11,7 @@ application code. `cloud/` is intentionally empty: no cloud provider has been ch
 copy deployment\docker\compose.env.example .env      # fill in; .env is git-ignored
 docker compose up --build                            # MySQL 8 + Python API (image from the repo root)
 ```
-**Connects:** `docker-compose.yml` (root) builds `backend/SmartRation.Python/Dockerfile` with the repo
+**Connects:** `docker-compose.yml` (root) builds `backend/SmartRation/Dockerfile` with the repo
 root as context (the image includes `ai/chatbot/knowledge` and `data/synthetic/reference`); the C# API is
 not containerised yet and is reached via `LEGACY_API_URL`.
 

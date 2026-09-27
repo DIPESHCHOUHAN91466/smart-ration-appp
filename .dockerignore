@@ -1,12 +1,12 @@
-# ALLOW-LIST. Docker builds use the repository root as context (backend/SmartRation.Python/Dockerfile and
+# ALLOW-LIST. Docker builds use the repository root as context (backend/SmartRation/Dockerfile and
 # backend/SmartRation.Api/Dockerfile),
 # so everything is excluded unless listed below — secrets, backups, node_modules and venvs can't leak in.
 *
-!backend/SmartRation.Python/requirements.txt
-!backend/SmartRation.Python/alembic.ini
-!backend/SmartRation.Python/docker-entrypoint.sh
-!backend/SmartRation.Python/app/**
-!backend/SmartRation.Python/scripts/**
+!backend/SmartRation/requirements.txt
+!backend/SmartRation/alembic.ini
+!backend/SmartRation/docker-entrypoint.sh
+!backend/SmartRation/app/**
+!backend/SmartRation/scripts/**
 !ai/chatbot/knowledge/**
 !data/synthetic/reference/**
 !backend/SmartRation.Api/**

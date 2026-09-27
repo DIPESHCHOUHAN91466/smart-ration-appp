@@ -48,7 +48,7 @@ services:
     runtime: docker
     plan: free
     region: singapore
-    dockerfilePath: ./backend/SmartRation.Python/Dockerfile
+    dockerfilePath: ./backend/SmartRation/Dockerfile
     dockerContext: .
     healthCheckPath: /health/live
     envVars:

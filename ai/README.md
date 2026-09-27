@@ -10,12 +10,12 @@ and every change is measured against the same evaluation set.
 **What belongs here:** `chatbot/knowledge/*.json` (reviewed answers in en/hi/mr),
 `chatbot/evaluation/questions.json` (questions with the expected answer or safety behaviour),
 `chatbot/prompts/` (templates for a future LLM provider). **What does NOT:** code — the chatbot engine
-is in `backend/SmartRation.Python/app/chatbot`, the analytics service in `backend/SmartRation.AI`;
+is in `backend/SmartRation/app/chatbot`, the analytics service in `backend/SmartRation.AI`;
 personal data of any kind.
 
 **How do I run it?**
 ```
-cd backend\SmartRation.Python
+cd backend\SmartRation
 .venv\Scripts\python -m app.chatbot.evaluate     # score the assistant on the evaluation set
 .venv\Scripts\python -m pytest tests\test_chatbot_engine.py
 ```

@@ -69,11 +69,11 @@ if (Test-Path $aiPython) {
     Write-Host "  AI service   :8001  not set up (backend\SmartRation.AI\README.md) - AI panels will show 'unavailable'" -ForegroundColor Yellow
 }
 
-$pyPython = Join-Path $root "backend\SmartRation.Python\.venv\Scripts\python.exe"
+$pyPython = Join-Path $root "backend\SmartRation\.venv\Scripts\python.exe"
 if (Test-Path $pyPython) {
-    Start-DevService "Python API" 8000 (Join-Path $root "backend\SmartRation.Python") ".venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000" "^python"
+    Start-DevService "Python API" 8000 (Join-Path $root "backend\SmartRation") ".venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000" "^python"
 } else {
-    Write-Warning "Python API not set up (backend\SmartRation.Python\README.md). The frontend needs it on :8000."
+    Write-Warning "Python API not set up (backend\SmartRation\README.md). The frontend needs it on :8000."
 }
 
 $frontend = Join-Path $root "frontend"

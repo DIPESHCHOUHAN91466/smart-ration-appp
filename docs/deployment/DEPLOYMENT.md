@@ -8,12 +8,12 @@
 |---|---|---|
 | MySQL 8 | 3306 | Windows service `MySQL80` |
 | C# API (legacy) | 5188 | `dotnet run --project backend/SmartRation.Api --launch-profile http` |
-| Python API | 8000 | `cd backend\SmartRation.Python` → `.venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000` |
+| Python API | 8000 | `cd backend\SmartRation` → `.venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000` |
 | AI service | 8001 | `cd backend\SmartRation.AI` → `.venv\Scripts\python -m uvicorn smartration_ai.main:create_app --factory --port 8001` |
 | Frontend | 5173 | `cd frontend` → `npm run dev` (calls the Python API on :8000) |
 
 `start-dev.bat` starts the C# API and frontend. First-time Python setup:
-[backend/SmartRation.Python/README.md](../../backend/SmartRation.Python/README.md).
+[backend/SmartRation/README.md](../../backend/SmartRation/README.md).
 
 ## Docker (MySQL + Python API)
 
@@ -24,7 +24,7 @@ docker compose up --build
 
 - `mysql`: MySQL 8.0, named volume `mysql-data`, healthcheck; published on `127.0.0.1:3307` so
   it doesn't clash with a host MySQL. This is a **separate** database from the host's `smartration`.
-- `api`: built from `backend/SmartRation.Python/Dockerfile` (non-root user, no secrets in the image,
+- `api`: built from `backend/SmartRation/Dockerfile` (non-root user, no secrets in the image,
   healthcheck on `/health/live`). It waits for MySQL to be healthy, then runs
   `scripts/setup_database.py` (creates/adopts/upgrades; never drops), optionally seeds, and starts uvicorn.
 - The C# API isn't containerised; `LEGACY_API_URL` points at the host (`host.docker.internal:5188`).

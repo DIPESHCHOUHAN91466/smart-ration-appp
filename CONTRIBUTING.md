@@ -3,7 +3,7 @@
 ## Setup
 
 See [README.md](README.md) and [docs/deployment/DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md) for running the services, and
-[backend/SmartRation.Python/README.md](backend/SmartRation.Python/README.md) for the Python backend.
+[backend/SmartRation/README.md](backend/SmartRation/README.md) for the Python backend.
 
 ## Branches and commits
 
@@ -14,7 +14,7 @@ See [README.md](README.md) and [docs/deployment/DEPLOYMENT.md](docs/deployment/D
 ## Before you push
 
 ```
-# Python backend (backend/SmartRation.Python)
+# Python backend (backend/SmartRation)
 .venv\Scripts\python -m ruff check .
 .venv\Scripts\python -m mypy
 .venv\Scripts\python -m pytest

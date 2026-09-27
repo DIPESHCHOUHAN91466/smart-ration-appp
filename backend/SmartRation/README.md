@@ -19,7 +19,7 @@ Both ──► the same MySQL database (smartration)
 ## Setup
 
 ```
-cd backend\SmartRation.Python
+cd backend\SmartRation
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements-dev.txt   # runtime + test/lint tools
 copy .env.example .env        # fill DATABASE_URL (smartration_app account) and JWT_SECRET_KEY

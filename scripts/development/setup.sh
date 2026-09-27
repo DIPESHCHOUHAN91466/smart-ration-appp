@@ -26,7 +26,7 @@ if command -v node >/dev/null && node --version | grep -Eq '^v(1[89]|[2-9][0-9])
 if command -v npm >/dev/null; then ok "npm: $(npm --version)"; else err "npm MISSING (comes with Node.js)"; fi
 [ "$FAILED" -gt 0 ] && { echo "Install the missing tools and run this script again."; exit 1; }
 
-for spec in "backend/SmartRation.Python:requirements-dev.txt" "backend/SmartRation.AI:requirements.txt"; do
+for spec in "backend/SmartRation:requirements-dev.txt" "backend/SmartRation.AI:requirements.txt"; do
   dir="$ROOT/${spec%%:*}"; req="${spec##*:}"
   echo "== ${spec%%:*}"
   if [ -d "$dir/.venv" ]; then ok ".venv exists"; else run "python -m venv .venv" "$dir" "$PYTHON" -m venv .venv; fi
@@ -40,7 +40,7 @@ echo "== C# API"
 run "dotnet restore SmartRation.sln" "$ROOT" dotnet restore SmartRation.sln --nologo -v q
 
 echo "== .env files"
-for dir in "." "backend/SmartRation.Python" "backend/SmartRation.AI" "frontend"; do
+for dir in "." "backend/SmartRation" "backend/SmartRation.AI" "frontend"; do
   [ -f "$ROOT/$dir/.env.example" ] || continue
   if [ -f "$ROOT/$dir/.env" ]; then ok "$dir/.env exists (left unchanged)"
   elif [ "$CHECK_ONLY" = 1 ]; then todo "would create $dir/.env from .env.example"
@@ -48,4 +48,4 @@ for dir in "." "backend/SmartRation.Python" "backend/SmartRation.AI" "frontend";
 done
 
 if [ "$FAILED" -gt 0 ]; then echo "$FAILED step(s) failed - read the messages above."; exit 1; fi
-echo "Setup complete. Next: seed the database (scripts/development/seed-demo-data.ps1 or backend/SmartRation.Python/scripts/setup_database.py + seed_database.py), then start the services (docs/development/LOCAL_SETUP.md)."
+echo "Setup complete. Next: seed the database (scripts/development/seed-demo-data.ps1 or backend/SmartRation/scripts/setup_database.py + seed_database.py), then start the services (docs/development/LOCAL_SETUP.md)."

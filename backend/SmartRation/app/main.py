@@ -1,6 +1,6 @@
 """Smart Ration HSD2C — Python (FastAPI) backend.
 
-Run (from backend/SmartRation.Python):
+Run (from backend/SmartRation):
     .venv\\Scripts\\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000
 
 Migration status: routes implemented in Python are registered first; every

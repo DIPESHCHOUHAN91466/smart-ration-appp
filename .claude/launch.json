@@ -43,7 +43,7 @@
     },
     {
       "name": "python-api",
-      "runtimeExecutable": "backend/SmartRation.Python/.venv/Scripts/python.exe",
+      "runtimeExecutable": "backend/SmartRation/.venv/Scripts/python.exe",
       "runtimeArgs": [
         "-m",
         "uvicorn",
@@ -54,7 +54,7 @@
         "--port",
         "8000",
         "--app-dir",
-        "backend/SmartRation.Python"
+        "backend/SmartRation"
       ],
       "port": 8000
     }

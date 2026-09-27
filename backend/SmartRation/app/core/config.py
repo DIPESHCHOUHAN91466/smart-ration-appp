@@ -12,7 +12,7 @@ from typing import Annotated
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-ROOT = Path(__file__).resolve().parents[2]  # backend/SmartRation.Python
+ROOT = Path(__file__).resolve().parents[2]  # backend/SmartRation
 
 
 class Settings(BaseSettings):

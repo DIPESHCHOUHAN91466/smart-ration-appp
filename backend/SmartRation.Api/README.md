@@ -10,7 +10,7 @@ notifications, beneficiaries and families, search, audit, reports, admin, AI ale
 **What belongs here:** controllers (thin), services (rules + transactions), EF models, DTOs +
 validation, middleware, configuration. **What does NOT:** authentication endpoints for the frontend
 (served by Python, though C# validates the same JWT), chatbot, database schema changes (Alembic in
-`SmartRation.Python` owns the schema — **don't add EF migrations**), UI.
+`SmartRation` owns the schema — **don't add EF migrations**), UI.
 
 **How do I run it?**
 ```

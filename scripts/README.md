@@ -3,7 +3,7 @@
 **What:** PowerShell entry points for everyday work. **Why:** one command for things you do often, so
 nobody has to remember five terminals. **Belongs here:** scripts that orchestrate existing apps.
 **Doesn't:** application logic, secrets, anything destructive without an explicit confirmation
-(database scripts live in `backend/SmartRation.Python/scripts`; backups in `database/mysql`).
+(database scripts live in `backend/SmartRation/scripts`; backups in `database/mysql`).
 
 | Script | Does | Safe? |
 |---|---|---|

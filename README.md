@@ -3,7 +3,7 @@
 [![GitHub Repository](https://img.shields.io/badge/GitHub-smart--ration--appp-181717?logo=github)](https://github.com/DIPESHCHOUHAN91466/smart-ration-appp)
 [![Frontend](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite%206-61DAFB?logo=react)](frontend/README.md)
 [![Core API](https://img.shields.io/badge/Core%20API-ASP.NET%20Core%208%20(C%23)-512BD4?logo=dotnet)](backend/SmartRation.Api/README.md)
-[![Gateway & AI](https://img.shields.io/badge/Gateway%20%26%20AI-FastAPI%20%7C%20Python%203.12%2B-3776AB?logo=fastapi)](backend/SmartRation.Python/README.md)
+[![Gateway & AI](https://img.shields.io/badge/Gateway%20%26%20AI-FastAPI%20%7C%20Python%203.12%2B-3776AB?logo=fastapi)](backend/SmartRation/README.md)
 [![Database](https://img.shields.io/badge/Database-MySQL%208-4479A1?logo=mysql)](database/README.md)
 [![Mobile](https://img.shields.io/badge/Mobile-Expo%20%7C%20React%20Native-000020?logo=expo)](mobile/README.md)
 [![Tests](https://img.shields.io/badge/Tests-612%20passing%20(104%20xUnit%20%7C%20314%20pytest%20%7C%20146%20MySQL%20%7C%2039%20vitest%20%7C%209%20E2E)-success)](tests/README.md)
@@ -176,10 +176,10 @@ Smart_Ration_HSD2C_Final/
 ├── backend/                      # Backend microservices & tests         → backend/README.md
 │   ├── SmartRation.Api/          # C# ASP.NET Core business API (:5188)  → backend/SmartRation.Api/README.md
 │   ├── SmartRation.Api.Tests/    # C# xUnit test suite (104 tests)       → backend/SmartRation.Api.Tests/README.md
-│   ├── SmartRation.Python/       # Python FastAPI Gateway & Auth (:8000) → backend/SmartRation.Python/README.md
+│   ├── SmartRation/       # Python FastAPI Gateway & Auth (:8000) → backend/SmartRation/README.md
 │   │   ├── app/chatbot/          # Modular chatbot intent & engine
 │   │   ├── app/synthetic/        # Synthetic data generation engine
-│   │   └── tests/                # Python unit, contract & scale tests   → backend/SmartRation.Python/tests/README.md
+│   │   └── tests/                # Python unit, contract & scale tests   → backend/SmartRation/tests/README.md
 │   └── SmartRation.AI/           # Python AI Analytics Service (:8001)   → backend/SmartRation.AI/README.md
 ├── mobile/                       # Expo / React Native mobile client     → mobile/README.md
 ├── database/                     # MySQL schema, setup & backups         → database/README.md
@@ -275,7 +275,7 @@ No real secret is committed. [`.env.example`](.env.example) documents every valu
 
 | Component | Where its settings live | Key values |
 |---|---|---|
-| Python gateway | `backend/SmartRation.Python/.env` | `DATABASE_URL`, `JWT_SECRET_KEY`, `LEGACY_API_URL`, `CORS_ORIGINS` |
+| Python gateway | `backend/SmartRation/.env` | `DATABASE_URL`, `JWT_SECRET_KEY`, `LEGACY_API_URL`, `CORS_ORIGINS` |
 | C# business API | `dotnet user-secrets` (never a file) | `Database:Provider=MySql`, `ConnectionStrings:MySql`, `Jwt:Key`, `Qr:Secret`, `AiService:ApiKey` |
 | AI service | `backend/SmartRation.AI/.env` | `SMARTRATION_AI_DB_URL` (read-only account), `SMARTRATION_AI_API_KEY` |
 | Frontend | `frontend/.env` | `VITE_API_BASE_URL`, `VITE_DEMO_MODE` |
@@ -355,7 +355,7 @@ Smart Ration enforces high test coverage across all layers:
 | Component | Framework | Count | Command |
 |---|---|---|---|
 | **C# Business API** | xUnit | **104** | `dotnet test SmartRation.sln -c Release` |
-| **Python Gateway** | pytest | **201** | `backend\SmartRation.Python\.venv\Scripts\pytest` |
+| **Python Gateway** | pytest | **201** | `backend\SmartRation\.venv\Scripts\pytest` |
 | **Chatbot Evaluation** | pytest (en / hi / mr cases) | **67** | run by `.\sr.ps1 test` |
 | **AI Analytics Service** | pytest | **46** | run by `.\sr.ps1 test` |
 | **Frontend Web** | Vitest, Testing Library | **39** | `cd frontend && npm test` |

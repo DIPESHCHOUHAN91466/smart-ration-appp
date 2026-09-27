@@ -29,7 +29,7 @@ Nothing secret is in the repository. Each component reads its own git-ignored fi
 | Component | File / store | Required values |
 |---|---|---|
 | C# API | .NET user-secrets (in your Windows profile) | `ConnectionStrings:MySql`, `Database:Provider=MySql`, `Jwt:Key`, `Qr:Secret`, `AiService:ApiKey` |
-| Python API | `backend/SmartRation.Python/.env` (from `.env.example`) | `DATABASE_URL`, `JWT_SECRET_KEY` (= C# `Jwt:Key`) |
+| Python API | `backend/SmartRation/.env` (from `.env.example`) | `DATABASE_URL`, `JWT_SECRET_KEY` (= C# `Jwt:Key`) |
 | AI service | `backend/SmartRation.AI/.env` (from `.env.example`) | `SMARTRATION_AI_DB_URL`, `SMARTRATION_AI_API_KEY` (= C# `AiService:ApiKey`) |
 | Frontend | `frontend/.env` (from `.env.example`) | `VITE_API_BASE_URL=http://localhost:8000/api/v1` |
 | Root MySQL tests | `.env` at the repository root | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME=smartration_test` |
@@ -55,7 +55,7 @@ One command does all of the following (safe to re-run; never overwrites an exist
 ```
 Or by hand:
 ```
-cd backend\SmartRation.Python
+cd backend\SmartRation
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements-dev.txt
 copy .env.example .env                 # then fill it in
@@ -134,7 +134,7 @@ Details: [../testing/TESTING.md](../testing/TESTING.md).
 
 The schema is owned by **Alembic** (Python backend). Do **not** add EF Core migrations.
 ```
-cd backend\SmartRation.Python
+cd backend\SmartRation
 # edit app/db/models.py, then:
 .venv\Scripts\alembic revision --autogenerate -m "describe the change"
 # review the file, back up (database/mysql/backup.ps1), then:

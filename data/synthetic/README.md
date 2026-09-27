@@ -21,11 +21,11 @@ references `XXXX-XXXX-####`), and optional distribution history (`backend/SmartR
 
 ## Bulk synthetic citizens: the central generator
 
-`backend/SmartRation.Python/app/synthetic` is the one place bulk citizen data comes from (tests and
+`backend/SmartRation/app/synthetic` is the one place bulk citizen data comes from (tests and
 the command below use it). Same `--seed` → identical records; everything is validated before insert.
 
 ```
-cd backend\SmartRation.Python
+cd backend\SmartRation
 .venv\Scripts\python scripts\generate_test_data.py --users 1000 --seed 2026            # generate + validate only
 .venv\Scripts\python scripts\generate_test_data.py --users 1000 --json people.json     # write JSON
 .venv\Scripts\python scripts\generate_test_data.py --users 1000 --insert               # into smartration_test only

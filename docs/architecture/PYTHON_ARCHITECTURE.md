@@ -2,13 +2,13 @@
 
 Two Python applications, each a proper package (no loose scripts in the repository root):
 
-| | `backend/SmartRation.Python` (:8000) | `backend/SmartRation.AI` (:8001) |
+| | `backend/SmartRation` (:8000) | `backend/SmartRation.AI` (:8001) |
 |---|---|---|
 | Role | API gateway, authentication, Public Help + chatbot, data providers, DB migrations | AI analytics: forecasts, stock risk, queue prediction, anomaly alerts, optional OCR |
 | Database | read/write via SQLAlchemy (app account); owns the schema (Alembic) | **read-only** account (history generator is the only writer, dev only) |
 | Called by | the browser (all `/api/*`) | the C# API (API key) |
 
-## `backend/SmartRation.Python/app`
+## `backend/SmartRation/app`
 
 ```
 app/

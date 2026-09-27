@@ -10,5 +10,5 @@ $env:SMARTRATION_DB_USER = "smartration_app"; $env:SMARTRATION_DB_PASSWORD = "<p
 .\database\mysql\backup.ps1                                          # → backups\smartration_<timestamp>.sql.gz + .sha256
 .\database\mysql\restore.ps1 -BackupFile <file> -Confirm RESTORE_SMARTRATION   # verifies checksum, backs up first
 ```
-**Connects:** uses the MySQL client tools; `backend/SmartRation.Python/scripts/reset_database.py` calls
+**Connects:** uses the MySQL client tools; `backend/SmartRation/scripts/reset_database.py` calls
 `backup.ps1` before any reset. Details: [../../docs/database/BACKUP_RESTORE.md](../../docs/database/BACKUP_RESTORE.md).

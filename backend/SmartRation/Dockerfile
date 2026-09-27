@@ -1,6 +1,6 @@
 # Smart Ration Python backend (FastAPI) + the built website. Build from the REPOSITORY ROOT (it needs the
 # frontend sources, the chatbot knowledge in ai/ and the synthetic reference data in data/):
-#   docker build -f backend/SmartRation.Python/Dockerfile -t smartration-api .
+#   docker build -f backend/SmartRation/Dockerfile -t smartration-api .
 # The root .dockerignore is an allow-list: only those folders enter the build.
 # Secrets are NEVER baked in: DATABASE_URL, JWT_SECRET_KEY, ... come from the environment at run time.
 
@@ -21,7 +21,7 @@ RUN npm run build
 FROM python:3.13-slim AS build
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 RUN python -m venv /opt/venv
-COPY backend/SmartRation.Python/requirements.txt /tmp/requirements.txt
+COPY backend/SmartRation/requirements.txt /tmp/requirements.txt
 RUN /opt/venv/bin/pip install -r /tmp/requirements.txt
 
 FROM python:3.13-slim
@@ -32,10 +32,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH="/opt/venv/bin:$PATH" \
 RUN useradd --system --uid 10001 --home-dir /app smartration
 COPY --from=build /opt/venv /opt/venv
 WORKDIR /app
-COPY --chown=smartration:smartration backend/SmartRation.Python/alembic.ini ./
-COPY --chown=smartration:smartration backend/SmartRation.Python/app ./app
-COPY --chown=smartration:smartration backend/SmartRation.Python/scripts ./scripts
-COPY --chown=smartration:smartration backend/SmartRation.Python/docker-entrypoint.sh ./
+COPY --chown=smartration:smartration backend/SmartRation/alembic.ini ./
+COPY --chown=smartration:smartration backend/SmartRation/app ./app
+COPY --chown=smartration:smartration backend/SmartRation/scripts ./scripts
+COPY --chown=smartration:smartration backend/SmartRation/docker-entrypoint.sh ./
 COPY --chown=smartration:smartration ai/chatbot/knowledge ./ai/chatbot/knowledge
 COPY --chown=smartration:smartration data/synthetic/reference ./data/synthetic/reference
 # The built website, served by the API on the same origin (app/web.py).

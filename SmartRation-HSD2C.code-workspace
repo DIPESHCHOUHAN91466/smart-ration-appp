@@ -7,7 +7,7 @@
     { "name": "01 FRONTEND (React + Vite)", "path": "frontend" },
     { "name": "02 BACKEND (C# API)", "path": "backend/SmartRation.Api" },
     { "name": "02 BACKEND (C# tests)", "path": "backend/SmartRation.Api.Tests" },
-    { "name": "03 PYTHON (API gateway · auth · chatbot · data)", "path": "backend/SmartRation.Python" },
+    { "name": "03 PYTHON (API gateway · auth · chatbot · data)", "path": "backend/SmartRation" },
     { "name": "03 PYTHON AI (analytics service)", "path": "backend/SmartRation.AI" },
     { "name": "04 DATABASE (MySQL scripts)", "path": "database" },
     { "name": "05 AI (chatbot knowledge · evaluation)", "path": "ai" },

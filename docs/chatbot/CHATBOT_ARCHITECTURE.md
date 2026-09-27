@@ -24,7 +24,7 @@ Public Help page ──────► GET  /api/public-help/*              ├�
 
 | Where | What |
 |---|---|
-| `backend/SmartRation.Python/app/chatbot/knowledge/public-help.json` | help categories (quick buttons) + fixed replies (welcome, fallback, privacy, health…) |
+| `backend/SmartRation/app/chatbot/knowledge/public-help.json` | help categories (quick buttons) + fixed replies (welcome, fallback, privacy, health…) |
 | `…/knowledge/ration-help.json` | how this app works (register, book, token, QR, OTP, collection, login help) |
 | `…/knowledge/faq.json` | ration cards: what, types, applying, documents, eligibility, changes, lost card, rights, complaints, support |
 | `…/knowledge/schemes.json` | NFSA, free foodgrain (PMGKAY), One Nation One Ration Card, this installation's demo schemes |

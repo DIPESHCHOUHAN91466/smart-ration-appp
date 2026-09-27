@@ -1,4 +1,4 @@
-# SmartRation.Python/tests — Python Test Suites
+# SmartRation/tests — Python Test Suites
 
 Comprehensive unit, contract, and scale test suites for the Python FastAPI Gateway, Chatbot Engine, Data Providers, and Database Migrations.
 
@@ -20,7 +20,7 @@ Comprehensive unit, contract, and scale test suites for the Python FastAPI Gatew
 
 ## Running Python Tests
 
-From `backend/SmartRation.Python`:
+From `backend/SmartRation`:
 ```powershell
 .venv\Scripts\pytest
 ```

@@ -10,8 +10,8 @@ restoring it are operational tasks with their own safety rules.
 account and the **read-only** `smartration_ai` account — copy to `*.local.sql`, which is git-ignored,
 before filling in passwords), `mysql/backup.ps1`, `mysql/restore.ps1` (see [mysql/README.md](mysql/README.md)).
 **What does NOT:** the schema definition and migrations — those are code, owned by **Alembic** in
-`backend/SmartRation.Python/app/db/migrations` (revision `0001_initial` = the 25 tables); setup/verify/
-seed/reset scripts live in `backend/SmartRation.Python/scripts`; synthetic reference data lives in
+`backend/SmartRation/app/db/migrations` (revision `0001_initial` = the 25 tables); setup/verify/
+seed/reset scripts live in `backend/SmartRation/scripts`; synthetic reference data lives in
 `data/synthetic`. Never commit passwords or backups.
 
 > History: the schema used to be created by EF Core migrations in the C# API (MySQL and SQLite). Since
@@ -22,7 +22,7 @@ seed/reset scripts live in `backend/SmartRation.Python/scripts`; synthetic refer
 ```
 mysql -u root -p < database\mysql-setup.local.sql            # one time, as root
 .\scripts\development\seed-demo-data.ps1                     # schema + synthetic reference data
-backend\SmartRation.Python\.venv\Scripts\python backend\SmartRation.Python\scripts\verify_database.py
+backend\SmartRation\.venv\Scripts\python backend\SmartRation\scripts\verify_database.py
 ```
 
 **How does it connect?** Python API (read/write, `smartration_app`), C# API (read/write, same account),
@@ -34,7 +34,7 @@ Test plan: [../docs/database/DB_TESTING.md](../docs/database/DB_TESTING.md).
 
 `schema/smartration_schema.sql` is a **generated, read-only** SQL view of the Alembic migrations (every
 table, column, key and index) for people who want to read the schema as SQL. Regenerate it after a
-migration with `backend\SmartRation.Python\scripts\export_schema_sql.py`; a test fails if it is out of
+migration with `backend\SmartRation\scripts\export_schema_sql.py`; a test fails if it is out of
 date. Never apply it to a database — `setup_database.py` / `alembic upgrade head` do that.
 (The empty `migrations/`, `seed/` and `diagrams/` placeholders from the original scaffold were removed:
 migrations live in Alembic, seeds in `data/synthetic` + `seed_database.py`.)

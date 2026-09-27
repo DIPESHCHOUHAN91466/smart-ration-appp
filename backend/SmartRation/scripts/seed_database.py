@@ -11,7 +11,7 @@ Users (only when the Users table is empty):
 Passwords are never stored in source; if the variables are unset, no users are created.
 All data is fabricated; no real Aadhaar, passbook or personal data is used.
 
-Usage (from backend/SmartRation.Python):
+Usage (from backend/SmartRation):
     .venv\\Scripts\\python scripts\\seed_database.py
 """
 

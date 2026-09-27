@@ -28,7 +28,7 @@ itself), or any manual SQL.
 ```powershell
 # stop the C# and Python APIs first
 .\database\mysql\restore.ps1 -BackupFile .\database\mysql\backups\smartration_20260924_134123.sql.gz -Confirm RESTORE_SMARTRATION
-cd backend\SmartRation.Python; .venv\Scripts\python scripts\verify_database.py
+cd backend\SmartRation; .venv\Scripts\python scripts\verify_database.py
 ```
 
 The restore script: refuses without `-Confirm RESTORE_SMARTRATION` → verifies the SHA-256 checksum →

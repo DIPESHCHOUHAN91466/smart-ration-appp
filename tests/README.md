@@ -9,9 +9,9 @@ CRUD and transaction tests run directly against the `smartration_test` MySQL dat
 
 | Suite | Location | Count |
 |---|---|---|
-| Python API (unit + API) | `backend/SmartRation.Python/tests/` | 164 |
-| MySQL suite (100 records: CRUD, injection, performance, concurrency, errors, integrity) | `backend/SmartRation.Python/tests/mysql_suite/` | 122 |
-| Contract tests (C# vs. Python, live) | `backend/SmartRation.Python/tests/contract/` | 36 + 23 checks |
+| Python API (unit + API) | `backend/SmartRation/tests/` | 164 |
+| MySQL suite (100 records: CRUD, injection, performance, concurrency, errors, integrity) | `backend/SmartRation/tests/mysql_suite/` | 122 |
+| Contract tests (C# vs. Python, live) | `backend/SmartRation/tests/contract/` | 36 + 23 checks |
 | Chatbot evaluation | `ai/chatbot/evaluation/` (+ `app.chatbot.evaluate`) | 67 cases |
 | AI service | `backend/SmartRation.AI/tests/` | 46 |
 | C# API | `backend/SmartRation.Api.Tests/` | 94 |
@@ -22,7 +22,7 @@ next to that app); anything that touches the real `smartration` database — eve
 database whose name doesn't end in `_test`.
 
 **How do I run it?** Everything: `.\scripts\development\run-tests.ps1` (add `-MySql` for database suites).
-This folder only, from the repo root: `backend\SmartRation.Python\.venv\Scripts\python -m pytest tests/mysql`
+This folder only, from the repo root: `backend\SmartRation\.venv\Scripts\python -m pytest tests/mysql`
 (needs `DB_*` in the root `.env`, `DB_NAME=smartration_test`).
 
 The empty `backend/`, `frontend/`, `e2e/` folders are placeholders from the original scaffold; there are

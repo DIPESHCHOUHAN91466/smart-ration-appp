@@ -14,7 +14,7 @@ is, and whether anything fails under load.
 .\sr.ps1 load --users 100 --skip-health --base http://127.0.0.1:5188/api   # the C# API alone, for comparison
 ```
 
-`backend/SmartRation.Python/scripts/load_test.py`. Each virtual user is a signed-in citizen with its own
+`backend/SmartRation/scripts/load_test.py`. Each virtual user is a signed-in citizen with its own
 keep-alive connection (like a browser tab) who, one request after another, loads the item list with shop
 stock, the shop list, their bookings, their profile, a search, and the gateway's liveness check. All users
 start at the same instant, so concurrency = users. Requests go to the Python gateway at `/api/v1`, which

@@ -33,7 +33,7 @@ services:
   api:
     build:
       context: .                                   # repo root: the image needs ai/ and data/ too
-      dockerfile: backend/SmartRation.Python/Dockerfile
+      dockerfile: backend/SmartRation/Dockerfile
     restart: unless-stopped
     depends_on:
       mysql:

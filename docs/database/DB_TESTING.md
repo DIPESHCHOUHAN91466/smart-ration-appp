@@ -13,7 +13,7 @@ being retired). Everything a MySQLi test plan checks has a direct equivalent her
 | `mysqli_begin_transaction` / `commit` / `rollback` | one `Session` transaction per request; rollback on any error |
 | `mysqli_multi_query` | disabled: the driver refuses stacked statements |
 
-The suite lives in `backend/SmartRation.Python/tests/mysql_suite/` (123 tests).
+The suite lives in `backend/SmartRation/tests/mysql_suite/` (123 tests).
 
 ---
 
@@ -44,7 +44,7 @@ In PowerShell, from the Python backend folder, use the **same password as in you
 database name `smartration_test`:
 
 ```powershell
-cd backend\SmartRation.Python        # from the repository root, wherever it is on your machine
+cd backend\SmartRation        # from the repository root, wherever it is on your machine
 $env:TEST_DATABASE_URL = "mysql+pymysql://smartration_app:<password>@localhost:3306/smartration_test?charset=utf8mb4"
 ```
 

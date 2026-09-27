@@ -4,7 +4,7 @@
 messages, quick questions, input. **Why:** one assistant, mounted once in `App.jsx`, on every page
 except the full-screen QR scanner.
 **Belongs here:** rendering and UI state only. **Doesn't:** business logic or knowledge — answers and
-safety rules live on the server (`backend/SmartRation.Python/app/chatbot`, content in
+safety rules live on the server (`backend/SmartRation/app/chatbot`, content in
 `ai/chatbot/knowledge`); API communication lives in `services/chatbotService.js`.
 **Run/test:** appears on http://localhost:5173; tests in `frontend/tests/unit/chatbot.test.jsx`.
 **Connects:** `hooks/useChatbot.js` (conversation, kept in `sessionStorage`) → `services/chatbotService.js`

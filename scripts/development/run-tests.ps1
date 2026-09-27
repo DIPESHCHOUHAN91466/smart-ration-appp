@@ -6,7 +6,7 @@
   Python backend (pytest), chatbot evaluation, AI service (pytest), C# (dotnet test on SmartRation.sln),
   frontend (ESLint, Vitest, production build) and a read-only database health check.
   -MySql also runs the MySQL suite (146 tests) against smartration_test (never the real database):
-  it builds TEST_DATABASE_URL from backend\SmartRation.Python\.env with the database name changed.
+  it builds TEST_DATABASE_URL from backend\SmartRation\.env with the database name changed.
   -Quick skips the C# build, the frontend and the database check (fastest feedback while working on Python).
   -E2E also runs the Playwright end-to-end tests (the stack must already be running: start-all.ps1).
   Works from any current directory.
@@ -29,13 +29,13 @@ function Run([string]$Name, [string]$Directory, [scriptblock]$Command) {
     $results.Add([pscustomobject]@{ Suite = $Name; Result = $(if ($code -eq 0) { "PASS" } else { "FAIL" }); Seconds = [int]$watch.Elapsed.TotalSeconds })
 }
 
-$py = Join-Path $root "backend\SmartRation.Python"
+$py = Join-Path $root "backend\SmartRation"
 Run "Python backend" $py { & .venv\Scripts\python -m pytest -p no:warnings }
 Run "Chatbot evaluation" $py { & .venv\Scripts\python -m app.chatbot.evaluate }
 
 if ($MySql) {
     $url = & "$py\.venv\Scripts\python" "$py\scripts\test_database_url.py"   # password stays in this variable only
-    if ($LASTEXITCODE -ne 0 -or -not $url) { throw "Could not build TEST_DATABASE_URL from backend\SmartRation.Python\.env" }
+    if ($LASTEXITCODE -ne 0 -or -not $url) { throw "Could not build TEST_DATABASE_URL from backend\SmartRation\.env" }
     $env:TEST_DATABASE_URL = $url
     Run "MySQL suite (smartration_test)" $py { & .venv\Scripts\python -m pytest tests/mysql_suite -p no:warnings }
     Run "Root MySQL tests (tests/mysql)" $root { & "$py\.venv\Scripts\python" -m pytest tests/mysql -p no:warnings }

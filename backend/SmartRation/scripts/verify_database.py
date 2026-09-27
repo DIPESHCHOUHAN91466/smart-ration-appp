@@ -5,7 +5,7 @@ table/column/type/nullability/default/foreign key/index/unique constraint
 (Alembic's own comparison against the SQLAlchemy models), migration version,
 and that the reference/seed records exist.
 
-Usage (from backend/SmartRation.Python):
+Usage (from backend/SmartRation):
     .venv\\Scripts\\python scripts\\verify_database.py
     .venv\\Scripts\\python scripts\\verify_database.py --allow-unstamped   # before setup_database.py adopts it
 Exit code 0 = passed, 1 = failed.

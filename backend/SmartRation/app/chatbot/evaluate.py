@@ -1,6 +1,6 @@
 """Score the Public Help assistant against the evaluation set.
 
-    .venv/Scripts/python -m app.chatbot.evaluate          (run from backend/SmartRation.Python)
+    .venv/Scripts/python -m app.chatbot.evaluate          (run from backend/SmartRation)
 
 Prints accuracy per language for retrieval ("does the question reach the right article?") and
 for the safety rules ("is a private/sensitive/health question handled as such?"), lists every

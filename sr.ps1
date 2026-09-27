@@ -15,7 +15,7 @@ param(
 )
 $root = $PSScriptRoot
 $dev = Join-Path $root "scripts\development"
-$py = Join-Path $root "backend\SmartRation.Python"
+$py = Join-Path $root "backend\SmartRation"
 $pyExe = Join-Path $py ".venv\Scripts\python.exe"
 
 function Script([string]$Name, [string[]]$Arguments = $Rest) {
@@ -61,7 +61,7 @@ switch ($Command.ToLowerInvariant()) {
     }
     "synthetic" { InDir $py { & $pyExe scripts\generate_test_data.py @Rest }; exit $LASTEXITCODE }   # --help for options
     "contracts" { InDir $py { & $pyExe scripts\export_openapi.py @Rest }; exit $LASTEXITCODE }       # --csharp http://localhost:5188
-    "docker"    { InDir $root { docker build -f backend/SmartRation.Python/Dockerfile -t smartration-api:local . }; exit $LASTEXITCODE }
+    "docker"    { InDir $root { docker build -f backend/SmartRation/Dockerfile -t smartration-api:local . }; exit $LASTEXITCODE }
     default {
         Write-Host @"
 Smart Ration developer commands (.\sr.ps1 <command>):

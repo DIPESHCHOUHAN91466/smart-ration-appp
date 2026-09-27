@@ -11,7 +11,7 @@
 
 Take a backup first on any database holding real data (database/mysql/backup.ps1).
 
-Usage (from backend/SmartRation.Python):
+Usage (from backend/SmartRation):
     .venv\\Scripts\\python scripts\\setup_database.py [--seed]
 """
 

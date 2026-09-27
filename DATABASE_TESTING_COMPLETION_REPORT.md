@@ -80,7 +80,7 @@ Timings vary run to run and depend on the machine; they describe this run only.
 
 ## What changed in this round
 
-- `backend/SmartRation.Python/app/synthetic/` + `scripts/generate_test_data.py` (central, seeded generator) and `tests/test_synthetic_data.py`.
+- `backend/SmartRation/app/synthetic/` + `scripts/generate_test_data.py` (central, seeded generator) and `tests/test_synthetic_data.py`.
 - `tests/mysql_suite/test_08_scale.py` (1000 records, concurrency levels), `support.stats()`.
 - Demo mobiles `9876543210–12` → `9000000001 / 9000000051 / 9000000052` (both seeders, tests, dev database rows); C# `ScenarioBuilder` no longer uses random mobiles.
 - `/health/db`; frontend API base falls back to localhost only in development (`/api` in production builds).

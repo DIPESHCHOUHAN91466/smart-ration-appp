@@ -7,7 +7,7 @@ authentication, permissions, business rules, data — runs here, never in the br
 |---|---|---|---|
 | `SmartRation.Api/` | C# ASP.NET Core **business API**: slots, tokens, QR, OTP, collection, inventory, beneficiaries, reports, admin | 5188 | [SmartRation.Api/README.md](SmartRation.Api/README.md) |
 | `SmartRation.Api.Tests/` | xUnit tests for the C# API (104) | — | [SmartRation.Api.Tests/README.md](SmartRation.Api.Tests/README.md) |
-| `SmartRation.Python/` | Python **API gateway**: auth, Public Help + chatbot, data providers, DB migrations; forwards the rest to C# | 8000 | [SmartRation.Python/README.md](SmartRation.Python/README.md) |
+| `SmartRation/` | Python **API gateway**: auth, Public Help + chatbot, data providers, DB migrations; forwards the rest to C# | 8000 | [SmartRation/README.md](SmartRation/README.md) |
 | `SmartRation.AI/` | Python **AI service**: forecasts, stock risk, alerts, OCR | 8001 | [SmartRation.AI/README.md](SmartRation.AI/README.md) |
 
 **Belongs here:** server code and its tests. **Doesn't:** UI (`frontend`), chatbot content (`ai/`),

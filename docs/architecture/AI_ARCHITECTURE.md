@@ -17,7 +17,7 @@ UI (ChatbotWidget) → POST /api/chatbot/message → ChatProvider (CHATBOT_PROVI
 | Knowledge (25 reviewed articles, 12 categories, fixed replies) | `ai/chatbot/knowledge/` |
 | Evaluation set (48 retrieval + 19 safety cases; 100% today) | `ai/chatbot/evaluation/questions.json` |
 | Prompt template for a future LLM provider (unused today) | `ai/chatbot/prompts/` |
-| Code (engine, providers, evaluation runner) | `backend/SmartRation.Python/app/chatbot/` |
+| Code (engine, providers, evaluation runner) | `backend/SmartRation/app/chatbot/` |
 
 Provider abstraction (the brief's `IChatbotProvider`): `ChatProvider` in
 `app/chatbot/providers.py`. Implemented: **`KnowledgeBaseProvider`** (rules + retrieval). A

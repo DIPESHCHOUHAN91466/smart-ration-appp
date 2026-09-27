@@ -22,8 +22,8 @@
       "request": "launch",
       "module": "uvicorn",
       "args": ["app.main:create_app", "--factory", "--host", "127.0.0.1", "--port", "8000"],
-      "cwd": "${workspaceFolder}/backend/SmartRation.Python",
-      "python": "${workspaceFolder}/backend/SmartRation.Python/.venv/Scripts/python.exe",
+      "cwd": "${workspaceFolder}/backend/SmartRation",
+      "python": "${workspaceFolder}/backend/SmartRation/.venv/Scripts/python.exe",
       "justMyCode": true,
       "console": "integratedTerminal"
     },
@@ -58,8 +58,8 @@
       "request": "launch",
       "module": "pytest",
       "args": ["-q"],
-      "cwd": "${workspaceFolder}/backend/SmartRation.Python",
-      "python": "${workspaceFolder}/backend/SmartRation.Python/.venv/Scripts/python.exe",
+      "cwd": "${workspaceFolder}/backend/SmartRation",
+      "python": "${workspaceFolder}/backend/SmartRation/.venv/Scripts/python.exe",
       "justMyCode": false,
       "console": "integratedTerminal"
     },

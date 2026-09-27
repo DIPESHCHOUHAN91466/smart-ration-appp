@@ -1,8 +1,8 @@
 """Where the root-level MySQL tests connect, resolved from the project's ONE database configuration:
 
 1. TEST_DATABASE_URL                       (the same variable the MySQL suite in backend/ and CI use)
-2. DATABASE_URL in backend/SmartRation.Python/.env, with the database name swapped to
-   smartration_test (exactly what backend/SmartRation.Python/scripts/test_database_url.py does)
+2. DATABASE_URL in backend/SmartRation/.env, with the database name swapped to
+   smartration_test (exactly what backend/SmartRation/scripts/test_database_url.py does)
 3. legacy DB_HOST / DB_PORT / DB_USER / DB_PASSWORD / DB_NAME (repository-root .env), for old setups
 
 `SOURCE` says which one was used (never the password). Whatever the source, conftest refuses a
@@ -36,9 +36,9 @@ def _from_url(url: str, database: str | None = None) -> dict:
 def _resolve() -> tuple[dict, str]:
     if os.getenv("TEST_DATABASE_URL"):
         return _from_url(os.environ["TEST_DATABASE_URL"]), "TEST_DATABASE_URL"
-    backend_url = dotenv_values(ROOT / "backend" / "SmartRation.Python" / ".env").get("DATABASE_URL") or ""
+    backend_url = dotenv_values(ROOT / "backend" / "SmartRation" / ".env").get("DATABASE_URL") or ""
     if backend_url.startswith("mysql"):
-        return _from_url(backend_url, database="smartration_test"), "backend/SmartRation.Python/.env DATABASE_URL (database: smartration_test)"
+        return _from_url(backend_url, database="smartration_test"), "backend/SmartRation/.env DATABASE_URL (database: smartration_test)"
     return {
         "host": os.getenv("DB_HOST", "127.0.0.1"),
         "port": int(os.getenv("DB_PORT", "3306")),

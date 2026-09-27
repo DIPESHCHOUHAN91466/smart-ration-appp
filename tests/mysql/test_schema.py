@@ -7,7 +7,7 @@ import pytest
 EXPECTED_TEST_USERS = {"id", "username", "full_name", "email", "mobile", "notes", "created_at", "updated_at"}
 
 # The application's tables (created in smartration_test by the MySQL suite in
-# backend/SmartRation.Python/tests/mysql_suite via the real Alembic migration).
+# backend/SmartRation/tests/mysql_suite via the real Alembic migration).
 APP_TABLES = {"users", "beneficiaries", "families", "rationshops", "tokens", "timeslots", "inventory", "rationcollections"}
 
 

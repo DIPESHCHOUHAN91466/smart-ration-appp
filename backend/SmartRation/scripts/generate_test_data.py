@@ -1,6 +1,6 @@
 """Generate deterministic SYNTHETIC citizens (app/synthetic) and optionally insert them into the TEST database.
 
-Usage (from backend/SmartRation.Python):
+Usage (from backend/SmartRation):
     .venv\\Scripts\\python scripts\\generate_test_data.py --users 1000                 # generate + validate, print a summary
     .venv\\Scripts\\python scripts\\generate_test_data.py --users 1000 --json out.json # also write the records as JSON
     .venv\\Scripts\\python scripts\\generate_test_data.py --users 1000 --insert        # insert into smartration_test

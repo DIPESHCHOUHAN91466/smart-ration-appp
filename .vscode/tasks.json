@@ -134,14 +134,14 @@
       "type": "shell",
       "command": ".venv/Scripts/python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 --reload",
       "isBackground": true,
-      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
       "problemMatcher": []
     },
     {
       "label": "Smart Ration: Python Tests",
       "type": "shell",
       "command": ".venv/Scripts/python -m pytest",
-      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
       "problemMatcher": [],
       "group": "test"
     },
@@ -149,7 +149,7 @@
       "label": "Python: Lint + type check",
       "type": "shell",
       "command": ".venv/Scripts/python -m ruff check . ; .venv/Scripts/python -m mypy",
-      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
       "problemMatcher": []
     },
     {
@@ -157,7 +157,7 @@
       "detail": "Scores the assistant on ai/chatbot/evaluation/questions.json (en/hi/mr)",
       "type": "shell",
       "command": ".venv/Scripts/python -m app.chatbot.evaluate",
-      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
       "problemMatcher": []
     },
 
@@ -185,7 +185,7 @@
       "detail": "Read-only: tables, columns, keys, indexes, migration version, reference data",
       "type": "shell",
       "command": ".venv/Scripts/python scripts/verify_database.py",
-      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.Python" },
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
       "problemMatcher": []
     },
     {

@@ -1,4 +1,4 @@
-"""Shared helpers for the database scripts (run from backend/SmartRation.Python)."""
+"""Shared helpers for the database scripts (run from backend/SmartRation)."""
 
 from __future__ import annotations
 

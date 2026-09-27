@@ -20,8 +20,8 @@ from _common import alembic_config
 from alembic import command
 
 OUTPUT = Path(__file__).resolve().parents[3] / "database" / "schema" / "smartration_schema.sql"
-HEADER = """-- GENERATED FILE - do not edit. Source of truth: backend/SmartRation.Python/app/db/migrations (Alembic).
--- Regenerate: cd backend/SmartRation.Python; .venv\\Scripts\\python scripts\\export_schema_sql.py
+HEADER = """-- GENERATED FILE - do not edit. Source of truth: backend/SmartRation/app/db/migrations (Alembic).
+-- Regenerate: cd backend/SmartRation; .venv\\Scripts\\python scripts\\export_schema_sql.py
 -- MySQL 8 (tables use the database defaults: InnoDB, utf8mb4). Apply schema changes with `alembic upgrade head`, never with this file.
 
 """
