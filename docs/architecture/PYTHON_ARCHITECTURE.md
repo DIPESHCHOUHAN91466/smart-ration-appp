@@ -32,7 +32,7 @@ tests/                   pytest: unit + API (SQLite), mysql_suite (MySQL, *_test
 
 ### Rules
 
-- **Configuration** only through `app/core/config.py` (environment / `.env`); no secret has a default,
+- **Configuration** only through `app/config/settings.py` (environment / `.env`); no secret has a default,
   and the app refuses to start without `JWT_SECRET_KEY` or with an unknown `DATA_MODE` /
   `CHATBOT_PROVIDER`.
 - **No global mutable state** besides the engine/session factory and read-only caches (knowledge base,

@@ -93,7 +93,7 @@ def _migrate(url: str) -> None:
     from alembic import command
     from alembic.config import Config
 
-    from app.db.database import MIGRATIONS_DIR
+    from app.database.migrations import MIGRATIONS_DIR
 
     cfg = Config()
     cfg.set_main_option("script_location", str(MIGRATIONS_DIR))

@@ -13,10 +13,10 @@ from sqlalchemy import create_engine, func, select, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import IntegrityError, OperationalError
 
-from app.core.config import Settings
-from app.db import database
-from app.db.models import User
+from app.config.settings import Settings
+from app.database import session as database
 from app.main import create_app
+from app.models import User
 from mysql_suite.support import KEY, new_session
 
 

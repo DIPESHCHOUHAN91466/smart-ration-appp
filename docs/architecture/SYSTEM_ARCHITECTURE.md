@@ -26,26 +26,26 @@ The frontend calls the Python backend (`VITE_API_BASE_URL=http://localhost:8000/
 yet migrated reach the C# API through the proxy (parity verified 36/36), so no route was lost.
 
 New public features are built in Python only: the Public Help pages and the Public Help chatbot
-(`app/chatbot/`, `app/api/public_help.py`; see [CHATBOT.md](../chatbot/CHATBOT_ARCHITECTURE.md)).
+(`app/ai/chatbot/`, `app/api/routes/public_help.py`; see [CHATBOT.md](../chatbot/CHATBOT_ARCHITECTURE.md)).
 
 ## Python backend layout (`backend/SmartRation`)
 
 | Path | Role | C# equivalent |
 |---|---|---|
 | `app/main.py` | `create_app()` factory: settings, middleware, routers, proxy last | `Program.cs` |
-| `app/core/config.py` | Settings from env / `.env` (pydantic-settings); no secret has a default | appsettings + user-secrets |
+| `app/config/settings.py` | Settings from env / `.env` (pydantic-settings); no secret has a default | appsettings + user-secrets |
 | `app/core/errors.py` | `ApiError` family + handlers → `{success,message,data,errors,errorCode}` | `ExceptionHandlingMiddleware` |
-| `app/core/security.py` | JWT (same claims/key as C#), Argon2id + BCrypt verify, refresh tokens | `AuthService`, `PasswordHashes` |
-| `app/core/dependencies.py` | `get_current_user`, `require_roles(...)` | `[Authorize(Roles=...)]` |
+| `app/security/tokens.py` | JWT (same claims/key as C#), Argon2id + BCrypt verify, refresh tokens | `AuthService`, `PasswordHashes` |
+| `app/api/dependencies/auth.py` | `get_current_user`, `require_roles(...)` | `[Authorize(Roles=...)]` |
 | `app/core/validation.py` | DataAnnotations-compatible validation messages | DataAnnotations |
-| `app/core/rate_limit.py` | fixed-window limiter per client IP | ASP.NET rate limiter |
+| `app/security/rate_limit.py` | fixed-window limiter per client IP | ASP.NET rate limiter |
 | `app/core/logging.py`, `middleware.py` | JSON logs with request id; body size limit | `ILogger` |
 | `app/api/` | FastAPI routers; `legacy_proxy.py` is the fallback | Controllers |
 | `app/services/` | business logic, one transaction per request | Services |
 | `app/schemas/` | Pydantic request/response models | DTOs |
-| `app/db/models.py` | 25 SQLAlchemy models = the existing tables, column for column | EF entities |
-| `app/db/migrations/` | Alembic | EF migrations |
-| `app/chatbot/` | Public Help assistant: knowledge base (JSON, en/hi/mr), safety rules, retrieval | — (new) |
+| `app/models/` | 25 SQLAlchemy models = the existing tables, column for column | EF entities |
+| `migrations/` | Alembic | EF migrations |
+| `app/ai/chatbot/` | Public Help assistant: knowledge base (JSON, en/hi/mr), safety rules, retrieval | — (new) |
 | `scripts/` | setup / verify / seed / reset database | `DbInitializer` |
 | `tests/` | pytest; `tests/contract/` compares both live backends | `SmartRation.Api.Tests` |
 

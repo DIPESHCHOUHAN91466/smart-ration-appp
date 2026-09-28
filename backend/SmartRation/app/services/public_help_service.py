@@ -13,8 +13,8 @@ from collections.abc import Callable
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.security import utc_now
-from app.db.models import RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, Token
+from app.models import RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, Token
+from app.utils.time import utc_now
 
 CACHE_SECONDS = 300
 _cache: dict[str, tuple[float, list[dict]]] = {}

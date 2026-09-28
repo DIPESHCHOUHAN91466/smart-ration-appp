@@ -7,7 +7,7 @@ from collections.abc import Callable
 
 from sqlalchemy.orm import Session
 
-from app.db import database
+from app.database import session as database
 
 KEY = "mysql-suite-signing-key-0123456789abcdef-0123456789"
 

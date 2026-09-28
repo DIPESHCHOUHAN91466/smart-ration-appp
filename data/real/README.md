@@ -20,9 +20,9 @@ start today, because no real provider exists yet.
    Protection Act, 2023; Aadhaar Act restrictions.
 3. **Security review** — penetration test; rotate the JWT key (it is in old git history); refresh token
    in an HttpOnly cookie; audit-log retention; backup + tested restore; TLS everywhere.
-4. **Implement the real providers** behind the existing interfaces (`app/data_providers`,
+4. **Implement the real providers** behind the existing interfaces (`app/services/data_provider.py`,
    `Services/Verification/I*.cs`) — business code does not change.
 5. **Remove the startup refusal** for real mode only once 1–4 are signed off
-   (`DataModeGuard.cs`, `app/data_providers/check_data_mode`).
+   (`DataModeGuard.cs`, `app/services/data_provider.py/check_data_mode`).
 
 Design: [../../docs/architecture/DATA_ARCHITECTURE.md](../../docs/architecture/DATA_ARCHITECTURE.md).

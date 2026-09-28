@@ -10,7 +10,7 @@ restoring it are operational tasks with their own safety rules.
 account and the **read-only** `smartration_ai` account — copy to `*.local.sql`, which is git-ignored,
 before filling in passwords), `mysql/backup.ps1`, `mysql/restore.ps1` (see [mysql/README.md](mysql/README.md)).
 **What does NOT:** the schema definition and migrations — those are code, owned by **Alembic** in
-`backend/SmartRation/app/db/migrations` (revision `0001_initial` = the 25 tables); setup/verify/
+`backend/SmartRation/migrations` (revision `0001_initial` = the 25 tables); setup/verify/
 seed/reset scripts live in `backend/SmartRation/scripts`; synthetic reference data lives in
 `data/synthetic`. Never commit passwords or backups.
 

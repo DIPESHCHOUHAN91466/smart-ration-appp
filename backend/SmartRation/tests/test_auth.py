@@ -11,10 +11,9 @@ import jwt
 import pytest
 from sqlalchemy import func, select
 
-from app.core.security import NAME_CLAIM, ROLE_CLAIM, TokenUser, create_access_token, hash_token, utc_now
-from app.db.database import Base, get_engine, get_session_factory
-from app.db.enums import UserRole
-from app.db.models import (
+from app.database.base import Base
+from app.database.session import get_engine, get_session_factory
+from app.models import (
     AadhaarVerification,
     AuditLog,
     Beneficiary,
@@ -26,6 +25,9 @@ from app.db.models import (
     RefreshToken,
     User,
 )
+from app.models.enums import UserRole
+from app.security.tokens import NAME_CLAIM, ROLE_CLAIM, TokenUser, create_access_token, hash_token
+from app.utils.time import utc_now
 
 KEY = "unit-test-signing-key-0123456789abcdef-0123456789"
 BCRYPT_DEMO = bcrypt.hashpw(b"demo123", bcrypt.gensalt(rounds=4, prefix=b"2a")).decode()  # C#-style $2a$ hash
@@ -219,8 +221,8 @@ def test_logout_revokes_and_is_idempotent(api):
 
 
 def test_decode_rejects_tampering_wrong_key_and_alg_none():
-    from app.core.config import Settings
-    from app.core.security import InvalidToken, decode_access_token
+    from app.config.settings import Settings
+    from app.security.tokens import InvalidToken, decode_access_token
 
     s = Settings(_env_file=None, database_url="sqlite://", jwt_secret_key=KEY)
     good, _ = create_access_token(TokenUser(1, "a@b.c", "A", "RuralUser", None), s)

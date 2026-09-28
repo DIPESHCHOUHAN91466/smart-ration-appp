@@ -11,7 +11,8 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.database import Base, get_engine
+from app.database.base import Base
+from app.database.session import get_engine
 from app.services import public_help_service
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -152,7 +153,7 @@ def test_routes_are_in_the_openapi_document(api):
 def test_unknown_provider_fails_at_startup(tmp_path):
     from py_testkit import make_settings
 
-    from app.chatbot.providers import UnsupportedProvider
+    from app.ai.chatbot.providers import UnsupportedProvider
     from app.main import create_app
 
     with pytest.raises(UnsupportedProvider):
@@ -166,8 +167,9 @@ def _seed_bookings(tmp_path):
 
     from py_testkit import make_settings
 
-    from app.core.security import TokenUser, create_access_token, utc_now
-    from app.db.models import RationShop, TimeSlot, Token, User
+    from app.models import RationShop, TimeSlot, Token, User
+    from app.security.tokens import TokenUser, create_access_token
+    from app.utils.time import utc_now
 
     settings = make_settings(tmp_path)
     now = utc_now()

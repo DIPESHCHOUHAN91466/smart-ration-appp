@@ -10,7 +10,7 @@ C# through the proxy work on :8000 but appear in Swagger only once migrated.
 - **`/api/v1/...` is the current, versioned API**; every route in this document answers there. The
   unversioned `/api/...` is kept as an alias with identical behaviour, so older clients keep working.
   Paths below are written `/api/...`; put `/v1` after `/api` for the versioned form.
-- The gateway rewrites `/api/v1/x` to `/api/x` before routing (`app/core/api_version.py`), so auth,
+- The gateway rewrites `/api/v1/x` to `/api/x` before routing (`app/middleware/api_version.py`), so auth,
   rate limits, errors and logs are the same under both prefixes. The C# API only ever sees `/api/...`.
 - Other versions are not mapped: `/api/v2/...` is 404 until a v2 exists. A breaking change gets a new
   version with its own routes; v1 keeps meaning today's contract.

@@ -18,23 +18,15 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.config import Settings
+from app.config.settings import Settings
 from app.core.errors import Conflict, Forbidden, Unauthorized
-from app.core.security import (
-    PasswordCheck,
-    TokenUser,
-    create_access_token,
-    format_utc,
-    generate_refresh_token,
-    hash_password,
-    hash_token,
-    utc_now,
-    verify_password,
-)
-from app.data_providers import get_data_provider
-from app.db.enums import UserRole
-from app.db.models import RefreshToken, User
+from app.models import RefreshToken, User
+from app.models.enums import UserRole
+from app.security.passwords import PasswordCheck, hash_password, verify_password
+from app.security.tokens import TokenUser, create_access_token, generate_refresh_token, hash_token
 from app.services import audit_service
+from app.services.data_provider import get_data_provider
+from app.utils.time import format_utc, utc_now
 
 log = logging.getLogger("smartration.auth")
 

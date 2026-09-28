@@ -137,7 +137,7 @@ def test_requests_take_turns_across_the_connection_pools():
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from app.api import legacy_proxy
+    from app.api.routes import legacy_proxy
 
     served: list[int] = []
 

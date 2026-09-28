@@ -1,6 +1,6 @@
 """Write database/schema/smartration_schema.sql: the MySQL DDL of the Alembic migrations, for reading.
 
-The schema is owned by the Alembic migrations (app/db/migrations). This file is a generated, read-only
+The schema is owned by the Alembic migrations (backend/SmartRation/migrations). This file is a generated, read-only
 snapshot for people who want to see the tables as SQL (reviews, DBAs, documentation). It never
 connects to a database (Alembic "offline" mode) and contains no credentials.
 
@@ -20,7 +20,7 @@ from _common import alembic_config
 from alembic import command
 
 OUTPUT = Path(__file__).resolve().parents[3] / "database" / "schema" / "smartration_schema.sql"
-HEADER = """-- GENERATED FILE - do not edit. Source of truth: backend/SmartRation/app/db/migrations (Alembic).
+HEADER = """-- GENERATED FILE - do not edit. Source of truth: backend/SmartRation/migrations (Alembic).
 -- Regenerate: cd backend/SmartRation; .venv\\Scripts\\python scripts\\export_schema_sql.py
 -- MySQL 8 (tables use the database defaults: InnoDB, utf8mb4). Apply schema changes with `alembic upgrade head`, never with this file.
 

@@ -13,10 +13,9 @@ import pytest
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session
 
-import app.db.models  # noqa: F401
-from app.core.security import utc_now
-from app.db.database import Base
-from app.db.models import (
+import app.models  # noqa: F401
+from app.database.base import Base
+from app.models import (
     AadhaarVerification,
     Beneficiary,
     Family,
@@ -33,6 +32,7 @@ from app.db.models import (
     User,
 )
 from app.synthetic import SOURCE, SyntheticDataError, book, collect, generate, insert, is_synthetic_email, is_synthetic_mobile, validate
+from app.utils.time import utc_now
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))

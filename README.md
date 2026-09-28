@@ -177,7 +177,7 @@ Smart_Ration_HSD2C_Final/
 │   ├── SmartRation.Api/          # C# ASP.NET Core business API (:5188)  → backend/SmartRation.Api/README.md
 │   ├── SmartRation.Api.Tests/    # C# xUnit test suite (104 tests)       → backend/SmartRation.Api.Tests/README.md
 │   ├── SmartRation/       # Python FastAPI Gateway & Auth (:8000) → backend/SmartRation/README.md
-│   │   ├── app/chatbot/          # Modular chatbot intent & engine
+│   │   ├── app/ai/chatbot/          # Modular chatbot intent & engine
 │   │   ├── app/synthetic/        # Synthetic data generation engine
 │   │   └── tests/                # Python unit, contract & scale tests   → backend/SmartRation/tests/README.md
 │   └── SmartRation.AI/           # Python AI Analytics Service (:8001)   → backend/SmartRation.AI/README.md

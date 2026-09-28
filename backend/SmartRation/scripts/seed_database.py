@@ -27,9 +27,10 @@ from _common import database_url, engine, safe_url
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.core.security import hash_password, utc_now
-from app.db.enums import RationType, UserRole
-from app.db.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
+from app.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
+from app.models.enums import RationType, UserRole
+from app.security.passwords import hash_password
+from app.utils.time import utc_now
 
 # The synthetic reference data lives in <repo>/data/synthetic/reference/*.json (clearly labelled
 # isSynthetic / SYNTHETIC_DEMO). SYNTHETIC_DATA_DIR overrides the location (e.g. in Docker).
@@ -136,7 +137,7 @@ def seed(db: Session) -> list[str]:
 
 
 def main() -> int:
-    from app.core.config import get_settings
+    from app.config.settings import get_settings
 
     if get_settings().data_mode != "synthetic":
         # Synthetic demo records must never be written into a real-data database.

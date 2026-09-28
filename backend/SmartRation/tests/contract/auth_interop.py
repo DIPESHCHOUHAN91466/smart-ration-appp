@@ -21,8 +21,8 @@ import httpx
 import pymysql
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from app.core.config import Settings  # noqa: E402
-from app.core.security import decode_access_token  # noqa: E402
+from app.config.settings import Settings  # noqa: E402
+from app.security.tokens import decode_access_token  # noqa: E402
 
 CS = "http://localhost:5188/api"
 PY = "http://127.0.0.1:8000/api"

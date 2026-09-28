@@ -31,7 +31,7 @@ function Run([string]$Name, [string]$Directory, [scriptblock]$Command) {
 
 $py = Join-Path $root "backend\SmartRation"
 Run "Python backend" $py { & .venv\Scripts\python -m pytest -p no:warnings }
-Run "Chatbot evaluation" $py { & .venv\Scripts\python -m app.chatbot.evaluate }
+Run "Chatbot evaluation" $py { & .venv\Scripts\python -m app.ai.chatbot.evaluate }
 
 if ($MySql) {
     $url = & "$py\.venv\Scripts\python" "$py\scripts\test_database_url.py"   # password stays in this variable only

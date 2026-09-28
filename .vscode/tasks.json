@@ -156,7 +156,7 @@
       "label": "Chatbot: Evaluate",
       "detail": "Scores the assistant on ai/chatbot/evaluation/questions.json (en/hi/mr)",
       "type": "shell",
-      "command": ".venv/Scripts/python -m app.chatbot.evaluate",
+      "command": ".venv/Scripts/python -m app.ai.chatbot.evaluate",
       "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
       "problemMatcher": []
     },

@@ -1,4 +1,4 @@
--- GENERATED FILE - do not edit. Source of truth: backend/SmartRation/app/db/migrations (Alembic).
+-- GENERATED FILE - do not edit. Source of truth: backend/SmartRation/migrations (Alembic).
 -- Regenerate: cd backend/SmartRation; .venv\Scripts\python scripts\export_schema_sql.py
 -- MySQL 8 (tables use the database defaults: InnoDB, utf8mb4). Apply schema changes with `alembic upgrade head`, never with this file.
 

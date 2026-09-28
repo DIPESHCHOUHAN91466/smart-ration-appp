@@ -22,8 +22,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import NullPool
 
-from app.core.security import utc_now
-from app.db.models import (
+from app.models import (
     AadhaarVerification,
     Beneficiary,
     Family,
@@ -40,6 +39,7 @@ from app.db.models import (
     User,
 )
 from app.synthetic import SOURCE, collect, generate, insert
+from app.utils.time import utc_now
 from mysql_suite.support import new_session, stats
 from mysql_suite.test_05_concurrency import run_parallel
 

@@ -28,17 +28,7 @@ from sqlalchemy import CursorResult, func, select, update
 from sqlalchemy import insert as sql_insert
 from sqlalchemy.orm import Session
 
-from app.core.security import utc_now
-from app.db.enums import (
-    AadhaarVerificationStatus,
-    EligibilityStatus,
-    FamilyRelationship,
-    Gender,
-    MobileVerificationStatus,
-    PassbookVerificationStatus,
-    UserRole,
-)
-from app.db.models import (
+from app.models import (
     AadhaarVerification,
     Beneficiary,
     Family,
@@ -58,6 +48,16 @@ from app.db.models import (
     TokenItem,
     User,
 )
+from app.models.enums import (
+    AadhaarVerificationStatus,
+    EligibilityStatus,
+    FamilyRelationship,
+    Gender,
+    MobileVerificationStatus,
+    PassbookVerificationStatus,
+    UserRole,
+)
+from app.utils.time import utc_now
 
 SOURCE = "SYNTHETIC_DEMO"
 TOKEN_CONFIRMED = 2              # C# TokenStatus.Confirmed (Models/Token.cs)

@@ -135,7 +135,7 @@ Details: [../testing/TESTING.md](../testing/TESTING.md).
 The schema is owned by **Alembic** (Python backend). Do **not** add EF Core migrations.
 ```
 cd backend\SmartRation
-# edit app/db/models.py, then:
+# edit app/models/, then:
 .venv\Scripts\alembic revision --autogenerate -m "describe the change"
 # review the file, back up (database/mysql/backup.ps1), then:
 .venv\Scripts\python scripts\setup_database.py

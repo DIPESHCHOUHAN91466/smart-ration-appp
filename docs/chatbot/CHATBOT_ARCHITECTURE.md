@@ -24,18 +24,18 @@ Public Help page ──────► GET  /api/public-help/*              ├�
 
 | Where | What |
 |---|---|
-| `backend/SmartRation/app/chatbot/knowledge/public-help.json` | help categories (quick buttons) + fixed replies (welcome, fallback, privacy, health…) |
+| `ai/chatbot/knowledge/public-help.json` | help categories (quick buttons) + fixed replies (welcome, fallback, privacy, health…) |
 | `…/knowledge/ration-help.json` | how this app works (register, book, token, QR, OTP, collection, login help) |
 | `…/knowledge/faq.json` | ration cards: what, types, applying, documents, eligibility, changes, lost card, rights, complaints, support |
 | `…/knowledge/schemes.json` | NFSA, free foodgrain (PMGKAY), One Nation One Ration Card, this installation's demo schemes |
-| `app/chatbot/knowledge_base.py` | loads + validates (every text in en/hi/mr, valid categories, in-app links only) at startup |
-| `app/chatbot/text.py` | input clean-up, normalisation (Devanagari variants), language detection |
-| `app/chatbot/intents.py` | safety and intent rules, in order: sensitive input, internals, own records, health, greeting, thanks |
-| `app/chatbot/retrieval.py` | knowledge-base scoring (keywords, title words, inflections, typos) |
-| `app/chatbot/responses.py` | the `Reply` model and all text assembled in code (bookings, shop and scheme lists) |
-| `app/chatbot/engine.py` | orchestration only (`Assistant`); data arrives through the `PublicData` / `PersonalData` protocols, never directly from the database |
-| `app/chatbot/providers.py` | `ChatProvider` interface; `CHATBOT_PROVIDER=knowledge` |
-| `app/api/public_help.py` | the five public routes |
+| `app/ai/chatbot/knowledge_base.py` | loads + validates (every text in en/hi/mr, valid categories, in-app links only) at startup |
+| `app/ai/chatbot/text.py` | input clean-up, normalisation (Devanagari variants), language detection |
+| `app/ai/chatbot/intents.py` | safety and intent rules, in order: sensitive input, internals, own records, health, greeting, thanks |
+| `app/ai/chatbot/retrieval.py` | knowledge-base scoring (keywords, title words, inflections, typos) |
+| `app/ai/chatbot/responses.py` | the `Reply` model and all text assembled in code (bookings, shop and scheme lists) |
+| `app/ai/chatbot/engine.py` | orchestration only (`Assistant`); data arrives through the `PublicData` / `PersonalData` protocols, never directly from the database |
+| `app/ai/chatbot/providers.py` | `ChatProvider` interface; `CHATBOT_PROVIDER=knowledge` |
+| `app/api/routes/public_help.py` | the five public routes |
 | `frontend/src/components/chatbot/` | widget, window, header, message, input, suggestions, avatar, CSS |
 | `frontend/src/hooks/useChatbot.js` | conversation state (sessionStorage) |
 | `frontend/src/assets/ration-mitra-emblem.png` | the emblem cropped from the supplied logo (`ration-mitra-logo.webp`); chatbot avatar + launcher (Logo 2), header (Logo 1), favicon |
@@ -70,7 +70,7 @@ Hindi or Marathi from marker words.
 
 ## Editing content
 
-1. Edit the JSON in `app/chatbot/knowledge/` — every `title` / `answer` needs `en`, `hi` and `mr`.
+1. Edit the JSON in `app/ai/chatbot/knowledge/` — every `title` / `answer` needs `en`, `hi` and `mr`.
    Lines starting with `• ` or `1. ` become lists. Links must be in-app paths (`/register`).
 2. Add keywords users would actually type, in all three languages and romanised Hindi.
 3. Add the question to `QUESTIONS` in `tests/test_chatbot_engine.py` and run the tests — they fail if

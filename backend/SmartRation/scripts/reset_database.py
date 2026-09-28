@@ -26,7 +26,7 @@ import verify_database
 from _common import ROOT, alembic_config, database_name, database_url, safe_url
 from alembic import command
 
-from app.core.config import get_settings
+from app.config.settings import get_settings
 
 BACKUP_SCRIPT = ROOT.parents[1] / "database" / "mysql" / "backup.ps1"
 

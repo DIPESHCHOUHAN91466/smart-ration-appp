@@ -6,6 +6,7 @@
 !backend/SmartRation/alembic.ini
 !backend/SmartRation/docker-entrypoint.sh
 !backend/SmartRation/app/**
+!backend/SmartRation/migrations/**
 !backend/SmartRation/scripts/**
 !ai/chatbot/knowledge/**
 !data/synthetic/reference/**

@@ -5,7 +5,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from app.core.api_version import strip_version
+from app.middleware.api_version import strip_version
 
 seen: list[str] = []
 

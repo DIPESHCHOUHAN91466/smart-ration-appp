@@ -21,14 +21,16 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine, make_url
 from sqlalchemy.orm import Session
 
-import app.db.models  # noqa: F401  (register tables)
-from app.core.config import Settings
-from app.core.security import hash_password, utc_now
-from app.db import database
-from app.db.database import Base
-from app.db.enums import UserRole
-from app.db.models import User
+import app.models  # noqa: F401  (register tables)
+from app.config.settings import Settings
+from app.database import session as database
+from app.database.base import Base
+from app.database.migrations import MIGRATIONS_DIR
 from app.main import create_app
+from app.models import User
+from app.models.enums import UserRole
+from app.security.passwords import hash_password
+from app.utils.time import utc_now
 from mysql_suite.support import _REPORT, KEY, new_session, record_fixture  # noqa: F401
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -65,7 +67,7 @@ def engine(test_url) -> Iterator[Engine]:
 
     database.configure_database(test_url)
     cfg = Config()
-    cfg.set_main_option("script_location", str(ROOT / "app" / "db" / "migrations"))
+    cfg.set_main_option("script_location", str(MIGRATIONS_DIR))
     cfg.attributes["database_url"] = test_url
     command.upgrade(cfg, "head")
 

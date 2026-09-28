@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import os
 
-from app.core.config import Settings
+from app.config.settings import Settings
 
 
 def live_database_url() -> str | None:

@@ -34,11 +34,12 @@ COPY --from=build /opt/venv /opt/venv
 WORKDIR /app
 COPY --chown=smartration:smartration backend/SmartRation/alembic.ini ./
 COPY --chown=smartration:smartration backend/SmartRation/app ./app
+COPY --chown=smartration:smartration backend/SmartRation/migrations ./migrations
 COPY --chown=smartration:smartration backend/SmartRation/scripts ./scripts
 COPY --chown=smartration:smartration backend/SmartRation/docker-entrypoint.sh ./
 COPY --chown=smartration:smartration ai/chatbot/knowledge ./ai/chatbot/knowledge
 COPY --chown=smartration:smartration data/synthetic/reference ./data/synthetic/reference
-# The built website, served by the API on the same origin (app/web.py).
+# The built website, served by the API on the same origin (app/api/routes/frontend.py).
 COPY --from=web --chown=smartration:smartration /web/dist ./frontend-dist
 USER smartration
 EXPOSE 8000

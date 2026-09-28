@@ -63,8 +63,8 @@ def citizen_token() -> tuple[str, int]:
     """(token, shop id) for the first seeded citizen, minted with the local JWT key."""
     from sqlalchemy import create_engine, text
 
-    from app.core.config import get_settings
-    from app.core.security import TokenUser, create_access_token
+    from app.config.settings import get_settings
+    from app.security.tokens import TokenUser, create_access_token
 
     settings = get_settings()
     if settings.is_production:

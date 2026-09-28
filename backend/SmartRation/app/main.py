@@ -5,7 +5,7 @@ Run (from backend/SmartRation):
 
 Migration status: routes implemented in Python are registered first; every
 other /api/* request falls through to the C# API via the fallback proxy
-(app/api/legacy_proxy.py). See MIGRATION.md.
+(app/api/routes/legacy_proxy.py). See MIGRATION.md.
 """
 
 from __future__ import annotations
@@ -16,18 +16,18 @@ import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, health, legacy_proxy, public_help
-from app.chatbot.knowledge_base import get_knowledge_base
-from app.chatbot.providers import get_provider
-from app.core.api_version import ApiVersionAliasMiddleware
-from app.core.config import Settings, get_settings
+from app.ai.chatbot.knowledge_base import get_knowledge_base
+from app.ai.chatbot.providers import get_provider
+from app.api.routes import auth, health, legacy_proxy, public_help
+from app.api.routes.frontend import mount_frontend
+from app.config.settings import Settings, get_settings
 from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
-from app.core.middleware import install_middleware
-from app.core.rate_limit import FixedWindowLimiter
-from app.data_providers import check_data_mode
-from app.db.database import configure_database
-from app.web import mount_frontend
+from app.database.session import configure_database
+from app.middleware.api_version import ApiVersionAliasMiddleware
+from app.middleware.http import install_middleware
+from app.security.rate_limit import FixedWindowLimiter
+from app.services.data_provider import check_data_mode
 
 API_DESCRIPTION = """
 Python backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET API).

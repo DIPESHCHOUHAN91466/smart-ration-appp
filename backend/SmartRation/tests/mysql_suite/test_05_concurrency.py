@@ -12,7 +12,7 @@ from sqlalchemy import func, select, text
 from sqlalchemy.exc import IntegrityError, OperationalError
 
 from app.core.errors import ApiError
-from app.db.models import Beneficiary, Family, TimeSlot, User
+from app.models import Beneficiary, Family, TimeSlot, User
 from app.services import auth_service
 from app.services.auth_service import RequestContext
 from mysql_suite.sample_data import people
@@ -89,7 +89,7 @@ def _ctx() -> RequestContext:
 
 @pytest.fixture
 def settings(test_url):
-    from app.core.config import Settings
+    from app.config.settings import Settings
     return Settings(_env_file=None, database_url=test_url, legacy_api_url="", jwt_secret_key=KEY)
 
 

@@ -15,26 +15,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.errors import BadRequest
-from app.core.security import utc_now
-from app.db.enums import (
-    AadhaarVerificationStatus,
-    EligibilityStatus,
-    FamilyRelationship,
-    Gender,
-    MobileVerificationStatus,
-    PassbookVerificationStatus,
-)
-from app.db.models import (
-    AadhaarVerification,
-    Beneficiary,
-    Family,
-    FamilyMember,
-    MobileVerification,
-    PassbookVerification,
-    RationScheme,
-    RationShop,
-    User,
-)
+from app.models import AadhaarVerification, Beneficiary, Family, FamilyMember, MobileVerification, PassbookVerification, RationScheme, RationShop, User
+from app.models.enums import AadhaarVerificationStatus, EligibilityStatus, FamilyRelationship, Gender, MobileVerificationStatus, PassbookVerificationStatus
+from app.utils.time import utc_now
 
 SOURCE = "SYNTHETIC_DEMO"
 DOTNET_MIN_DATE = datetime(1, 1, 1)  # C# default(DateTime), what the C# API stores for DateOfBirth

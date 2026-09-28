@@ -12,7 +12,7 @@ CRUD and transaction tests run directly against the `smartration_test` MySQL dat
 | Python API (unit + API) | `backend/SmartRation/tests/` | 164 |
 | MySQL suite (100 records: CRUD, injection, performance, concurrency, errors, integrity) | `backend/SmartRation/tests/mysql_suite/` | 122 |
 | Contract tests (C# vs. Python, live) | `backend/SmartRation/tests/contract/` | 36 + 23 checks |
-| Chatbot evaluation | `ai/chatbot/evaluation/` (+ `app.chatbot.evaluate`) | 67 cases |
+| Chatbot evaluation | `ai/chatbot/evaluation/` (+ `app.ai.chatbot.evaluate`) | 67 cases |
 | AI service | `backend/SmartRation.AI/tests/` | 46 |
 | C# API | `backend/SmartRation.Api.Tests/` | 94 |
 | Frontend | `frontend/tests/unit/` | 36 |

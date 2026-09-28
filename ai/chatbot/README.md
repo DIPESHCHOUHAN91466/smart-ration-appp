@@ -17,8 +17,8 @@ cases; prompt templates. **Doesn't:** code, personal data, anything unverified.
 **Editing content:** keep every `title`/`answer` in `en`, `hi`, `mr`; lines starting `• ` or `1. `
 become lists; links must be in-app paths (`/register`); general scheme facts stay hedged ("check your
 state's portal"). Add real user questions to `evaluation/questions.json`, then run
-`python -m app.chatbot.evaluate` (from `backend/SmartRation`) — it must stay at 100%.
+`python -m app.ai.chatbot.evaluate` (from `backend/SmartRation`) — it must stay at 100%.
 The app refuses to start if a translation is missing.
 
-**Connects:** loaded by `backend/SmartRation/app/chatbot/knowledge_base.py`.
+**Connects:** loaded by `backend/SmartRation/app/ai/chatbot/knowledge_base.py`.
 Design: [../../docs/chatbot/CHATBOT_ARCHITECTURE.md](../../docs/chatbot/CHATBOT_ARCHITECTURE.md).

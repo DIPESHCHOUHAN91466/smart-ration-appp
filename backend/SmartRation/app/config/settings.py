@@ -1,0 +1,102 @@
+"""Settings from environment variables / a local, git-ignored .env file.
+
+Nothing secret has a default. See .env.example for every variable.
+"""
+
+from __future__ import annotations
+
+from functools import lru_cache
+from pathlib import Path
+from typing import Annotated
+
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+ROOT = Path(__file__).resolve().parents[2]  # backend/SmartRation
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=ROOT / ".env", env_file_encoding="utf-8", extra="ignore")
+
+    environment: str = Field(default="development", description="development | production")
+
+    # synthetic (demo data, the default) | real (refused until real integrations exist).
+    # See app/services/data_provider.py and data/real/README.md.
+    data_mode: str = Field(default="synthetic", description="synthetic | real")
+
+    # MySQL (the same database the C# API uses). Required.
+    database_url: str = Field(description="mysql+pymysql://USER:PASSWORD@localhost:3306/smartration?charset=utf8mb4")
+
+    # Side-by-side migration: routes not yet migrated are forwarded here.
+    legacy_api_url: str = Field(default="http://localhost:5188", description="C# API base URL; empty disables the fallback proxy")
+    legacy_api_timeout_seconds: float = 30.0
+    # Connections to the C# API: several small pools used in turn. httpcore's pool scans every waiting
+    # request against every connection, so one large pool gets slower as it grows (docs/testing/LOAD_TESTING.md).
+    legacy_api_pools: int = Field(default=8, ge=1, le=64)
+    legacy_api_connections_per_pool: int = Field(default=8, ge=1, le=100)
+
+    # The Python AI/analytics service (backend/SmartRation.AI). Only checked by /health; empty disables.
+    ai_service_url: str = Field(default="http://127.0.0.1:8001", description="AI service base URL; empty disables the check")
+
+    # Comma-separated in the environment (NoDecode: not parsed as JSON).
+    cors_origins: Annotated[list[str], NoDecode] = Field(default=["http://localhost:5173"])
+
+    # Serve the built frontend from this API (single-service deployments, e.g. Render). Empty = don't.
+    frontend_dist_dir: str = Field(default="", description="path to frontend/dist; the Docker image sets it")
+
+    # Largest request body accepted (OCR uploads are up to 5 MB).
+    max_request_bytes: int = 6 * 1024 * 1024
+
+    log_level: str = "INFO"
+
+    # ---- Authentication (must match the C# API so tokens work on both) ----
+    # Same value as the C# user-secret Jwt:Key. Required; no default.
+    jwt_secret_key: str = Field(default="", repr=False)
+    jwt_algorithm: str = "HS256"
+    jwt_issuer: str = "SmartRationHSD2C"
+    jwt_audience: str = "SmartRationHSD2C.Clients"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 7
+    # Upgrade a user's BCrypt hash to Argon2id after a successful login.
+    password_upgrade_to_argon2: bool = True
+    # Per client IP, per minute, shared by login + register (same as the C# "auth" policy).
+    auth_rate_limit_per_minute: int = 10
+
+    # ---- Public Help chatbot ----
+    # "knowledge" = retrieval over the reviewed knowledge base (no external service).
+    chatbot_provider: str = "knowledge"
+    # Reserved for a future generative provider; unused by "knowledge". Never commit a real key.
+    chatbot_api_key: str = Field(default="", repr=False)
+    chatbot_rate_limit_per_minute: int = 30
+    public_help_rate_limit_per_minute: int = 120
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def split_origins(cls, value):
+        # Accept a comma-separated string from the environment.
+        if isinstance(value, str) and not value.startswith("["):
+            return [v.strip() for v in value.split(",") if v.strip()]
+        return value
+
+    @field_validator("legacy_api_url", "ai_service_url")
+    @classmethod
+    def default_scheme(cls, value: str) -> str:
+        # Hosting blueprints (Render's fromService "host") give a bare host name: assume HTTPS.
+        value = value.strip()
+        return f"https://{value}" if value and "://" not in value else value
+
+    @field_validator("jwt_secret_key")
+    @classmethod
+    def strong_key(cls, value: str) -> str:
+        if value and len(value) < 32:
+            raise ValueError("JWT_SECRET_KEY must be at least 32 characters")
+        return value
+
+    @property
+    def is_production(self) -> bool:
+        return self.environment.lower() == "production"
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()  # type: ignore[call-arg]  # required values come from the environment / .env

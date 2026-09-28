@@ -15,15 +15,15 @@ area is migrated and end-to-end testing passes.
 |---|---|
 | Controllers | FastAPI routers (`app/api/`) |
 | Services | `app/services/` |
-| EF entities | SQLAlchemy models (`app/db/models.py`) |
+| EF entities | SQLAlchemy models (`app/models/`) |
 | DTOs + DataAnnotations | Pydantic schemas (`app/schemas/`) |
-| EF Core migrations | Alembic (`app/db/migrations/`; `0001_initial` = the existing schema, live DB stamped) |
-| appsettings + user-secrets | `.env` + pydantic-settings (`app/core/config.py`) |
+| EF Core migrations | Alembic (`migrations/`; `0001_initial` = the existing schema, live DB stamped) |
+| appsettings + user-secrets | `.env` + pydantic-settings (`app/config/settings.py`) |
 | ExceptionHandlingMiddleware / ApiException | exception handlers / `ApiError` (`app/core/errors.py`) |
-| JWT bearer + BCrypt | PyJWT (same claims) + bcrypt verify, Argon2id rehash on login (`app/core/security.py`) |
-| [Authorize(Roles=...)] | `get_current_user` / `require_roles` (`app/core/dependencies.py`) |
+| JWT bearer + BCrypt | PyJWT (same claims) + bcrypt verify, Argon2id rehash on login (`app/security/tokens.py`) |
+| [Authorize(Roles=...)] | `get_current_user` / `require_roles` (`app/api/dependencies/auth.py`) |
 | DataAnnotations | `app/core/validation.py` (same messages as the C# API) |
-| Rate limiter | in-process fixed window per IP (`app/core/rate_limit.py`) |
+| Rate limiter | in-process fixed window per IP (`app/security/rate_limit.py`) |
 | HttpClient (AI service) | direct import of the merged AI package (Step: AI) |
 | ILogger | JSON logging with request id (`app/core/logging.py`) |
 

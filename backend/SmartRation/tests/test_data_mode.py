@@ -11,15 +11,8 @@ import pytest
 from fastapi.testclient import TestClient
 from py_testkit import make_settings
 
-from app.data_providers import (
-    BLOCKED,
-    IntegrationNotAvailable,
-    RealDataProvider,
-    SyntheticDataProvider,
-    check_data_mode,
-    get_data_provider,
-)
 from app.main import create_app
+from app.services.data_provider import BLOCKED, IntegrationNotAvailable, RealDataProvider, SyntheticDataProvider, check_data_mode, get_data_provider
 
 ROOT = Path(__file__).resolve().parents[1]
 

@@ -14,9 +14,10 @@ from alembic.script import ScriptDirectory  # noqa: E402
 from sqlalchemy import create_engine, inspect, text  # noqa: E402
 from sqlalchemy.engine import Engine, make_url  # noqa: E402
 
-import app.db.models  # noqa: E402,F401  (register tables)
-from app.core.config import get_settings  # noqa: E402
-from app.db.database import Base  # noqa: E402
+import app.models  # noqa: E402,F401  (register tables)
+from app.config.settings import get_settings  # noqa: E402
+from app.database.base import Base  # noqa: E402
+from app.database.migrations import MIGRATIONS_DIR  # noqa: E402
 
 EXPECTED_DATABASE = "smartration"
 LEGACY_MARKER_TABLE = "__efmigrationshistory"  # created by the C# API's EF Core migrations
@@ -44,7 +45,7 @@ def database_name(url: str) -> str:
 
 def alembic_config() -> Config:
     cfg = Config(str(ROOT / "alembic.ini"))
-    cfg.set_main_option("script_location", str(ROOT / "app" / "db" / "migrations"))
+    cfg.set_main_option("script_location", str(MIGRATIONS_DIR))
     return cfg
 
 

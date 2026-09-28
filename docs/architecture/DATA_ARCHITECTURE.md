@@ -17,7 +17,7 @@
 
 | Concern | Interface | Synthetic implementation (today) | Real implementation |
 |---|---|---|---|
-| New citizen's household, beneficiary, verifications (Python) | `DataProvider` (`app/data_providers`) | `SyntheticDataProvider` | `RealDataProvider` — refuses |
+| New citizen's household, beneficiary, verifications (Python) | `DataProvider` (`app/services/data_provider.py`) | `SyntheticDataProvider` | `RealDataProvider` — refuses |
 | Aadhaar verification (C#) | `IAadhaarVerificationService` | `SyntheticAadhaarVerificationService` | not implemented — startup refused |
 | Passbook / ration-card registry (C#) | `IPassbookVerificationService` | `SyntheticPassbookVerificationService` | not implemented — startup refused |
 | OTP (C#) | `IOtpService`, `ISmsProvider` | `SyntheticOtpService`, `MockSmsProvider` | `HttpSmsProvider` exists (gateway config required); refused outside Development if mocks are on |

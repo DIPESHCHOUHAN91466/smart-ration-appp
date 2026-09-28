@@ -2,7 +2,7 @@
 
 **Not used today.** The live assistant (`CHATBOT_PROVIDER=knowledge`) answers only from
 `../knowledge/*.json` and never calls a language model. This template documents the contract a future
-`LLMChatbotProvider` must follow; see `backend/SmartRation/app/chatbot/providers.py`.
+`LLMChatbotProvider` must follow; see `backend/SmartRation/app/ai/chatbot/providers.py`.
 
 Order of operations for that provider (the safety rules stay in code, before any model call):
 1. Run `Assistant.reply()`; if the result is not `answer`/`fallback` (i.e. privacy, sensitive input,

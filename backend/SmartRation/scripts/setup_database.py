@@ -40,8 +40,8 @@ from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.db.database import Base
-from app.db.schema_utils import comparable_metadata
+from app.database.base import Base
+from app.database.schema_utils import comparable_metadata
 
 BASELINE = "0001_initial"
 
