@@ -39,7 +39,7 @@ def run(tmp_path):
     stub.chmod(0o755)
 
     def invoke(**extra: str) -> subprocess.CompletedProcess:
-        # Start from a clean slate: other suites (tests/mysql) load a .env with DB_NAME/DB_HOST into this process.
+        # Start from a clean slate: other suites (tests/integration/mysql) load a .env with DB_NAME/DB_HOST into this process.
         inherited = {k: v for k, v in os.environ.items() if not k.startswith(("DB_", "MYSQL_")) and k not in ("BACKUP_DIR", "KEEP_DAYS")}
         env = {**inherited, "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}", "STUB_LOG": str(log),
                "DB_NAME": "smartration", "DB_USER": "backup_user", "DB_PASSWORD": "s3cret-Pa55", "BACKUP_DIR": str(tmp_path / "backups"), **extra}

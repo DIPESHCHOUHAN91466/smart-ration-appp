@@ -1,5 +1,6 @@
 // End-to-end smoke tests (Playwright) against the RUNNING stack: frontend :5173 -> Python API :8000 ->
-// C# API :5188 -> MySQL. Start it first (.\sr.ps1 run), then: npm run test:e2e
+// C# API :5188 -> MySQL. Start it first (.\sr.ps1 run), then here in tests/e2e: npm install (once), npm test.
+// A small Node project of its own, so browser tests of the whole system don't live inside one app.
 // Uses the Microsoft Edge already installed on Windows (no browser download); set E2E_BROWSER=chromium
 // to use Playwright's own Chromium instead (after `npx playwright install chromium`).
 import { defineConfig, devices } from "@playwright/test";
@@ -7,7 +8,7 @@ import { defineConfig, devices } from "@playwright/test";
 const channel = process.env.E2E_BROWSER === "chromium" ? undefined : "msedge";
 
 export default defineConfig({
-  testDir: "e2e",
+  testDir: ".",
   timeout: 30_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,

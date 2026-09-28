@@ -45,7 +45,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 |---|---|---|
 | `smartration`: 25 tables, Alembic `0001_initial`, 0 drift | PASS | `verify_database.py` |
 | MySQL suite on `smartration_test` (CRUD, injection, performance, concurrency, errors, integrity, 1000 records, concurrency 10/25/50/100) | PASS | 145/145 via `run-tests.ps1 -MySql`; see [docs/testing/DATABASE_TESTING_COMPLETION_REPORT.md](../docs/testing/DATABASE_TESTING_COMPLETION_REPORT.md) |
-| Root `tests/mysql` | PARTIAL | 24/24 with the correct password; your root `.env` `DB_PASSWORD` is still wrong |
+| Root `tests/integration/mysql` | PARTIAL | 24/24 with the correct password; your root `.env` `DB_PASSWORD` is still wrong |
 | Backup | PASS (2026-09-24) · Restore | NOT TESTED |
 
 ## Authentication

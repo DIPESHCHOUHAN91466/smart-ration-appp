@@ -36,6 +36,7 @@ done
 
 echo "== Frontend"
 run "npm install" "$ROOT/frontend" npm install --no-fund --no-audit
+run "npm install (end-to-end tests)" "$ROOT/tests/e2e" npm install --no-fund --no-audit
 echo "== C# API"
 run "dotnet restore SmartRation.sln" "$ROOT" dotnet restore SmartRation.sln --nologo -v q
 

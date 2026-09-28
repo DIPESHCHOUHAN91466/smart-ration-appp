@@ -165,39 +165,41 @@ Smart Ration adopts a **frozen hybrid architecture**: ASP.NET Core 8 powers high
 
 ```
 Smart_Ration_HSD2C_Final/
-├── frontend/                     # React 18 web application              → frontend/README.md
-│   ├── src/components/           # Reusable UI & Chatbot widget          → frontend/src/components/README.md
-│   ├── src/pages/                # Role dashboards (Citizen, Shop, Admin)→ frontend/src/pages/README.md
-│   ├── src/api/ + src/services/  # HTTP client + one module per API area → frontend/src/services/README.md
-│   ├── src/state/                # Zustand stores + toasts               → frontend/src/state/README.md
+├── .github/workflows/            # CI: lint, tests, MySQL suite, integrity, contracts, security audit, images
+├── .vscode/                      # One workspace: tasks, debug configs, extensions   → .vscode/README.md
+├── frontend/                     # React 18 + Vite web app (en/hi/mr)                → frontend/README.md
+│   ├── src/pages/ layouts/ components/   # UI: role dashboards, shells, reusable widgets
+│   ├── src/api/ services/        # HTTP client (JWT, refresh) + one module per API area
+│   ├── src/state/                # Zustand stores + toasts
 │   ├── src/features/             # qr, auth, chatbot logic (no UI)
-│   ├── src/config/ utils/ types/ # env settings, formatting, JSDoc API types
-│   ├── src/i18n/                 # English, Hindi, and Marathi locales   → frontend/src/i18n/README.md
-│   ├── tests/                    # Vitest unit & component tests         → frontend/tests/README.md
-│   └── e2e/                      # Playwright end-to-end browser tests   → frontend/e2e/README.md
-├── backend/                      # Backend microservices & tests         → backend/README.md
-│   ├── SmartRation.Api/          # C# ASP.NET Core business API (:5188)  → backend/SmartRation.Api/README.md
-│   ├── SmartRation.Api.Tests/    # C# xUnit test suite (104 tests)       → backend/SmartRation.Api.Tests/README.md
-│   ├── SmartRation/       # Python FastAPI Gateway & Auth (:8000) → backend/SmartRation/README.md
-│   │   ├── app/ai/chatbot/          # Modular chatbot intent & engine
-│   │   ├── app/synthetic/        # Synthetic data generation engine
-│   │   └── tests/                # unit/ api/ integration/ security/ performance/ → backend/SmartRation/tests/README.md
-├── mobile/                       # Expo / React Native mobile client     → mobile/README.md
-├── database/                     # Everything about MySQL that isn't app code → database/README.md
-│   ├── schema/                   # Generated schema SQL + one-time setup script
-│   ├── migrations/               # Generated SQL per Alembic revision (for DBAs)
-│   ├── seeds/                    # Synthetic reference data; REAL_DATA.md  → database/seeds/README.md
-│   └── queries/                  # Read-only data-integrity checks
-├── ai/                           # AI analytics service (:8001) + chatbot content → ai/README.md
+│   ├── src/config/ utils/ types/ hooks/ i18n/ styles/ assets/
+│   └── tests/                    # Vitest unit + component tests
+├── backend/
+│   ├── SmartRation/              # Python gateway (:8000): auth, Public Help, chatbot, proxy, website
+│   │   ├── app/api/{routes,dependencies}  app/{config,core,schemas,services,repositories}
+│   │   ├── app/{models,database,security,middleware,ai/chatbot,workers,utils,synthetic}
+│   │   ├── migrations/           # Alembic — the schema's source of truth
+│   │   ├── scripts/              # setup / verify / seed / reset / integrity / export
+│   │   └── tests/                # unit/ api/ integration/ security/ performance/
+│   ├── SmartRation.Api/          # C# ASP.NET Core business API (:5188)              → backend/SmartRation.Api/README.md
+│   └── SmartRation.Api.Tests/    # xUnit (136 tests)
+├── ai/                           # AI analytics service (:8001) + chatbot content    → ai/README.md
 │   ├── configs/ preprocessing/ models/ training/ evaluation/ inference/ postprocessing/ pipelines/ api/
-│   └── chatbot/                  # Knowledge base (en/hi/mr), evaluation set, prompts
-├── tests/                        # Cross-cutting integration tests       → tests/README.md
-│   └── mysql/                    # Direct live MySQL test suite          → tests/mysql/README.md
-├── scripts/                      # development/ database/ testing/ deployment/ → scripts/README.md
-├── docs/                         # Architecture, API & security specs    → docs/README.md
-├── deployment/                   # Docker Compose & Nginx configurations → deployment/README.md
-├── sr.ps1                        # Unified developer CLI tool
-└── render.yaml                   # Render blueprint (staging demo)       → docs/deployment/RENDER.md
+│   └── chatbot/                  # knowledge base (en/hi/mr), evaluation set, prompts
+├── database/                     # MySQL outside app code                            → database/README.md
+│   ├── schema/  migrations/      # generated SQL (whole schema, per revision) + setup script
+│   ├── seeds/                    # synthetic reference data; REAL_DATA.md
+│   └── queries/                  # read-only data-integrity checks
+├── tests/                        # cross-component                                   → tests/README.md
+│   ├── e2e/  smoke/              # browser journeys (Playwright); post-deploy checks
+│   └── integration/mysql/  regression/
+├── scripts/                      # development/ database/ testing/ deployment/       → scripts/README.md
+├── deployment/                   # docker/ staging/ production/ nginx/ scripts/      → deployment/README.md
+├── docs/                         # architecture, api, database, security, testing, deployment, user-guides
+├── mobile/                       # Expo starter — planned, not connected yet         → mobile/README.md
+├── ARCHITECTURE.md  DEVELOPMENT.md  TESTING.md  DEPLOYMENT.md  SECURITY.md  CONTRIBUTING.md  CHANGELOG.md
+├── sr.ps1                        # one developer command: .\sr.ps1 help
+└── render.yaml                   # Render blueprint (staging demo)                   → docs/deployment/RENDER.md
 ```
 
 ---

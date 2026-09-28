@@ -33,8 +33,16 @@
       "label": "Smart Ration: E2E Tests",
       "detail": "Playwright browser tests against the running stack (start it first: Smart Ration: Run Full Stack)",
       "type": "shell",
-      "command": "npm run test:e2e",
-      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "command": "npm test",
+      "options": { "cwd": "${workspaceFolder}/tests/e2e" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Smart Ration: Regression Tests",
+      "detail": "C# / Python / JavaScript contracts that must agree (tests/regression); no services needed",
+      "type": "shell",
+      "command": "backend/SmartRation/.venv/Scripts/python -m pytest tests/regression",
+      "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     },
     {

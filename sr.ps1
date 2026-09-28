@@ -36,7 +36,7 @@ switch ($Command.ToLowerInvariant()) {
     "health"    { Script "development\health-check.ps1" }
     "audit"     { Script "development\audit-dependencies.ps1" }             # known vulnerabilities in every dependency
     "test"      { Script "testing\run-tests.ps1" }                   # add -MySql / -Quick
-    "e2e"       { InDir (Join-Path $root "frontend") { npm run test:e2e @Rest }; exit $LASTEXITCODE }
+    "e2e"       { InDir (Join-Path $root "tests\e2e") { npm test -- @Rest }; exit $LASTEXITCODE }
     "load"      { InDir $py { & $pyExe scripts\load_test.py @Rest }; exit $LASTEXITCODE }          # --users 10 100 1000 (the stack must be running)
     "build" {
         Step "C# (SmartRation.sln, Release)" { InDir $root { dotnet build SmartRation.sln -c Release --nologo -v q } }

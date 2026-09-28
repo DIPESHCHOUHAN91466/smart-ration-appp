@@ -32,13 +32,14 @@ function Run([string]$Name, [string]$Directory, [scriptblock]$Command) {
 $py = Join-Path $root "backend\SmartRation"
 Run "Python backend" $py { & .venv\Scripts\python -m pytest -p no:warnings }
 Run "Chatbot evaluation" $py { & .venv\Scripts\python -m app.ai.chatbot.evaluate }
+Run "Cross-component regression (tests/regression)" $root { & "$py\.venv\Scripts\python" -m pytest tests/regression -p no:warnings }
 
 if ($MySql) {
     $url = & "$py\.venv\Scripts\python" "$py\scripts\test_database_url.py"   # password stays in this variable only
     if ($LASTEXITCODE -ne 0 -or -not $url) { throw "Could not build TEST_DATABASE_URL from backend\SmartRation\.env" }
     $env:TEST_DATABASE_URL = $url
     Run "MySQL suite (smartration_test)" $py { & .venv\Scripts\python -m pytest tests/integration/mysql_suite -p no:warnings }
-    Run "Root MySQL tests (tests/mysql)" $root { & "$py\.venv\Scripts\python" -m pytest tests/mysql -p no:warnings }
+    Run "Root MySQL tests (tests/integration/mysql)" $root { & "$py\.venv\Scripts\python" -m pytest tests/integration/mysql -p no:warnings }
     Remove-Item Env:TEST_DATABASE_URL
 }
 
@@ -56,7 +57,7 @@ if (-not $Quick) {
 }
 
 if ($E2E) {
-    Run "End-to-end (Playwright)" (Join-Path $root "frontend") { npm run test:e2e --silent }
+    Run "End-to-end (Playwright, tests/e2e)" (Join-Path $root "tests\e2e") { npm test --silent }
     Run "Smoke test (local stack)" $root { & "$py\.venv\Scripts\python" -m pytest tests/smoke -p no:warnings --base-url http://127.0.0.1:8000 }
 }
 

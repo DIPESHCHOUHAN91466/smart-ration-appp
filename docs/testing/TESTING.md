@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | Python backend unit/API | `backend/SmartRation/tests/` | SQLite temp files | 221 | `.venv\Scripts\python -m pytest` (in that folder) |
 | MySQL suite (100 adversarial + 1000 generated records; concurrency 10/25/50/100) | `backend/SmartRation/tests/integration/mysql_suite/` | `smartration_test` | 146 | set `TEST_DATABASE_URL`, then `… -m pytest tests/integration/mysql_suite` |
-| Root MySQL tests | `tests/mysql/` | `smartration_test` (root `.env`) | 24 | from the repo root: `backend\SmartRation\.venv\Scripts\python -m pytest tests/mysql` |
+| Root MySQL tests | `tests/integration/mysql/` | `smartration_test` (root `.env`) | 24 | from the repo root: `backend\SmartRation\.venv\Scripts\python -m pytest tests/integration/mysql` |
 | AI service | `ai/tests/` | SQLite | 58 | `.venv\Scripts\python -m pytest` (in `ai/`; lint: `ruff check ai` from the root) |
 | C# API | `backend/SmartRation.Api.Tests/` | in-memory (SQLite) | 130 | `dotnet test SmartRation.sln -c Release` (repository root) |
 | Frontend | `frontend/tests/unit/` | jsdom | 45 | `npm test` (in `frontend`) |
@@ -23,10 +23,10 @@ Everything Python can also be collected from the repository root with the Python
 |---|---|
 | Authentication, refresh rotation, Argon2 upgrade, cross-backend tokens | `test_auth.py`, `auth_interop.py`, C# `PasswordHashesTests` |
 | Authorization (roles) | `test_auth.py`, C# service tests |
-| SQL injection | MySQL suite `test_03_security.py` (16 payloads × API/ORM/raw driver), `tests/mysql/test_crud.py` |
+| SQL injection | MySQL suite `test_03_security.py` (16 payloads × API/ORM/raw driver), `tests/integration/mysql/test_crud.py` |
 | Rate limiting | `test_auth.py`, `test_public_help_api.py` |
 | Schema, migrations, drift | `test_schema_compat.py`, `test_db_scripts.py`, `verify_database.py`, MySQL suite `test_01` |
-| CRUD, transactions, integrity, concurrency | MySQL suite `test_02`, `test_05`, `test_07`, `test_08_scale` (1000 records; 10/25/50/100 concurrent reads, creates, updates, bookings, stock issues); `tests/mysql/*` |
+| CRUD, transactions, integrity, concurrency | MySQL suite `test_02`, `test_05`, `test_07`, `test_08_scale` (1000 records; 10/25/50/100 concurrent reads, creates, updates, bookings, stock issues); `tests/integration/mysql/*` |
 | Synthetic data generator (determinism, reserved ranges, validation, insert, CLI guards) | `test_synthetic_data.py` |
 | Error handling, logging without secrets | MySQL suite `test_06`, `test_health_and_errors.py` |
 | Proxy parity with C# | `test_proxy.py`, `compare_proxy.py` |

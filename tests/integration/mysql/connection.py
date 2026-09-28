@@ -1,4 +1,4 @@
-"""Connections for the root-level MySQL tests (tests/mysql).
+"""Connections for the root-level MySQL tests (tests/integration/mysql).
 
 Settings come from config.DB_CONFIG (TEST_DATABASE_URL, else the backend's DATABASE_URL pointed at
 smartration_test, else legacy DB_* - see config.py). Only databases whose name ends in `_test` are allowed, so these tests can

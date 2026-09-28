@@ -1,0 +1,14 @@
+{
+  "name": "smart-ration-e2e",
+  "private": true,
+  "version": "1.0.0",
+  "description": "End-to-end browser tests of the running Smart Ration stack (Playwright, installed Microsoft Edge)",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:list": "playwright test --list"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

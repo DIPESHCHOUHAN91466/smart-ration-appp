@@ -6,7 +6,7 @@
   1. Checks the required tools: Python 3.12+, .NET 8 SDK, Node.js 18+ and npm (stops if one is missing).
   2. Python API and AI service: creates each .venv if missing (or rebuilds it if it was created in another
      folder, i.e. the project was moved), then installs its requirements.
-  3. Frontend: npm install.
+  3. Frontend and end-to-end tests (tests\e2e): npm install.
   4. C#: dotnet restore SmartRation.sln.
   5. .env files: copies each .env.example to .env ONLY when .env does not exist (never overwrites).
      The copies contain placeholders: fill in the database password and secrets yourself.
@@ -75,6 +75,7 @@ foreach ($svc in @(
 # ------------------------------------------------------------------ 3. frontend
 Step "Frontend"
 Invoke-Checked "npm install" (Join-Path $root "frontend") { npm install --no-fund --no-audit }
+Invoke-Checked "npm install (end-to-end tests)" (Join-Path $root "tests\e2e") { npm install --no-fund --no-audit }
 
 # ------------------------------------------------------------------ 4. C#
 Step "C# API"

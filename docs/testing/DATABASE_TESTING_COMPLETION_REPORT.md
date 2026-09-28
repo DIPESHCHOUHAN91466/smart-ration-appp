@@ -27,7 +27,7 @@ scenarios described; it is not a guarantee of production behaviour, which needs 
 | Frontend | 39 | 39 | 0 | 0 |
 | End-to-end (Playwright, running stack) | 9 | 9 | 0 | 0 |
 | **Total** | **612** | **612** | **0** | — |
-| Root `tests/mysql` (24) | — | — | — | **NOT RUN** — root `.env` `DB_PASSWORD` is wrong (owner action) |
+| Root `tests/integration/mysql` (24) | — | — | — | **NOT RUN** — root `.env` `DB_PASSWORD` is wrong (owner action) |
 | MySQLi | — | — | — | **NOT APPLICABLE** |
 
 Command: `.\scripts\testing\run-tests.ps1 -MySql` (exit 0). Note: that full run took 89 minutes for the
@@ -88,7 +88,7 @@ Timings vary run to run and depend on the machine; they describe this run only.
 
 ## Remaining risks (documented, not fixed here)
 
-1. Root `.env` `DB_PASSWORD` is wrong → root `tests/mysql` can't run (owner action).
+1. Root `.env` `DB_PASSWORD` is wrong → root `tests/integration/mysql` can't run (owner action).
 2. CI not executed (branch not pushed). The Docker image was built and run locally on 2026-09-25; `docker compose up` was not run.
 3. Refresh token stored in `localStorage`; JWT key present in old git history (rotate before public use).
 4. No end-to-end browser tests; 41 older dashboard components still English-only.

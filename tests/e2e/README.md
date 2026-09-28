@@ -1,4 +1,4 @@
-# frontend/e2e — End-to-End Browser Tests (Playwright)
+# tests/e2e — End-to-End Browser Tests (Playwright)
 
 Automated end-to-end browser tests verifying user-facing journeys, accessibility, language localization, and API interactions in the Microsoft Edge installed on Windows (Playwright `channel: "msedge"`, no browser download).
 
@@ -20,10 +20,13 @@ The full application stack should be running:
 
 ## Running E2E Tests
 
-From the `frontend` directory:
+This folder is a small Node project of its own (`package.json`, `playwright.config.js`), so the browser tests of
+the whole system don't live inside one app. From `tests/e2e`:
 ```bash
-npm run test:e2e
+npm install        # first time only (setup.ps1 does it too)
+npm test
 ```
+(`npm run test:e2e` in `frontend/` forwards here.)
 
 To run with interactive UI mode:
 ```bash

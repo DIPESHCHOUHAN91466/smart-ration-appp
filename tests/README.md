@@ -1,31 +1,32 @@
 # tests — cross-component tests
 
-**What is this?** Tests that don't belong to one application: `mysql/` (connection, schema, CRUD and
-transaction tests run directly against the `smartration_test` MySQL database) and `smoke/` (a read-only
-post-deployment check of a running stack or public URL: health, readiness, database, chatbot, auth
-enforcement, security headers, the website — `pytest tests/smoke --base-url <url>`; skipped without a URL).
+**What:** tests that span components — the whole stack in a browser, a deployment from the outside, the
+shared MySQL database, and the contracts between C#, Python and JavaScript. **Why:** each app's own tests
+can only see that app; these catch what breaks between them.
 
-**Why does it exist?** Some checks are about the shared database itself rather than one backend.
+| Folder | What it tests | Needs | Run (repository root) |
+|---|---|---|---|
+| `e2e/` | browser journeys through frontend → gateway → C# API → MySQL (Playwright, installed Edge, desktop + phone; never signs in) | the stack running (`.\sr.ps1 run`) | `.\sr.ps1 e2e` (first time: `npm install` in `tests\e2e`) |
+| `smoke/` | a deployment from the outside: health, readiness, database, chatbot, auth enforcement, security headers, the website | a URL | `.\sr.ps1 smoke <url>` or `pytest tests/smoke --base-url <url>` (skipped without one) |
+| `integration/mysql/` | the shared MySQL server directly: connection, `utf8mb4`, schema (InnoDB, keys, indexes), CRUD, transactions, SQL-injection payloads | `smartration_test` | `backend\SmartRation\.venv\Scripts\python -m pytest tests/integration/mysql` |
+| `regression/` | values C#, Python and JS must agree on (enums, QR contract, roles, ration types) + the register of every fixed bug and its test | nothing | `backend\SmartRation\.venv\Scripts\python -m pytest tests/regression` |
 
-**Where the other tests live** (each next to the code it tests):
+`pytest` from the repository root (with `backend\SmartRation\.venv`) runs the gateway, AI service, MySQL
+and regression suites together (`pytest.ini`); `.\scripts\testing\run-tests.ps1 -MySql -E2E` runs everything.
 
-| Suite | Location | Count |
+**Where the other tests live** (next to the code they test):
+
+| Suite | Location | Count (2026-09-28) |
 |---|---|---|
-| Python API (unit + API) | `backend/SmartRation/tests/` | 164 |
-| MySQL suite (100 records: CRUD, injection, performance, concurrency, errors, integrity) | `backend/SmartRation/tests/integration/mysql_suite/` | 122 |
-| Contract tests (C# vs. Python, live) | `backend/SmartRation/tests/contract/` | 36 + 23 checks |
-| Chatbot evaluation | `ai/chatbot/evaluation/` (+ `app.ai.chatbot.evaluate`) | 67 cases |
+| Python gateway: unit, api, integration, security, performance | `backend/SmartRation/tests/` | 296 (+145 MySQL-only, skipped without `TEST_DATABASE_URL`) |
+| MySQL suite (CRUD, injection, 1,000 records, concurrency 10–100, integrity) | `backend/SmartRation/tests/integration/mysql_suite/` | 146 |
+| Contract tools (C# vs Python, live, manual) | `backend/SmartRation/tests/contract/` | — |
+| Chatbot evaluation | `ai/chatbot/evaluation/` (`python -m app.ai.chatbot.evaluate`) | 67 cases |
 | AI service | `ai/tests/` | 58 |
-| C# API | `backend/SmartRation.Api.Tests/` | 94 |
-| Frontend | `frontend/tests/unit/` | 36 |
+| C# API | `backend/SmartRation.Api.Tests/` | 136 |
+| Frontend unit + component | `frontend/tests/unit/` | 51 |
 
-**What belongs here:** tests that span components. **What does NOT:** tests of a single app (keep them
-next to that app); anything that touches the real `smartration` database — every MySQL test refuses a
-database whose name doesn't end in `_test`.
+**Does NOT belong here:** tests of a single app (keep them next to that app); anything that touches the
+real `smartration` database — every MySQL test refuses a database whose name doesn't end in `_test`.
 
-**How do I run it?** Everything: `.\scripts\testing\run-tests.ps1` (add `-MySql` for database suites).
-This folder only, from the repo root: `backend\SmartRation\.venv\Scripts\python -m pytest tests/mysql`
-(needs `DB_*` in the root `.env`, `DB_NAME=smartration_test`).
-
-The empty `backend/`, `frontend/`, `e2e/` folders are placeholders from the original scaffold; there are
-no end-to-end (browser automation) tests yet. Strategy: [../docs/testing/TESTING.md](../docs/testing/TESTING.md).
+Strategy: [../docs/testing/TESTING.md](../docs/testing/TESTING.md).
