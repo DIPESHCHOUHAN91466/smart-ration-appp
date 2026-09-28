@@ -1,8 +1,8 @@
 import emblem from "../assets/ration-mitra-emblem.png";
 import hsd2cLogo from "../assets/hsd2c-logo.png";
 
-// Logo 1 — the Ration Mitra emblem: a pixel crop (not a redraw) of the supplied logo
-// src/assets/ration-mitra-logo.webp, on its own black background. Shown at the top of every
+// Logo 1 — the Ration Mitra emblem: a pixel crop (not a redraw) of the supplied light logo
+// src/assets/ration-mitra-logo.webp (2026-09-28), on white. Shown at the top of every
 // header (public site, login, register, dashboard sidebar) next to the product name. The chatbot
 // uses the same emblem, smaller (Logo 2, ChatbotAvatar). Decorative: the name is always next to it.
 export default function BrandMark({ variant = "" }) {

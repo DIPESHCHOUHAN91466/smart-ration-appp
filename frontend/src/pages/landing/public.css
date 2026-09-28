@@ -105,7 +105,7 @@
 
 .land-help { background: linear-gradient(135deg, #063B7A, #0757B8 60%, #0A6ED1); color: #fff; }
 .land-help-inner { max-width: 1100px; margin: 0 auto; padding: 56px 24px; display: flex; align-items: center; gap: 36px; }
-.land-help-logo { width: 168px; height: 168px; flex: none; border-radius: 28px; object-fit: cover; box-shadow: 0 20px 44px #00163a66; }
+.land-help-logo { width: 224px; height: 168px; flex: none; border-radius: 28px; object-fit: contain; background: #fff; box-shadow: 0 20px 44px #00163a66; }
 .land-help h2 { margin: 0 0 10px; font-size: clamp(22px, 2.4vw, 30px); }
 .land-help p { margin: 0; color: #dbeafe; line-height: 1.6; max-width: 620px; font-size: 16px; }
 .land-btn.primary.light { background: #fff; color: #063B7A; }
@@ -201,7 +201,7 @@
   .land-qr { flex-direction: column; align-items: flex-start; padding: 22px; }
   .land-help-inner { flex-direction: column; text-align: center; padding: 44px 16px; }
   .land-help-inner .land-actions { justify-content: center; }
-  .land-help-logo { width: 128px; height: 128px; }
+  .land-help-logo { width: 171px; height: 128px; }
   .help-hero { padding: 40px 16px 36px; }
   .help-search { flex-wrap: wrap; padding: 8px; }
   .help-search input { flex: 1 1 0; }

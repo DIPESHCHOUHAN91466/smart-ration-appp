@@ -197,7 +197,7 @@ export default function LandingPage() {
       {/* ---------------------------------------------------------------- public help / assistant */}
       <section className="land-help" aria-labelledby="assist-title">
         <div className="land-help-inner">
-          <img src={rationMitraLogo} alt="Ration Mitra — AI powered, for every family. Powered by HSD2C" className="land-help-logo" width={168} height={168} />
+          <img src={rationMitraLogo} alt="Ration Mitra — AI powered, for every family. Powered by HSD2C" className="land-help-logo" width={224} height={168} />
           <div>
             <h2 id="assist-title">{t("land_help_title")}</h2>
             <p>{t("land_help_text")}</p>
