@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.core.errors import ok
 from app.core.validation import ValidationFailed, validate
-from app.database.session import get_db
+from app.database.connection import get_db
 from app.schemas.auth import (
     LOGIN_RULES,
     REFRESH_RULES,

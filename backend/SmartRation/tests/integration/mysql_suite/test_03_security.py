@@ -12,7 +12,7 @@ import pytest
 from sqlalchemy import func, inspect, select, text
 from sqlalchemy.dialects import mysql
 
-from app.models import User
+from app.database.models import User
 from mysql_suite.sample_data import INJECTION_PAYLOADS
 
 

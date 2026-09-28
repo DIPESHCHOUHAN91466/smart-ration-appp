@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 import ai.domain as ai_domain
-from app.models import enums as py_enums
+from app.database import enums as py_enums
 from app.services.public_help_service import UPCOMING_STATUSES
 
 ROOT = Path(__file__).resolve().parents[2]

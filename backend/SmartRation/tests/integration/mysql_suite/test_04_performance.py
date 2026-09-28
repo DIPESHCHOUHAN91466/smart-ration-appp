@@ -12,8 +12,8 @@ import tracemalloc
 from sqlalchemy import create_engine, delete, func, insert, select, text
 from sqlalchemy.pool import NullPool
 
-from app.models import User
-from app.models.enums import UserRole
+from app.database.enums import UserRole
+from app.database.models import User
 from app.utils.time import utc_now
 from mysql_suite.sample_data import people
 from mysql_suite.support import Timer

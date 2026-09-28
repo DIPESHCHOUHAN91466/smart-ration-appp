@@ -8,9 +8,9 @@ import pytest
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session, sessionmaker
 
-import app.models  # noqa: F401  (register tables)
+import app.database.models  # noqa: F401  (register tables)
 from app.database.base import Base
-from app.models import AuditLog, RationItem, RationScheme, RationShop, RefreshToken, SchemeEntitlementItem, TimeSlot, Token, User
+from app.database.models import AuditLog, RationItem, RationScheme, RationShop, RefreshToken, SchemeEntitlementItem, TimeSlot, Token, User
 from app.repositories import audit_logs, bookings, catalog, refresh_tokens, users
 from app.utils.time import utc_now
 

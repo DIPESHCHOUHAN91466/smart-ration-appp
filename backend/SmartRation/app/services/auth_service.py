@@ -19,8 +19,8 @@ from sqlalchemy.orm import Session
 
 from app.config.settings import Settings
 from app.core.errors import Conflict, Forbidden, Unauthorized
-from app.models import User
-from app.models.enums import UserRole
+from app.database.enums import UserRole
+from app.database.models import User
 from app.repositories import refresh_tokens, users
 from app.security.passwords import PasswordCheck, hash_password, verify_password
 from app.security.tokens import TokenUser, create_access_token, generate_refresh_token, hash_token

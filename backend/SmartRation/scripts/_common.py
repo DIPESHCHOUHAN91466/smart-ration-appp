@@ -14,7 +14,7 @@ from alembic.script import ScriptDirectory  # noqa: E402
 from sqlalchemy import create_engine, inspect, text  # noqa: E402
 from sqlalchemy.engine import Engine, make_url  # noqa: E402
 
-import app.models  # noqa: E402,F401  (register tables)
+import app.database.models  # noqa: E402,F401  (register tables)
 from app.config.settings import get_settings  # noqa: E402
 from app.database.base import Base  # noqa: E402
 from app.database.migrations import MIGRATIONS_DIR  # noqa: E402

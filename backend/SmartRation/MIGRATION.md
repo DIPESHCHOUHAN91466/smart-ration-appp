@@ -15,7 +15,7 @@ area is migrated and end-to-end testing passes.
 |---|---|
 | Controllers | FastAPI routers (`app/api/`) |
 | Services | `app/services/` |
-| EF entities | SQLAlchemy models (`app/models/`) |
+| EF entities | SQLAlchemy models (`app/database/models.py`) |
 | DTOs + DataAnnotations | Pydantic schemas (`app/schemas/`) |
 | EF Core migrations | Alembic (`migrations/`; `0001_initial` = the existing schema, live DB stamped) |
 | appsettings + user-secrets | `.env` + pydantic-settings (`app/config/settings.py`) |

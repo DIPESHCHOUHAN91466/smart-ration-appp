@@ -31,7 +31,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config.settings import get_settings
-from app.models import RationShop
+from app.database.models import RationShop
 from app.security.passwords import hash_password
 from app.synthetic import SyntheticDataError, book, collect, generate, insert, validate
 

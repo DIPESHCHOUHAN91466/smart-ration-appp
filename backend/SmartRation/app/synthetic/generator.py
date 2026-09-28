@@ -28,7 +28,16 @@ from sqlalchemy import CursorResult, func, select, update
 from sqlalchemy import insert as sql_insert
 from sqlalchemy.orm import Session
 
-from app.models import (
+from app.database.enums import (
+    AadhaarVerificationStatus,
+    EligibilityStatus,
+    FamilyRelationship,
+    Gender,
+    MobileVerificationStatus,
+    PassbookVerificationStatus,
+    UserRole,
+)
+from app.database.models import (
     AadhaarVerification,
     Beneficiary,
     Family,
@@ -47,15 +56,6 @@ from app.models import (
     Token,
     TokenItem,
     User,
-)
-from app.models.enums import (
-    AadhaarVerificationStatus,
-    EligibilityStatus,
-    FamilyRelationship,
-    Gender,
-    MobileVerificationStatus,
-    PassbookVerificationStatus,
-    UserRole,
 )
 from app.utils.time import utc_now
 

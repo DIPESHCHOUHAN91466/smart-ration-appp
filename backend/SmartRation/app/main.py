@@ -23,7 +23,7 @@ from app.api.routes.frontend import mount_frontend
 from app.config.settings import Settings, get_settings
 from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
-from app.database.session import configure_database
+from app.database.connection import configure_database
 from app.middleware.api_version import ApiVersionAliasMiddleware
 from app.middleware.http import install_middleware
 from app.security.rate_limit import FixedWindowLimiter

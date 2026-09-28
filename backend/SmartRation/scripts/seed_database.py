@@ -27,8 +27,8 @@ from _common import database_url, engine, safe_url
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
-from app.models.enums import RationType, UserRole
+from app.database.enums import RationType, UserRole
+from app.database.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
 from app.security.passwords import hash_password
 from app.utils.time import utc_now
 

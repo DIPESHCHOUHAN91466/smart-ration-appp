@@ -8,7 +8,7 @@ from pathlib import Path
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.database.session import get_engine
+from app.database.connection import get_engine
 
 # backend/SmartRation/migrations (Alembic); alembic.ini points at the same folder.
 MIGRATIONS_DIR = Path(__file__).resolve().parents[2] / "migrations"

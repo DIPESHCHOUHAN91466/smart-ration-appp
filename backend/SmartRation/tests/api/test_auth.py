@@ -12,8 +12,9 @@ import pytest
 from sqlalchemy import func, select
 
 from app.database.base import Base
-from app.database.session import get_engine, get_session_factory
-from app.models import (
+from app.database.connection import get_engine, get_session_factory
+from app.database.enums import UserRole
+from app.database.models import (
     AadhaarVerification,
     AuditLog,
     Beneficiary,
@@ -25,7 +26,6 @@ from app.models import (
     RefreshToken,
     User,
 )
-from app.models.enums import UserRole
 from app.security.tokens import NAME_CLAIM, ROLE_CLAIM, TokenUser, create_access_token, hash_token
 from app.utils.time import utc_now
 

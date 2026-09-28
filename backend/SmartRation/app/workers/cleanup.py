@@ -26,7 +26,7 @@ from sqlalchemy.orm import Session
 
 from app.config.settings import get_settings
 from app.core.logging import configure_logging
-from app.database.session import get_session_factory
+from app.database.connection import get_session_factory
 from app.repositories import refresh_tokens
 from app.utils.time import utc_now
 

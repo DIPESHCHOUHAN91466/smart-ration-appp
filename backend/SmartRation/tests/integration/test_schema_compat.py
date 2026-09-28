@@ -13,7 +13,7 @@ from py_testkit import live_database_url
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import OperationalError
 
-import app.models  # noqa: F401
+import app.database.models  # noqa: F401
 from app.database.base import Base
 from app.database.schema_utils import comparable_metadata
 

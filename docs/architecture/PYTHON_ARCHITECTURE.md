@@ -28,10 +28,10 @@ app/
 │                        data_provider (Synthetic now, Real = BLOCKED until a government integration exists)
 ├── repositories/        every SQL query, one module per aggregate (users, refresh_tokens, audit_logs,
 │                        catalog, bookings); add rows, never commit
-├── models/              SQLAlchemy models by domain (users, verification, beneficiaries, shops, schemes,
-│                        bookings, ai) + enums + column types; 25 tables
-├── database/            base (declarative Base), session (engine, pool, get_db), migrations (Alembic
-│                        revision helpers), schema_utils
+├── database/            connection.py (engine, pool, sessions, get_db) · models.py (all 25 tables, one
+│                        section per domain) · enums.py · types.py (MySQL column types) · base.py
+│                        (declarative Base) · migrations.py (Alembic revision helpers) · integrity.py ·
+│                        schema_utils.py
 ├── security/            passwords (Argon2id, BCrypt upgrade), tokens (JWT, refresh), rate_limit
 ├── middleware/          http (request id, access log, security headers, body-size limit), api_version (/api/v1)
 ├── ai/chatbot/          Public Help assistant: engine (safety + retrieval), knowledge loader, providers, evaluate

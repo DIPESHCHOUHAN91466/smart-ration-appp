@@ -7,10 +7,10 @@ from datetime import timedelta
 import pytest
 from sqlalchemy import select
 
-import app.models  # noqa: F401  (register tables)
-from app.database import session as database
+import app.database.models  # noqa: F401  (register tables)
+from app.database import connection as database
 from app.database.base import Base
-from app.models import AuditLog, RefreshToken, User
+from app.database.models import AuditLog, RefreshToken, User
 from app.utils.time import utc_now
 from app.workers import cleanup
 

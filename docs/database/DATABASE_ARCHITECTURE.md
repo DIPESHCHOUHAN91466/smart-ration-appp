@@ -3,7 +3,7 @@
 MySQL 8, database `smartration`, charset utf8mb4, InnoDB. The application connects with a
 least-privilege account (`smartration_app`: DML + DDL on `smartration` only; no global
 privileges such as PROCESS or CREATE DATABASE). The Python models in
-`backend/SmartRation/app/models/` match the tables column for column; any drift
+`backend/SmartRation/app/database/models.py` match the tables column for column; any drift
 fails `tests/integration/test_schema_compat.py` and `scripts/verify_database.py`.
 
 On Windows, MySQL runs with `lower_case_table_names=1`, so tables are stored lowercase
@@ -21,7 +21,7 @@ New schema changes:
 
 ```
 cd backend\SmartRation
-# 1. edit app/models/
+# 1. edit app/database/models.py
 .venv\Scripts\alembic revision --autogenerate -m "short description"
 # 2. review the generated file: reversible downgrade, no data loss, batch-safe for big tables
 # 3. back up (BACKUP_RESTORE.md), then:
@@ -75,7 +75,7 @@ Aadhaar values are masked synthetic references (`XXXX-XXXX-####`).
 | VerificationAuditLogs | 13 | — | — |
 
 Totals: 24 foreign keys, 37 indexes (18 unique). Enums are stored as integers with the C# values
-(`app/models/enums.py`); decimals are `decimal(65,30)`; datetimes are `datetime(6)` naive UTC.
+(`app/database/enums.py`); decimals are `decimal(65,30)`; datetimes are `datetime(6)` naive UTC.
 
 ### Mapping to the target entities in the migration brief
 

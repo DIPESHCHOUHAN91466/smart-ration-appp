@@ -34,8 +34,8 @@ from sqlalchemy import func, inspect, select, text
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.database.base import Base
+from app.database.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, User
 from app.database.schema_utils import comparable_metadata
-from app.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, User
 
 IGNORED = {LEGACY_MARKER_TABLE, "alembic_version"}
 

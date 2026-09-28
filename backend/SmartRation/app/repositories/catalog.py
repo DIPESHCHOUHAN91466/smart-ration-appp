@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import RationItem, RationScheme, RationShop, SchemeEntitlementItem
+from app.database.models import RationItem, RationScheme, RationShop, SchemeEntitlementItem
 
 
 def active_shops(db: Session) -> Sequence[RationShop]:

@@ -22,7 +22,7 @@ from typing import Protocol
 
 from sqlalchemy.orm import Session
 
-from app.models import Beneficiary, User
+from app.database.models import Beneficiary, User
 
 BLOCKED = "BLOCKED — REQUIRES EXTERNAL INTEGRATION"
 DATA_MODES = ("synthetic", "real")

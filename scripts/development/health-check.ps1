@@ -91,9 +91,9 @@ $pyExe = Join-Path $pyDir ".venv\Scripts\python.exe"
 Check (Test-Path $pyExe) "Python API virtualenv" $(if (Test-Path $pyExe) { ".venv present" } else { "missing - run scripts\development\setup.ps1" }) "NOT CONFIGURED"
 if (Test-Path $pyExe) {
     Push-Location $pyDir
-    $imports = & $pyExe -c "import app.main, app.synthetic, app.database.session; print('ok')" 2>&1 | Select-Object -Last 1
+    $imports = & $pyExe -c "import app.main, app.synthetic, app.database.connection; print('ok')" 2>&1 | Select-Object -Last 1
     Pop-Location
-    Check ("$imports" -eq "ok") "Python API imports" $(if ("$imports" -eq "ok") { "app.main, app.synthetic, app.database.session" } else { "$imports" })
+    Check ("$imports" -eq "ok") "Python API imports" $(if ("$imports" -eq "ok") { "app.main, app.synthetic, app.database.connection" } else { "$imports" })
     $pytest = & $pyExe -m pytest --version 2>&1 | Select-Object -First 1
     Check ("$pytest" -match "^pytest \d") "pytest" $(if ("$pytest" -match "^pytest \d") { "$pytest" } else { "missing - pip install -r requirements-dev.txt" }) "NOT CONFIGURED"
 }

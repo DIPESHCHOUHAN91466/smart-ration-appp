@@ -177,7 +177,7 @@ Smart_Ration_HSD2C_Final/
 ├── backend/
 │   ├── SmartRation/              # Python gateway (:8000): auth, Public Help, chatbot, proxy, website
 │   │   ├── app/api/{routes,dependencies}  app/{config,core,schemas,services,repositories}
-│   │   ├── app/{models,database,security,middleware,ai/chatbot,workers,utils,synthetic}
+│   │   ├── app/database/{connection,models,enums,types}.py  app/{security,middleware,ai/chatbot,workers,utils,synthetic}
 │   │   ├── migrations/           # Alembic — the schema's source of truth
 │   │   ├── scripts/              # setup / verify / seed / reset / integrity / export
 │   │   └── tests/                # unit/ api/ integration/ security/ performance/

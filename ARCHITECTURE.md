@@ -43,7 +43,7 @@ services commit); `Controller → Service → EF Core` in C#; in the AI service
 | Folder | Contents | Details |
 |---|---|---|
 | `frontend/` | React app: `pages`, `layouts`, `components`, `api`, `services`, `state`, `features`, `config`, `utils`, `types` | [docs/architecture/FRONTEND_ARCHITECTURE.md](docs/architecture/FRONTEND_ARCHITECTURE.md) |
-| `backend/SmartRation/` | Python gateway: `app/{api,config,core,schemas,services,repositories,models,database,security,middleware,ai,workers,utils,synthetic}`, `migrations/` | [docs/architecture/PYTHON_ARCHITECTURE.md](docs/architecture/PYTHON_ARCHITECTURE.md) |
+| `backend/SmartRation/` | Python gateway: `app/main.py`, `app/config/settings.py`, `app/database/{connection,models}.py`, `app/{api,core,schemas,services,repositories,security,middleware,ai,workers,utils,synthetic}`, `migrations/` | [docs/architecture/PYTHON_ARCHITECTURE.md](docs/architecture/PYTHON_ARCHITECTURE.md) |
 | `backend/SmartRation.Api/` | C# business API | [docs/architecture/BACKEND_ARCHITECTURE.md](docs/architecture/BACKEND_ARCHITECTURE.md) |
 | `ai/` | AI analytics service by stage + chatbot knowledge | [docs/architecture/AI_ARCHITECTURE.md](docs/architecture/AI_ARCHITECTURE.md) |
 | `database/` | schema and migration SQL, seeds, integrity queries | [docs/database/DATABASE_ARCHITECTURE.md](docs/database/DATABASE_ARCHITECTURE.md) |

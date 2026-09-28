@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database.base import Base
-from app.database.session import get_engine
+from app.database.connection import get_engine
 from app.services import public_help_service
 
 sys.path.insert(0, str(BACKEND_ROOT / "scripts"))
@@ -167,7 +167,7 @@ def _seed_bookings(tmp_path):
 
     from py_testkit import make_settings
 
-    from app.models import RationShop, TimeSlot, Token, User
+    from app.database.models import RationShop, TimeSlot, Token, User
     from app.security.tokens import TokenUser, create_access_token
     from app.utils.time import utc_now
 

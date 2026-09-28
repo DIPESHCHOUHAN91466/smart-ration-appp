@@ -23,8 +23,8 @@ from fastapi.responses import JSONResponse
 
 from app.ai.chatbot.knowledge_base import get_knowledge_base
 from app.ai.chatbot.providers import get_provider
+from app.database.connection import database_is_reachable
 from app.database.migrations import alembic_head, current_revision
-from app.database.session import database_is_reachable
 from app.schemas.health import DatabaseHealthResponse, HealthResponse, ReadyResponse
 
 router = APIRouter(tags=["health"])

@@ -74,7 +74,7 @@ defaults, keys, foreign keys or indexes.
 
 ## Database and Alembic
 
-Models in `app/models/` mirror the existing schema (generated from `information_schema`,
+Models in `app/database/models.py` mirror the existing schema (generated from `information_schema`,
 PascalCase table names as EF created them; Windows MySQL's lowercase storage is handled).
 
 **Alembic owns the schema.** Revision `0001_initial` creates all 25 tables exactly as EF Core did

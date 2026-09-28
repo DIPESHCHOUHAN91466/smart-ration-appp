@@ -21,14 +21,14 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine, make_url
 from sqlalchemy.orm import Session
 
-import app.models  # noqa: F401  (register tables)
+import app.database.models  # noqa: F401  (register tables)
 from app.config.settings import Settings
-from app.database import session as database
+from app.database import connection as database
 from app.database.base import Base
+from app.database.enums import UserRole
 from app.database.migrations import MIGRATIONS_DIR
+from app.database.models import User
 from app.main import create_app
-from app.models import User
-from app.models.enums import UserRole
 from app.security.passwords import hash_password
 from app.utils.time import utc_now
 from mysql_suite.support import _REPORT, KEY, new_session, record_fixture  # noqa: F401

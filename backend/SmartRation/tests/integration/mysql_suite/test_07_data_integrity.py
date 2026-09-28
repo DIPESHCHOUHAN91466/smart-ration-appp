@@ -12,7 +12,7 @@ import pytest
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import IntegrityError
 
-from app.models import AadhaarVerification, Beneficiary, Family, FamilyMember, Inventory, MobileVerification, RationShop, RefreshToken, User
+from app.database.models import AadhaarVerification, Beneficiary, Family, FamilyMember, Inventory, MobileVerification, RationShop, RefreshToken, User
 from app.utils.time import utc_now
 from mysql_suite.sample_data import people
 

@@ -6,7 +6,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from app.models import AuditLog
+from app.database.models import AuditLog
 
 
 def add(

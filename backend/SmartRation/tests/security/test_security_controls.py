@@ -16,9 +16,9 @@ from sqlalchemy import func, select
 from app.api.dependencies.auth import CurrentUser, require_roles
 from app.core.errors import install_exception_handlers
 from app.database.base import Base
-from app.database.session import get_engine, get_session_factory
-from app.models import User
-from app.models.enums import UserRole
+from app.database.connection import get_engine, get_session_factory
+from app.database.enums import UserRole
+from app.database.models import User
 from app.security.passwords import hash_password
 from app.security.tokens import ROLE_CLAIM, TokenUser, create_access_token
 from app.utils.time import utc_now

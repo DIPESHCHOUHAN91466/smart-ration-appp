@@ -28,8 +28,8 @@ from app.ai.chatbot.text import MAX_MESSAGE_LENGTH
 from app.api.dependencies.auth import optional_current_user
 from app.core.errors import NotFound, ok
 from app.core.validation import ValidationFailed
-from app.database.session import get_db
-from app.models.enums import UserRole
+from app.database.connection import get_db
+from app.database.enums import UserRole
 from app.schemas.public_help import ChatRequest
 from app.security.rate_limit import rate_limit
 from app.services.public_help_service import DatabasePublicData, UserBookings

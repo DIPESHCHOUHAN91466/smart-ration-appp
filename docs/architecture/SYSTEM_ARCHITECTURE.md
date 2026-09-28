@@ -43,7 +43,7 @@ New public features are built in Python only: the Public Help pages and the Publ
 | `app/api/` | FastAPI routers; `legacy_proxy.py` is the fallback | Controllers |
 | `app/services/` | business logic, one transaction per request | Services |
 | `app/schemas/` | Pydantic request/response models | DTOs |
-| `app/models/` | 25 SQLAlchemy models = the existing tables, column for column | EF entities |
+| `app/database/models.py` | 25 SQLAlchemy models = the existing tables, column for column | EF entities |
 | `migrations/` | Alembic | EF migrations |
 | `app/ai/chatbot/` | Public Help assistant: knowledge base (JSON, en/hi/mr), safety rules, retrieval | — (new) |
 | `scripts/` | setup / verify / seed / reset database | `DbInitializer` |

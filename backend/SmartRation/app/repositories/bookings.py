@@ -9,7 +9,7 @@ from datetime import datetime
 from sqlalchemy import Row, select
 from sqlalchemy.orm import Session
 
-from app.models import RationShop, TimeSlot, Token
+from app.database.models import RationShop, TimeSlot, Token
 
 
 def upcoming_for_user(db: Session, user_id: int, since: datetime, statuses: Collection[int], limit: int) -> Sequence[Row]:

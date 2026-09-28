@@ -22,7 +22,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import NullPool
 
-from app.models import (
+from app.database.models import (
     AadhaarVerification,
     Beneficiary,
     Family,

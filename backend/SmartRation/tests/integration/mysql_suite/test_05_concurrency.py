@@ -12,7 +12,7 @@ from sqlalchemy import func, select, text
 from sqlalchemy.exc import IntegrityError, OperationalError
 
 from app.core.errors import ApiError
-from app.models import Beneficiary, Family, TimeSlot, User
+from app.database.models import Beneficiary, Family, TimeSlot, User
 from app.services import auth_service
 from app.services.auth_service import RequestContext
 from mysql_suite.sample_data import people

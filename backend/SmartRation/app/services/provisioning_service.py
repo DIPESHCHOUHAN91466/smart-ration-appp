@@ -14,8 +14,8 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from app.core.errors import BadRequest
-from app.models import AadhaarVerification, Beneficiary, Family, FamilyMember, MobileVerification, PassbookVerification, User
-from app.models.enums import AadhaarVerificationStatus, EligibilityStatus, FamilyRelationship, Gender, MobileVerificationStatus, PassbookVerificationStatus
+from app.database.enums import AadhaarVerificationStatus, EligibilityStatus, FamilyRelationship, Gender, MobileVerificationStatus, PassbookVerificationStatus
+from app.database.models import AadhaarVerification, Beneficiary, Family, FamilyMember, MobileVerification, PassbookVerification, User
 from app.repositories import catalog
 from app.utils.masking import mask_mobile
 from app.utils.time import utc_now

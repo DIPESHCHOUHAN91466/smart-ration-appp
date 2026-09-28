@@ -5,7 +5,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import User
+from app.database.models import User
 
 
 def email_taken(db: Session, email: str) -> bool:

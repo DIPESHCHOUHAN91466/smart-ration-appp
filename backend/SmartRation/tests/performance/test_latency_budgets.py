@@ -16,11 +16,11 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import app.models  # noqa: F401  (register tables)
+import app.database.models  # noqa: F401  (register tables)
 from app.ai.chatbot.engine import Assistant
 from app.ai.chatbot.knowledge_base import load
 from app.database.base import Base
-from app.models import User
+from app.database.models import User
 from app.repositories import users
 from app.utils.time import utc_now
 

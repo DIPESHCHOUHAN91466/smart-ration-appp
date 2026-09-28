@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from fastapi import Depends, Request
 
 from app.core.errors import Forbidden, Unauthorized
-from app.models.enums import UserRole
+from app.database.enums import UserRole
 from app.security.tokens import ROLE_CLAIM, InvalidToken, decode_access_token
 
 

@@ -7,7 +7,7 @@ from datetime import datetime
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
-from app.models import RefreshToken
+from app.database.models import RefreshToken
 
 
 def add(db: Session, user_id: int, token_hash: str, expires_at: datetime, created_at: datetime) -> None:

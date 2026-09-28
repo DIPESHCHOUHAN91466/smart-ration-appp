@@ -13,9 +13,9 @@ from py_testkit import BACKEND_ROOT
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session
 
-import app.models  # noqa: F401
+import app.database.models  # noqa: F401
 from app.database.base import Base
-from app.models import (
+from app.database.models import (
     AadhaarVerification,
     Beneficiary,
     Family,

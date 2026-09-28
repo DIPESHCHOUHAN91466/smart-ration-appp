@@ -14,9 +14,9 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.exc import IntegrityError, OperationalError
 
 from app.config.settings import Settings
-from app.database import session as database
+from app.database import connection as database
+from app.database.models import User
 from app.main import create_app
-from app.models import User
 from mysql_suite.support import KEY, new_session
 
 

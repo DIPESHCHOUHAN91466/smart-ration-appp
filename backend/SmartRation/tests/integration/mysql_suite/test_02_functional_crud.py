@@ -6,7 +6,7 @@ import pytest
 from sqlalchemy import func, select
 from sqlalchemy.exc import DataError, IntegrityError, OperationalError
 
-from app.models import Beneficiary, User
+from app.database.models import Beneficiary, User
 from mysql_suite.sample_data import long_email, people
 
 
