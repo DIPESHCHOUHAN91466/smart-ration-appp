@@ -1,11 +1,65 @@
 # Smart Ration HSD2C — Project Audit
 
-Latest: third audit, 2026-09-26 (below) · First audits: 2026-09-25 · Previous audits:
+Latest: fourth audit + restructure, 2026-09-28 (below) · Third audit: 2026-09-26 · First audits: 2026-09-25 · Previous audits:
 [docs/archive/PROJECT_AUDIT_2026-09-21.md](archive/PROJECT_AUDIT_2026-09-21.md) (pre-cleanup state, now outdated) and
 [MIGRATION_AUDIT.md](migration/MIGRATION_AUDIT.md) (C# → Python migration, Phase 0).
 
 Everything below was checked against the code, the running services and the database on this date;
 items marked *fixed* were fixed during this audit and committed.
+
+## Fourth audit — target architecture restructure (2026-09-28)
+
+Triggered by the "Super Master Prompt" (52 sections) with the owner's instruction that the **target
+architecture is most important**: every target folder must exist with real code, moved with history.
+Decisions taken with the owner: full restructure, `backend/SmartRation.Python` → `backend/SmartRation`,
+test-then-commit the work in progress found on `D:\` (fc2bbb6). C# stays (legitimate role: the business
+rules, 136 tests); Python is used for everything new.
+
+### Classification of important items
+
+| Path (before) | Decision | After | Reason |
+|---|---|---|---|
+| `backend/SmartRation.Python/` | RENAME | `backend/SmartRation/` | target name; history kept (`git mv`) |
+| `app/core/{config,security,rate_limit,middleware,api_version,dependencies}.py` | MOVE + SPLIT | `app/config/`, `app/security/{passwords,tokens,rate_limit}`, `app/middleware/`, `app/api/dependencies/`, `app/utils/time` | one responsibility per module; `core/` keeps errors, logging, validation |
+| `app/api/*.py`, `app/web.py` | MOVE | `app/api/routes/` | routes vs dependencies |
+| `app/db/models.py` (436 lines) | SPLIT | `app/models/<domain>.py` (7 domains) | giant file |
+| `app/db/{database,schema_utils}.py` | MOVE + SPLIT | `app/database/{base,session,migrations,schema_utils}` | engine vs Base vs Alembic helpers |
+| `app/db/migrations/` | MOVE | `backend/SmartRation/migrations/` | target layout |
+| services with inline SQL | MODIFY | `app/repositories/` (5 modules) | API → schema → service → repository → database |
+| — | CREATE | `app/workers/cleanup.py`, `app/utils/masking.py`, `app/schemas/{health,public_help}.py` | missing: token table only grew; masking duplicated; models inside routes |
+| `backend/SmartRation.AI/smartration_ai/` (flat, 14 modules) | MOVE + SPLIT | `ai/{configs,preprocessing,models,training,evaluation,inference,postprocessing,pipelines,api}` | AI as a staged subsystem; model version + accuracy report added |
+| `frontend/src/{store,context,qr,routes,services/api*.js,styles.css,components/layout}` | MOVE | `state/`, `features/{qr,auth}`, `api/`, `styles/`, `layouts/` | target frontend layout |
+| — | CREATE | `frontend/src/{config/env.js,utils/format.js,types/api.js,features/chatbot}` | env flags were read in 3 places; date/locale logic duplicated (and wrong for zone-less UTC) |
+| `data/` | MOVE | `database/seeds/` | target layout; `REAL_DATA.md` kept |
+| `database/mysql/*.ps1` | MOVE | `scripts/database/` | scripts by purpose |
+| — | CREATE | `database/queries/` (8 checks), `database/migrations/` (generated SQL) | integrity rules and DBA-readable migrations were missing |
+| `api/openapi/` | MOVE | `docs/api/openapi/` | documentation, generated |
+| `docker-compose.yml` (MySQL + Python only) | MOVE + MODIFY | `deployment/docker/` with the C# service | the C# image existed but compose didn't use it |
+| — | CREATE | `deployment/{staging,production}/`, `deployment/scripts/backup-mysql.sh`, `scripts/deployment/`, `tests/smoke/` | environment separation, Linux backups, post-deploy verification |
+| `frontend/e2e/` | MOVE | `tests/e2e/` (own `package.json`) | cross-component tests at the root; Playwright no longer a frontend dependency |
+| `tests/mysql/` | MOVE | `tests/integration/mysql/` | target layout |
+| — | CREATE | `tests/regression/` (21 contract tests + bug register) | C#/Python/JS seams had no test |
+| backend tests (flat, 13 files) | MOVE | `tests/{unit,api,integration,security,performance}` + new security and performance suites | test layers |
+| 18 empty scaffold folders (`components/atoms`, `molecules`, `DTOs/Booking`, `frontend/e2e`, …), `docs/user-guide`, `docs/presentation` | DELETE | — | empty, untracked, no references; they made the tree look like it had features it doesn't |
+| `ai/SERVICE.md` (was the service README) | MERGE | `ai/README.md` | one README per folder |
+| `DATABASE_TESTING_COMPLETION_REPORT.md` (root) | MOVE | `docs/testing/` | a report, not a root document |
+
+### Findings (fixed and committed)
+
+- **C# seeder bug:** cancelled demo tokens were counted in `TimeSlots.BookedCount` — found by the new
+  integrity check (12 slots in the development database). Fixed with a regression test. The existing 12 rows
+  in the local database were **not** changed (owner's data; warning-level).
+- **Time-zone bug:** C# timestamps without `Z` were displayed 5 h 30 min early on two pages. Fixed + test.
+- Stale path after the move in `reset_database.py`; an order-dependent test. Fixed + tests.
+
+### Still open
+
+- No public deployment (needs the owner's Render + managed MySQL accounts).
+- Both Python virtualenvs were created at their old paths: `python -m …` works everywhere, but the `.exe`
+  launchers are stale — run `.\sr.ps1 setup` (downloads packages) to rebuild them.
+- Docker Engine was not running during this audit, so the Compose stack was validated (`docker compose config`)
+  but not started; CI builds and runs both images.
+- Refresh token in `localStorage` (HttpOnly cookie planned); dashboards have few frontend tests.
 
 ## Third audit — after the move to `D:\` (2026-09-26)
 

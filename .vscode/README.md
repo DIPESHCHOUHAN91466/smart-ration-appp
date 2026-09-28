@@ -7,8 +7,9 @@ The Explorer then shows the project as numbered areas:
 |---|---|
 | 01 FRONTEND | `frontend` |
 | 02 BACKEND (C# API / tests) | `backend/SmartRation.Api`, `backend/SmartRation.Api.Tests` |
-| 03 PYTHON (gateway · auth · chatbot · data) / 03 PYTHON AI | `backend/SmartRation`, `ai` |
-| 04 DATABASE · 05 AI · 06 DATA · 07 TESTS · 08 SCRIPTS · 09 DOCUMENTATION · 10 DEPLOYMENT | `database`, `ai`, `data`, `tests`, `scripts`, `docs`, `deployment` |
+| 03 PYTHON (gateway · auth · chatbot · data) | `backend/SmartRation` |
+| 04 AI (analytics service · chatbot knowledge) | `ai` |
+| 05 DATABASE · 06 TESTS · 07 SCRIPTS · 08 DOCUMENTATION · 09 DEPLOYMENT | `database`, `tests`, `scripts`, `docs`, `deployment` |
 | 99 REPOSITORY | the whole repo (root files; the tasks and debug configurations below) |
 
 Opening just the repository folder works too; the numbered view is only a convenience.
@@ -26,11 +27,13 @@ Stop the script-started services first (task `Smart Ration: Stop All`), or the p
 
 Main tasks (all prefixed **Smart Ration:**): Setup · Build All · Run Full Stack · Stop All · Health Check ·
 Python API · .NET API · Frontend · Database Health · Synthetic Data (asks for count and seed) ·
-Python Tests · .NET Tests · Frontend Tests · E2E Tests · All Tests.
+Python Tests · .NET Tests · Frontend Tests · E2E Tests · Regression Tests · All Tests · Data Integrity ·
+Build Docker Images · Smoke Test (asks for the URL).
 Also: Frontend: install · build · lint — Backend: build — Python: lint + type check — Chatbot: evaluate —
-AI service: start · test — Database: seed synthetic data · back up — Tests: full suite + MySQL.
+AI service: start · test — Database: seed synthetic data · back up · export schema + migration SQL —
+Worker: refresh-token cleanup (dry run) — Tests: full suite + MySQL.
 Default build task (Ctrl+Shift+B): `Smart Ration: Build All`. Default test task: `Smart Ration: All Tests`.
-Every task runs the same command as `.\sr.ps1 <command>` or a script in `scripts/development`.
+Every task runs the same command as `.\sr.ps1 <command>` or a script in `scripts/` (development, database, testing, deployment).
 
 ## Settings
 
@@ -42,4 +45,5 @@ Python and C# indent 4, the rest 2. `backend/SmartRation/.vscode` and
 `ai/.vscode` point VS Code at each project's own `.venv` and tests.
 
 Recommended extensions are suggested when you open the folder (`extensions.json`): C#, Python +
-Pylance + debugpy, Ruff, Mypy, Vitest, ESLint, Prettier, Docker, GitHub Actions, GitLens.
+Pylance + debugpy, Ruff, Mypy, Vitest, ESLint, Playwright (tests/e2e), Prettier, REST Client, Docker,
+GitHub Actions, GitLens — only tools this stack uses.

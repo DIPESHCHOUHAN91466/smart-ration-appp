@@ -2,6 +2,39 @@
 
 All notable changes. Dates are commit dates; hashes refer to this repository.
 
+## 2026-09-28 — Target architecture: every folder with a purpose and real code
+
+Moves were made with `git mv` (history kept); every phase was tested and committed separately
+(0165b7b, 830bedf, 2c0dd2c, fdee2b3, 15393a8, 6418f25, 9851ff3).
+
+### Changed (layout)
+- `backend/SmartRation.Python` → `backend/SmartRation`; inside `app/`: `config/`, `security/`, `middleware/`,
+  `api/{routes,dependencies}`, `database/`, `models/` (one module per domain), `ai/chatbot/`; Alembic → `migrations/`.
+- AI service `backend/SmartRation.AI` → `ai/` (package `ai`) by stage: `configs`, `preprocessing`, `models`,
+  `training`, `evaluation`, `inference`, `postprocessing`, `pipelines`, `api`.
+- Frontend `src/`: `api/`, `config/env.js`, `state/` (was `store/` + toast context), `features/{qr,auth,chatbot}`,
+  `styles/`, `utils/`, `types/`; `layouts/PublicLayout`.
+- `data/` → `database/seeds/`; `api/openapi` → `docs/api/openapi`; scripts by purpose (`scripts/{development,database,
+  testing,deployment}`); `docker-compose.yml` → `deployment/docker/` (now with the C# API).
+- Tests by layer: gateway `tests/{unit,api,integration,security,performance}`; root `tests/{e2e,smoke,integration,regression}`
+  (`frontend/e2e` became its own small Node project in `tests/e2e`).
+- 18 empty scaffold folders removed; root `ARCHITECTURE.md`, `DEVELOPMENT.md`, `TESTING.md`, `DEPLOYMENT.md`.
+
+### Added
+- Gateway `repositories/` (all SQL out of the services), `utils/masking`, `workers/cleanup` (expired refresh tokens).
+- `database/queries/` — 8 read-only integrity checks + `check_data_integrity.py` (CI `--strict`);
+  `database/migrations/` — generated SQL per Alembic revision (drift-tested).
+- AI: `MODEL_VERSION` on every forecast and in `/health`; `python -m ai.evaluation.report` (accuracy per shop and item).
+- Deployment: `staging/` and `production/` env templates (tested against the settings the code reads) and checklists;
+  `deployment/scripts/backup-mysql.sh`; `scripts/deployment/{build-images,verify-deployment}.ps1`; `tests/smoke`.
+- Tests: security controls (17), latency budgets (3), repositories, worker, integrity, backup script, env templates,
+  AI stages (12), frontend formatting (6), 21 cross-component contract tests; `docs/user-guides/` for each role.
+
+### Fixed
+- C# seeder counted cancelled demo tokens in `TimeSlots.BookedCount` (found by the new drift check).
+- Times from the C# API (no `Z`) were shown 5 h 30 min early on My Token and Notifications.
+- ESLint fast-refresh warnings (2 → 0).
+
 ## 2026-09-26 — Move to `D:\`, third audit, dependency security, C# cleanup, `/api/v1`
 
 ### Added

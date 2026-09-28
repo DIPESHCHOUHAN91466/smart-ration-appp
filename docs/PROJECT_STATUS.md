@@ -1,5 +1,25 @@
 # Smart Ration HSD2C — Project Status
 
+## Current (2026-09-28, after the target-architecture restructure)
+
+| Check | Result | Evidence |
+|---|---|---|
+| Gateway (unit, api, integration, security, performance) | PASS | pytest 296 passed (+145 MySQL-only skipped without `TEST_DATABASE_URL`); ruff + mypy clean |
+| MySQL suite on `smartration_test` / root MySQL tests | PASS | 146 / 24 passed |
+| AI service | PASS | 58 passed, ruff clean; running on MySQL, `/health` healthy; accuracy report 60 forecasts, median wMAPE 0.375 |
+| C# API | PASS | 136 passed (incl. seeder regression) |
+| Frontend | PASS | ESLint 0 problems, Vitest 51 passed, production build |
+| Cross-component regression | PASS | 21 passed (mutation-checked) |
+| Root pytest run | PASS | 399 passed |
+| End-to-end (running stack, Edge) | PASS | 9 passed from `tests/e2e` |
+| Smoke test (local stack) | PASS | 9 passed, 1 skipped (website not bundled in local dev) |
+| Data integrity (development database) | PASS with warning | 7 checks pass; `slot_count_drift` 12 (old seeder data, fixed going forward) |
+| Docker Compose stack | NOT TESTED | configuration valid; Docker Engine was not running |
+| Public deployment | BLOCKED | needs the owner's Render + managed MySQL accounts |
+
+Details of what changed: [PROJECT_AUDIT.md](PROJECT_AUDIT.md) (fourth audit) and the changelog.
+The tables below are the earlier status (2026-09-25) and are kept for history.
+
 Date: 2026-09-25 · Branch `feature/python-backend-migration` (not pushed) · Audit: [PROJECT_AUDIT.md](PROJECT_AUDIT.md)
 
 **PASS** = verified by automated tests and/or in the browser during this work · **PARTIAL** = works but

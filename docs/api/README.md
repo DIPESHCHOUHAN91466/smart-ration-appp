@@ -17,5 +17,5 @@ cd backend\SmartRation
 .venv\Scripts\python scripts\export_openapi.py                              # Python contract
 .venv\Scripts\python scripts\export_openapi.py --csharp http://localhost:5188  # + C# contract
 ```
-Human-readable overview: [../docs/api/API.md](../docs/api/API.md). Live docs: http://127.0.0.1:8000/docs and
+Human-readable overview: [API.md](API.md). Live docs: http://127.0.0.1:8000/docs and
 http://localhost:5188/swagger.
