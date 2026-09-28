@@ -10,7 +10,7 @@ Business code asks the *provider* — never the synthetic generator directly:
                            Aadhaar references XXXX-XXXX-1234 that belong to nobody).
     DATA_MODE=real       → RealDataProvider: needs authorised integrations that don't exist yet
                            (state PDS / ration-card registry, UIDAI-authorised eKYC). Until they
-                           do, the app refuses to start in real mode. See data/real/README.md.
+                           do, the app refuses to start in real mode. See database/seeds/REAL_DATA.md.
 
 Switching to real data is a configuration change plus a new provider implementation — the
 auth/registration code above this interface does not change.
@@ -67,7 +67,7 @@ def check_data_mode(mode: str) -> None:
     if mode == "real":
         raise IntegrationNotAvailable(
             f"{BLOCKED}: DATA_MODE=real needs an authorised ration-card registry and eKYC integration, "
-            "a separate database, and a privacy/consent/security review. See data/real/README.md."
+            "a separate database, and a privacy/consent/security review. See database/seeds/REAL_DATA.md."
         )
 
 

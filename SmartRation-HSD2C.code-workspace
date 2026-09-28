@@ -1,7 +1,7 @@
 {
   // Open with: File → Open Workspace from File… → SmartRation-HSD2C.code-workspace
   // Numbered folders give the project map at a glance (see .vscode/README.md).
-  // "99 REPOSITORY" is the whole repo: root files (README, docker-compose.yml) and the shared
+  // "99 REPOSITORY" is the whole repo: root files (README, render.yaml, sr.ps1) and the shared
   // tasks/launch configurations live there.
   "folders": [
     { "name": "01 FRONTEND (React + Vite)", "path": "frontend" },

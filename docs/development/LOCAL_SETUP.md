@@ -14,7 +14,7 @@ From a fresh clone to the app running at http://localhost:5173. About 20 minutes
 
 ## 2. MySQL (one time)
 
-1. Copy `database/mysql-setup.sql` to `database/mysql-setup.local.sql` (git-ignored), replace both
+1. Copy `database/schema/mysql-setup.sql` to `database/mysql-setup.local.sql` (git-ignored), replace both
    `CHANGE_ME` passwords, and run it as root:
    `mysql -u root -p < database\mysql-setup.local.sql`.
    It creates database `smartration`, the application account `smartration_app` (rights on that
@@ -76,10 +76,10 @@ dotnet restore SmartRation.sln
 ## 5. Database schema and synthetic data
 
 ```
-.\scripts\development\seed-demo-data.ps1
+.\scripts\database\seed-demo-data.ps1
 ```
 Creates the schema on an empty database (or verifies and adopts an existing one), then loads the
-synthetic reference data from `data/synthetic/` into **empty tables only**. Demo users are created
+synthetic reference data from `database/seeds/` into **empty tables only**. Demo users are created
 only if you set `SEED_DEMO_PASSWORD` first. The C# API also seeds its synthetic demo households on
 first start. Everything is `DATA_MODE=synthetic` — see [../architecture/DATA_ARCHITECTURE.md](../architecture/DATA_ARCHITECTURE.md).
 
@@ -124,8 +124,8 @@ db, synthetic, contracts, docker).
 ## 7. Test
 
 ```
-.\scripts\development\run-tests.ps1           # Python, chatbot evaluation, AI, C# (SmartRation.sln), frontend lint/tests/build, DB health
-.\scripts\development\run-tests.ps1 -MySql    # + the 145-test MySQL suite on smartration_test
+.\scripts\testing\run-tests.ps1           # Python, chatbot evaluation, AI, C# (SmartRation.sln), frontend lint/tests/build, DB health
+.\scripts\testing\run-tests.ps1 -MySql    # + the 145-test MySQL suite on smartration_test
 dotnet test SmartRation.sln -c Release         # C# only, from the repository root
 ```
 Details: [../testing/TESTING.md](../testing/TESTING.md).
@@ -137,7 +137,7 @@ The schema is owned by **Alembic** (Python backend). Do **not** add EF Core migr
 cd backend\SmartRation
 # edit app/models/, then:
 .venv\Scripts\alembic revision --autogenerate -m "describe the change"
-# review the file, back up (database/mysql/backup.ps1), then:
+# review the file, back up (scripts/database/backup.ps1), then:
 .venv\Scripts\python scripts\setup_database.py
 ```
 

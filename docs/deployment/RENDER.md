@@ -93,4 +93,4 @@ Set `VITE_DEMO_MODE=false` on `smart-ration-hsd2c` and redeploy to hide them.
 | A service name was taken, so Render added a suffix | — | nothing to change: the services find each other by Render's own references |
 
 Local verification of the same setup: `.\sr.ps1 docker` builds the image; this guide's first-start
-sequence is what `docker-compose.yml` does too (with a local MySQL).
+sequence is what `deployment/docker/docker-compose.yml` does too (with a local MySQL).

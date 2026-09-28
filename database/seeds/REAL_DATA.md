@@ -1,6 +1,6 @@
-# data/real — what real data would require
+# Real data — what it would require
 
-**Status: BLOCKED — REQUIRES EXTERNAL INTEGRATION.** This folder holds no data and never should: real
+**Status: BLOCKED — REQUIRES EXTERNAL INTEGRATION.** No real data is stored in this repository, and none ever should be: real
 personal data does not belong in a source repository. With `DATA_MODE=real`, both backends refuse to
 start today, because no real provider exists yet.
 
@@ -11,7 +11,7 @@ start today, because no real provider exists yet.
 | State PDS / ration-card registry API | `SyntheticDataProvider` (Python), `SyntheticPassbookVerificationService` (C#) | a data-sharing agreement with the state Food & Civil Supplies department, API contract, credentials |
 | Aadhaar authentication / eKYC | `SyntheticAadhaarVerificationService` (C#) | access through a UIDAI-licensed AUA/KUA; the app must never store full Aadhaar numbers |
 | SMS gateway | `MockSmsProvider` (C#) | a DLT-registered sender and templates; `Sms:Provider=Http` (adapter exists) |
-| Real reference data (shops, schemes, quotas) | `data/synthetic/reference` | official sources and an update process |
+| Real reference data (shops, schemes, quotas) | `database/seeds/synthetic` | official sources and an update process |
 
 ## Before switching (all required)
 

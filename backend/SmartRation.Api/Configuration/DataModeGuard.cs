@@ -35,9 +35,9 @@ public static class DataModeGuard
         if (mode == DataMode.Real)
         {
             // No real provider exists yet. Real mode must wait for authorised integrations,
-            // plus a separate database, consent, privacy and security review (data/real/README.md).
+            // plus a separate database, consent, privacy and security review (database/seeds/REAL_DATA.md).
             problems.Add($"{Blocked}: DATA_MODE=real needs an authorised Aadhaar eKYC provider, a passbook/ration-card registry " +
-                         "provider and a real SMS gateway. None is implemented yet — see data/real/README.md.");
+                         "provider and a real SMS gateway. None is implemented yet — see database/seeds/REAL_DATA.md.");
             return problems;
         }
         if (!demo.UseSyntheticAadhaar)

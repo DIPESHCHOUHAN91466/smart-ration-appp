@@ -464,8 +464,6 @@ public static class DbInitializer
                     continue;
                 }
 
-                candidateSlot.BookedCount += 1;
-
                 TokenStatus status;
                 if (dayOffset < 0)
                 {
@@ -474,6 +472,12 @@ public static class DbInitializer
                 else
                 {
                     status = TokenStatus.Confirmed;
+                }
+
+                // A cancelled booking gives its place back (BookingService.CancelBookingAsync), so it never counts.
+                if (status != TokenStatus.Cancelled)
+                {
+                    candidateSlot.BookedCount += 1;
                 }
 
                 var token = new Token

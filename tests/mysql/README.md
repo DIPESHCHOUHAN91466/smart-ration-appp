@@ -23,7 +23,7 @@ Unlike unit tests that mock database contexts, this test suite connects directly
    2. otherwise `DATABASE_URL` in `backend/SmartRation/.env`, pointed at `smartration_test`,
    3. otherwise the legacy `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASSWORD` / `DB_NAME` in the root `.env`.
 
-   Run: `.\scripts\development\run-tests.ps1 -MySql`, or from the repository root
+   Run: `.\scripts\testing\run-tests.ps1 -MySql`, or from the repository root
    `backend\SmartRation\.venv\Scripts\python -m pytest tests/mysql`.
 
 > **Safety Guard:** Every test in this suite validates that the database name ends with `_test`. Tests will immediately refuse to execute against any production or default database name.
@@ -37,5 +37,5 @@ backend\SmartRation\.venv\Scripts\python -m pytest tests/mysql -v
 
 Or using the project test orchestrator:
 ```powershell
-.\scripts\development\run-tests.ps1 -MySql
+.\scripts\testing\run-tests.ps1 -MySql
 ```

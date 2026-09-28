@@ -21,3 +21,12 @@ def test_schema_snapshot_has_every_table_and_no_credentials():
     for table in ("Users", "Families", "Beneficiaries", "Tokens", "TimeSlots", "Inventory", "RationShops", "AadhaarVerifications"):
         assert f"CREATE TABLE `{table}`" in sql
     assert "schema@localhost" not in sql and "mysql+pymysql" not in sql
+
+
+def test_every_revision_has_generated_upgrade_sql_without_credentials():
+    migrations = ROOT.parents[1] / "database" / "migrations"
+    upgrade = (migrations / "0001_initial.upgrade.sql").read_text(encoding="utf-8")
+    assert upgrade.count("CREATE TABLE `") == 25 and "INSERT INTO alembic_version (version_num) VALUES ('0001_initial')" in upgrade
+    assert "schema@localhost" not in upgrade and "mysql+pymysql" not in upgrade
+    # The initial revision has no downgrade file: undoing it drops every table, which the migration refuses.
+    assert not (migrations / "0001_initial.downgrade.sql").exists()

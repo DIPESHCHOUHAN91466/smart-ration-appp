@@ -21,7 +21,7 @@
 | Aadhaar verification (C#) | `IAadhaarVerificationService` | `SyntheticAadhaarVerificationService` | not implemented — startup refused |
 | Passbook / ration-card registry (C#) | `IPassbookVerificationService` | `SyntheticPassbookVerificationService` | not implemented — startup refused |
 | OTP (C#) | `IOtpService`, `ISmsProvider` | `SyntheticOtpService`, `MockSmsProvider` | `HttpSmsProvider` exists (gateway config required); refused outside Development if mocks are on |
-| Reference data (items, shops, schemes) | JSON in `data/synthetic/reference/` | seeded into empty tables | from the state department — not available |
+| Reference data (items, shops, schemes) | JSON in `database/seeds/synthetic/` | seeded into empty tables | from the state department — not available |
 
 ## Configuration
 
@@ -38,7 +38,7 @@
   history households `BEN-HIST-*` with `@history.synthetic.invalid` emails (cannot log in).
 - Aadhaar is only ever a masked reference `XXXX-XXXX-1234` that belongs to nobody.
 - Bulk test citizens (`app/synthetic`, `scripts/generate_test_data.py`): `SYN-RC-<seed>-000001` ration cards,
-  `90BBxxxxxx` mobiles, `@example.com` emails; see [data/synthetic/README.md](../../data/synthetic/README.md).
+  `90BBxxxxxx` mobiles, `@example.com` emails; see [database/seeds/README.md](../../database/seeds/README.md).
   The `Users` table has no flag column; synthetic users are identified by these reserved ranges/domains and
   by `DataSource` on their beneficiary rows.
 - Reference JSON carries `"_meta": {"isSynthetic": true}`; the seeder refuses files without it.
@@ -56,4 +56,4 @@
 5. **Data migration plan** — how real households map to `Families`/`Beneficiaries`; no synthetic rows.
 6. Only then change the startup guard to allow `DATA_MODE=real` with the real providers configured.
 
-Details and owners: [../../data/real/README.md](../../data/real/README.md).
+Details and owners: [../../database/seeds/REAL_DATA.md](../../database/seeds/REAL_DATA.md).

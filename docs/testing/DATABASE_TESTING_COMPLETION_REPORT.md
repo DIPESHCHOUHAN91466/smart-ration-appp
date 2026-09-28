@@ -30,7 +30,7 @@ scenarios described; it is not a guarantee of production behaviour, which needs 
 | Root `tests/mysql` (24) | — | — | — | **NOT RUN** — root `.env` `DB_PASSWORD` is wrong (owner action) |
 | MySQLi | — | — | — | **NOT APPLICABLE** |
 
-Command: `.\scripts\development\run-tests.ps1 -MySql` (exit 0). Note: that full run took 89 minutes for the
+Command: `.\scripts\testing\run-tests.ps1 -MySql` (exit 0). Note: that full run took 89 minutes for the
 MySQL suite; an immediate rerun of the same 145 tests with per-test timing took **90 s** (slowest test 13.8 s).
 The cause of the slow run was not identified (no code changed between the runs); it is recorded, not explained away.
 

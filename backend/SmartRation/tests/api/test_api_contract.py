@@ -1,4 +1,4 @@
-"""api/openapi/python-api.openapi.json must match the routes and schemas in the code."""
+"""docs/api/openapi/python-api.openapi.json must match the routes and schemas in the code."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import sys
 from py_testkit import BACKEND_ROOT
 
 ROOT = BACKEND_ROOT
-CONTRACT = ROOT.parents[1] / "api" / "openapi" / "python-api.openapi.json"
+CONTRACT = ROOT.parents[1] / "docs" / "api" / "openapi" / "python-api.openapi.json"
 
 
 def test_python_api_contract_is_up_to_date():

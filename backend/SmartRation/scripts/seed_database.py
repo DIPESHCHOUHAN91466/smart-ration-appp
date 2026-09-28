@@ -1,7 +1,7 @@
 """Seed SYNTHETIC reference and demo data. Idempotent and non-destructive.
 
 Reference data (ration items, 10 demo shops, the two demo schemes and their entitlements,
-inventory tiers, 5-minute slot rules) is read from data/synthetic/reference/*.json — the same
+inventory tiers, 5-minute slot rules) is read from database/seeds/synthetic/*.json — the same
 values as the C# DbInitializer. Each group is inserted only when its
 table is empty, so running this against an existing database changes nothing.
 
@@ -32,9 +32,9 @@ from app.models.enums import RationType, UserRole
 from app.security.passwords import hash_password
 from app.utils.time import utc_now
 
-# The synthetic reference data lives in <repo>/data/synthetic/reference/*.json (clearly labelled
+# The synthetic reference data lives in <repo>/database/seeds/synthetic/*.json (clearly labelled
 # isSynthetic / SYNTHETIC_DEMO). SYNTHETIC_DATA_DIR overrides the location (e.g. in Docker).
-DATA_DIR = Path(os.environ.get("SYNTHETIC_DATA_DIR") or Path(__file__).resolve().parents[3] / "data" / "synthetic" / "reference")
+DATA_DIR = Path(os.environ.get("SYNTHETIC_DATA_DIR") or Path(__file__).resolve().parents[3] / "database" / "seeds" / "synthetic")
 
 
 def _records(name: str):

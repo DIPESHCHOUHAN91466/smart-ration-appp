@@ -1,4 +1,4 @@
-"""Write the API contracts in api/openapi/ (generated, read-only; never edit them by hand).
+"""Write the API contracts in docs/api/openapi/ (generated, read-only; never edit them by hand).
 
     .venv\\Scripts\\python scripts\\export_openapi.py            # rewrite python-api.openapi.json
     .venv\\Scripts\\python scripts\\export_openapi.py --check    # exit 1 if it is out of date (tests run this)
@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT))
 from app.config.settings import Settings  # noqa: E402
 from app.main import create_app  # noqa: E402
 
-OUT = ROOT.parents[1] / "api" / "openapi"
+OUT = ROOT.parents[1] / "docs" / "api" / "openapi"
 PYTHON_CONTRACT = OUT / "python-api.openapi.json"
 CSHARP_CONTRACT = OUT / "csharp-api.swagger.json"
 

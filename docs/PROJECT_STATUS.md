@@ -44,7 +44,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 | Item | Status | Evidence |
 |---|---|---|
 | `smartration`: 25 tables, Alembic `0001_initial`, 0 drift | PASS | `verify_database.py` |
-| MySQL suite on `smartration_test` (CRUD, injection, performance, concurrency, errors, integrity, 1000 records, concurrency 10/25/50/100) | PASS | 145/145 via `run-tests.ps1 -MySql`; see [DATABASE_TESTING_COMPLETION_REPORT.md](../DATABASE_TESTING_COMPLETION_REPORT.md) |
+| MySQL suite on `smartration_test` (CRUD, injection, performance, concurrency, errors, integrity, 1000 records, concurrency 10/25/50/100) | PASS | 145/145 via `run-tests.ps1 -MySql`; see [docs/testing/DATABASE_TESTING_COMPLETION_REPORT.md](../docs/testing/DATABASE_TESTING_COMPLETION_REPORT.md) |
 | Root `tests/mysql` | PARTIAL | 24/24 with the correct password; your root `.env` `DB_PASSWORD` is still wrong |
 | Backup | PASS (2026-09-24) · Restore | NOT TESTED |
 
@@ -93,7 +93,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 | Item | Status | Evidence |
 |---|---|---|
 | `DATA_MODE=synthetic` default; providers behind interfaces | PASS | tests (C# + Python) |
-| Reference data in `data/synthetic` (marked `isSynthetic`) | PASS | seed output identical to before; image-layout simulation |
+| Reference data in `database/seeds` (marked `isSynthetic`) | PASS | seed output identical to before; image-layout simulation |
 | Every generated record tagged `SYNTHETIC_DEMO`, masked Aadhaar only | PASS | MySQL suite integrity tests |
 | Central seeded generator (`app/synthetic`, `generate_test_data.py --users N --seed S`) | PASS | 23 unit tests; 1000 citizens inserted into `smartration_test` |
 | Demo mobiles in the reserved `9000000xxx` block (were `9876543210–12`) | PASS | seeders, tests, dev DB rows updated |
@@ -102,7 +102,7 @@ incomplete or only partly verified · **FAIL** = broken · **NOT TESTED** = not 
 
 | Item | Status | Evidence |
 |---|---|---|
-| Interfaces, `RealDataProvider`, startup refusal, migration checklist | PASS | tests; `data/real/README.md` |
+| Interfaces, `RealDataProvider`, startup refusal, migration checklist | PASS | tests; `database/seeds/REAL_DATA.md` |
 | Real ration-card registry, eKYC, SMS, reference data | BLOCKED | REQUIRES EXTERNAL INTEGRATION (and legal/privacy review) |
 
 ## AI

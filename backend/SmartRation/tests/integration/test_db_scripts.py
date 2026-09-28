@@ -125,3 +125,16 @@ def test_migration_downgrade_is_guarded(db_url):
                             capture_output=True, text=True, timeout=120)
     assert result.returncode != 0 and "Refusing to drop" in result.stderr
     assert count(db_url, RationItem) == 6  # nothing dropped
+
+
+def test_every_path_the_scripts_depend_on_exists():
+    """Regression: after the folder restructure, reset_database.py still pointed at database/mysql/backup.ps1."""
+    code = ("import sys; sys.path.insert(0, 'scripts'); "
+            "import reset_database, seed_database, export_openapi, export_schema_sql; "
+            "from app.database.integrity import QUERIES_DIR; from app.database.migrations import MIGRATIONS_DIR; "
+            "paths = [reset_database.BACKUP_SCRIPT, seed_database.DATA_DIR, export_openapi.OUT, "
+            "export_schema_sql.OUTPUT.parent, export_schema_sql.MIGRATIONS_OUTPUT, QUERIES_DIR, MIGRATIONS_DIR]; "
+            "missing = [str(p) for p in paths if not p.exists()]; print(missing); sys.exit(1 if missing else 0)")
+    env = {k: v for k, v in os.environ.items() if k not in ("SYNTHETIC_DATA_DIR", "INTEGRITY_QUERIES_DIR")}
+    result = subprocess.run([sys.executable, "-c", code], cwd=ROOT, capture_output=True, text=True, env=env)
+    assert result.returncode == 0, result.stdout + result.stderr

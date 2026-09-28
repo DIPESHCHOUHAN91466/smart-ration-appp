@@ -56,6 +56,8 @@ jobs:
         run: python scripts/setup_database.py --seed
       - name: Setup is idempotent
         run: python scripts/setup_database.py --seed
+      - name: Data integrity checks (database/queries, read-only; warnings also fail here)
+        run: python scripts/check_data_integrity.py --strict
       - name: Cleanup worker runs against MySQL (dry run)
         run: python -m app.workers.cleanup --dry-run
       - name: Tests (unit, api, integration incl. live schema compatibility, security, performance budgets)
@@ -152,7 +154,7 @@ jobs:
         run: docker build -f backend/SmartRation/Dockerfile -t smartration-api:ci .
       - name: Image contains no secrets or env files
         run: |
-          docker run --rm --entrypoint sh smartration-api:ci -c 'test ! -e /app/.env && test ! -d /app/tests && test ! -d /app/.venv && test -f /app/ai/chatbot/knowledge/faq.json && test -f /app/data/synthetic/reference/shops.json && test -f /app/frontend-dist/index.html'
+          docker run --rm --entrypoint sh smartration-api:ci -c 'test ! -e /app/.env && test ! -d /app/tests && test ! -d /app/.venv && test -f /app/ai/chatbot/knowledge/faq.json && test -f /app/database/seeds/synthetic/shops.json && test -f /app/database/queries/01_overbooked_time_slots.sql && test -f /app/migrations/env.py && test -f /app/frontend-dist/index.html'
       - name: Container starts, is live and serves the website
         run: |
           docker run -d --name api -p 8000:8000 \

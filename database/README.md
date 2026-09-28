@@ -1,40 +1,60 @@
-# database — MySQL setup and operations
+# database — MySQL outside the application code
 
-**What is this?** Everything about the MySQL database that isn't application code: the one-time setup
-script, backup and restore scripts, and reference folders.
+**What:** everything about the MySQL database that a DBA, reviewer or operator needs without reading
+Python: the one-time setup script, the schema and each migration as SQL, the seed data, and read-only
+integrity checks.
 
-**Why does it exist?** The database outlives any single backend; creating it, backing it up and
-restoring it are operational tasks with their own safety rules.
+**Why:** the database outlives any single backend. Creating it, reviewing schema changes, seeding a demo
+installation and checking the data are tasks with their own safety rules.
 
-**What belongs here:** `mysql-setup.sql` (creates the `smartration` database, the `smartration_app`
-account and the **read-only** `smartration_ai` account — copy to `*.local.sql`, which is git-ignored,
-before filling in passwords), `mysql/backup.ps1`, `mysql/restore.ps1` (see [mysql/README.md](mysql/README.md)).
-**What does NOT:** the schema definition and migrations — those are code, owned by **Alembic** in
-`backend/SmartRation/migrations` (revision `0001_initial` = the 25 tables); setup/verify/
-seed/reset scripts live in `backend/SmartRation/scripts`; synthetic reference data lives in
-`data/synthetic`. Never commit passwords or backups.
+| Folder | Contents | Written by |
+|---|---|---|
+| `schema/mysql-setup.sql` | creates the `smartration` database, the `smartration_app` account and the **read-only** `smartration_ai` account. Copy it to `database/mysql-setup.local.sql` (git-ignored) before filling in passwords | hand |
+| `schema/smartration_schema.sql` | the whole schema at the current Alembic head (26 tables incl. `alembic_version`) | generated |
+| `migrations/<revision>.upgrade.sql` | what each Alembic revision changes, for DBAs who must apply SQL by hand (also sets `alembic_version`). Later revisions also get a `.downgrade.sql`; the initial one does not — undoing it drops everything, so restore a backup instead | generated |
+| `seeds/` | synthetic reference data (`seeds/synthetic/*.json`, all marked `isSynthetic`) and [what real data would require](seeds/REAL_DATA.md) | hand |
+| `queries/` | read-only integrity checks, one rule per file (over-booked slots, negative stock, collections without items or with open tokens, unmasked Aadhaar, duplicate e-mails, counter drift, shop owners without a shop) | hand |
+| `backups/` | output of `scripts/database/backup.ps1` — **git-ignored, may contain personal data** | script |
 
-> History: the schema used to be created by EF Core migrations in the C# API (MySQL and SQLite). Since
-> 2026-09-24 Alembic owns it; the existing database was adopted with zero drift. Do not add EF migrations.
-> The C# API still runs its (already complete) EF migration history on startup, which changes nothing.
+**Does NOT belong here:** the schema's source of truth — that is the Alembic migrations in
+`backend/SmartRation/migrations` (Python code, applied with `alembic upgrade head` / `setup_database.py`);
+passwords; real personal data.
 
-**How do I run it?**
-```
+## Run
+
+```powershell
 mysql -u root -p < database\mysql-setup.local.sql            # one time, as root
-.\scripts\development\seed-demo-data.ps1                     # schema + synthetic reference data
-backend\SmartRation\.venv\Scripts\python backend\SmartRation\scripts\verify_database.py
+.\scripts\database\seed-demo-data.ps1                          # schema (Alembic) + synthetic reference data
+cd backend\SmartRation
+.venv\Scripts\python scripts\verify_database.py                # schema matches the models (read-only)
+.venv\Scripts\python scripts\check_data_integrity.py           # database/queries (read-only; exit 1 on errors)
+.venv\Scripts\python scripts\export_schema_sql.py              # regenerate schema/ and migrations/ after a new revision
 ```
 
-**How does it connect?** Python API (read/write, `smartration_app`), C# API (read/write, same account),
-AI service (read-only, `smartration_ai`). Test suites use a separate `smartration_test` database.
+`export_schema_sql.py --check` runs in the tests, so a migration committed without refreshed SQL fails.
+`check_data_integrity.py` prints ids and counts only — never names, e-mails or Aadhaar values — and runs every
+query inside a transaction that is rolled back. CI runs it with `--strict` after seeding MySQL 8.
+
+## Adding an integrity check
+
+Create `queries/NN_<name>.sql` with one `SELECT` whose first column is `id`, and this header:
+
+```sql
+-- check: <name>
+-- severity: error | warning
+-- why: the rule, and where the application enforces it
+```
+
+Then add a case to `backend/SmartRation/tests/integration/test_data_integrity.py` that breaks the rule and
+expects the check to report it.
+
+**Connects:** Python API and C# API (read/write, `smartration_app`), AI service (read-only, `smartration_ai`).
+Test suites use a separate `smartration_test` database.
+
+> History: the schema was created by EF Core migrations in the C# API until 2026-09-24; Alembic owns it
+> since then (the existing database was adopted with zero drift). The C# API still runs its already
+> complete EF history on startup, which changes nothing. Do not add EF migrations.
 
 Architecture: [../docs/database/DATABASE_ARCHITECTURE.md](../docs/database/DATABASE_ARCHITECTURE.md) ·
 Backups: [../docs/database/BACKUP_RESTORE.md](../docs/database/BACKUP_RESTORE.md) ·
 Test plan: [../docs/database/DB_TESTING.md](../docs/database/DB_TESTING.md).
-
-`schema/smartration_schema.sql` is a **generated, read-only** SQL view of the Alembic migrations (every
-table, column, key and index) for people who want to read the schema as SQL. Regenerate it after a
-migration with `backend\SmartRation\scripts\export_schema_sql.py`; a test fails if it is out of
-date. Never apply it to a database — `setup_database.py` / `alembic upgrade head` do that.
-(The empty `migrations/`, `seed/` and `diagrams/` placeholders from the original scaffold were removed:
-migrations live in Alembic, seeds in `data/synthetic` + `seed_database.py`.)

@@ -23,7 +23,7 @@
     "**/dist": true,
     "**/.venv": true,
     "**/package-lock.json": true,
-    "database/mysql/backups": true
+    "database/backups": true
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,

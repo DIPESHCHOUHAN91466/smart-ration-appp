@@ -1,14 +1,26 @@
-# data/synthetic — fabricated demo data
+# database/seeds — synthetic data today, real data later
 
-**What:** reference data for a demonstration installation. **Every value is invented.** No real
-person, household, Aadhaar number, ration card or shop is represented.
+**What:** the data the system runs on that isn't user-generated: synthetic reference data for a
+demonstration installation (`synthetic/`), and the rules for ever using real data
+([REAL_DATA.md](REAL_DATA.md) — documentation only). **Every value here is invented.** No real person,
+household, Aadhaar number, ration card or shop is represented.
+
+**Why:** to keep synthetic and real data strictly apart. Business logic never depends on synthetic data
+directly (it asks interfaces; `DATA_MODE` picks the implementation), so a real-data rollout is a
+deliberate, reviewed step — never an accident.
+
+**Does NOT belong here:** real personal data (ever, in this repository), secrets, database dumps
+(`database/backups/`, git-ignored), generator code (`backend/SmartRation/app/synthetic`).
+
+**Run:** `.\scripts\database\seed-demo-data.ps1` loads `synthetic/` into empty tables (only when
+`DATA_MODE=synthetic`). The Docker image carries the same files (`SYNTHETIC_DATA_DIR`).
 
 | File | Records | Used by |
 |---|---|---|
-| `reference/ration_items.json` | 6 items (rice, wheat, sugar, pulses, oil, salt) with local names and units | seed script |
-| `reference/shops.json` | 10 demo ration shops around Nagpur (names, codes, coordinates) | seed script |
-| `reference/schemes.json` | `DEMO-NFSA`, `DEMO-AAY` with per-member monthly quotas | seed script, chatbot (quotas answer) |
-| `reference/inventory_rules.json` | minimum stock, stock tiers, slot capacity (2) and 5-minute slots | seed script |
+| `synthetic/ration_items.json` | 6 items (rice, wheat, sugar, pulses, oil, salt) with local names and units | seed script |
+| `synthetic/shops.json` | 10 demo ration shops around Nagpur (names, codes, coordinates) | seed script |
+| `synthetic/schemes.json` | `DEMO-NFSA`, `DEMO-AAY` with per-member monthly quotas | seed script, chatbot (quotas answer) |
+| `synthetic/inventory_rules.json` | minimum stock, stock tiers, slot capacity (2) and 5-minute slots | seed script |
 
 Each file has `"_meta": {"isSynthetic": true, "dataSource": "SYNTHETIC_DEMO"}`; the seed script refuses
 a file without it and refuses to run unless `DATA_MODE=synthetic`. It inserts only into **empty**
@@ -58,3 +70,5 @@ names, injection-looking text) for encoding and security tests.
 
 Changing values: edit the JSON (keep the C# `DbInitializer` in sync — it seeds the same values), then
 run the seed on an empty database or a fresh `smartration_test`.
+
+Architecture: [../../docs/architecture/DATA_ARCHITECTURE.md](../../docs/architecture/DATA_ARCHITECTURE.md).

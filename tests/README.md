@@ -1,7 +1,9 @@
 # tests — cross-component tests
 
-**What is this?** Tests that don't belong to one application. Today: `mysql/`, connection, schema,
-CRUD and transaction tests run directly against the `smartration_test` MySQL database.
+**What is this?** Tests that don't belong to one application: `mysql/` (connection, schema, CRUD and
+transaction tests run directly against the `smartration_test` MySQL database) and `smoke/` (a read-only
+post-deployment check of a running stack or public URL: health, readiness, database, chatbot, auth
+enforcement, security headers, the website — `pytest tests/smoke --base-url <url>`; skipped without a URL).
 
 **Why does it exist?** Some checks are about the shared database itself rather than one backend.
 
@@ -21,7 +23,7 @@ CRUD and transaction tests run directly against the `smartration_test` MySQL dat
 next to that app); anything that touches the real `smartration` database — every MySQL test refuses a
 database whose name doesn't end in `_test`.
 
-**How do I run it?** Everything: `.\scripts\development\run-tests.ps1` (add `-MySql` for database suites).
+**How do I run it?** Everything: `.\scripts\testing\run-tests.ps1` (add `-MySql` for database suites).
 This folder only, from the repo root: `backend\SmartRation\.venv\Scripts\python -m pytest tests/mysql`
 (needs `DB_*` in the root `.env`, `DB_NAME=smartration_test`).
 

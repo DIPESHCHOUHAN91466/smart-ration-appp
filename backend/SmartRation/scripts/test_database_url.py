@@ -1,6 +1,6 @@
 """Print the MySQL *test* database URL: DATABASE_URL from .env with the database name replaced.
 
-Used by scripts/development/run-tests.ps1 -MySql to set TEST_DATABASE_URL without anyone typing a
+Used by scripts/testing/run-tests.ps1 -MySql to set TEST_DATABASE_URL without anyone typing a
 password. The output contains the password — capture it into a variable, never log or print it.
 
     .venv\\Scripts\\python scripts\\test_database_url.py [database_name]   (default: smartration_test)

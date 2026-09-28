@@ -25,13 +25,13 @@
 | AI panels say "unavailable" | AI service down or API keys differ | `.\scripts\development\start-all.ps1`; `AiService:ApiKey` must equal `SMARTRATION_AI_API_KEY`; open http://127.0.0.1:8001/health |
 | Forecast says "insufficient data" | fewer than 14 days of history | generate synthetic history (LOCAL_SETUP.md §5), development only |
 | Build error "file is being used by another process" | the API is running | stop it (`stop-all.ps1`) before `dotnet build` |
-| API refuses to start: "BLOCKED — REQUIRES EXTERNAL INTEGRATION" | `DATA_MODE=real` or a `Demo:UseSynthetic*` flag set to false | intended: real data isn't integrated yet — use `DATA_MODE=synthetic` (data/real/README.md) |
+| API refuses to start: "BLOCKED — REQUIRES EXTERNAL INTEGRATION" | `DATA_MODE=real` or a `Demo:UseSynthetic*` flag set to false | intended: real data isn't integrated yet — use `DATA_MODE=synthetic` (database/seeds/REAL_DATA.md) |
 | mysqldump: `Access denied; you need the PROCESS privilege` | app account lacks PROCESS | the backup script already passes `--no-tablespaces`; use it rather than a raw mysqldump |
 | `backup.ps1`: output lands in the wrong place | older PowerShell: `$PSScriptRoot` empty in param defaults | fixed in the script; pass `-OutputDir` explicitly if needed |
 | Tables appear lowercase (`users`) in MySQL | Windows `lower_case_table_names=1` | expected; the tooling compares case-insensitively |
-| `docker compose up`: `set MYSQL_PASSWORD in .env` | compose `.env` missing | copy `deployment\docker\compose.env.example` to `.env` at the repo root |
+| `docker compose up`: `set MYSQL_PASSWORD in deployment/docker/.env` | compose `.env` missing | copy `deployment\docker\compose.env.example` to `deployment\docker\.env` |
 | Docker: `failed to connect to the docker API … dockerDesktopLinuxEngine` | Docker Desktop / its WSL VM isn't running | start Docker Desktop and wait for "Engine running"; `wsl -l -v` should show `docker-desktop Running` |
-| Container exits right after start | `setup_database.py` refused (see its log) | `docker compose logs api` |
+| Container exits right after start | `setup_database.py` refused (see its log) | `docker compose -f deployment/docker/docker-compose.yml logs api` |
 
 **user-secrets on Windows (packaged apps):** a tool running inside a packaged/sandboxed app may write
 `%APPDATA%\Microsoft\UserSecrets` into a private virtualised copy that the C# API never sees. Run

@@ -9,7 +9,7 @@
      * anything else (partial/unknown schema)   -> refuse and explain
   3. Optionally seed synthetic data (--seed), then run the verification.
 
-Take a backup first on any database holding real data (database/mysql/backup.ps1).
+Take a backup first on any database holding real data (scripts/database/backup.ps1).
 
 Usage (from backend/SmartRation):
     .venv\\Scripts\\python scripts\\setup_database.py [--seed]

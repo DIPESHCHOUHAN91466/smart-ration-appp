@@ -1,6 +1,6 @@
 # Backup and restore
 
-Scripts: `database/mysql/backup.ps1`, `database/mysql/restore.ps1` (Windows PowerShell 5.1+,
+Scripts: `scripts/database/backup.ps1`, `scripts/database/restore.ps1` (Windows PowerShell 5.1+,
 MySQL 8 client tools in `C:\Program Files\MySQL\MySQL Server 8.0\bin`, overridable with `-MySqlBin`).
 Credentials come from environment variables and go into a temporary MySQL option file that is
 deleted afterwards, so they never appear on the command line.
@@ -10,12 +10,12 @@ deleted afterwards, so they never appear on the command line.
 ```powershell
 $env:SMARTRATION_DB_USER = "smartration_app"
 $env:SMARTRATION_DB_PASSWORD = "<password>"      # from your .env; don't paste it into files
-.\database\mysql\backup.ps1
+.\scripts\database\backup.ps1
 ```
 
 - `mysqldump --single-transaction` (consistent snapshot without locking), with routines,
   triggers and events, `--hex-blob`, utf8mb4.
-- Output: `database/mysql/backups/smartration_<yyyyMMdd_HHmmss>.sql.gz` plus a `.sha256` file.
+- Output: `database/backups/smartration_<yyyyMMdd_HHmmss>.sql.gz` plus a `.sha256` file.
   The script checks for mysqldump's completion marker before compressing, and never overwrites.
 - The folder is git-ignored. **Copy backups off the machine**; a backup on the same disk doesn't
   survive disk loss.
@@ -27,7 +27,7 @@ itself), or any manual SQL.
 
 ```powershell
 # stop the C# and Python APIs first
-.\database\mysql\restore.ps1 -BackupFile .\database\mysql\backups\smartration_20260924_134123.sql.gz -Confirm RESTORE_SMARTRATION
+.\scripts\database\restore.ps1 -BackupFile .\database\backups\smartration_20260924_134123.sql.gz -Confirm RESTORE_SMARTRATION
 cd backend\SmartRation; .venv\Scripts\python scripts\verify_database.py
 ```
 

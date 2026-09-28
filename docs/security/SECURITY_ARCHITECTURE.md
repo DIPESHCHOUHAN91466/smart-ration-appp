@@ -9,7 +9,7 @@
 | QR HMAC secret | .NET user-secret `Qr:Secret`; `.env` `QR_SECRET` when QR moves to Python | git, logs |
 | Seed passwords | env vars `SEED_DEMO_PASSWORD`, `SEED_ADMIN_PASSWORD` at seed time only | source code |
 
-`.env`, `.env.*` (except `.env.example`) and `database/mysql/backups/` are git-ignored. Docker images
+`.env`, `.env.*` (except `.env.example`) and `database/backups/` are git-ignored. Docker images
 contain no `.env` (see `.dockerignore`; CI asserts it); secrets are passed at run time. The Python
 app refuses to start without `JWT_SECRET_KEY` and has no default for any secret.
 

@@ -9,7 +9,8 @@
 !backend/SmartRation/migrations/**
 !backend/SmartRation/scripts/**
 !ai/chatbot/knowledge/**
-!data/synthetic/reference/**
+!database/seeds/synthetic/**
+!database/queries/**
 !backend/SmartRation.Api/**
 !frontend/package.json
 !frontend/package-lock.json

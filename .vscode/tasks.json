@@ -192,7 +192,7 @@
       "label": "Database: Seed synthetic data",
       "detail": "Creates/adopts the schema and fills EMPTY tables only with synthetic demo data",
       "type": "shell",
-      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/seed-demo-data.ps1",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/database/seed-demo-data.ps1",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     },
@@ -200,7 +200,49 @@
       "label": "Database: Back up",
       "detail": "Needs SMARTRATION_DB_USER / SMARTRATION_DB_PASSWORD in the environment",
       "type": "shell",
-      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File database/mysql/backup.ps1",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/database/backup.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Smart Ration: Data Integrity",
+      "detail": "Read-only checks in database/queries (ids and counts only); exit 1 on an error-level finding",
+      "type": "shell",
+      "command": ".venv/Scripts/python scripts/check_data_integrity.py",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Database: Export schema + migration SQL",
+      "detail": "Regenerates database/schema/smartration_schema.sql and database/migrations/*.sql from Alembic (offline)",
+      "type": "shell",
+      "command": ".venv/Scripts/python scripts/export_schema_sql.py",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Worker: Refresh-token cleanup (dry run)",
+      "detail": "Counts refresh tokens expired more than 30 days ago; deletes nothing",
+      "type": "shell",
+      "command": ".venv/Scripts/python -m app.workers.cleanup --dry-run",
+      "options": { "cwd": "${workspaceFolder}/backend/SmartRation" },
+      "problemMatcher": []
+    },
+
+    // ---------------------------------------------------------------- deployment
+    {
+      "label": "Smart Ration: Build Docker Images",
+      "detail": "Both images from the repo root, as CI and Render build them; pushes nothing",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deployment/build-images.ps1",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Smart Ration: Smoke Test",
+      "detail": "tests/smoke against a running deployment (asks for the URL; default the local stack)",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deployment/verify-deployment.ps1 ${input:smokeUrl}",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     },
@@ -210,7 +252,7 @@
       "label": "Smart Ration: All Tests",
       "detail": "Python, chatbot evaluation, AI service, C# (SmartRation.sln), frontend lint + tests + build, database health",
       "type": "shell",
-      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/run-tests.ps1",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/testing/run-tests.ps1",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": [],
       "group": { "kind": "test", "isDefault": true }
@@ -218,13 +260,14 @@
     {
       "label": "Tests: Full suite + MySQL (smartration_test)",
       "type": "shell",
-      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/development/run-tests.ps1 -MySql",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/testing/run-tests.ps1 -MySql",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     }
   ],
   "inputs": [
     { "id": "syntheticUsers", "type": "promptString", "description": "How many synthetic citizens?", "default": "1000" },
-    { "id": "syntheticSeed", "type": "promptString", "description": "Seed (same seed = same data; a seed already in the test database is refused)", "default": "2026" }
+    { "id": "syntheticSeed", "type": "promptString", "description": "Seed (same seed = same data; a seed already in the test database is refused)", "default": "2026" },
+    { "id": "smokeUrl", "type": "promptString", "description": "Deployment to smoke-test", "default": "http://127.0.0.1:8000" }
   ]
 }

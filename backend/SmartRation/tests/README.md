@@ -36,7 +36,7 @@ $env:TEST_DATABASE_URL = .venv\Scripts\python scripts\test_database_url.py
 Remove-Item Env:TEST_DATABASE_URL
 ```
 
-Or from the repository root: `.\scripts\development\run-tests.ps1 -MySql`.
+Or from the repository root: `.\scripts\testing\run-tests.ps1 -MySql`.
 
 Contract comparison (both servers running): `.venv\Scripts\python tests\contract\compare_proxy.py`.
 

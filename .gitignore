@@ -45,7 +45,7 @@ __pycache__/
 .venv/
 
 # Database backups (contain personal data)
-database/mysql/backups/
+database/backups/
 
 # Test and log output
 .pytest_cache/

@@ -9,7 +9,7 @@ See [README.md](README.md) and [docs/deployment/DEPLOYMENT.md](docs/deployment/D
 
 - Work on a branch (`feature/…`, `fix/…`); `main` stays deployable.
 - One logical change per commit, with a message that says *why*.
-- Never commit `.env` files, backups (`database/mysql/backups/`), credentials or real personal data.
+- Never commit `.env` files, backups (`database/backups/`), credentials or real personal data.
 
 ## Before you push
 

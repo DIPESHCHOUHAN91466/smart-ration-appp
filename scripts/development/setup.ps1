@@ -100,7 +100,7 @@ if ($script:failed) {
     exit 1
 }
 Write-Host "Setup complete. Next:" -ForegroundColor Green
-Write-Host "  .\scripts\development\seed-demo-data.ps1   (first time: database schema + synthetic demo data)"
+Write-Host "  .\scripts\database\seed-demo-data.ps1   (first time: database schema + synthetic demo data)"
 Write-Host "  .\scripts\development\start-all.ps1        (start everything)"
 Write-Host "  .\scripts\development\health-check.ps1     (check everything)"
 exit 0

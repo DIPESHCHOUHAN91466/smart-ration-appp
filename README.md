@@ -182,19 +182,19 @@ Smart_Ration_HSD2C_Final/
 │   │   └── tests/                # Python unit, contract & scale tests   → backend/SmartRation/tests/README.md
 │   └── SmartRation.AI/           # Python AI Analytics Service (:8001)   → backend/SmartRation.AI/README.md
 ├── mobile/                       # Expo / React Native mobile client     → mobile/README.md
-├── database/                     # MySQL schema, setup & backups         → database/README.md
-│   └── mysql/                    # Backup and restore utilities          → database/mysql/README.md
+├── database/                     # Everything about MySQL that isn't app code → database/README.md
+│   ├── schema/                   # Generated schema SQL + one-time setup script
+│   ├── migrations/               # Generated SQL per Alembic revision (for DBAs)
+│   ├── seeds/                    # Synthetic reference data; REAL_DATA.md  → database/seeds/README.md
+│   └── queries/                  # Read-only data-integrity checks
 ├── ai/                           # Chatbot knowledge base & evaluations  → ai/README.md
-├── data/                         # Synthetic demo datasets & rules       → data/README.md
-│   ├── synthetic/                # 1000+ realistic synthetic records    → data/synthetic/README.md
-│   └── real/                     # Integration requirements for live PDS → data/real/README.md
 ├── tests/                        # Cross-cutting integration tests       → tests/README.md
 │   └── mysql/                    # Direct live MySQL test suite          → tests/mysql/README.md
-├── scripts/                      # Developer automation scripts          → scripts/README.md
+├── scripts/                      # development/ database/ testing/ deployment/ → scripts/README.md
 ├── docs/                         # Architecture, API & security specs    → docs/README.md
 ├── deployment/                   # Docker Compose & Nginx configurations → deployment/README.md
 ├── sr.ps1                        # Unified developer CLI tool
-└── docker-compose.yml            # Multi-container orchestration
+└── render.yaml                   # Render blueprint (staging demo)       → docs/deployment/RENDER.md
 ```
 
 ---
@@ -245,7 +245,7 @@ Smart_Ration_HSD2C_Final/
 Run from PowerShell in the repository root:
 
 ```powershell
-# 1. Create the database and accounts (one time): copy database/mysql-setup.sql to
+# 1. Create the database and accounts (one time): copy database/schema/mysql-setup.sql to
 #    database/mysql-setup.local.sql (git-ignored), replace the CHANGE_ME passwords, then:
 mysql -u root -p < database\mysql-setup.local.sql
 
@@ -331,7 +331,7 @@ The repository includes a unified developer command line interface in the root d
 .\sr.ps1 db seed                      # Seed reference and demo data into empty tables
 .\sr.ps1 db schema                    # Regenerate the SQL schema export in database/
 .\sr.ps1 synthetic --users 1000       # Generate 1000 synthetic citizen records & bookings
-.\sr.ps1 contracts                    # Export OpenAPI contracts to api/openapi/
+.\sr.ps1 contracts                    # Export OpenAPI contracts to docs/api/openapi/
 .\sr.ps1 docker                       # Build the Python gateway image locally
 ```
 
@@ -381,7 +381,7 @@ These counts come from the last full run recorded in [docs/PROJECT_STATUS.md](do
   - `/api/inventory`, `/api/inventory/movements`
   - `/api/beneficiaries/me`, `/api/beneficiaries/family`
   - `/api/admin/database/tables`, `/api/admin/reports`
-- **Static OpenAPI Specifications**: Exported contracts live in [`api/openapi/`](api/openapi/).
+- **Static OpenAPI Specifications**: Exported contracts live in [`docs/api/openapi/`](docs/api/openapi/).
 
 ---
 
@@ -389,24 +389,22 @@ These counts come from the last full run recorded in [docs/PROJECT_STATUS.md](do
 
 **Public demo on Render:** [`render.yaml`](render.yaml) deploys the website + Python API and the C# API from this repository; the database is a free Aiven MySQL. Step by step: [docs/deployment/RENDER.md](docs/deployment/RENDER.md).
 
-Docker Compose currently runs **MySQL 8 + the Python gateway**. The C# API, AI service and frontend are not part of the Compose stack yet.
+Docker Compose runs **MySQL 8 + the C# business API + the Python gateway with the website** — the same two images and start-up order as Render. The optional AI analytics service is not part of it.
 
 ```powershell
-copy deployment\docker\compose.env.example .env   # fill in the values; .env is git-ignored
-docker compose up --build -d
-docker compose ps
+copy deployment\docker\compose.env.example deployment\docker\.env   # fill in the values; .env is git-ignored
+docker compose -f deployment/docker/docker-compose.yml up --build -d
+.\scripts\deployment\verify-deployment.ps1 http://127.0.0.1:8000     # smoke test
 ```
 
 | Service | Host address | Notes |
 |---|---|---|
 | `mysql` | `127.0.0.1:3307` | Port 3307 avoids a clash with a host MySQL. Data lives in the `mysql-data` volume. `docker compose down -v` **deletes** it. |
-| `api` | `http://localhost:8000` | Creates, adopts or upgrades the schema on start and never drops data. Proxies business routes to the C# API at `LEGACY_API_URL` (default: the host's `:5188`). |
+| `core` | `http://localhost:5188` | C# business API; migrates the schema and seeds synthetic demo data on first start. |
+| `api` | `http://localhost:8000` | Website + Python gateway. Waits for `core`, adopts the schema with Alembic (never drops data), proxies business routes to `core`. |
 
-**C# API image.** [`backend/SmartRation.Api/Dockerfile`](backend/SmartRation.Api/Dockerfile) builds the business API as a standalone image, from the repository root:
-
-```bash
-docker build -f backend/SmartRation.Api/Dockerfile -t smartration-csharp-api .
-```
+Build both images without running them: `.\scripts\deployment\build-images.ps1` (`.\sr.ps1 docker`).
+Environment templates and checklists for staging and production: [deployment/](deployment/README.md).
 
 It runs as a non-root user and listens on `$PORT` (default `8080`). All configuration is passed as environment variables at run time: `Database__Provider`, `ConnectionStrings__MySql`, `Jwt__Key`, `Qr__Secret`, `DATA_MODE`, `Demo__DemoOtpEnabled=false`, `Sms__*`. Against an empty database it creates the schema with EF Core migrations and, in synthetic mode, seeds the demo data. When the Python gateway starts against the same fresh database, set `WAIT_FOR_URL` on the gateway to the C# API's `/health` URL, so the gateway waits until the schema exists.
 

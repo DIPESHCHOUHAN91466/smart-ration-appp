@@ -15,11 +15,11 @@
 `start-dev.bat` starts the C# API and frontend. First-time Python setup:
 [backend/SmartRation/README.md](../../backend/SmartRation/README.md).
 
-## Docker (MySQL + Python API)
+## Docker Compose (MySQL + C# API + Python gateway with the website)
 
 ```
-copy deployment\docker\compose.env.example .env     # fill in every value; .env is git-ignored
-docker compose up --build
+copy deployment\docker\compose.env.example deployment\docker\.env     # fill in every value; git-ignored
+docker compose -f deployment/docker/docker-compose.yml up --build
 ```
 
 - `mysql`: MySQL 8.0, named volume `mysql-data`, healthcheck; published on `127.0.0.1:3307` so
@@ -27,7 +27,9 @@ docker compose up --build
 - `api`: built from `backend/SmartRation/Dockerfile` (non-root user, no secrets in the image,
   healthcheck on `/health/live`). It waits for MySQL to be healthy, then runs
   `scripts/setup_database.py` (creates/adopts/upgrades; never drops), optionally seeds, and starts uvicorn.
-- The C# API isn't containerised; `LEGACY_API_URL` points at the host (`host.docker.internal:5188`).
+- `core`: the C# API from `backend/SmartRation.Api/Dockerfile` (non-root); on first start it migrates the
+  schema and seeds synthetic demo data. `api` waits for `http://core:8080/api/health` before touching the
+  database (`WAIT_FOR_URL`), exactly as on Render.
 - `docker compose down` keeps data; `docker compose down -v` **deletes the database volume**.
 
 Probes: liveness `GET /health/live`; readiness `GET /ready` (database, migration version, legacy API).

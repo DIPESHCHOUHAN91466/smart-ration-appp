@@ -4,7 +4,7 @@ Safety rails, all required:
   * RESET_DATABASE=true and CONFIRM_RESET=SMART_RATION_RESET in the environment
   * ENVIRONMENT (or APP_ENV) must not be "production"
   * you must type the database name when prompted (or pass --yes-i-typed-it <name>)
-  * a backup is taken first (database/mysql/backup.ps1) unless --skip-backup;
+  * a backup is taken first (scripts/database/backup.ps1) unless --skip-backup;
     if the backup fails, nothing is dropped.
 
 Then: alembic downgrade base -> upgrade head -> seed -> verify.
@@ -28,7 +28,7 @@ from alembic import command
 
 from app.config.settings import get_settings
 
-BACKUP_SCRIPT = ROOT.parents[1] / "database" / "mysql" / "backup.ps1"
+BACKUP_SCRIPT = ROOT.parents[1] / "scripts" / "database" / "backup.ps1"
 
 
 def take_backup(url: str) -> None:

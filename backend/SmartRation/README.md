@@ -7,7 +7,7 @@ request unchanged to the C# business API. (A full migration to Python was paused
 [MIGRATION.md](MIGRATION.md).)
 **Belongs here:** gateway, auth, chatbot engine, data providers, Alembic migrations, DB scripts, their tests.
 **Doesn't:** business rules for bookings, QR, collection, inventory (C# API); UI (frontend);
-chatbot *content* (`ai/chatbot/knowledge`); synthetic reference data (`data/synthetic`).
+chatbot *content* (`ai/chatbot/knowledge`); synthetic reference data (`database/seeds`).
 Architecture: [../../docs/architecture/PYTHON_ARCHITECTURE.md](../../docs/architecture/PYTHON_ARCHITECTURE.md).
 
 ```
@@ -91,4 +91,4 @@ revision. (The C# API's startup `Migrate()` has nothing to apply, so it leaves t
 ```
 
 Seed users need `SEED_DEMO_PASSWORD` and/or `SEED_ADMIN_EMAIL` + `SEED_ADMIN_PASSWORD`
-(never stored in source). Backups: `database/mysql/backup.ps1` / `restore.ps1`.
+(never stored in source). Backups: `scripts/database/backup.ps1` / `restore.ps1`.

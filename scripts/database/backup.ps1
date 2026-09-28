@@ -5,7 +5,7 @@
 .DESCRIPTION
   Uses mysqldump --single-transaction (consistent InnoDB snapshot, no table locks),
   including schema, data, routines, triggers and events. Output:
-    database\mysql\backups\<database>_<yyyyMMdd_HHmmss>.sql.gz
+    database\backups\<database>_<yyyyMMdd_HHmmss>.sql.gz
   An existing file is never overwritten. The password is read from the environment
   and written only to a temporary MySQL option file (deleted afterwards), so it never
   appears on the command line or in the process list.
@@ -13,7 +13,7 @@
 .EXAMPLE
   $env:SMARTRATION_DB_USER = "smartration_app"
   $env:SMARTRATION_DB_PASSWORD = "<password>"
-  .\database\mysql\backup.ps1
+  .\scripts\database\backup.ps1
 #>
 [CmdletBinding()]
 param(
@@ -25,7 +25,7 @@ param(
 )
 $ErrorActionPreference = "Stop"
 # ($PSScriptRoot is empty in param defaults on Windows PowerShell 5.1)
-if (-not $OutputDir) { $OutputDir = Join-Path $PSScriptRoot "backups" }
+if (-not $OutputDir) { $OutputDir = Join-Path $PSScriptRoot "..\..\database\backups" }
 
 $user = $env:SMARTRATION_DB_USER
 $password = $env:SMARTRATION_DB_PASSWORD

@@ -10,7 +10,7 @@
 
 .EXAMPLE
   $env:SMARTRATION_DB_USER = "smartration_app"; $env:SMARTRATION_DB_PASSWORD = "<password>"
-  .\database\mysql\restore.ps1 -BackupFile .\database\mysql\backups\smartration_20260924_101500.sql.gz -Confirm RESTORE_SMARTRATION
+  .\scripts\database\restore.ps1 -BackupFile .\database\backups\smartration_20260924_101500.sql.gz -Confirm RESTORE_SMARTRATION
 #>
 [CmdletBinding()]
 param(

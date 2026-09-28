@@ -48,4 +48,4 @@ for dir in "." "backend/SmartRation" "backend/SmartRation.AI" "frontend"; do
 done
 
 if [ "$FAILED" -gt 0 ]; then echo "$FAILED step(s) failed - read the messages above."; exit 1; fi
-echo "Setup complete. Next: seed the database (scripts/development/seed-demo-data.ps1 or backend/SmartRation/scripts/setup_database.py + seed_database.py), then start the services (docs/development/LOCAL_SETUP.md)."
+echo "Setup complete. Next: seed the database (scripts/database/seed-demo-data.ps1 or backend/SmartRation/scripts/setup_database.py + seed_database.py), then start the services (docs/development/LOCAL_SETUP.md)."

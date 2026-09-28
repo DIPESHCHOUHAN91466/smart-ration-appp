@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     environment: str = Field(default="development", description="development | production")
 
     # synthetic (demo data, the default) | real (refused until real integrations exist).
-    # See app/services/data_provider.py and data/real/README.md.
+    # See app/services/data_provider.py and database/seeds/REAL_DATA.md.
     data_mode: str = Field(default="synthetic", description="synthetic | real")
 
     # MySQL (the same database the C# API uses). Required.

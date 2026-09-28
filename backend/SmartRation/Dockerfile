@@ -27,7 +27,7 @@ RUN /opt/venv/bin/pip install -r /tmp/requirements.txt
 FROM python:3.13-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH="/opt/venv/bin:$PATH" \
     ENVIRONMENT=production RUN_DB_SETUP=false \
-    CHATBOT_KNOWLEDGE_DIR=/app/ai/chatbot/knowledge SYNTHETIC_DATA_DIR=/app/data/synthetic/reference \
+    CHATBOT_KNOWLEDGE_DIR=/app/ai/chatbot/knowledge SYNTHETIC_DATA_DIR=/app/database/seeds/synthetic INTEGRITY_QUERIES_DIR=/app/database/queries \
     FRONTEND_DIST_DIR=/app/frontend-dist
 RUN useradd --system --uid 10001 --home-dir /app smartration
 COPY --from=build /opt/venv /opt/venv
@@ -38,7 +38,8 @@ COPY --chown=smartration:smartration backend/SmartRation/migrations ./migrations
 COPY --chown=smartration:smartration backend/SmartRation/scripts ./scripts
 COPY --chown=smartration:smartration backend/SmartRation/docker-entrypoint.sh ./
 COPY --chown=smartration:smartration ai/chatbot/knowledge ./ai/chatbot/knowledge
-COPY --chown=smartration:smartration data/synthetic/reference ./data/synthetic/reference
+COPY --chown=smartration:smartration database/seeds/synthetic ./database/seeds/synthetic
+COPY --chown=smartration:smartration database/queries ./database/queries
 # The built website, served by the API on the same origin (app/api/routes/frontend.py).
 COPY --from=web --chown=smartration:smartration /web/dist ./frontend-dist
 USER smartration
