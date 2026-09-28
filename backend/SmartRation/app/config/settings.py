@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     legacy_api_pools: int = Field(default=8, ge=1, le=64)
     legacy_api_connections_per_pool: int = Field(default=8, ge=1, le=100)
 
-    # The Python AI/analytics service (backend/SmartRation.AI). Only checked by /health; empty disables.
+    # The Python AI/analytics service (ai). Only checked by /health; empty disables.
     ai_service_url: str = Field(default="http://127.0.0.1:8001", description="AI service base URL; empty disables the check")
 
     # Comma-separated in the environment (NoDecode: not parsed as JSON).

@@ -92,7 +92,7 @@ public class AIController(
         return Ok(ApiResponse<BeneficiaryRiskInsightDto>.Ok(result));
     }
 
-    // ---- Python AI analytics (optional service; see backend/SmartRation.AI) ----
+    // ---- Python AI analytics (optional service; see ai) ----
     // Shop owners are always scoped to their own shop. Beneficiaries have no access.
 
     [HttpGet("analytics/forecast")]

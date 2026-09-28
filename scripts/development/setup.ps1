@@ -58,7 +58,7 @@ if ($script:failed) {
 # ------------------------------------------------------------------ 2. Python virtualenvs
 foreach ($svc in @(
         @{ Name = "Python API"; Dir = "backend\SmartRation"; Requirements = "requirements-dev.txt" },
-        @{ Name = "AI service"; Dir = "backend\SmartRation.AI"; Requirements = "requirements.txt" })) {
+        @{ Name = "AI service"; Dir = "ai"; Requirements = "requirements.txt" })) {
     Step $svc.Name
     $dir = Join-Path $root $svc.Dir
     $venvPython = Join-Path $dir ".venv\Scripts\python.exe"
@@ -82,7 +82,7 @@ Invoke-Checked "dotnet restore SmartRation.sln" $root { dotnet restore SmartRati
 
 # ------------------------------------------------------------------ 5. .env files (never overwritten)
 Step ".env files"
-foreach ($dir in @(".", "backend\SmartRation", "backend\SmartRation.AI", "frontend")) {
+foreach ($dir in @(".", "backend\SmartRation", "ai", "frontend")) {
     $example = Join-Path $root "$dir\.env.example"
     $target = Join-Path $root "$dir\.env"
     $shown = if ($dir -eq ".") { ".env" } else { "$dir\.env" }

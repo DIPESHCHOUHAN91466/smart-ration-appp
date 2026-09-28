@@ -9,7 +9,7 @@
 | MySQL 8 | 3306 | Windows service `MySQL80` |
 | C# API (legacy) | 5188 | `dotnet run --project backend/SmartRation.Api --launch-profile http` |
 | Python API | 8000 | `cd backend\SmartRation` → `.venv\Scripts\python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000` |
-| AI service | 8001 | `cd backend\SmartRation.AI` → `.venv\Scripts\python -m uvicorn smartration_ai.main:create_app --factory --port 8001` |
+| AI service | 8001 | from the repository root: `ai\.venv\Scripts\python -m uvicorn ai.api.main:create_app --factory --port 8001` |
 | Frontend | 5173 | `cd frontend` → `npm run dev` (calls the Python API on :8000) |
 
 `start-dev.bat` starts the C# API and frontend. First-time Python setup:

@@ -27,12 +27,14 @@ Status of a generative provider: **BLOCKED — REQUIRES EXTERNAL INTEGRATION** (
 
 ## 2. Distribution analytics (AI service)
 
-`backend/SmartRation.AI` computes, from the distribution history (read-only):
+`ai` computes, from the distribution history (read-only):
 demand forecasts (method chosen by rolling-origin backtest; no number below 14 days of data),
 stock-out risk, queue prediction, anomaly alerts (low stock, forecast risk, demand spikes, unusual
 consumption, inventory anomalies) persisted in `AIAlerts`, and optional OCR that pre-fills forms for
-human confirmation (never identity verification). Statistical methods only — no trained ML model,
-so no `ai/models/` artifacts exist yet.
+human confirmation (never identity verification). Statistical methods only — no trained ML model:
+`ai/models/` holds the forecasting formulas (not weight files), `ai/training/` picks one per shop and item
+by backtest, `ai/evaluation/` measures accuracy (`python -m ai.evaluation.report`, with `MODEL_VERSION`),
+`ai/inference/` runs them. Every forecast carries `model_version`; `/health` reports `forecast_model`.
 
 ## Principles
 

@@ -179,15 +179,16 @@ Smart_Ration_HSD2C_Final/
 │   ├── SmartRation/       # Python FastAPI Gateway & Auth (:8000) → backend/SmartRation/README.md
 │   │   ├── app/ai/chatbot/          # Modular chatbot intent & engine
 │   │   ├── app/synthetic/        # Synthetic data generation engine
-│   │   └── tests/                # Python unit, contract & scale tests   → backend/SmartRation/tests/README.md
-│   └── SmartRation.AI/           # Python AI Analytics Service (:8001)   → backend/SmartRation.AI/README.md
+│   │   └── tests/                # unit/ api/ integration/ security/ performance/ → backend/SmartRation/tests/README.md
 ├── mobile/                       # Expo / React Native mobile client     → mobile/README.md
 ├── database/                     # Everything about MySQL that isn't app code → database/README.md
 │   ├── schema/                   # Generated schema SQL + one-time setup script
 │   ├── migrations/               # Generated SQL per Alembic revision (for DBAs)
 │   ├── seeds/                    # Synthetic reference data; REAL_DATA.md  → database/seeds/README.md
 │   └── queries/                  # Read-only data-integrity checks
-├── ai/                           # Chatbot knowledge base & evaluations  → ai/README.md
+├── ai/                           # AI analytics service (:8001) + chatbot content → ai/README.md
+│   ├── configs/ preprocessing/ models/ training/ evaluation/ inference/ postprocessing/ pipelines/ api/
+│   └── chatbot/                  # Knowledge base (en/hi/mr), evaluation set, prompts
 ├── tests/                        # Cross-cutting integration tests       → tests/README.md
 │   └── mysql/                    # Direct live MySQL test suite          → tests/mysql/README.md
 ├── scripts/                      # development/ database/ testing/ deployment/ → scripts/README.md
@@ -277,7 +278,7 @@ No real secret is committed. [`.env.example`](.env.example) documents every valu
 |---|---|---|
 | Python gateway | `backend/SmartRation/.env` | `DATABASE_URL`, `JWT_SECRET_KEY`, `LEGACY_API_URL`, `CORS_ORIGINS` |
 | C# business API | `dotnet user-secrets` (never a file) | `Database:Provider=MySql`, `ConnectionStrings:MySql`, `Jwt:Key`, `Qr:Secret`, `AiService:ApiKey` |
-| AI service | `backend/SmartRation.AI/.env` | `SMARTRATION_AI_DB_URL` (read-only account), `SMARTRATION_AI_API_KEY` |
+| AI service | `ai/.env` | `SMARTRATION_AI_DB_URL` (read-only account), `SMARTRATION_AI_API_KEY` |
 | Frontend | `frontend/.env` | `VITE_API_BASE_URL`, `VITE_DEMO_MODE` |
 | Docker Compose | `.env` at the repo root (from `deployment/docker/compose.env.example`) | `MYSQL_*`, `JWT_SECRET_KEY` |
 

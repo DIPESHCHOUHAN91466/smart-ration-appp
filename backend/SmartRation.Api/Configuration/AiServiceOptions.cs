@@ -1,6 +1,6 @@
 namespace SmartRation.Api.Configuration;
 
-// The optional Python AI analytics service (backend/SmartRation.AI).
+// The optional Python AI analytics service (ai).
 public class AiServiceOptions
 {
     public const string SectionName = "AiService";

@@ -20,7 +20,7 @@ function Result([string]$Name, [bool]$Ok, [string]$Detail) {
     if (-not $Ok) { $script:failed++ }
 }
 
-foreach ($req in @("backend\SmartRation\requirements-dev.txt", "backend\SmartRation.AI\requirements.txt")) {
+foreach ($req in @("backend\SmartRation\requirements-dev.txt", "ai\requirements.txt")) {
     # stdout = the findings table (empty when clean); stderr = progress and summary notes only.
     $out = & $pyExe -m pip_audit -r (Join-Path $root $req) --progress-spinner off 2>$null | Out-String
     $ok = ($LASTEXITCODE -eq 0)

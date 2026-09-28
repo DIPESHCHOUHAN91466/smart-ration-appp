@@ -30,7 +30,7 @@ Nothing secret is in the repository. Each component reads its own git-ignored fi
 |---|---|---|
 | C# API | .NET user-secrets (in your Windows profile) | `ConnectionStrings:MySql`, `Database:Provider=MySql`, `Jwt:Key`, `Qr:Secret`, `AiService:ApiKey` |
 | Python API | `backend/SmartRation/.env` (from `.env.example`) | `DATABASE_URL`, `JWT_SECRET_KEY` (= C# `Jwt:Key`) |
-| AI service | `backend/SmartRation.AI/.env` (from `.env.example`) | `SMARTRATION_AI_DB_URL`, `SMARTRATION_AI_API_KEY` (= C# `AiService:ApiKey`) |
+| AI service | `ai/.env` (from `.env.example`) | `SMARTRATION_AI_DB_URL`, `SMARTRATION_AI_API_KEY` (= C# `AiService:ApiKey`) |
 | Frontend | `frontend/.env` (from `.env.example`) | `VITE_API_BASE_URL=http://localhost:8000/api/v1` |
 | Root MySQL tests | `.env` at the repository root | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME=smartration_test` |
 
@@ -60,12 +60,12 @@ python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements-dev.txt
 copy .env.example .env                 # then fill it in
 
-cd ..\SmartRation.AI
+cd ..\..\ai
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 copy .env.example .env                 # then fill it in
 
-cd ..\..\frontend
+cd ..\frontend
 npm install
 copy .env.example .env
 
@@ -85,7 +85,7 @@ first start. Everything is `DATA_MODE=synthetic` — see [../architecture/DATA_A
 
 Optional: a year of synthetic distribution history for the AI analytics (development only):
 ```
-cd backend\SmartRation.AI
+cd ai
 .venv\Scripts\python scripts\generate_history.py --months 12 --seed 42           # first time
 .venv\Scripts\python scripts\generate_history.py --months 12 --seed 42 --replace # regenerate
 .venv\Scripts\python scripts\generate_history.py --verify                        # re-check invariants

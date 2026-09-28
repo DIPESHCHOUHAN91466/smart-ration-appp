@@ -23,7 +23,7 @@ is needed:
 Deliberately **not** used: OpenCV, PyTorch, YOLO or other computer-vision stacks (decision 4 of the
 migration plan).
 
-**Optional:** OCR of supporting documents (`SmartRation.AI/smartration_ai/ocr.py`) uses the external
+**Optional:** OCR of supporting documents (`ai/inference/ocr.py`) uses the external
 Tesseract binary plus `pytesseract`/Pillow *only if they're installed*. Neither is in the requirements;
 without them the OCR endpoint clearly reports that OCR is unavailable instead of returning fake text.
 OCR is never identity verification; it only pre-fills fields a human confirms.

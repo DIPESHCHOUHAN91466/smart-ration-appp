@@ -26,18 +26,18 @@
     },
     {
       "name": "ai",
-      "runtimeExecutable": "backend/SmartRation.AI/.venv/Scripts/python.exe",
+      "runtimeExecutable": "ai/.venv/Scripts/python.exe",
       "runtimeArgs": [
         "-m",
         "uvicorn",
-        "smartration_ai.main:create_app",
+        "ai.api.main:create_app",
         "--factory",
         "--host",
         "127.0.0.1",
         "--port",
         "8001",
         "--app-dir",
-        "backend/SmartRation.AI"
+        "."
       ],
       "port": 8001
     },

@@ -165,16 +165,16 @@
     {
       "label": "AI service: Start",
       "type": "shell",
-      "command": ".venv/Scripts/python -m uvicorn smartration_ai.main:create_app --factory --host 127.0.0.1 --port 8001",
+      "command": "ai/.venv/Scripts/python -m uvicorn ai.api.main:create_app --factory --host 127.0.0.1 --port 8001",
       "isBackground": true,
-      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.AI" },
+      "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     },
     {
       "label": "AI service: Test",
       "type": "shell",
       "command": ".venv/Scripts/python -m pytest",
-      "options": { "cwd": "${workspaceFolder}/backend/SmartRation.AI" },
+      "options": { "cwd": "${workspaceFolder}/ai" },
       "problemMatcher": [],
       "group": "test"
     },

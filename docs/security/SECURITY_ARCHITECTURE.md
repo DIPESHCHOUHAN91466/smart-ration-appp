@@ -4,7 +4,7 @@
 
 | Secret | Where it lives | Never in |
 |---|---|---|
-| MySQL app password | `backend/SmartRation/.env` (`DATABASE_URL`), .NET user-secrets, `backend/SmartRation.AI/.env` | git, logs, error messages, URLs printed by scripts (shown as `***`) |
+| MySQL app password | `backend/SmartRation/.env` (`DATABASE_URL`), .NET user-secrets, `ai/.env` | git, logs, error messages, URLs printed by scripts (shown as `***`) |
 | JWT signing key | `.env` `JWT_SECRET_KEY` = .NET user-secret `Jwt:Key` (same value, so tokens work on both) | git, logs |
 | QR HMAC secret | .NET user-secret `Qr:Secret`; `.env` `QR_SECRET` when QR moves to Python | git, logs |
 | Seed passwords | env vars `SEED_DEMO_PASSWORD`, `SEED_ADMIN_PASSWORD` at seed time only | source code |

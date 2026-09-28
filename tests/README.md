@@ -15,7 +15,7 @@ enforcement, security headers, the website — `pytest tests/smoke --base-url <u
 | MySQL suite (100 records: CRUD, injection, performance, concurrency, errors, integrity) | `backend/SmartRation/tests/integration/mysql_suite/` | 122 |
 | Contract tests (C# vs. Python, live) | `backend/SmartRation/tests/contract/` | 36 + 23 checks |
 | Chatbot evaluation | `ai/chatbot/evaluation/` (+ `app.ai.chatbot.evaluate`) | 67 cases |
-| AI service | `backend/SmartRation.AI/tests/` | 46 |
+| AI service | `ai/tests/` | 58 |
 | C# API | `backend/SmartRation.Api.Tests/` | 94 |
 | Frontend | `frontend/tests/unit/` | 36 |
 

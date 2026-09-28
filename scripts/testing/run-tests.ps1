@@ -42,7 +42,7 @@ if ($MySql) {
     Remove-Item Env:TEST_DATABASE_URL
 }
 
-Run "AI service" (Join-Path $root "backend\SmartRation.AI") { & .venv\Scripts\python -m pytest -p no:warnings }
+Run "AI service" (Join-Path $root "ai") { & .venv\Scripts\python -m pytest -p no:warnings }
 
 if (-not $Quick) {
     # Release configuration: a running API (Debug build) locks its own .exe, which would break the build.

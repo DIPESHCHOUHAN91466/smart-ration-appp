@@ -97,8 +97,8 @@ if (Test-Path $pyExe) {
     $pytest = & $pyExe -m pytest --version 2>&1 | Select-Object -First 1
     Check ("$pytest" -match "^pytest \d") "pytest" $(if ("$pytest" -match "^pytest \d") { "$pytest" } else { "missing - pip install -r requirements-dev.txt" }) "NOT CONFIGURED"
 }
-$aiExe = Join-Path $root "backend\SmartRation.AI\.venv\Scripts\python.exe"
-foreach ($venv in @((Join-Path $pyDir ".venv"), (Join-Path $root "backend\SmartRation.AI\.venv"))) {
+$aiExe = Join-Path $root "ai\.venv\Scripts\python.exe"
+foreach ($venv in @((Join-Path $pyDir ".venv"), (Join-Path $root "ai\.venv"))) {
     if ((Test-Path $venv) -and (Test-VenvMoved $venv)) {
         Report "WARNING" "Virtualenv location" "$(Split-Path (Split-Path $venv) -Leaf)\.venv was created in $(Split-Path (Get-VenvOrigin $venv)) - pytest.exe/uvicorn.exe/activate are broken; run scripts\development\setup.ps1 to rebuild"
     }

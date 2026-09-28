@@ -32,9 +32,9 @@
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
-      "args": ["smartration_ai.main:create_app", "--factory", "--host", "127.0.0.1", "--port", "8001"],
-      "cwd": "${workspaceFolder}/backend/SmartRation.AI",
-      "python": "${workspaceFolder}/backend/SmartRation.AI/.venv/Scripts/python.exe",
+      "args": ["ai.api.main:create_app", "--factory", "--host", "127.0.0.1", "--port", "8001"],
+      "cwd": "${workspaceFolder}",
+      "python": "${workspaceFolder}/ai/.venv/Scripts/python.exe",
       "justMyCode": true,
       "console": "integratedTerminal"
     },

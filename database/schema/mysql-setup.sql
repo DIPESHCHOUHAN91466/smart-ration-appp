@@ -5,7 +5,7 @@
 --   smartration_ai  — used by the Python AI service (READ-ONLY)
 --
 -- Replace the CHANGE_ME passwords before running, then put the same values
--- in .NET user-secrets / backend/SmartRation.AI/.env (never commit them).
+-- in .NET user-secrets / ai/.env (never commit them).
 
 CREATE DATABASE IF NOT EXISTS smartration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

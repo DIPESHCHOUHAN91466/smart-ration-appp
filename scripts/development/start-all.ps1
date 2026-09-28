@@ -62,11 +62,11 @@ if ($mysql -and $mysql.Status -ne "Running") {
 Write-Host "Starting Smart Ration services..." -ForegroundColor Cyan
 Start-DevService "C# API" 5188 $root "dotnet run --project backend\SmartRation.Api --launch-profile http" "^(dotnet|SmartRation\.Api)$"
 
-$aiPython = Join-Path $root "backend\SmartRation.AI\.venv\Scripts\python.exe"
+$aiPython = Join-Path $root "ai\.venv\Scripts\python.exe"
 if (Test-Path $aiPython) {
-    Start-DevService "AI service" 8001 (Join-Path $root "backend\SmartRation.AI") ".venv\Scripts\python -m uvicorn smartration_ai.main:create_app --factory --host 127.0.0.1 --port 8001" "^python"
+    Start-DevService "AI service" 8001 $root "ai\.venv\Scripts\python -m uvicorn ai.api.main:create_app --factory --host 127.0.0.1 --port 8001" "^python"
 } else {
-    Write-Host "  AI service   :8001  not set up (backend\SmartRation.AI\README.md) - AI panels will show 'unavailable'" -ForegroundColor Yellow
+    Write-Host "  AI service   :8001  not set up (ai\README.md) - AI panels will show 'unavailable'" -ForegroundColor Yellow
 }
 
 $pyPython = Join-Path $root "backend\SmartRation\.venv\Scripts\python.exe"

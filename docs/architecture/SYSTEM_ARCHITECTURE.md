@@ -75,7 +75,7 @@ valid). Verified by `tests/contract/compare_proxy.py` (36/36) and `tests/contrac
 | Database | evolve the existing `smartration` DB in place (no second database, no data copy) |
 | Schema ownership | Alembic; `0001_initial` = the EF-created schema; live DB adopted by `stamp` |
 | Passwords | keep BCrypt verification, rehash to Argon2id on successful login |
-| AI service | merge `SmartRation.AI` into the Python backend (later step) |
+| AI service | separate read-only service in `ai/` (moved from `backend/SmartRation.AI` on 2026-09-28, organised by stage); not merged into the gateway so analytics can fail without affecting it |
 | Computer vision | OpenCV / PyTorch / YOLO not used |
 | Payments | not implemented (no payments feature exists); documented as future work |
 | Native code | none — see [NATIVE_DEPENDENCIES.md](../deployment/NATIVE_DEPENDENCIES.md) |

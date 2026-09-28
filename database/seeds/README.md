@@ -28,7 +28,7 @@ tables, so re-running never changes existing data.
 
 Generated at runtime (not stored here): demo households and beneficiaries (C# `DbInitializer` and the
 Python `SyntheticDataProvider` on registration: codes `FAM-DEMO-*`, `BEN-DEMO-*`, masked Aadhaar
-references `XXXX-XXXX-####`), and optional distribution history (`backend/SmartRation.AI/scripts/generate_history.py`:
+references `XXXX-XXXX-####`), and optional distribution history (`ai/scripts/generate_history.py`:
 `BEN-HIST-*`, `@history.synthetic.invalid`). All rows carry `DataSource = "SYNTHETIC_DEMO"`.
 
 ## Bulk synthetic citizens: the central generator

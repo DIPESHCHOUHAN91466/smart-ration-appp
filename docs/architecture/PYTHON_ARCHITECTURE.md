@@ -2,7 +2,7 @@
 
 Two Python applications, each a proper package (no loose scripts in the repository root):
 
-| | `backend/SmartRation` (:8000) | `backend/SmartRation.AI` (:8001) |
+| | `backend/SmartRation` (:8000) | `ai` (:8001) |
 |---|---|---|
 | Role | API gateway, authentication, Public Help + chatbot, data providers, DB migrations | AI analytics: forecasts, stock risk, queue prediction, anomaly alerts, optional OCR |
 | Database | read/write via SQLAlchemy (app account); owns the schema (Alembic) | **read-only** account (history generator is the only writer, dev only) |
@@ -59,12 +59,17 @@ query, a repository never decides a rule, and only services commit.
   the request id, full details only in the server log.
 - **Logs** never contain passwords, tokens, OTPs, message text or query strings.
 
-## `backend/SmartRation.AI/smartration_ai`
+## `ai/` (package `ai`)
 
-`config` · `repository` (read-only SQL) · `domain` · `forecasting` (weighted moving average,
-exponential smoothing, seasonal; chosen by backtest) · `inventory` · `queue` · `risk` · `alerts` ·
-`shop_monitor` · `ocr` (optional Tesseract; masks Aadhaar/mobile) · `i18n` · `service` · `main` (FastAPI).
-`scripts/generate_history.py` writes synthetic history for development (see LOCAL_SETUP.md).
+Organised by stage, so the path of a forecast reads top to bottom:
+`configs/settings` → `preprocessing/` (`repository` read-only SQL, `series` daily totals + outlier capping) →
+`models/forecasting` (weighted moving average, exponential smoothing, monthly-cycle seasonal; `MODEL_VERSION`) →
+`training/model_selection` (per shop and item, the model with the lowest backtest error; confidence) →
+`inference/` (`forecast`, `service` = `AnalyticsService`, `ocr` optional Tesseract that masks Aadhaar/mobile) →
+`postprocessing/i18n` (reasons in en/hi/mr) → `api/main` (FastAPI). `evaluation/` holds the backtests and the
+accuracy report (`python -m ai.evaluation.report`); `pipelines/` the rule-based analyses (`inventory`, `queue`,
+`risk`, `shop_monitor`, `alerts`); `domain` and `errors` are shared. `scripts/generate_history.py` writes
+synthetic history for development (see LOCAL_SETUP.md).
 
 ## Why Python here
 

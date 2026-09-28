@@ -1,0 +1,19 @@
+# Lint rules for the AI package (same style as backend/SmartRation). Run from the repository root:
+#   backend\SmartRation\.venv\Scripts\python -m ruff check ai
+line-length = 160
+target-version = "py312"
+extend-exclude = [".venv", "chatbot"]
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = [
+    "B008",  # FastAPI's Depends(...) in argument defaults is the framework's idiom
+]
+
+[lint.per-file-ignores]
+"tests/**" = ["E501"]
+"postprocessing/i18n.py" = ["E501"]  # the en/hi/mr message catalogue: one message per line
+
+[lint.isort]
+known-first-party = ["ai"]
+known-local-folder = ["ai_testkit"]
