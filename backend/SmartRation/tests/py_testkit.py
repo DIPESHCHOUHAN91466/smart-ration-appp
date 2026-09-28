@@ -7,8 +7,12 @@ being a package; works from this folder and from the repository root.
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 from app.config.settings import Settings
+
+BACKEND_ROOT = Path(__file__).resolve().parents[1]  # backend/SmartRation
+REPO_ROOT = BACKEND_ROOT.parents[1]
 
 
 def live_database_url() -> str | None:

@@ -17,7 +17,7 @@ personal data of any kind.
 ```
 cd backend\SmartRation
 .venv\Scripts\python -m app.ai.chatbot.evaluate     # score the assistant on the evaluation set
-.venv\Scripts\python -m pytest tests\test_chatbot_engine.py
+.venv\Scripts\python -m pytest tests\unit\test_chatbot_engine.py
 ```
 
 **How does it connect?** The Python API loads `chatbot/knowledge` at startup (path overridable with

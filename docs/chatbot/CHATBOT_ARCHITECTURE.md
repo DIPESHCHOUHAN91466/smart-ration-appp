@@ -73,7 +73,7 @@ Hindi or Marathi from marker words.
 1. Edit the JSON in `app/ai/chatbot/knowledge/` — every `title` / `answer` needs `en`, `hi` and `mr`.
    Lines starting with `• ` or `1. ` become lists. Links must be in-app paths (`/register`).
 2. Add keywords users would actually type, in all three languages and romanised Hindi.
-3. Add the question to `QUESTIONS` in `tests/test_chatbot_engine.py` and run the tests — they fail if
+3. Add the question to `QUESTIONS` in `tests/unit/test_chatbot_engine.py` and run the tests — they fail if
    a translation is missing or a question lands on the wrong article.
 4. Facts about the app must match the code (booking rules, OTP limits); general scheme facts stay
    hedged ("in many states", "check your state's portal") and should be reviewed before a public launch.
@@ -87,8 +87,8 @@ Unknown `CHATBOT_PROVIDER` values stop the app at startup.
 
 ## Tests
 
-- Backend: `tests/test_chatbot_engine.py` (66: 32 real questions in 3 languages, safety rules, language
-  detection, knowledge integrity) and `tests/test_public_help_api.py` (16: routes, validation, privacy,
+- Backend: `tests/unit/test_chatbot_engine.py` (66: 32 real questions in 3 languages, safety rules, language
+  detection, knowledge integrity) and `tests/api/test_public_help_api.py` (16: routes, validation, privacy,
   no message text in logs, rate limit, XSS input, startup check).
 - Frontend: `tests/unit/chatbot.test.jsx` (17: open/close, quick actions, typed messages, failure + retry,
   rate limit, markup safety, private-data reply, related topics, Esc + focus, expand, clear, search,

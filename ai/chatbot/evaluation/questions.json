@@ -1,5 +1,5 @@
 {
-  "_comment": "Evaluation set for the Public Help assistant. 'answers': the article each question must retrieve. 'safety': the reply kind each message must get. Used by backend tests (tests/test_chatbot_engine.py) and by `python -m app.ai.chatbot.evaluate`. Add a case for every question users actually ask that went wrong.",
+  "_comment": "Evaluation set for the Public Help assistant. 'answers': the article each question must retrieve. 'safety': the reply kind each message must get. Used by backend tests (tests/unit/test_chatbot_engine.py) and by `python -m app.ai.chatbot.evaluate`. Add a case for every question users actually ask that went wrong.",
   "answers": [
     {
       "message": "How can I apply for a ration card?",

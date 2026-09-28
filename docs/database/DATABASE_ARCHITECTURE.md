@@ -4,7 +4,7 @@ MySQL 8, database `smartration`, charset utf8mb4, InnoDB. The application connec
 least-privilege account (`smartration_app`: DML + DDL on `smartration` only; no global
 privileges such as PROCESS or CREATE DATABASE). The Python models in
 `backend/SmartRation/app/models/` match the tables column for column; any drift
-fails `tests/test_schema_compat.py` and `scripts/verify_database.py`.
+fails `tests/integration/test_schema_compat.py` and `scripts/verify_database.py`.
 
 On Windows, MySQL runs with `lower_case_table_names=1`, so tables are stored lowercase
 (`users`) even though they're declared PascalCase (`Users`); the tooling handles both.

@@ -20,28 +20,14 @@ import time
 import httpx
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 
 from app.ai.chatbot.knowledge_base import get_knowledge_base
 from app.ai.chatbot.providers import get_provider
 from app.database.migrations import alembic_head, current_revision
 from app.database.session import database_is_reachable
+from app.schemas.health import DatabaseHealthResponse, HealthResponse, ReadyResponse
 
 router = APIRouter(tags=["health"])
-
-
-class HealthResponse(BaseModel):
-    status: str = Field(description="healthy | degraded | unhealthy")
-    database: str = Field(description="healthy | unhealthy")
-    legacyApi: str = Field(description="healthy | unhealthy | disabled — the C# API behind the fallback proxy")
-    aiService: str = Field(description="healthy | unhealthy | disabled — the Python AI/analytics service")
-    chatbot: str = Field(description="healthy | unhealthy — knowledge base loaded and provider available")
-    dataMode: str = Field(description="synthetic | real")
-
-
-class ReadyResponse(BaseModel):
-    ready: bool
-    checks: dict[str, str] = Field(description="database, migrations, legacyApi: ok | failing | disabled (+ detail)")
 
 
 async def _probe(client: httpx.AsyncClient | None, path: str = "/health") -> str:
@@ -92,12 +78,6 @@ async def ready(request: Request):
     }
     is_ready = all(v in ("ok", "disabled") for v in checks.values())
     return JSONResponse(status_code=200 if is_ready else 503, content=ReadyResponse(ready=is_ready, checks=checks).model_dump())
-
-
-class DatabaseHealthResponse(BaseModel):
-    status: str = Field(description="healthy | unhealthy")
-    latencyMs: float | None = Field(description="round trip of a trivial query; null when unreachable")
-    migrations: str = Field(description="ok | behind | unknown — schema at the Alembic head this code expects")
 
 
 @router.get(

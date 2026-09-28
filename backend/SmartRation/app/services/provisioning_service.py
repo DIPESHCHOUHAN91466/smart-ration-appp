@@ -11,12 +11,13 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.errors import BadRequest
-from app.models import AadhaarVerification, Beneficiary, Family, FamilyMember, MobileVerification, PassbookVerification, RationScheme, RationShop, User
+from app.models import AadhaarVerification, Beneficiary, Family, FamilyMember, MobileVerification, PassbookVerification, User
 from app.models.enums import AadhaarVerificationStatus, EligibilityStatus, FamilyRelationship, Gender, MobileVerificationStatus, PassbookVerificationStatus
+from app.repositories import catalog
+from app.utils.masking import mask_mobile
 from app.utils.time import utc_now
 
 SOURCE = "SYNTHETIC_DEMO"
@@ -30,17 +31,13 @@ def _pending_code() -> str:
     return f"PENDING-{uuid.uuid4().hex}"
 
 
-def mask_mobile(mobile: str) -> str:
-    return "****" if not mobile or len(mobile) < 4 else "******" + mobile[-4:]
-
-
 def provision(db: Session, user: User) -> Beneficiary:
     """Family (head = the user) + beneficiary + mobile/Aadhaar/passbook records.
     Flushes to get ids; the caller commits everything in one transaction."""
-    shop_id = db.scalar(select(RationShop.Id).where(RationShop.IsActive.is_(True)).order_by(RationShop.Id).limit(1))
+    shop_id = catalog.first_active_shop_id(db)
     if not shop_id:
         raise BadRequest("No active ration shop is configured to assign this beneficiary to.")
-    scheme_id = db.scalar(select(RationScheme.Id).where(RationScheme.SchemeCode == "DEMO-NFSA", RationScheme.IsActive.is_(True)).limit(1))
+    scheme_id = catalog.active_scheme_id(db, "DEMO-NFSA")
     if not scheme_id:
         raise BadRequest("No active ration scheme is configured to assign this beneficiary to.")
 

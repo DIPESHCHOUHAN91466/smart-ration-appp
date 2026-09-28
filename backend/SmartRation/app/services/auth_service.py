@@ -14,18 +14,19 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 
-from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config.settings import Settings
 from app.core.errors import Conflict, Forbidden, Unauthorized
-from app.models import RefreshToken, User
+from app.models import User
 from app.models.enums import UserRole
+from app.repositories import refresh_tokens, users
 from app.security.passwords import PasswordCheck, hash_password, verify_password
 from app.security.tokens import TokenUser, create_access_token, generate_refresh_token, hash_token
 from app.services import audit_service
 from app.services.data_provider import get_data_provider
+from app.utils.masking import mask_email
 from app.utils.time import format_utc, utc_now
 
 log = logging.getLogger("smartration.auth")
@@ -54,23 +55,22 @@ def _token_user(user: User) -> TokenUser:
 def _issue_tokens(db: Session, user: User, settings: Settings) -> dict:
     access, access_expires = create_access_token(_token_user(user), settings)
     raw_refresh, refresh_hash, refresh_expires = generate_refresh_token(settings)
-    db.add(RefreshToken(UserId=user.Id, TokenHash=refresh_hash, ExpiresAt=refresh_expires, CreatedAt=utc_now()))
+    refresh_tokens.add(db, user.Id, refresh_hash, refresh_expires, utc_now())
     return {"accessToken": access, "refreshToken": raw_refresh, "accessTokenExpiresAt": format_utc(access_expires), "user": user_summary(user)}
 
 
 def register(db: Session, settings: Settings, ctx: RequestContext, full_name: str, email: str, mobile: str, password: str) -> dict:
     email = email.strip().lower()
-    if db.scalar(select(User.Id).where(User.Email == email)):
+    if users.email_taken(db, email):
         raise Conflict("An account with this email already exists.")
-    if db.scalar(select(User.Id).where(User.MobileNumber == mobile)):
+    if users.mobile_taken(db, mobile):
         raise Conflict("An account with this mobile number already exists.")
 
     # Self-registration is ALWAYS a Rural User; privileged roles are never client-chosen.
     user = User(FullName=full_name.strip(), Email=email, MobileNumber=mobile.strip(), PasswordHash=hash_password(password),
                 Role=int(UserRole.RuralUser), IsActive=True, CreatedAt=utc_now(), RationShopId=None)
-    db.add(user)
     try:
-        db.flush()
+        users.add(db, user)
         beneficiary = get_data_provider(settings.data_mode).provision_citizen(db, user)
         audit_service.record(db, user.Id, "REGISTER", "User", str(user.Id), ip_address=ctx.ip_address)
         response = _issue_tokens(db, user, settings)
@@ -85,12 +85,12 @@ def register(db: Session, settings: Settings, ctx: RequestContext, full_name: st
 
 def login(db: Session, settings: Settings, ctx: RequestContext, email: str, password: str) -> dict:
     email = email.strip().lower()
-    user = db.scalar(select(User).where(User.Email == email))
+    user = users.by_email(db, email)
     check = verify_password(password, user.PasswordHash) if user else PasswordCheck(valid=False, needs_upgrade=False)
 
     if user is None or not check.valid:
         audit_service.record(db, user.Id if user else None, "LOGIN_FAILED", "User",
-                             details=f"email={audit_service.mask_email(email)}", result="FAILED", ip_address=ctx.ip_address)
+                             details=f"email={mask_email(email)}", result="FAILED", ip_address=ctx.ip_address)
         db.commit()
         raise Unauthorized("Invalid email or password.")
 
@@ -109,27 +109,27 @@ def login(db: Session, settings: Settings, ctx: RequestContext, email: str, pass
 
 
 def refresh(db: Session, settings: Settings, raw_refresh_token: str) -> dict:
-    token = db.scalar(select(RefreshToken).where(RefreshToken.TokenHash == hash_token(raw_refresh_token)).with_for_update())
+    token = refresh_tokens.by_hash(db, hash_token(raw_refresh_token), for_update=True)
     now = utc_now()
     if token is None or token.RevokedAt is not None or token.ExpiresAt <= now:
         db.rollback()
         raise Unauthorized("Refresh token is invalid or has expired. Please log in again.")
 
-    user = db.get(User, token.UserId)
+    user = users.by_id(db, token.UserId)
     if user is None:  # unreachable while the FK holds; never issue a token for a missing user
         db.rollback()
         raise Unauthorized("Refresh token is invalid or has expired. Please log in again.")
     raw_new, new_hash, new_expires = generate_refresh_token(settings)
     token.RevokedAt = now
     token.ReplacedByTokenHash = new_hash
-    db.add(RefreshToken(UserId=token.UserId, TokenHash=new_hash, ExpiresAt=new_expires, CreatedAt=now))
+    refresh_tokens.add(db, token.UserId, new_hash, new_expires, now)
     access, access_expires = create_access_token(_token_user(user), settings)
     db.commit()
     return {"accessToken": access, "refreshToken": raw_new, "accessTokenExpiresAt": format_utc(access_expires), "user": user_summary(user)}
 
 
 def logout(db: Session, ctx: RequestContext, raw_refresh_token: str) -> None:
-    token = db.scalar(select(RefreshToken).where(RefreshToken.TokenHash == hash_token(raw_refresh_token)))
+    token = refresh_tokens.by_hash(db, hash_token(raw_refresh_token))
     if token is not None and token.RevokedAt is None:
         token.RevokedAt = utc_now()
         audit_service.record(db, token.UserId, "LOGOUT", "User", str(token.UserId), ip_address=ctx.ip_address)

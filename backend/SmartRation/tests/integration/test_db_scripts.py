@@ -5,16 +5,16 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 import pytest
+from py_testkit import BACKEND_ROOT
 from sqlalchemy import create_engine, func, select, text
 
 import app.models  # noqa: F401
 from app.database.base import Base
 from app.models import RationItem, User
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = BACKEND_ROOT
 RESET_FLAGS = {"RESET_DATABASE": "true", "CONFIRM_RESET": "SMART_RATION_RESET"}
 
 

@@ -1,7 +1,7 @@
 """MySQL test suite: runs ONLY against a dedicated test database.
 
     set TEST_DATABASE_URL=mysql+pymysql://smartration_app:<password>@localhost:3306/smartration_test?charset=utf8mb4
-    .venv\\Scripts\\python -m pytest tests/mysql_suite -v
+    .venv\\Scripts\\python -m pytest tests/integration/mysql_suite -v
 
 Safety: the database name must end in `_test`; anything else (including the real
 `smartration`) makes every test in this folder refuse to run. Without TEST_DATABASE_URL the
@@ -13,10 +13,10 @@ from __future__ import annotations
 import os
 import sys
 from collections.abc import Callable, Iterator
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from py_testkit import BACKEND_ROOT
 from sqlalchemy import text
 from sqlalchemy.engine import Engine, make_url
 from sqlalchemy.orm import Session
@@ -33,7 +33,7 @@ from app.security.passwords import hash_password
 from app.utils.time import utc_now
 from mysql_suite.support import _REPORT, KEY, new_session, record_fixture  # noqa: F401
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = BACKEND_ROOT
 REFERENCE_TABLES = {"rationitems", "rationschemes", "schemeentitlementitems", "rationshops", "inventory", "timeslots"}
 
 _URL = os.environ.get("TEST_DATABASE_URL", "")
@@ -41,7 +41,7 @@ _URL = os.environ.get("TEST_DATABASE_URL", "")
 
 def _guard() -> str:
     if not _URL:
-        pytest.skip("TEST_DATABASE_URL not set (see tests/mysql_suite/conftest.py)", allow_module_level=True)
+        pytest.skip("TEST_DATABASE_URL not set (see tests/integration/mysql_suite/conftest.py)", allow_module_level=True)
     url = make_url(_URL)
     if not url.drivername.startswith("mysql"):
         pytest.exit("TEST_DATABASE_URL must be a MySQL URL.", returncode=2)

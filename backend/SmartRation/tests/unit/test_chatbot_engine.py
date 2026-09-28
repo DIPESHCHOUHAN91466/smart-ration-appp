@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import json
 import shutil
-from pathlib import Path
 
 import pytest
+from py_testkit import REPO_ROOT
 
 from app.ai.chatbot.engine import Assistant
 from app.ai.chatbot.knowledge_base import KNOWLEDGE_DIR, LANGUAGES, KnowledgeError, load
@@ -32,7 +32,7 @@ def bot() -> Assistant:
 
 
 # The evaluation set lives with the AI assets: <repo>/ai/chatbot/evaluation/questions.json
-EVALUATION = json.loads((Path(__file__).resolve().parents[3] / "ai" / "chatbot" / "evaluation" / "questions.json").read_text(encoding="utf-8"))
+EVALUATION = json.loads((REPO_ROOT / "ai" / "chatbot" / "evaluation" / "questions.json").read_text(encoding="utf-8"))
 QUESTIONS = [(c["message"], c["language"], c["expected_article"]) for c in EVALUATION["answers"]]
 SAFETY = [(c["message"], c["language"], c["expected_kind"]) for c in EVALUATION["safety"]]
 

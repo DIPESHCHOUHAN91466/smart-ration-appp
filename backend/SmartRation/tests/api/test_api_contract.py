@@ -5,9 +5,10 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from py_testkit import BACKEND_ROOT
+
+ROOT = BACKEND_ROOT
 CONTRACT = ROOT.parents[1] / "api" / "openapi" / "python-api.openapi.json"
 
 

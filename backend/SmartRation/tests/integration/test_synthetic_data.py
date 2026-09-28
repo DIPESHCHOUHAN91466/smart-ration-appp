@@ -7,9 +7,9 @@ import json
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 import pytest
+from py_testkit import BACKEND_ROOT
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session
 
@@ -34,7 +34,7 @@ from app.models import (
 from app.synthetic import SOURCE, SyntheticDataError, book, collect, generate, insert, is_synthetic_email, is_synthetic_mobile, validate
 from app.utils.time import utc_now
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = BACKEND_ROOT
 sys.path.insert(0, str(ROOT / "scripts"))
 
 

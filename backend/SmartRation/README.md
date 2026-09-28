@@ -61,7 +61,7 @@ Protect a Python route with `Depends(get_current_user)` or `Depends(require_role
 .venv\Scripts\python tests\contract\auth_interop.py       # live: tokens/hashes across both backends (creates 2 test accounts)
 ```
 
-`tests/test_schema_compat.py` compares the SQLAlchemy models with the live MySQL schema using
+`tests/integration/test_schema_compat.py` compares the SQLAlchemy models with the live MySQL schema using
 Alembic's own comparison — it fails on any drift in tables, columns, types, nullability,
 defaults, keys, foreign keys or indexes.
 

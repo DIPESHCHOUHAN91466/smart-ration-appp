@@ -56,7 +56,9 @@ jobs:
         run: python scripts/setup_database.py --seed
       - name: Setup is idempotent
         run: python scripts/setup_database.py --seed
-      - name: Tests (unit + live schema compatibility against MySQL)
+      - name: Cleanup worker runs against MySQL (dry run)
+        run: python -m app.workers.cleanup --dry-run
+      - name: Tests (unit, api, integration incl. live schema compatibility, security, performance budgets)
         run: python -m pytest
       - name: Create the separate test database (smartration_test)
         run: |
@@ -64,7 +66,7 @@ jobs:
       - name: MySQL suite (CRUD, injection, 1000 records, concurrency 10-100) on smartration_test
         env:
           TEST_DATABASE_URL: mysql+pymysql://smartration_app:ci-app-only@127.0.0.1:3306/smartration_test?charset=utf8mb4
-        run: python -m pytest tests/mysql_suite
+        run: python -m pytest tests/integration/mysql_suite
       - name: Chatbot evaluation (en/hi/mr)
         run: python -m app.ai.chatbot.evaluate
 

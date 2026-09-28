@@ -37,7 +37,7 @@ if ($MySql) {
     $url = & "$py\.venv\Scripts\python" "$py\scripts\test_database_url.py"   # password stays in this variable only
     if ($LASTEXITCODE -ne 0 -or -not $url) { throw "Could not build TEST_DATABASE_URL from backend\SmartRation\.env" }
     $env:TEST_DATABASE_URL = $url
-    Run "MySQL suite (smartration_test)" $py { & .venv\Scripts\python -m pytest tests/mysql_suite -p no:warnings }
+    Run "MySQL suite (smartration_test)" $py { & .venv\Scripts\python -m pytest tests/integration/mysql_suite -p no:warnings }
     Run "Root MySQL tests (tests/mysql)" $root { & "$py\.venv\Scripts\python" -m pytest tests/mysql -p no:warnings }
     Remove-Item Env:TEST_DATABASE_URL
 }

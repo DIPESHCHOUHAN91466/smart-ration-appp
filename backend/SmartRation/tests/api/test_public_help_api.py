@@ -5,9 +5,9 @@ from __future__ import annotations
 import io
 import logging
 import sys
-from pathlib import Path
 
 import pytest
+from py_testkit import BACKEND_ROOT
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -15,7 +15,7 @@ from app.database.base import Base
 from app.database.session import get_engine
 from app.services import public_help_service
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+sys.path.insert(0, str(BACKEND_ROOT / "scripts"))
 import seed_database  # noqa: E402
 
 

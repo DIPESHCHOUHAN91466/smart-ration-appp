@@ -2,14 +2,14 @@
 
 Adds the row to the caller's session; the caller commits (so an audit row is
 atomic with the change it describes). Never pass passwords, tokens, full
-Aadhaar numbers or other personal data in `details`.
+Aadhaar numbers or other personal data in `details` (mask with app.utils.masking).
 """
 
 from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from app.models import AuditLog
+from app.repositories import audit_logs
 from app.utils.time import utc_now
 
 
@@ -24,20 +24,5 @@ def record(
     role: str | None = None,
     ip_address: str | None = None,
 ) -> None:
-    db.add(AuditLog(
-        UserId=user_id,
-        Action=action,
-        EntityName=entity_name,
-        EntityId=entity_id,
-        IpAddress=ip_address,
-        Details=details,
-        Role=role,
-        Result=result,
-        CreatedAt=utc_now(),
-    ))
-
-
-def mask_email(email: str) -> str:
-    """'rahul@example.com' -> 'r***@example.com' (same as the C# MaskEmail)."""
-    at = email.find("@")
-    return "***" if at <= 0 else f"{email[0]}***{email[at:]}"
+    audit_logs.add(db, user_id=user_id, action=action, entity_name=entity_name, entity_id=entity_id, details=details,
+                   result=result, role=role, ip_address=ip_address, created_at=utc_now())

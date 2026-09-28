@@ -50,7 +50,7 @@ its items, stock moved from available to allocated with a *Distributed* ledger e
 below zero (citizens whose shop lacks stock are reported as `NotCollected`). Past slots exist in databases
 seeded since 2026-09-25 (the seeder now creates −5…+2 days, like the C# seeder).
 Verified at scale on MySQL: 100 000 citizens (343 085 family members) inserted in 83 s; 1 000 citizens'
-collections with stock and ledger checked exactly (`tests/mysql_suite/test_08_scale.py`).
+collections with stock and ledger checked exactly (`tests/integration/mysql_suite/test_08_scale.py`).
 `--insert` refuses any database whose name doesn't end in `_test`, refuses unless `DATA_MODE=synthetic`,
 and runs in one transaction. Accounts can't log in unless `SYNTHETIC_USER_PASSWORD` is set.
 The MySQL suite's `sample_data.py` is different on purpose: 100 *adversarial* records (emoji, 150-character

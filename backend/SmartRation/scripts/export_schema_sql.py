@@ -7,7 +7,7 @@ connects to a database (Alembic "offline" mode) and contains no credentials.
     .venv\\Scripts\\python scripts\\export_schema_sql.py           # rewrite the snapshot
     .venv\\Scripts\\python scripts\\export_schema_sql.py --check   # exit 1 if the snapshot is out of date
 
-tests/test_schema_snapshot.py runs --check, so a migration without a refreshed snapshot fails the tests.
+tests/integration/test_schema_snapshot.py runs --check, so a migration without a refreshed snapshot fails the tests.
 """
 
 from __future__ import annotations

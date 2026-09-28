@@ -19,7 +19,6 @@ from dataclasses import asdict
 
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.concurrency import run_in_threadpool
-from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.ai.chatbot.knowledge_base import LANGUAGES, get_knowledge_base
@@ -31,6 +30,7 @@ from app.core.errors import NotFound, ok
 from app.core.validation import ValidationFailed
 from app.database.session import get_db
 from app.models.enums import UserRole
+from app.schemas.public_help import ChatRequest
 from app.security.rate_limit import rate_limit
 from app.services.public_help_service import DatabasePublicData, UserBookings
 
@@ -40,13 +40,6 @@ router = APIRouter(tags=["public help"])
 chat_limit = Depends(rate_limit("chatbot", lambda s: s.chatbot_rate_limit_per_minute))
 help_limit = Depends(rate_limit("public-help", lambda s: s.public_help_rate_limit_per_minute))
 Language = Query("en", description="en | hi | mr (anything else falls back to en)", max_length=5)
-
-
-class ChatRequest(BaseModel):
-    message: str | None = Field(None, description=f"The question, up to {MAX_MESSAGE_LENGTH} characters.")
-    language: str | None = Field("en", description="en | hi | mr — the interface language; Devanagari messages are detected")
-    topic: str | None = Field(None, description="A quick-button category id instead of a message (e.g. 'documents')")
-    articleId: str | None = Field(None, description="Open a specific article (e.g. from 'related')")
 
 
 def _lang(value: str | None) -> str:

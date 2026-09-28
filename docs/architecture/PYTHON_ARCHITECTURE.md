@@ -13,22 +13,38 @@ Two Python applications, each a proper package (no loose scripts in the reposito
 ```
 app/
 ├── main.py              create_app(): settings → startup checks → middleware → routers → proxy (last)
-├── core/                cross-cutting: config (pydantic-settings), errors (envelope), logging (JSON +
-│                        request id), middleware, security (JWT, Argon2/BCrypt), dependencies
-│                        (get_current_user, require_roles, optional_current_user), validation, rate_limit
-├── api/                 FastAPI routers — thin: validate, call a service, wrap the envelope
-│   ├── auth.py          /api/auth/*
-│   ├── public_help.py   /api/public-help/*, /api/chatbot/*
-│   ├── health.py        /health, /health/live, /ready
-│   └── legacy_proxy.py  forwards every other /api/* to the C# API
-├── services/            business logic, one transaction per call (auth, audit, provisioning, public help)
-├── chatbot/             engine (safety + retrieval), knowledge loader, providers, evaluate
-├── data_providers/      DataProvider interface: SyntheticDataProvider now, RealDataProvider = BLOCKED
-├── schemas/             Pydantic request/response models
-└── db/                  models (25 tables), types, enums, database (engine/session), migrations (Alembic)
-scripts/                 setup / verify / seed / reset database (reset is dev-only, double-confirmed)
-tests/                   pytest: unit + API (SQLite), mysql_suite (MySQL, *_test only), contract (live)
+├── config/settings.py   the one configuration object (pydantic-settings: environment / .env)
+├── core/                cross-cutting: errors (envelope + ApiError), logging (JSON + request id), validation
+├── api/
+│   ├── routes/          FastAPI routers — thin: validate, call a service, wrap the envelope
+│   │   ├── auth.py          /api/auth/*
+│   │   ├── public_help.py   /api/public-help/*, /api/chatbot/*
+│   │   ├── health.py        /health, /health/live, /health/db, /ready
+│   │   ├── legacy_proxy.py  forwards every other /api/* to the C# API
+│   │   └── frontend.py      serves the built React app (single-service deployments only)
+│   └── dependencies/    get_current_user, optional_current_user, require_roles (RBAC)
+├── schemas/             Pydantic request/response models (auth, health, public_help)
+├── services/            business rules, one transaction per call (auth, audit, provisioning, public help),
+│                        data_provider (Synthetic now, Real = BLOCKED until a government integration exists)
+├── repositories/        every SQL query, one module per aggregate (users, refresh_tokens, audit_logs,
+│                        catalog, bookings); add rows, never commit
+├── models/              SQLAlchemy models by domain (users, verification, beneficiaries, shops, schemes,
+│                        bookings, ai) + enums + column types; 25 tables
+├── database/            base (declarative Base), session (engine, pool, get_db), migrations (Alembic
+│                        revision helpers), schema_utils
+├── security/            passwords (Argon2id, BCrypt upgrade), tokens (JWT, refresh), rate_limit
+├── middleware/          http (request id, access log, security headers, body-size limit), api_version (/api/v1)
+├── ai/chatbot/          Public Help assistant: engine (safety + retrieval), knowledge loader, providers, evaluate
+├── synthetic/           the one synthetic-data generator (generate / validate / insert / book / collect)
+├── workers/             background jobs: cleanup (purge long-expired refresh tokens)
+└── utils/               time (UTC formats shared with C#), masking (email, mobile, Aadhaar)
+migrations/              Alembic environment + revisions (the schema's source of truth)
+scripts/                 setup / verify / seed / reset database (reset is dev-only, double-confirmed), export OpenAPI / schema
+tests/                   unit/ · api/ · integration/ (+ mysql_suite on *_test only) · security/ · performance/ · contract/ (manual)
 ```
+
+The request path is **route → schema → service → repository → model/database**: a route never runs a
+query, a repository never decides a rule, and only services commit.
 
 ### Rules
 

@@ -4,17 +4,16 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from pathlib import Path
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
-from py_testkit import make_settings
+from py_testkit import BACKEND_ROOT, make_settings
 
 from app.main import create_app
 from app.services.data_provider import BLOCKED, IntegrationNotAvailable, RealDataProvider, SyntheticDataProvider, check_data_mode, get_data_provider
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = BACKEND_ROOT
 
 
 def test_synthetic_is_the_default_and_selects_the_synthetic_provider(tmp_path):

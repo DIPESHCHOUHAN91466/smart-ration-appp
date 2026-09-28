@@ -13,7 +13,7 @@ being retired). Everything a MySQLi test plan checks has a direct equivalent her
 | `mysqli_begin_transaction` / `commit` / `rollback` | one `Session` transaction per request; rollback on any error |
 | `mysqli_multi_query` | disabled: the driver refuses stacked statements |
 
-The suite lives in `backend/SmartRation/tests/mysql_suite/` (123 tests).
+The suite lives in `backend/SmartRation/tests/integration/mysql_suite/` (123 tests).
 
 ---
 
@@ -53,7 +53,7 @@ This lasts only while that PowerShell window is open. Don't put it in a committe
 ## Step 3 — Run the tests
 
 ```powershell
-.venv\Scripts\python -m pytest tests\mysql_suite -v
+.venv\Scripts\python -m pytest tests\integration\mysql_suite -v
 ```
 
 The first run builds all 25 tables in `smartration_test` with the real Alembic migration and seeds
@@ -62,7 +62,7 @@ synthetic reference data (shops, items, schemes, slots). The full run takes abou
 Run a single area:
 
 ```powershell
-.venv\Scripts\python -m pytest tests\mysql_suite\test_03_security.py -v
+.venv\Scripts\python -m pytest tests\integration\mysql_suite\test_03_security.py -v
 ```
 
 ## Step 4 — Read the results
@@ -198,7 +198,7 @@ All data is fabricated. There are no real people and no Aadhaar numbers.
 - [ ] Transactions: one per request; rollback on error; `FOR UPDATE` where counters/stock change
 - [ ] Deadlocks (1213) retried by code that locks several rows
 - [ ] Logs are JSON with request ids and no secrets
-- [ ] `tests/mysql_suite`: 123 passed
+- [ ] `tests/integration/mysql_suite`: 123 passed
 
 ## Clean up (optional)
 

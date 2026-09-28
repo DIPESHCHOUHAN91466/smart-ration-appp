@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from py_testkit import BACKEND_ROOT
+
+ROOT = BACKEND_ROOT
 
 
 def test_schema_snapshot_is_up_to_date():

@@ -5,7 +5,7 @@
 | Suite | Where | Runs against | Count | Command |
 |---|---|---|---|---|
 | Python backend unit/API | `backend/SmartRation/tests/` | SQLite temp files | 221 | `.venv\Scripts\python -m pytest` (in that folder) |
-| MySQL suite (100 adversarial + 1000 generated records; concurrency 10/25/50/100) | `backend/SmartRation/tests/mysql_suite/` | `smartration_test` | 146 | set `TEST_DATABASE_URL`, then `… -m pytest tests/mysql_suite` |
+| MySQL suite (100 adversarial + 1000 generated records; concurrency 10/25/50/100) | `backend/SmartRation/tests/integration/mysql_suite/` | `smartration_test` | 146 | set `TEST_DATABASE_URL`, then `… -m pytest tests/integration/mysql_suite` |
 | Root MySQL tests | `tests/mysql/` | `smartration_test` (root `.env`) | 24 | from the repo root: `backend\SmartRation\.venv\Scripts\python -m pytest tests/mysql` |
 | AI service | `backend/SmartRation.AI/tests/` | SQLite | 46 | `.venv\Scripts\python -m pytest` (in that folder) |
 | C# API | `backend/SmartRation.Api.Tests/` | in-memory (SQLite) | 130 | `dotnet test SmartRation.sln -c Release` (repository root) |
