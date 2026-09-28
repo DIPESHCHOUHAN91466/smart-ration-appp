@@ -7,6 +7,7 @@ import { publicStrings } from "../../src/i18n/publicStrings";
 const LANGS = ["en", "hi", "mr"];
 
 function sourceFiles(dir) {
+  if (!statSync(dir).isDirectory()) return [dir];
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);
     return statSync(path).isDirectory() ? sourceFiles(path) : /\.(jsx?)$/.test(name) ? [path] : [];
@@ -28,7 +29,7 @@ describe("translations", () => {
   });
 
   it("every t('key') used by the public pages and the chatbot exists", () => {
-    const roots = ["src/components/chatbot", "src/components/layout", "src/pages/landing", "src/pages/public-help"];
+    const roots = ["src/components/chatbot", "src/layouts/PublicLayout.jsx", "src/components/LanguageSwitcher.jsx", "src/pages/landing", "src/pages/public-help"];
     const used = new Set();
     for (const root of roots) {
       for (const file of sourceFiles(root)) {

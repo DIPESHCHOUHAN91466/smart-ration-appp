@@ -17,7 +17,4 @@ export function resolveApiBaseUrl(configured, isDev) {
   return withApiVersion(configured || (isDev ? "http://127.0.0.1:8000/api" : "/api"));
 }
 
-// import.meta.env.DEV is replaced at build time, so production bundles don't contain the localhost URL.
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-  ? withApiVersion(import.meta.env.VITE_API_BASE_URL)
-  : import.meta.env.DEV ? resolveApiBaseUrl("", true) : "/api/v1";
+// The value the app uses is config/env.js API_BASE_URL (built with these rules from VITE_API_BASE_URL).

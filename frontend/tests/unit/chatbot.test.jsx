@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import ChatbotWidget from "../../src/components/chatbot/ChatbotWidget";
 import { chatbotService } from "../../src/services/chatbotService";
-import { openChatbot } from "../../src/store/chatbotStore";
+import { openChatbot } from "../../src/state/chatbotStore";
 import { useLanguageStore } from "../../src/i18n/useTranslation";
 
 const SUGGESTIONS = [

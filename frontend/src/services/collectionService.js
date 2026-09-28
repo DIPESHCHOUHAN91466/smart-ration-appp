@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function confirmCollection(tokenId, verificationMethod) {
   return unwrap(apiClient.post("/ration/collection/confirm", { tokenId, verificationMethod }));

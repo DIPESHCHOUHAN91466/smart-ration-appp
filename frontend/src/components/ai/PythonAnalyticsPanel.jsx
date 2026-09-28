@@ -9,9 +9,10 @@ import {
   resolveAlert,
   syncAlerts,
 } from "../../services/aiService";
-import { useAuthStore } from "../../store/authStore";
-import { useToast } from "../../context/ToastContext";
+import { useAuthStore } from "../../state/authStore";
+import { useToast } from "../../state/toast";
 import { useTranslation } from "../../i18n/useTranslation";
+import { formatDateTime } from "../../utils/format";
 
 const TONE = {
   HIGH: "success", MEDIUM: "warning", LOW: "danger",
@@ -21,12 +22,6 @@ const TONE = {
 };
 const SEVERITY_TONE = { INFO: "success", LOW: "warning", MEDIUM: "warning", HIGH: "danger", CRITICAL: "danger" };
 const RISK_TONE = { LOW: "success", MEDIUM: "warning", HIGH: "danger", CRITICAL: "danger" };
-
-function formatTime(iso, language) {
-  if (!iso) return "—";
-  const d = new Date(iso.endsWith("Z") ? iso : `${iso}Z`);
-  return d.toLocaleString({ hi: "hi-IN", mr: "mr-IN" }[language] ?? "en-IN", { dateStyle: "medium", timeStyle: "short" });
-}
 
 // Forecasts, persisted alerts, risk scores and shop monitoring from the Python
 // AI service, in the user's language. Every figure carries its basis and
@@ -126,7 +121,7 @@ export default function PythonAnalyticsPanel() {
           <AlertTriangle size={15} /> {t("ai_alerts_title")}
         </h3>
         <span className="muted ai-last-run">
-          <Clock3 size={12} /> {t("ai_last_analysis")}: {formatTime(alerts?.sync?.lastAnalysisAt, language)}
+          <Clock3 size={12} /> {t("ai_last_analysis")}: {formatDateTime(alerts?.sync?.lastAnalysisAt, language)}
           {canResolve && (
             <button type="button" className="link-btn" onClick={refresh}>
               <RefreshCcw size={12} /> {t("ai_refresh")}
@@ -167,8 +162,8 @@ export default function PythonAnalyticsPanel() {
                   )}
                   <div className="ai-alert-foot">
                     <small className="muted">
-                      {t("ai_detected")} {formatTime(a.detectedAt, language)}
-                      {a.lastSeenAt && ` • ${t("ai_last_seen")} ${formatTime(a.lastSeenAt, language)}`}
+                      {t("ai_detected")} {formatDateTime(a.detectedAt, language)}
+                      {a.lastSeenAt && ` • ${t("ai_last_seen")} ${formatDateTime(a.lastSeenAt, language)}`}
                     </small>
                     {canResolve && (
                       <span className="ai-alert-buttons">

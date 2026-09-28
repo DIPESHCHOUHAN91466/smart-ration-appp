@@ -7,9 +7,9 @@ import RationItemCard from "../../components/RationItemCard";
 import { getShops } from "../../services/shopsService";
 import { getSlots } from "../../services/slotsService";
 import { getRationItems, createBooking } from "../../services/rationService";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
 import { useTranslation } from "../../i18n/useTranslation";
-import { usePreferencesStore } from "../../store/preferencesStore";
+import { usePreferencesStore } from "../../state/preferencesStore";
 
 function today() {
   return new Date().toISOString().slice(0, 10);

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { MessageText, toBlocks } from "../../src/components/chatbot/ChatbotMessage";
+import { MessageText } from "../../src/components/chatbot/ChatbotMessage";
+import { toBlocks } from "../../src/features/chatbot/messageBlocks";
 
 describe("reply formatting", () => {
   it("turns bullet and numbered lines into lists and keeps paragraphs", () => {

@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function getShopDashboard() {
   return unwrap(apiClient.get("/shop/dashboard"));

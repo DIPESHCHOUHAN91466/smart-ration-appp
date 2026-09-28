@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import ChatbotWindow from "./ChatbotWindow";
 import ChatbotAvatar from "./ChatbotAvatar";
 import { useChatbot } from "../../hooks/useChatbot";
-import { useChatbotStore } from "../../store/chatbotStore";
+import { useChatbotStore } from "../../state/chatbotStore";
 import { useTranslation } from "../../i18n/useTranslation";
 import "./chatbot.css";
 

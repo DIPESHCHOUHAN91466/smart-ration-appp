@@ -168,8 +168,10 @@ Smart_Ration_HSD2C_Final/
 ├── frontend/                     # React 18 web application              → frontend/README.md
 │   ├── src/components/           # Reusable UI & Chatbot widget          → frontend/src/components/README.md
 │   ├── src/pages/                # Role dashboards (Citizen, Shop, Admin)→ frontend/src/pages/README.md
-│   ├── src/services/             # Axios API client modules              → frontend/src/services/README.md
-│   ├── src/store/                # Zustand global authentication state   → frontend/src/store/README.md
+│   ├── src/api/ + src/services/  # HTTP client + one module per API area → frontend/src/services/README.md
+│   ├── src/state/                # Zustand stores + toasts               → frontend/src/state/README.md
+│   ├── src/features/             # qr, auth, chatbot logic (no UI)
+│   ├── src/config/ utils/ types/ # env settings, formatting, JSDoc API types
 │   ├── src/i18n/                 # English, Hindi, and Marathi locales   → frontend/src/i18n/README.md
 │   ├── tests/                    # Vitest unit & component tests         → frontend/tests/README.md
 │   └── e2e/                      # Playwright end-to-end browser tests   → frontend/e2e/README.md

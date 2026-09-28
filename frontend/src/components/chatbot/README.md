@@ -9,7 +9,7 @@ safety rules live on the server (`backend/SmartRation/app/ai/chatbot`, content i
 **Run/test:** appears on http://localhost:5173; tests in `frontend/tests/unit/chatbot.test.jsx`.
 **Connects:** `hooks/useChatbot.js` (conversation, kept in `sessionStorage`) → `services/chatbotService.js`
 → `POST /api/chatbot/message` on the Python API. Any page can open it with `openChatbot(question)`
-from `store/chatbotStore.js`.
+from `state/chatbotStore.js`.
 
 | File | Role |
 |---|---|

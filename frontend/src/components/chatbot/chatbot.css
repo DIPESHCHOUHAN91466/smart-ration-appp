@@ -1,5 +1,5 @@
 /* Smart Ration AI Assistant — floating Public Help chatbot.
-   Uses the app's design tokens (styles.css :root). z-index 150: above page content and the
+   Uses the app's design tokens (styles/global.css :root). z-index 150: above page content and the
    sidebar, below modals (200) so the QR / OTP dialogs always stay on top. */
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

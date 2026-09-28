@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { ArrowRight, Menu, X } from "lucide-react";
-import BrandMark, { CompanyMark } from "../BrandMark";
-import LanguageSwitcher from "./LanguageSwitcher";
-import { useTranslation } from "../../i18n/useTranslation";
-import "../../pages/landing/public.css";
+import BrandMark, { CompanyMark } from "../components/BrandMark";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useTranslation } from "../i18n/useTranslation";
+import "../pages/landing/public.css";
 
 // Header + footer for the pages anyone can open without logging in (landing, Public Help).
 export default function PublicLayout() {

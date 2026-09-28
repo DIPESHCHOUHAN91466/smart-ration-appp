@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function getProfile() {
   return unwrap(apiClient.get("/users/profile"));

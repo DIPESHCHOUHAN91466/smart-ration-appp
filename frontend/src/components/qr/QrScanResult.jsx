@@ -1,19 +1,10 @@
 import { AlertTriangle, ArrowRight, CheckCircle2, Keyboard, RefreshCcw, ScanLine, XCircle } from "lucide-react";
-import { QR_STATUS, QR_STATUS_META } from "../../qr/qrContract";
+import { QR_STATUS, QR_STATUS_META } from "../../features/qr/qrContract";
 import { useTranslation } from "../../i18n/useTranslation";
+import { formatDate, rationItemLabel, rationItemUnit } from "../../utils/format";
 
 const TONE_ICON = { success: CheckCircle2, warning: AlertTriangle, error: XCircle };
 
-// "EdibleOil" -> "Edible Oil"; oil is measured in litres, everything else in kg.
-const itemLabel = (rationType) => rationType.replace(/([a-z])([A-Z])/g, "$1 $2");
-const itemUnit = (rationType) => (rationType === "EdibleOil" ? "L" : "kg");
-
-function formatDate(isoDate, language) {
-  const date = new Date(`${isoDate}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return isoDate;
-  const locale = { hi: "hi-IN", mr: "mr-IN" }[language] ?? "en-IN";
-  return date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
-}
 
 // Verification outcome. Shows only non-sensitive booking data (masked
 // mobile, no Aadhaar) — the full profile stays on the distribution screen.
@@ -82,9 +73,9 @@ export default function QrScanResult({ result, onContinue, onScanAgain, onManual
               <ul className="qr-entitlement">
                 {allocations.map((item) => (
                   <li key={item.rationType}>
-                    <span>{itemLabel(item.rationType)}</span>
+                    <span>{rationItemLabel(item.rationType)}</span>
                     <b>
-                      {item.todayAllocation} {itemUnit(item.rationType)}
+                      {item.todayAllocation} {rationItemUnit(item.rationType)}
                     </b>
                   </li>
                 ))}

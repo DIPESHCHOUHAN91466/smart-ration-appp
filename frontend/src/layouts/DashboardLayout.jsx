@@ -5,15 +5,15 @@ import {
   Ticket, Users, Store, FileText, TrendingUp, ChevronDown, ShieldCheck, MapPin, History,
   Sparkles, Database, Settings as SettingsIcon, User as UserIcon,
 } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../state/authStore";
 import { getNotifications } from "../services/notificationsService";
 import { useTranslation } from "../i18n/useTranslation";
 import { LANGUAGE_OPTIONS } from "../i18n/translations";
 import { globalSearch } from "../services/searchService";
-import { usePreferencesStore } from "../store/preferencesStore";
+import { usePreferencesStore } from "../state/preferencesStore";
 import BrandMark from "../components/BrandMark";
 import GlobalQrScanner from "../components/qr/GlobalQrScanner";
-import { useQrScannerStore } from "../store/qrScannerStore";
+import { useQrScannerStore } from "../state/qrScannerStore";
 
 // Roles that can verify customer QR codes (POST /api/qr/scan is shop-scoped).
 const QR_SCANNER_ROLES = ["ShopOwner"];

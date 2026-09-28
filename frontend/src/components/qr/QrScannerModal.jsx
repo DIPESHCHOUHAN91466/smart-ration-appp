@@ -4,9 +4,9 @@ import { ArrowLeft, Loader2, X } from "lucide-react";
 import QrCameraPreview from "./QrCameraPreview";
 import QrManualInput from "./QrManualInput";
 import QrScanResult from "./QrScanResult";
-import { precheckQr } from "../../services/qr/qrValidation";
+import { precheckQr } from "../../features/qr/qrValidation";
 import { scanQr } from "../../services/qrService";
-import { QR_STATUS } from "../../qr/qrContract";
+import { QR_STATUS } from "../../features/qr/qrContract";
 import { useTranslation } from "../../i18n/useTranslation";
 
 const VIEW = { CAMERA: "camera", MANUAL: "manual", VERIFYING: "verifying", RESULT: "result" };

@@ -4,7 +4,7 @@
 # The root .dockerignore is an allow-list: only those folders enter the build.
 # Secrets are NEVER baked in: DATABASE_URL, JWT_SECRET_KEY, ... come from the environment at run time.
 
-# Stage 1: the React frontend, built for same-origin "/api" (no VITE_API_BASE_URL: see apiBase.js).
+# Stage 1: the React frontend, built for same-origin "/api" (no VITE_API_BASE_URL: see frontend/src/config/env.js).
 FROM node:22-slim AS web
 WORKDIR /web
 COPY frontend/package.json frontend/package-lock.json ./

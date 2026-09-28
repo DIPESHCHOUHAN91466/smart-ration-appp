@@ -1,7 +1,7 @@
 {
   "editor.formatOnSave": true,
   // Format only the lines you changed: whole-file formatting would rewrite code nobody touched
-  // (and expand the single-line src/styles.css into thousands of lines).
+  // (and expand the single-line src/styles/global.css into thousands of lines).
   "editor.formatOnSaveMode": "modifications",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"

@@ -1,4 +1,4 @@
-import { usePreferencesStore } from "../store/preferencesStore";
+import { usePreferencesStore } from "../state/preferencesStore";
 
 export default function PageHeader({ title, subtitle, action }) {
   const showBreadcrumbs = usePreferencesStore((s) => s.showBreadcrumbs);

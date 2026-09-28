@@ -87,12 +87,12 @@ valid). Verified by `tests/contract/compare_proxy.py` (36/36) and `tests/contrac
 | Path | Role |
 |---|---|
 | `App.jsx` | routes: public (`/`, `/help`, `/login`, `/register`, `/profile/:ref`), role areas (`/rural`, `/shop`, `/gov`); mounts the chatbot once |
-| `components/layout/` | public header/footer, language switcher |
+| `layouts/`, `components/LanguageSwitcher.jsx` | public header/footer and dashboard shell, language switcher |
 | `components/chatbot/` | the floating Public Help assistant |
 | `pages/landing/`, `pages/public-help/` | public pages |
 | `pages/rural/`, `shop/`, `government/`, `shared/` | role dashboards |
-| `services/` | one module per API area (`api.js` = axios client with token refresh) |
-| `store/` | zustand stores (auth, preferences, QR scanner, chatbot) |
+| `api/`, `services/` | `api/client.js` = axios client with token refresh; one service module per API area |
+| `state/` | zustand stores (auth, preferences, QR scanner, chatbot), toasts |
 | `i18n/` | `translations.js` (+ `publicStrings.js`), `useTranslation()` — en/hi/mr |
 
 See also: [DATABASE.md](../database/DATABASE_ARCHITECTURE.md) · [MIGRATION_GUIDE.md](../migration/MIGRATION_GUIDE.md) · [API.md](../api/API.md) ·

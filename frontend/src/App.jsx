@@ -1,19 +1,19 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { ToastProvider } from "./context/ToastContext";
-import { useAuthStore } from "./store/authStore";
-import { homePathForRole } from "./routes/roleHome";
-import ProtectedRoute from "./routes/ProtectedRoute";
+import { ToastProvider } from "./state/ToastProvider";
+import { useAuthStore } from "./state/authStore";
+import { homePathForRole } from "./features/auth/roleHome";
+import ProtectedRoute from "./features/auth/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { LoadingState } from "./components/EmptyState";
-import PublicLayout from "./components/layout/PublicLayout";
+import PublicLayout from "./layouts/PublicLayout";
 import ChatbotWidget from "./components/chatbot/ChatbotWidget";
+import { SHOW_STATUS_PAGE as SHOW_STATUS } from "./config/env";
 
 // Public pages (no login): loaded on demand so the dashboards bundle stays the same size.
 const LandingPage = lazy(() => import("./pages/landing/LandingPage"));
 const PublicHelpPage = lazy(() => import("./pages/public-help/PublicHelpPage"));
-// Developer status page: only in development builds (or VITE_SHOW_STATUS=true).
-const SHOW_STATUS = import.meta.env.DEV || import.meta.env.VITE_SHOW_STATUS === "true";
+// Developer status page: only in development builds (or VITE_SHOW_STATUS=true) — config/env.js.
 const StatusPage = lazy(() => import("./pages/status/StatusPage"));
 
 import Login from "./pages/Login";
@@ -52,7 +52,7 @@ import AdminDatabase from "./pages/government/AdminDatabase";
 // Lazy-loaded: pulls in Leaflet, only needed on the map route.
 const GovernmentMap = lazy(() => import("./pages/government/Map"));
 
-import "./styles.css";
+import "./styles/global.css";
 
 // Visitors see the public landing page; signed-in users go straight to their dashboard.
 function Home() {

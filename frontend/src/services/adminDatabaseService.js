@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function getDatabaseTables() {
   return unwrap(apiClient.get("/admin/database/tables"));

@@ -8,7 +8,7 @@ import QRCodeCanvas from "../../components/QRCodeCanvas";
 import { MessageText } from "../../components/chatbot/ChatbotMessage";
 import rationMitraLogo from "../../assets/ration-mitra-logo.webp";
 import { publicHelpService } from "../../services/chatbotService";
-import { openChatbot } from "../../store/chatbotStore";
+import { openChatbot } from "../../state/chatbotStore";
 import { useTranslation } from "../../i18n/useTranslation";
 
 const FAQ_TOPICS = ["how_to_apply", "documents", "eligibility", "token_slots", "qr_verification", "contact_support"];

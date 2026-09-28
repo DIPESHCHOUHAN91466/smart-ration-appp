@@ -6,12 +6,12 @@ import BeneficiaryVerificationPanel from "../../components/verification/Benefici
 import OtpModal from "../../components/verification/OtpModal";
 import CollectionReceipt from "../../components/verification/CollectionReceipt";
 import { scanQr } from "../../services/qrService";
-import { precheckQr } from "../../services/qr/qrValidation";
-import { QR_STATUS_META } from "../../qr/qrContract";
+import { precheckQr } from "../../features/qr/qrValidation";
+import { QR_STATUS_META } from "../../features/qr/qrContract";
 import { confirmCollection } from "../../services/collectionService";
-import { openGlobalQrScanner } from "../../store/qrScannerStore";
+import { openGlobalQrScanner } from "../../state/qrScannerStore";
 import { useTranslation } from "../../i18n/useTranslation";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
 
 const VERIFYING_STEPS = [
   "Token verified",

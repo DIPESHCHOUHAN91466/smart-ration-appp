@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function getInventory(shopId) {
   return unwrap(apiClient.get("/inventory", { params: shopId ? { shopId } : {} }));

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
-import { useToast } from "../context/ToastContext";
-import { homePathForRole } from "../routes/roleHome";
+import { useAuthStore } from "../state/authStore";
+import { useToast } from "../state/toast";
+import { homePathForRole } from "../features/auth/roleHome";
 import { useTranslation } from "../i18n/useTranslation";
 import BrandMark from "../components/BrandMark";
 

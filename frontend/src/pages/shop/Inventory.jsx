@@ -3,7 +3,7 @@ import { Check, Package, Pencil, X } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyState";
 import { getInventory, updateInventory } from "../../services/inventoryService";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
 
 export default function ShopInventory() {
   const [items, setItems] = useState(null);

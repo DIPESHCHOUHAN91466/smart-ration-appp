@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { UserRound } from "lucide-react";
 import { getProfile, updateProfile } from "../../services/usersService";
-import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "../../state/authStore";
 import { useTranslation } from "../../i18n/useTranslation";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
 
 // "My profile" card on the Settings page: the signed-in user edits their own name and mobile
 // number (GET/PUT /api/v1/users/profile). The email is the sign-in name and stays read-only.

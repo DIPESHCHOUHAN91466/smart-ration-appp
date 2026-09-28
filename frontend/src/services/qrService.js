@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function generateQr(tokenId) {
   return unwrap(apiClient.post("/qr/generate", { tokenId }));

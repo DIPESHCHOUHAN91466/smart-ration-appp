@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { ArrowRight, Eye, EyeOff, Globe2, ShieldCheck, Sparkles, ScanEye, Landmark, BrainCircuit, Target, QrCode, CheckCircle2 } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
-import { useToast } from "../context/ToastContext";
-import { homePathForRole } from "../routes/roleHome";
+import { useAuthStore } from "../state/authStore";
+import { useToast } from "../state/toast";
+import { homePathForRole } from "../features/auth/roleHome";
 import { useTranslation } from "../i18n/useTranslation";
 import { LANGUAGE_OPTIONS } from "../i18n/translations";
 import BrandMark from "../components/BrandMark";
+import { DEMO_MODE } from "../config/env";
 
-// Demo accounts are a development/demo aid only — hidden when the app is
-// built for production unless explicitly re-enabled via env var.
-const DEMO_MODE = import.meta.env.VITE_DEMO_MODE !== "false";
+// Demo accounts are a development/demo aid only: hidden when the build sets VITE_DEMO_MODE=false
+// (config/env.js).
 
 const DEMO_ACCOUNTS = [
   { labelKey: "role_rural_user", email: "rural@example.com" },

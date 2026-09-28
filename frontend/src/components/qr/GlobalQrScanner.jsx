@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
-import { useQrScannerStore } from "../../store/qrScannerStore";
+import { useQrScannerStore } from "../../state/qrScannerStore";
 
 // Heavy camera/decoder code is only fetched the first time the scanner opens.
 const QrScannerModal = lazy(() => import("./QrScannerModal"));

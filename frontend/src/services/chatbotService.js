@@ -1,4 +1,4 @@
-import { apiClient } from "./api";
+import { apiClient } from "../api/client";
 
 // Public Help assistant (Python backend, no login needed). See docs/chatbot/CHATBOT_ARCHITECTURE.md.
 export const chatbotService = {

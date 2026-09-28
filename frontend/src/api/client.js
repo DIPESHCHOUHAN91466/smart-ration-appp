@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useAuthStore } from "../store/authStore";
-import { API_BASE_URL } from "./apiBase";
+import { useAuthStore } from "../state/authStore";
+import { API_BASE_URL } from "../config/env";
 
 // The Python backend: serves migrated routes itself and proxies the rest to the C# API.
 
@@ -52,6 +52,7 @@ apiClient.interceptors.response.use(
   },
 );
 
+/** @returns {import("../types/api").ApiError} */
 function normalizeError(error) {
   const data = error.response?.data;
   const message = data?.message || error.message || "Something went wrong. Please try again.";
@@ -61,7 +62,12 @@ function normalizeError(error) {
   return normalized;
 }
 
-// Unwraps the backend's { success, message, data } envelope into just `data`.
+/**
+ * Unwraps the backend's { success, message, data } envelope into just `data`.
+ * @template T
+ * @param {Promise<import("axios").AxiosResponse<import("../types/api").ApiEnvelope<T>>>} axiosPromise
+ * @returns {Promise<T | null>}
+ */
 export function unwrap(axiosPromise) {
   return axiosPromise.then((response) => response.data?.data);
 }

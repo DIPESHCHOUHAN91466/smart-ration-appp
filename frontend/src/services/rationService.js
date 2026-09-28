@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function getRationItems(shopId) {
   return unwrap(apiClient.get("/ration/items", { params: shopId ? { shopId } : {} }));

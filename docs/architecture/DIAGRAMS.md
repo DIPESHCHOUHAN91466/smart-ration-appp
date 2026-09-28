@@ -62,8 +62,8 @@ flowchart TB
     APP --> CB["ChatbotWidget"]
 
     RU & SH & GV & SS & PUB & CB --> SV["services/*.js<br/>one module per API area"]
-    SV --> AX["api.js (axios)<br/>adds JWT, refreshes on 401,<br/>unwraps the envelope"]
-    AX --> BASE["apiBase.js<br/>VITE_API_BASE_URL → /api/v1"]
+    SV --> AX["api/client.js (axios)<br/>adds JWT, refreshes on 401,<br/>unwraps the envelope"]
+    AX --> BASE["config/env.js + api/baseUrl.js<br/>VITE_API_BASE_URL → /api/v1"]
 
     subgraph ST["State"]
         AS["authStore (zustand, persisted)"]

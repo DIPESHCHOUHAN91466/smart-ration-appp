@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function getGovernmentDashboard() {
   return unwrap(apiClient.get("/admin/dashboard"));

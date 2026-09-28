@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 export function verifyByQr(reference) {
   return unwrap(apiClient.get(`/verification/qr/${encodeURIComponent(reference)}`));

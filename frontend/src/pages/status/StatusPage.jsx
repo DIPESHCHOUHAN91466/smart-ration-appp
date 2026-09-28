@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Activity, CheckCircle2, CircleAlert, CircleSlash, RefreshCw, XCircle } from "lucide-react";
-import { API_BASE_URL } from "../../services/apiBase";
+import { API_BASE_URL } from "../../config/env";
 import "./status.css";
 
 // Developer status page (/status): live health of every component, read from the Python API's

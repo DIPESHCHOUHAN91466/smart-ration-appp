@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import PublicLayout from "../../src/components/layout/PublicLayout";
+import PublicLayout from "../../src/layouts/PublicLayout";
 import LandingPage from "../../src/pages/landing/LandingPage";
 import PublicHelpPage from "../../src/pages/public-help/PublicHelpPage";
 import { publicHelpService } from "../../src/services/chatbotService";
-import { useChatbotStore } from "../../src/store/chatbotStore";
+import { useChatbotStore } from "../../src/state/chatbotStore";
 
 vi.mock("../../src/components/QRCodeCanvas", () => ({ default: () => <canvas data-testid="qr" /> }));
 

@@ -4,7 +4,7 @@ import PageHeader from "../../components/PageHeader";
 import StatusBadge from "../../components/StatusBadge";
 import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyState";
 import { getShopQueue, completeCollection } from "../../services/shopService";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
 
 export default function Queue() {
   const [tokens, setTokens] = useState(null);

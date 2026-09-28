@@ -8,12 +8,15 @@ import { ErrorState, LoadingState } from "../../components/EmptyState";
 import { getToken } from "../../services/tokensService";
 import { cancelBooking } from "../../services/rationService";
 import { getQrPayload } from "../../services/qrService";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
+import { useTranslation } from "../../i18n/useTranslation";
+import { formatDateTime } from "../../utils/format";
 
 export default function MyToken() {
   const { id } = useParams();
   const navigate = useNavigate();
   const notify = useToast();
+  const { language } = useTranslation();
 
   const [token, setToken] = useState(null);
   const [error, setError] = useState("");
@@ -117,7 +120,7 @@ export default function MyToken() {
               <Smartphone />
               <span>
                 Status
-                <b>{token.status}{token.collectedAt ? ` • collected ${new Date(token.collectedAt).toLocaleString()}` : ""}</b>
+                <b>{token.status}{token.collectedAt ? ` • collected ${formatDateTime(token.collectedAt, language)}` : ""}</b>
               </span>
             </div>
           </div>

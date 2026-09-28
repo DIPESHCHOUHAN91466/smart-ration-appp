@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveApiBaseUrl, withApiVersion } from "../../src/services/apiBase";
+import { resolveApiBaseUrl, withApiVersion } from "../../src/api/baseUrl";
 
 describe("API base URL", () => {
   it("uses VITE_API_BASE_URL when set", () => {

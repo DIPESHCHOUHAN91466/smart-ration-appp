@@ -7,7 +7,7 @@ import {
 import { Link } from "react-router-dom";
 import { MessageText } from "../../components/chatbot/ChatbotMessage";
 import { publicHelpService } from "../../services/chatbotService";
-import { openChatbot } from "../../store/chatbotStore";
+import { openChatbot } from "../../state/chatbotStore";
 import { useTranslation } from "../../i18n/useTranslation";
 
 const ICONS = {

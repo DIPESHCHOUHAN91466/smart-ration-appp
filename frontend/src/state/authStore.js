@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import apiClient from "../services/api";
+import apiClient from "../api/client";
 
 export const useAuthStore = create(
   persist(
@@ -10,6 +10,7 @@ export const useAuthStore = create(
       refreshToken: null,
       isAuthenticated: false,
 
+      /** @param {import("../types/api").AuthResponse} authResponse */
       setSession: (authResponse) => {
         set({
           user: authResponse.user,

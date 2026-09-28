@@ -2,12 +2,12 @@ import { useRef, useState } from "react";
 import { Accessibility, Database, Globe2, Palette, ShieldCheck, SlidersHorizontal, User } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import ToggleSetting from "../../components/ToggleSetting";
-import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "../../state/authStore";
 import { useTranslation } from "../../i18n/useTranslation";
 import { LANGUAGE_OPTIONS } from "../../i18n/translations";
 import { useLanguageStore } from "../../i18n/useTranslation";
-import { usePreferencesStore } from "../../store/preferencesStore";
-import { useToast } from "../../context/ToastContext";
+import { usePreferencesStore } from "../../state/preferencesStore";
+import { useToast } from "../../state/toast";
 import ProfileSection from "./ProfileSection";
 
 const ROLE_LABEL_KEY = {

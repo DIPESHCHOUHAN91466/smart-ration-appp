@@ -7,29 +7,35 @@ file by file). UI only: no business rules and no direct `fetch`/`axios` calls in
 frontend/src/
 ├── App.jsx            routes + route guards; mounts the chatbot once
 ├── main.jsx           entry
+├── config/env.js      every build-time setting in one place (API base URL, demo mode, status page)
+├── api/               the HTTP layer: client.js (axios: base URL, JWT, refresh on 401, error normalising,
+│                      envelope unwrapping), baseUrl.js (API URL rules, /api/v1)
+├── services/          one module per API area (rationService, qrService, chatbotService, …) — plain data in/out
+├── state/             Zustand stores: auth (tokens, user), preferences, QR scanner, chatbot open state;
+│                      toast.js (useToast) + ToastProvider.jsx
+├── features/          logic of one feature, no UI: qr/ (payload contract, input validation),
+│                      auth/ (ProtectedRoute, role → home page), chatbot/ (reply text → paragraphs and lists)
 ├── pages/             one folder per area: landing/, public-help/, rural/ (citizen), shop/,
 │                      government/ (officials + admin), shared/, status/ (dev only), Login, Register, NotFound
-├── layouts/           DashboardLayout (sidebar, header, language, QR scanner host)
-├── components/        reusable UI: chatbot/, layout/ (public header/footer), qr/, verification/, ai/, common widgets
-├── services/          ALL API calls — api.js (axios client: base URL, JWT, refresh on 401, error normalising)
-│                      + one module per area (rationService, qrService, chatbotService, …)
-├── store/             Zustand: auth (tokens, user), preferences, QR scanner, chatbot open state
+├── layouts/           DashboardLayout (sidebar, header, language, QR scanner host), PublicLayout (header/footer)
+├── components/        reusable UI: chatbot/, qr/, verification/, ai/, LanguageSwitcher, common widgets
 ├── hooks/             useChatbot, useQrScanner, useOnlineStatus
 ├── i18n/              translations.js (+ publicStrings.js): en / hi / mr, useTranslation()
-├── context/           ToastContext
-├── routes/            ProtectedRoute, roleHome
-├── qr/                QR payload contract
-└── assets/            logos, chatbot SVGs
+├── utils/format.js    dates and times in the user's language (UTC-safe), ration item labels and units
+├── types/api.js       JSDoc types of the API contract (envelope, errors, user, auth response)
+├── styles/global.css  design tokens and global styles
+└── assets/            logos
 tests/unit/            Vitest + Testing Library
 ```
 
-**Folder names** follow the existing app (e.g. `pages/rural` is the citizen area, `pages/shop` the
-ration-shop area). They were kept on purpose (2026-09-25) rather than renamed to a template layout —
-renaming would touch most files for no functional gain.
+The layout follows the project's target architecture (2026-09-28): UI (`pages`, `layouts`, `components`),
+state (`state`), HTTP (`api`) and domain calls (`services`), feature logic (`features`), configuration
+(`config`) are separate, so a page never builds a URL, reads `import.meta.env` or formats a date itself.
+Area names inside `pages/` follow the existing app (`rural` = citizen, `shop` = ration shop).
 
 ## Data flow
 
-Component → `services/<area>Service.js` → `api.js` (adds `Authorization`, retries once after refreshing
+Component → `services/<area>Service.js` → `api/client.js` (adds `Authorization`, retries once after refreshing
 the token on 401) → Python API `:8000` → (proxy) C# API. Errors come back normalised
 (`{message, status, errors}`) and are shown as friendly messages/toasts, never raw exceptions.
 

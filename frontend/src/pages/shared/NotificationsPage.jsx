@@ -3,12 +3,15 @@ import { Bell, CheckCircle2 } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyState";
 import { getNotifications, markNotificationsRead } from "../../services/notificationsService";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
+import { useTranslation } from "../../i18n/useTranslation";
+import { formatDateTime } from "../../utils/format";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState(null);
   const [error, setError] = useState("");
   const notify = useToast();
+  const { language } = useTranslation();
 
   const load = () => {
     setError("");
@@ -68,7 +71,7 @@ export default function NotificationsPage() {
               <div>
                 <b>{n.title}</b>
                 <small>
-                  {n.message} • {new Date(n.createdAt).toLocaleString()}
+                  {n.message} • {formatDateTime(n.createdAt, language)}
                 </small>
               </div>
               {!n.isRead && (

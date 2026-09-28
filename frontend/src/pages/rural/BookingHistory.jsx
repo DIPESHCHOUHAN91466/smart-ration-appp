@@ -5,7 +5,7 @@ import PageHeader from "../../components/PageHeader";
 import StatusBadge from "../../components/StatusBadge";
 import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyState";
 import { getBookings, cancelBooking } from "../../services/rationService";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../state/toast";
 
 export default function BookingHistory() {
   const [bookings, setBookings] = useState(null);

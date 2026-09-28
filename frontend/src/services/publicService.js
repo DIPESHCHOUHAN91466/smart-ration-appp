@@ -1,4 +1,4 @@
-import apiClient, { unwrap } from "./api";
+import apiClient, { unwrap } from "../api/client";
 
 // Calls the [AllowAnonymous] public endpoints — no auth token required,
 // though apiClient will attach one if the viewer happens to be logged in

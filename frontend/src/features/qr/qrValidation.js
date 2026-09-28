@@ -1,4 +1,4 @@
-import { QR_CONTRACT, QR_REQUIRED_FIELDS, QR_STATUS } from "../../qr/qrContract";
+import { QR_CONTRACT, QR_REQUIRED_FIELDS, QR_STATUS } from "./qrContract";
 
 // Fast client-side pre-check of scanned text, so obviously foreign QR codes
 // (UPI, WhatsApp, URLs, random text) are rejected without a server round trip.

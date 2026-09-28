@@ -1,6 +1,6 @@
 import { Globe2 } from "lucide-react";
-import { LANGUAGE_OPTIONS } from "../../i18n/translations";
-import { useTranslation } from "../../i18n/useTranslation";
+import { LANGUAGE_OPTIONS } from "../i18n/translations";
+import { useTranslation } from "../i18n/useTranslation";
 
 // Same control as on Login and the dashboard, as a labelled component for public pages.
 export default function LanguageSwitcher({ className = "" }) {

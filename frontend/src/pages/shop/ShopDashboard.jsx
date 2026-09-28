@@ -4,7 +4,7 @@ import { CheckCircle2, Clock3, Package, QrCode, Ticket, XCircle } from "lucide-r
 import PageHeader from "../../components/PageHeader";
 import { ErrorState, LoadingState } from "../../components/EmptyState";
 import { getShopDashboard } from "../../services/shopService";
-import { openGlobalQrScanner } from "../../store/qrScannerStore";
+import { openGlobalQrScanner } from "../../state/qrScannerStore";
 
 export default function ShopDashboard() {
   const navigate = useNavigate();

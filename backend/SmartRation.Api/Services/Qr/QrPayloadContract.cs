@@ -1,7 +1,7 @@
 namespace SmartRation.Api.Services.Qr;
 
 // Single source of truth for the Smart Ration QR envelope. The frontend
-// mirrors these values in src/qr/qrContract.js — change both together.
+// mirrors these values in frontend/src/features/qr/qrContract.js — change both together.
 //
 // Envelope (JSON, encoded into the QR image shown on "My Token & QR"):
 // {

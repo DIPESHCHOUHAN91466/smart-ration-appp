@@ -35,7 +35,7 @@ Every task runs the same command as `.\sr.ps1 <command>` or a script in `scripts
 ## Settings
 
 Format on save touches **only the lines you changed** (`formatOnSaveMode: modifications`); CSS is never
-formatted on save (`src/styles.css` is one long line). Python is not formatted on save (linted with ruff).
+formatted on save (`src/styles/global.css` is one long line). Python is not formatted on save (linted with ruff).
 ESLint runs in `frontend/` (`npm run lint`); Test Explorer uses pytest via the root `pytest.ini`; the C#
 extension opens `SmartRation.sln`.
 Python and C# indent 4, the rest 2. `backend/SmartRation/.vscode` and

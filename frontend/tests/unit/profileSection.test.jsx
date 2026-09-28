@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ToastProvider } from "../../src/context/ToastContext";
+import { ToastProvider } from "../../src/state/ToastProvider";
 import ProfileSection from "../../src/pages/shared/ProfileSection";
 import * as usersService from "../../src/services/usersService";
-import { useAuthStore } from "../../src/store/authStore";
+import { useAuthStore } from "../../src/state/authStore";
 
 const PROFILE = { id: 7, fullName: "Test Citizen", email: "citizen@example.org", mobileNumber: "9098000001", role: "RuralUser", rationShopId: null };
 

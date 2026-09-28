@@ -4,7 +4,7 @@
 find the code for any screen quickly.
 **Belongs here:** page layout, wiring components to services and stores. **Doesn't:** reusable widgets
 (`src/components`), raw API calls (`src/services`), business rules (backend).
-**Run/test:** routed in `src/App.jsx`. **Connects:** pages call `src/services/*` and read `src/store/*`.
+**Run/test:** routed in `src/App.jsx`. **Connects:** pages call `src/services/*` and read `src/state/*`.
 
 | Folder | Who | Routes |
 |---|---|---|
