@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.ai.chatbot.knowledge_base import get_knowledge_base
 from app.ai.chatbot.providers import get_provider
-from app.api.routes import auth, health, legacy_proxy, public_help
+from app.api.routes import auth, counter, health, legacy_proxy, public_help, ration
 from app.api.routes.frontend import mount_frontend
 from app.config.settings import Settings, get_settings
 from app.core.errors import install_exception_handlers
@@ -105,6 +105,8 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     app.include_router(health.router)
     app.include_router(auth.router)  # Step 2: /api/auth/{register,login,refresh,logout}
     app.include_router(public_help.router)  # new: /api/public-help/*, /api/chatbot/* (no login)
+    app.include_router(ration.router)  # items, shops, slots, bookings/tokens, token QR
+    app.include_router(counter.router)  # scanner, shop, verification/OTP, collection, inventory, notifications
 
     # ---- Fallback proxy: MUST stay last ----
     if legacy_client is not None:

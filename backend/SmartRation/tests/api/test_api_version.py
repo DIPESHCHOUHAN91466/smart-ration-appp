@@ -30,9 +30,9 @@ def test_strip_version(path, expected):
 
 def test_proxied_route_reaches_csharp_without_the_version(make_client):
     c = make_client(upstream)
-    r = c.get("/api/v1/ration/items?shopId=2", headers={"Authorization": "Bearer a.b.c"})
+    r = c.get("/api/v1/government/statistics?shopId=2", headers={"Authorization": "Bearer a.b.c"})
     assert r.status_code == 200
-    assert r.json()["data"]["path"] == "/api/ration/items"  # C# only knows /api/*
+    assert r.json()["data"]["path"] == "/api/government/statistics"  # C# only knows /api/*
     assert r.headers["X-Served-By"] == "legacy-dotnet"
 
 
@@ -53,5 +53,5 @@ def test_python_errors_are_identical_under_v1(make_client):
 
 def test_other_versions_are_not_rewritten(make_client):
     seen.clear()
-    make_client(upstream).get("/api/v2/shops")
-    assert seen == ["/api/v2/shops"]  # forwarded untouched (C# answers 404), never silently mapped to v1
+    make_client(upstream).get("/api/v2/government/dashboard")
+    assert seen == ["/api/v2/government/dashboard"]  # forwarded untouched (C# answers 404), never silently mapped to v1

@@ -70,6 +70,38 @@ class Settings(BaseSettings):
     chatbot_rate_limit_per_minute: int = 30
     public_help_rate_limit_per_minute: int = 120
 
+    # ---- QR codes ----
+    # HMAC key that signs every booking's QR code. Changing it invalidates all issued QR codes, so an
+    # existing installation keeps its value. Required for booking and verification; never the JWT key.
+    qr_secret: str = Field(default="", repr=False)
+    scan_rate_limit_per_minute: int = 120    # QR verify/scan per client IP (stops scripted probing)
+
+    # ---- OTP fallback (when a QR code can't be scanned) ----
+    # DEMO ONLY: always issue this fixed code and show it on screen. Refused outside development.
+    demo_otp_enabled: bool = True
+    demo_otp_value: str = Field(default="123456", repr=False)
+    otp_expiry_minutes: int = 5
+    otp_max_attempts: int = 3
+    otp_resend_cooldown_seconds: int = 30
+    otp_rate_limit_per_minute: int = 6
+
+    # ---- SMS delivery of OTP codes ----
+    # "mock" sends nothing (development); "http" posts to a DLT-registered gateway (SMS_BASE_URL + SMS_API_KEY).
+    sms_provider: str = "mock"
+    sms_base_url: str = ""
+    sms_api_key: str = Field(default="", repr=False)
+    sms_sender_id: str = "SMRTRN"
+    # A public demo on SYNTHETIC data may run the mock provider outside development; never with real data.
+    sms_allow_mock_outside_development: bool = False
+
+    # ---- AI analytics service calls (forecasts, alerts, OCR) ----
+    ai_service_api_key: str = Field(default="", repr=False)   # = SMARTRATION_AI_API_KEY of the AI service
+    ai_service_timeout_seconds: float = 8.0
+
+    # ---- Time slots (synthetic mode) ----
+    # Keep this many days of 5-minute slots available ahead of today for every shop (created on start-up).
+    upcoming_slot_days: int = Field(default=7, ge=0, le=60)
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def split_origins(cls, value):
@@ -95,6 +127,29 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.environment.lower() == "production"
+
+    @property
+    def is_development(self) -> bool:
+        return self.environment.lower() == "development"
+
+    @property
+    def uses_synthetic_demo_sms(self) -> bool:
+        """A non-development deployment running the mock SMS provider under the synthetic-demo opt-in."""
+        return (not self.is_development and self.sms_provider.lower() != "http"
+                and self.sms_allow_mock_outside_development and self.data_mode.lower() == "synthetic")
+
+    def production_problems(self) -> list[str]:
+        """Start-up refusals outside development: no fixed demo OTP, no silent mock SMS provider
+        (a synthetic-data public demo may opt in to the mock with SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true)."""
+        if self.is_development:
+            return []
+        problems = []
+        if self.demo_otp_enabled:
+            problems.append("DEMO_OTP_ENABLED must be false outside development.")
+        if self.sms_provider.lower() != "http" and not self.uses_synthetic_demo_sms:
+            problems.append("SMS_PROVIDER must be 'http' (a real gateway) outside development. A synthetic-data demo may set "
+                            "SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true instead; that is never allowed with DATA_MODE=real.")
+        return problems
 
 
 @lru_cache

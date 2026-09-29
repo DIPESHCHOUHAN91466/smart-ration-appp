@@ -36,10 +36,10 @@ def echo_upstream(request: httpx.Request) -> httpx.Response:
 
 def test_get_is_forwarded_with_path_query_and_auth(make_client):
     c = make_client(echo_upstream)
-    r = c.get("/api/tokens/today?shopId=3&shopId=4", headers={"Authorization": "Bearer abc.def.ghi"})
+    r = c.get("/api/government/statistics?shopId=3&shopId=4", headers={"Authorization": "Bearer abc.def.ghi"})
     assert r.status_code == 200
     d = r.json()["data"]
-    assert d["method"] == "GET" and d["path"] == "/api/tokens/today"
+    assert d["method"] == "GET" and d["path"] == "/api/government/statistics"
     assert d["query"] == "shopId=3&shopId=4"
     assert d["auth"] == "Bearer abc.def.ghi"
     assert r.headers["X-Served-By"] == "legacy-dotnet"
@@ -49,7 +49,7 @@ def test_get_is_forwarded_with_path_query_and_auth(make_client):
 def test_json_body_status_and_idempotency_key_are_preserved(make_client):
     c = make_client(echo_upstream)
     payload = {"tokenId": 51}
-    r = c.post("/api/shop/collection/complete", json=payload, headers={"Idempotency-Key": "k-1"})
+    r = c.post("/api/ai/alerts/sync", json=payload, headers={"Idempotency-Key": "k-1"})
     assert r.status_code == 201
     d = r.json()["data"]
     assert d["idem"] == "k-1" and d["ctype"] == "application/json"
@@ -68,20 +68,20 @@ def test_upstream_status_and_error_body_pass_through(make_client):
     def upstream(_):
         return httpx.Response(409, json={"success": False, "message": "This token has already been used for collection.", "data": None, "errors": None, "errorCode": "X"})
 
-    r = make_client(upstream).post("/api/ration/collection/confirm", json={})
+    r = make_client(upstream).post("/api/ai/alerts/sync", json={})
     assert r.status_code == 409 and r.json()["errorCode"] == "X"
 
 
 def test_cors_and_owned_headers_from_upstream_are_not_duplicated(make_client):
     c = make_client(echo_upstream)
-    r = c.get("/api/shops", headers={"Origin": "http://localhost:5173"})
+    r = c.get("/api/government/dashboard", headers={"Origin": "http://localhost:5173"})
     assert r.headers.get_list("access-control-allow-origin") == ["http://localhost:5173"]
     assert "Kestrel" not in r.headers.get("server", "")
 
 
 def test_forwarded_for_and_request_id_are_sent(make_client):
     c = make_client(echo_upstream)
-    r = c.get("/api/shops", headers={"X-Request-ID": "abcdef0123456789"})
+    r = c.get("/api/government/dashboard", headers={"X-Request-ID": "abcdef0123456789"})
     d = r.json()["data"]
     assert d["rid"] == "abcdef0123456789" and r.headers["X-Request-ID"] == "abcdef0123456789"
     assert d["xff"]  # client address for the C# rate limiter
@@ -91,7 +91,7 @@ def test_legacy_down_returns_502_envelope(make_client):
     def down(_):
         raise httpx.ConnectError("refused")
 
-    r = make_client(down).get("/api/shops")
+    r = make_client(down).get("/api/government/dashboard")
     assert r.status_code == 502
     assert r.json() == {"success": False, "message": "Connection temporarily unavailable. Please retry.", "data": None, "errors": None, "errorCode": "LEGACY_API_UNAVAILABLE"}
 
@@ -100,7 +100,7 @@ def test_legacy_timeout_returns_504(make_client):
     def slow(_):
         raise httpx.ReadTimeout("slow")
 
-    r = make_client(slow).get("/api/shops")
+    r = make_client(slow).get("/api/government/dashboard")
     assert r.status_code == 504 and r.json()["errorCode"] == "LEGACY_API_TIMEOUT"
 
 
@@ -123,12 +123,12 @@ def test_oversized_body_is_rejected_before_forwarding(make_client):
 
 
 def test_proxy_disabled_gives_404_envelope(make_client):
-    r = make_client(None, legacy_api_url="").get("/api/shops")
+    r = make_client(None, legacy_api_url="").get("/api/government/dashboard")
     assert r.status_code == 404 and r.json()["success"] is False
 
 
 def test_security_headers_present(make_client):
-    r = make_client(echo_upstream).get("/api/shops")
+    r = make_client(echo_upstream).get("/api/government/dashboard")
     assert r.headers["X-Content-Type-Options"] == "nosniff" and r.headers["X-Frame-Options"] == "DENY"
 
 
@@ -151,11 +151,11 @@ def test_requests_take_turns_across_the_connection_pools():
     app.include_router(legacy_proxy.build_router([pool(0), pool(1), pool(2)]))
     c = TestClient(app)
     for _ in range(6):
-        assert c.get("/api/shops").status_code == 200
+        assert c.get("/api/government/dashboard").status_code == 200
     assert served == [0, 1, 2, 0, 1, 2]
 
 
 def test_pool_settings_create_that_many_clients(make_client):
     c = make_client(echo_upstream, legacy_api_pools=3, legacy_api_connections_per_pool=4)
-    assert c.get("/api/shops").status_code == 200
+    assert c.get("/api/government/dashboard").status_code == 200
     assert c.app.state.legacy_client is not None  # health checks use the first pool

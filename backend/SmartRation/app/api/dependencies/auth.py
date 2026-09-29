@@ -57,3 +57,38 @@ def require_roles(*roles: UserRole):
         return user
 
     return dependency
+
+
+# Role groups used by the business routes.
+STAFF = (UserRole.ShopOwner, UserRole.GovernmentOfficial, UserRole.Admin)
+OFFICIALS = (UserRole.GovernmentOfficial, UserRole.Admin)
+
+
+@dataclass(frozen=True)
+class Actor:
+    """Who is asking, and from where — what the services need for access rules and audit rows."""
+
+    user_id: int
+    role: UserRole
+    ration_shop_id: int | None
+    ip_address: str | None = None
+    user_agent: str | None = None
+
+    @property
+    def is_official(self) -> bool:
+        return self.role in OFFICIALS
+
+
+def _actor(request: Request, user: CurrentUser) -> Actor:
+    return Actor(user.user_id, user.role, user.ration_shop_id,
+                 request.client.host if request.client else None, request.headers.get("user-agent"))
+
+
+def actor(*roles: UserRole):
+    """Dependency: the signed-in caller as an Actor, optionally limited to `roles` (403 otherwise)."""
+    def dependency(request: Request, user: CurrentUser = Depends(get_current_user)) -> Actor:
+        if roles and user.role not in roles:
+            raise Forbidden("You do not have permission to perform this action.")
+        return _actor(request, user)
+
+    return dependency

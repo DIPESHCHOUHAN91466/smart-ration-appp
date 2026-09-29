@@ -373,6 +373,95 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/audit/verification": {
+      "get": {
+        "operationId": "verification_audit_api_audit_verification_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "beneficiaryId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Beneficiaryid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "take",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Take",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verification audit trail (officials)",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
     "/api/auth/login": {
       "post": {
         "operationId": "login_api_auth_login_post",
@@ -683,6 +772,228 @@
         ]
       }
     },
+    "/api/inventory": {
+      "get": {
+        "operationId": "inventory_list_api_inventory_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock lines (my shop, or any shop for officials)",
+        "tags": [
+          "shop counter"
+        ]
+      },
+      "post": {
+        "operationId": "inventory_create_api_inventory_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Add a stock line to a shop",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/inventory/{inventory_id}": {
+      "put": {
+        "operationId": "inventory_update_api_inventory__inventory_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inventory_id",
+            "required": true,
+            "schema": {
+              "title": "Inventory Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Correct a stock balance / minimum level",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/inventory/{inventory_id}/damage": {
+      "post": {
+        "operationId": "inventory_damage_api_inventory__inventory_id__damage_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inventory_id",
+            "required": true,
+            "schema": {
+              "title": "Inventory Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Write off damaged stock",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/inventory/{inventory_id}/receive": {
+      "post": {
+        "operationId": "inventory_receive_api_inventory__inventory_id__receive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inventory_id",
+            "required": true,
+            "schema": {
+              "title": "Inventory Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record a stock delivery",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "operationId": "notifications_api_notifications_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My notifications",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/notifications/read": {
+      "post": {
+        "operationId": "notifications_read_api_notifications_read_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mark my notifications read",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
     "/api/public-help/articles/{article_id}": {
       "get": {
         "operationId": "article_api_public_help_articles__article_id__get",
@@ -832,6 +1143,667 @@
         "summary": "Search Public Help",
         "tags": [
           "public help"
+        ]
+      }
+    },
+    "/api/qr/generate": {
+      "post": {
+        "operationId": "qr_generate_api_qr_generate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "(Re)issue the QR reference for my token",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/qr/payload/{token_id}": {
+      "get": {
+        "operationId": "qr_payload_api_qr_payload__token_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token_id",
+            "required": true,
+            "schema": {
+              "title": "Token Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Signed QR payload for my token (signed on the server)",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/qr/scan": {
+      "post": {
+        "operationId": "qr_scan_api_qr_scan_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Global QR scanner: every outcome as a structured status",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/qr/verify": {
+      "post": {
+        "operationId": "qr_verify_api_qr_verify_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Check a scanned QR and return its token",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/ration/bookings": {
+      "get": {
+        "operationId": "list_bookings_api_ration_bookings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My bookings / my shop's bookings / all bookings (by role)",
+        "tags": [
+          "ration"
+        ]
+      },
+      "post": {
+        "operationId": "create_booking_api_ration_bookings_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Book a slot and generate a token",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/ration/bookings/{booking_id}": {
+      "delete": {
+        "operationId": "cancel_booking_api_ration_bookings__booking_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel a booking (frees its slot place)",
+        "tags": [
+          "ration"
+        ]
+      },
+      "get": {
+        "operationId": "get_booking_api_ration_bookings__booking_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One booking",
+        "tags": [
+          "ration"
+        ]
+      },
+      "put": {
+        "operationId": "reschedule_booking_api_ration_bookings__booking_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move a booking to another slot at the same shop",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/ration/collection/confirm": {
+      "post": {
+        "operationId": "collection_confirm_api_ration_collection_confirm_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Issue the ration: stock, token, receipt and audit in one transaction",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/ration/items": {
+      "get": {
+        "operationId": "ration_items_api_ration_items_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Active ration items (with stock / remaining entitlement when relevant)",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/shop/collection/complete": {
+      "post": {
+        "operationId": "shop_complete_api_shop_collection_complete_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mark a queued token collected (same checks as QR verification)",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/shop/dashboard": {
+      "get": {
+        "operationId": "shop_dashboard_api_shop_dashboard_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Today's counts and stock at my shop",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/shop/queue": {
+      "get": {
+        "operationId": "shop_queue_api_shop_queue_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Today's queue at my shop",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/shops": {
+      "get": {
+        "operationId": "shops_api_shops_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Active ration shops",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/slots": {
+      "get": {
+        "operationId": "list_slots_api_slots_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Shopid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "A shop's 5-minute slots for one day",
+        "tags": [
+          "ration"
+        ]
+      },
+      "post": {
+        "operationId": "create_slot_api_slots_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Create a time slot",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/slots/{slot_id}": {
+      "put": {
+        "operationId": "update_slot_api_slots__slot_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slot_id",
+            "required": true,
+            "schema": {
+              "title": "Slot Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change a slot's capacity",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/tokens/generate": {
+      "post": {
+        "operationId": "generate_token_api_tokens_generate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Book a slot and generate a token (alias)",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/tokens/today": {
+      "get": {
+        "operationId": "tokens_today_api_tokens_today_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Today's queue at my shop",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/tokens/{token_id}": {
+      "get": {
+        "operationId": "get_token_api_tokens__token_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token_id",
+            "required": true,
+            "schema": {
+              "title": "Token Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One token",
+        "tags": [
+          "ration"
+        ]
+      }
+    },
+    "/api/verification/otp/request": {
+      "post": {
+        "operationId": "otp_request_api_verification_otp_request_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Send a one-time code to the beneficiary's mobile",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/verification/otp/verify": {
+      "post": {
+        "operationId": "otp_verify_api_verification_otp_verify_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Check the one-time code and verify the beneficiary",
+        "tags": [
+          "shop counter"
+        ]
+      }
+    },
+    "/api/verification/qr/{reference}": {
+      "get": {
+        "operationId": "verify_qr_api_verification_qr__reference__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reference",
+            "required": true,
+            "schema": {
+              "title": "Reference",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify a beneficiary from a scanned QR",
+        "tags": [
+          "shop counter"
         ]
       }
     },
