@@ -66,6 +66,7 @@ services:
       DATA_MODE: synthetic
       DATABASE_URL: mysql+pymysql://${MYSQL_USER:-smartration_app}:${MYSQL_PASSWORD}@mysql:3306/smartration?charset=utf8mb4
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      QR_SECRET: ${QR_SECRET:?set QR_SECRET in deployment/docker/.env}   # signs booking QR codes; the API refuses to start without it
       LEGACY_API_URL: http://core:8080
       WAIT_FOR_URL: http://core:8080/api/health    # don't touch the database before the C# API has migrated it
       AI_SERVICE_URL: ""

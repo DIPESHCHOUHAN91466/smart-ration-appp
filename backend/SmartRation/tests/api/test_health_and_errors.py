@@ -16,7 +16,8 @@ def test_health_reports_database_and_legacy(make_client):
     r = make_client(healthy_legacy).get("/health")
     assert r.status_code == 200
     assert r.json() == {"status": "healthy", "database": "healthy", "legacyApi": "healthy",
-                        "aiService": "disabled", "chatbot": "healthy", "dataMode": "synthetic"}
+                        "aiService": "disabled", "chatbot": "healthy", "dataMode": "synthetic",
+                        "qrConfigured": True}
 
 
 def test_health_degraded_when_legacy_down(make_client):

@@ -12,7 +12,10 @@ from typing import Annotated
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-ROOT = Path(__file__).resolve().parents[2]  # backend/SmartRation
+ROOT = Path(__file__).resolve().parents[2]  # backend/SmartRation — .env is found from any working directory
+
+QR_SECRET_PLACEHOLDER = "replace_with_a_secure_random_secret"   # the .env.example value; refused at start-up
+WEAK_QR_SECRETS = {"secret", "qrcode", "qr_secret", "changeme", "change_me", "password", "123456", "smartration"}
 
 
 class Settings(BaseSettings):
@@ -75,6 +78,20 @@ class Settings(BaseSettings):
     # existing installation keeps its value. Required for booking and verification; never the JWT key.
     qr_secret: str = Field(default="", repr=False)
     scan_rate_limit_per_minute: int = 120    # QR verify/scan per client IP (stops scripted probing)
+
+    def qr_secret_problem(self) -> str | None:
+        """Why QR_SECRET is unusable, or None. Checked at start-up so a server never runs without it (the
+        secret is never generated on the fly: a new value on each restart would invalidate every issued QR)."""
+        secret = self.qr_secret.strip()
+        how = ('Generate one with:  python -c "import secrets; print(secrets.token_urlsafe(64))"  and put it in '
+               "backend/SmartRation/.env as QR_SECRET=... (or the deployment's secret store).")
+        if not secret:
+            return "QR_SECRET is not set. " + how
+        if secret == QR_SECRET_PLACEHOLDER or secret.lower() in WEAK_QR_SECRETS:
+            return "QR_SECRET is still a placeholder / well-known value. " + how
+        if len(secret) < 32:
+            return "QR_SECRET is too short (at least 32 characters). " + how
+        return None
 
     # ---- OTP fallback (when a QR code can't be scanned) ----
     # DEMO ONLY: always issue this fixed code and show it on screen. Refused outside development.

@@ -75,6 +75,24 @@
         "title": "AuthEnvelope",
         "type": "object"
       },
+      "Body_ocr_extract_api_ocr_extract_post": {
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "contentMediaType": "application/octet-stream",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          }
+        },
+        "title": "Body_ocr_extract_api_ocr_extract_post",
+        "type": "object"
+      },
       "ChatRequest": {
         "properties": {
           "articleId": {
@@ -239,6 +257,11 @@
             "title": "Legacyapi",
             "type": "string"
           },
+          "qrConfigured": {
+            "description": "QR_SECRET is set and usable (the value itself is never returned)",
+            "title": "Qrconfigured",
+            "type": "boolean"
+          },
           "status": {
             "description": "healthy | degraded | unhealthy",
             "title": "Status",
@@ -251,7 +274,8 @@
           "legacyApi",
           "aiService",
           "chatbot",
-          "dataMode"
+          "dataMode",
+          "qrConfigured"
         ],
         "title": "HealthResponse",
         "type": "object"
@@ -373,6 +397,1264 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/admin/dashboard": {
+      "get": {
+        "operationId": "dashboard_api_admin_dashboard_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Today's totals across all shops",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/admin/database/tables": {
+      "get": {
+        "operationId": "tables_api_admin_database_tables_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Tables the viewer can show",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/admin/database/{table}": {
+      "get": {
+        "operationId": "table_api_admin_database__table__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "table",
+            "required": true,
+            "schema": {
+              "title": "Table",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One page of a table (read-only)",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/admin/reports": {
+      "get": {
+        "operationId": "reports_api_admin_reports_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fromDate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Fromdate"
+            }
+          },
+          {
+            "in": "query",
+            "name": "toDate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Todate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Report record counts for a date range",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/admin/statistics": {
+      "get": {
+        "operationId": "statistics_api_admin_statistics_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fromDate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Fromdate"
+            }
+          },
+          {
+            "in": "query",
+            "name": "toDate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Todate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Tokens, collections and shop efficiency for a date range (default: last 30 days)",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/admin/synthetic-data/beneficiaries": {
+      "get": {
+        "operationId": "synthetic_beneficiaries_api_admin_synthetic_data_beneficiaries_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "district",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "District"
+            }
+          },
+          {
+            "in": "query",
+            "name": "aadhaarStatus",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Aadhaarstatus"
+            }
+          },
+          {
+            "in": "query",
+            "name": "passbookStatus",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Passbookstatus"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Synthetic beneficiary dataset (search / filter / pages)",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "operationId": "users_api_admin_users_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Role"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "User accounts (optionally one role)",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/ai/alerts": {
+      "get": {
+        "operationId": "recent_alerts_api_ai_alerts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Recent rule-based anomaly alerts (raw rows)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/alerts/active": {
+      "get": {
+        "operationId": "alerts_active_api_ai_alerts_active_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open + under-review alerts (runs a throttled refresh first)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/alerts/list": {
+      "get": {
+        "operationId": "alerts_list_api_ai_alerts_list_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Alerts (filterable by status / shop / source)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/alerts/shop/{shop_id}": {
+      "get": {
+        "operationId": "alerts_for_shop_api_ai_alerts_shop__shop_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shop_id",
+            "required": true,
+            "schema": {
+              "title": "Shop Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "active",
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One shop's alerts",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/alerts/sync": {
+      "post": {
+        "operationId": "alerts_sync_api_ai_alerts_sync_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Re-analyse now (still deduplicated; officials)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/alerts/{alert_id}": {
+      "get": {
+        "operationId": "alert_detail_api_ai_alerts__alert_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "title": "Alert Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One alert",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/alerts/{alert_id}/resolve": {
+      "post": {
+        "operationId": "alert_resolve_api_ai_alerts__alert_id__resolve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "title": "Alert Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mark an alert under review / resolved / dismissed (officials)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/analytics/forecast": {
+      "get": {
+        "operationId": "analytics_forecast_api_ai_analytics_forecast_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "horizonDays",
+            "required": false,
+            "schema": {
+              "default": 7,
+              "title": "Horizondays",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "en",
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "AI demand forecast (falls back to the built-in trend)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/analytics/inventory": {
+      "get": {
+        "operationId": "analytics_inventory_api_ai_analytics_inventory_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "en",
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "AI inventory analytics (falls back to built-in stock risk)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/analytics/queue": {
+      "get": {
+        "operationId": "analytics_queue_api_ai_analytics_queue_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "en",
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "AI queue analytics (falls back to the built-in estimate)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/analytics/risk": {
+      "get": {
+        "operationId": "analytics_risk_api_ai_analytics_risk_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "en",
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "AI beneficiary risk ranking (officials)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/analytics/shops": {
+      "get": {
+        "operationId": "analytics_shops_api_ai_analytics_shops_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "en",
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "AI shop monitor",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/beneficiaries/{beneficiary_id}/insight": {
+      "get": {
+        "operationId": "beneficiary_insight_api_ai_beneficiaries__beneficiary_id__insight_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiary_id",
+            "required": true,
+            "schema": {
+              "title": "Beneficiary Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One beneficiary's risk summary",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/demand-forecast": {
+      "get": {
+        "operationId": "demand_forecast_api_ai_demand_forecast_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Trailing-30-day demand trend",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/intelligence-center": {
+      "get": {
+        "operationId": "intelligence_center_api_ai_intelligence_center_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "All rule-based analytics in one view (officials)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/inventory-risk": {
+      "get": {
+        "operationId": "inventory_risk_api_ai_inventory_risk_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock-cover risk per shop and item",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/queue-prediction": {
+      "get": {
+        "operationId": "queue_prediction_api_ai_queue_prediction_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Today's queue wait estimate",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ai/shops/{shop_id}/insight": {
+      "get": {
+        "operationId": "shop_insight_api_ai_shops__shop_id__insight_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shop_id",
+            "required": true,
+            "schema": {
+              "title": "Shop Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One shop's risk summary",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/audit/verification": {
       "get": {
         "operationId": "verification_audit_api_audit_verification_get",
@@ -683,6 +1965,225 @@
         ]
       }
     },
+    "/api/beneficiaries/me": {
+      "get": {
+        "operationId": "my_beneficiary_api_beneficiaries_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My beneficiary verification profile",
+        "tags": [
+          "people"
+        ]
+      }
+    },
+    "/api/beneficiaries/{beneficiary_id}/collections": {
+      "get": {
+        "operationId": "beneficiary_collections_api_beneficiaries__beneficiary_id__collections_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiary_id",
+            "required": true,
+            "schema": {
+              "title": "Beneficiary Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Beneficiary's collection history",
+        "tags": [
+          "people"
+        ]
+      }
+    },
+    "/api/beneficiaries/{beneficiary_id}/entitlement": {
+      "get": {
+        "operationId": "beneficiary_entitlement_api_beneficiaries__beneficiary_id__entitlement_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiary_id",
+            "required": true,
+            "schema": {
+              "title": "Beneficiary Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Beneficiary's monthly entitlement",
+        "tags": [
+          "people"
+        ]
+      }
+    },
+    "/api/beneficiaries/{beneficiary_id}/family": {
+      "get": {
+        "operationId": "beneficiary_family_api_beneficiaries__beneficiary_id__family_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiary_id",
+            "required": true,
+            "schema": {
+              "title": "Beneficiary Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Beneficiary's family",
+        "tags": [
+          "people"
+        ]
+      }
+    },
+    "/api/beneficiaries/{beneficiary_id}/full-profile": {
+      "get": {
+        "operationId": "beneficiary_full_profile_api_beneficiaries__beneficiary_id__full_profile_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiary_id",
+            "required": true,
+            "schema": {
+              "title": "Beneficiary Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Beneficiary 360°: everything one screen needs",
+        "tags": [
+          "people"
+        ]
+      }
+    },
+    "/api/beneficiaries/{beneficiary_id}/verification": {
+      "get": {
+        "operationId": "beneficiary_verification_api_beneficiaries__beneficiary_id__verification_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiary_id",
+            "required": true,
+            "schema": {
+              "title": "Beneficiary Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Beneficiary verification profile",
+        "tags": [
+          "people"
+        ]
+      }
+    },
     "/api/chatbot/message": {
       "post": {
         "operationId": "message_api_chatbot_message_post",
@@ -769,6 +2270,131 @@
         "summary": "Assistant greeting and quick buttons",
         "tags": [
           "public help"
+        ]
+      }
+    },
+    "/api/families/{family_id}": {
+      "get": {
+        "operationId": "get_family_api_families__family_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "family_id",
+            "required": true,
+            "schema": {
+              "title": "Family Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "A family",
+        "tags": [
+          "people"
+        ]
+      }
+    },
+    "/api/families/{family_id}/entitlement": {
+      "get": {
+        "operationId": "get_family_entitlement_api_families__family_id__entitlement_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "family_id",
+            "required": true,
+            "schema": {
+              "title": "Family Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "A family's monthly entitlement",
+        "tags": [
+          "people"
+        ]
+      }
+    },
+    "/api/government/map/analytics": {
+      "get": {
+        "operationId": "map_analytics_api_government_map_analytics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Map totals and heatmap layers (synthetic demo data)",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "api_health_api_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Api Health Api Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "description": "Database unreachable"
+          }
+        },
+        "summary": "System status for the dashboard (status words only)",
+        "tags": [
+          "health"
         ]
       }
     },
@@ -994,6 +2620,63 @@
         ]
       }
     },
+    "/api/ocr/extract": {
+      "post": {
+        "operationId": "ocr_extract_api_ocr_extract_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_ocr_extract_api_ocr_extract_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suggest fields from a ration-card photo (PNG/JPEG, 5 MB; nothing stored)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/ocr/parse-text": {
+      "post": {
+        "operationId": "ocr_parse_text_api_ocr_parse_text_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mask and extract fields from typed text (nothing stored)",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/public-help/articles/{article_id}": {
       "get": {
         "operationId": "article_api_public_help_articles__article_id__get",
@@ -1143,6 +2826,46 @@
         "summary": "Search Public Help",
         "tags": [
           "public help"
+        ]
+      }
+    },
+    "/api/public/beneficiaries/{reference}": {
+      "get": {
+        "operationId": "public_badge_api_public_beneficiaries__reference__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reference",
+            "required": true,
+            "schema": {
+              "title": "Reference",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public verification badge (no login; non-sensitive fields only)",
+        "tags": [
+          "people"
         ]
       }
     },
@@ -1414,6 +3137,46 @@
         ]
       }
     },
+    "/api/ration/collection/history/{beneficiary_id}": {
+      "get": {
+        "operationId": "collection_history_api_ration_collection_history__beneficiary_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "beneficiary_id",
+            "required": true,
+            "schema": {
+              "title": "Beneficiary Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Beneficiary's collection history (alias)",
+        "tags": [
+          "people"
+        ]
+      }
+    },
     "/api/ration/items": {
       "get": {
         "operationId": "ration_items_api_ration_items_get",
@@ -1458,6 +3221,53 @@
         "summary": "Active ration items (with stock / remaining entitlement when relevant)",
         "tags": [
           "ration"
+        ]
+      }
+    },
+    "/api/search": {
+      "get": {
+        "operationId": "search_api_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dashboard search (results scoped by role)",
+        "tags": [
+          "people"
         ]
       }
     },
@@ -1534,6 +3344,173 @@
         "summary": "Active ration shops",
         "tags": [
           "ration"
+        ]
+      }
+    },
+    "/api/shops/map": {
+      "get": {
+        "operationId": "shop_markers_api_shops_map_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "in": "query",
+            "name": "district",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "District"
+            }
+          },
+          {
+            "in": "query",
+            "name": "taluka",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Taluka"
+            }
+          },
+          {
+            "in": "query",
+            "name": "village",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Village"
+            }
+          },
+          {
+            "in": "query",
+            "name": "schemeCode",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Schemecode"
+            }
+          },
+          {
+            "in": "query",
+            "name": "inventoryStatus",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Inventorystatus"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Shop markers with today's activity and stock status",
+        "tags": [
+          "government"
+        ]
+      }
+    },
+    "/api/shops/{shop_id}/location": {
+      "get": {
+        "operationId": "shop_location_api_shops__shop_id__location_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shop_id",
+            "required": true,
+            "schema": {
+              "title": "Shop Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One shop's map detail",
+        "tags": [
+          "government"
         ]
       }
     },
@@ -1726,6 +3703,42 @@
         "summary": "One token",
         "tags": [
           "ration"
+        ]
+      }
+    },
+    "/api/users/profile": {
+      "get": {
+        "operationId": "my_profile_api_users_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My account",
+        "tags": [
+          "people"
+        ]
+      },
+      "put": {
+        "operationId": "update_my_profile_api_users_profile_put",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Update my name / mobile number",
+        "tags": [
+          "people"
         ]
       }
     },

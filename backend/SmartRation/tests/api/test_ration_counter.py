@@ -7,14 +7,11 @@ All data here is synthetic; the QR secret and passwords are test-only values.
 
 from __future__ import annotations
 
-from datetime import time, timedelta
 from decimal import Decimal
 
-import pytest
+from ration_world import book, qr_payload, session
 from sqlalchemy import select
 
-from app.database.base import Base
-from app.database.connection import get_engine, get_session_factory
 from app.database.enums import InventoryMovementType, MobileVerificationStatus, TokenStatus, VerificationAction
 from app.database.models import (
     AuditLog,
@@ -23,79 +20,13 @@ from app.database.models import (
     InventoryMovement,
     MobileVerification,
     RationCollection,
-    RationItem,
-    RationScheme,
-    RationShop,
-    SchemeEntitlementItem,
     TimeSlot,
     Token,
     User,
     VerificationAuditLog,
 )
 from app.security.tokens import TokenUser, create_access_token
-from app.utils.dotnet import midnight
 from app.utils.time import utc_now
-
-QR_SECRET = "unit-test-qr-secret-0123456789abcdef"
-TEST_PASSWORD = "Unit-Test-Only-9!"   # a test fixture value, never a real password
-
-
-def session():
-    return get_session_factory()()
-
-
-@pytest.fixture
-def env(make_client):
-    client = make_client(lambda r: None, qr_secret=QR_SECRET)
-    settings = client.app.state.settings
-    Base.metadata.create_all(get_engine())
-    today = midnight(utc_now())
-    with session() as db:
-        now = utc_now()
-        db.add_all([
-            RationShop(Id=1, ShopName="Satnavari FPS", ShopCode="FPS-001", Address="a", District="Nagpur", State="MH",
-                       Latitude=0, Longitude=0, IsActive=True, CreatedAt=now),
-            RationShop(Id=2, ShopName="Other FPS", ShopCode="FPS-002", Address="b", District="Nagpur", State="MH",
-                       Latitude=0, Longitude=0, IsActive=True, CreatedAt=now),
-            RationScheme(Id=1, SchemeCode="DEMO-NFSA", Name="NFSA", Description="", IsActive=True),
-            SchemeEntitlementItem(RationSchemeId=1, RationType=1, QuotaPerEligibleMemberPerMonth=Decimal(5)),
-            SchemeEntitlementItem(RationSchemeId=1, RationType=2, QuotaPerEligibleMemberPerMonth=Decimal(3)),
-            RationItem(Id=1, RationType=1, Name="Rice", VernacularName="Chawal", Unit="kg", StandardQuotaPerBooking=Decimal(5), IsActive=True),
-            RationItem(Id=2, RationType=2, Name="Wheat", VernacularName="Gehu", Unit="kg", StandardQuotaPerBooking=Decimal(3), IsActive=True),
-            Inventory(Id=1, RationShopId=1, RationType=1, AvailableQuantity=Decimal(100), AllocatedQuantity=Decimal(0),
-                      MinimumStockLevel=Decimal(10), UpdatedAt=now),
-            Inventory(Id=2, RationShopId=1, RationType=2, AvailableQuantity=Decimal(50), AllocatedQuantity=Decimal(0),
-                      MinimumStockLevel=Decimal(10), UpdatedAt=now),
-            User(Id=50, FullName="Shop Owner", Email="shop@example.com", MobileNumber="9000000051", PasswordHash="x", Role=2,
-                 IsActive=True, CreatedAt=now, RationShopId=1),
-            User(Id=51, FullName="Other Owner", Email="shop2@example.com", MobileNumber="9000000052", PasswordHash="x", Role=2,
-                 IsActive=True, CreatedAt=now, RationShopId=2),
-            User(Id=60, FullName="Official", Email="gov@example.com", MobileNumber="9000000061", PasswordHash="x", Role=3,
-                 IsActive=True, CreatedAt=now),
-            TimeSlot(Id=1, RationShopId=1, SlotDate=today, StartTime=time(9), EndTime=time(9, 5), Capacity=2, BookedCount=0),
-            TimeSlot(Id=2, RationShopId=1, SlotDate=today + timedelta(days=1), StartTime=time(9), EndTime=time(9, 5), Capacity=1, BookedCount=0),
-            TimeSlot(Id=3, RationShopId=1, SlotDate=today - timedelta(days=1), StartTime=time(9), EndTime=time(9, 5), Capacity=2, BookedCount=0),
-        ])
-        db.commit()
-
-    r = client.post("/api/auth/register", json={"fullName": "Asha Patil", "email": "asha@example.com",
-                                                "mobileNumber": "9000000001", "password": TEST_PASSWORD})
-    assert r.status_code == 200, r.text
-    citizen = r.json()["data"]["accessToken"]
-
-    def bearer(user_id: int, email: str, role: str, shop: int | None) -> dict:
-        return {"Authorization": f"Bearer {create_access_token(TokenUser(user_id, email, role, role, shop), settings)[0]}"}
-
-    return {"client": client, "citizen": {"Authorization": f"Bearer {citizen}"},
-            "shop": bearer(50, "shop@example.com", "ShopOwner", 1), "other_shop": bearer(51, "shop2@example.com", "ShopOwner", 2),
-            "official": bearer(60, "gov@example.com", "GovernmentOfficial", None)}
-
-
-def book(env, slot_id=1, items=None):
-    return env["client"].post("/api/ration/bookings", headers=env["citizen"], json={
-        "rationShopId": 1, "timeSlotId": slot_id,
-        "items": items or [{"rationType": "Rice", "quantity": 5}, {"rationType": "Wheat", "quantity": 3}]})
-
 
 # ---------------------------------------------------------------- catalog, slots, booking
 
@@ -173,15 +104,9 @@ def test_bookings_are_private_to_their_owner_and_shop(env):
 
 # ---------------------------------------------------------------- QR, scan, verification, collection
 
-def _qr(env, token_id):
-    r = env["client"].get(f"/api/qr/payload/{token_id}", headers=env["citizen"])
-    assert r.status_code == 200
-    return r.json()["data"]
-
-
 def test_scan_verifies_a_signed_qr(env):
     token = book(env).json()["data"]
-    r = env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": _qr(env, token["id"])})
+    r = env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": qr_payload(env, token["id"])})
     assert r.status_code == 200
     result = r.json()["data"]
     assert result["status"] == "VERIFIED" and result["verified"] is True and r.json()["message"] == "QR verified successfully"
@@ -195,7 +120,7 @@ def test_scan_verifies_a_signed_qr(env):
 
 def test_scan_rejects_a_tampered_or_foreign_qr(env):
     token = book(env).json()["data"]
-    payload = _qr(env, token["id"])
+    payload = qr_payload(env, token["id"])
     tampered = payload.replace(token["tokenNumber"], "SR-2000-000001")
     r = env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": tampered})
     assert r.status_code == 200 and r.json()["data"]["verified"] is False
@@ -213,7 +138,7 @@ def test_blocked_reason_when_mobile_is_not_verified(env):
         mobile = db.scalar(select(MobileVerification))
         mobile.Status = int(MobileVerificationStatus.NotVerified)
         db.commit()
-    result = env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": _qr(env, token["id"])}).json()["data"]
+    result = env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": qr_payload(env, token["id"])}).json()["data"]
     assert result["status"] == "NOT_ELIGIBLE" and result["message"] == "Mobile OTP verification required."
 
 
@@ -240,7 +165,7 @@ def test_collection_is_atomic_audited_and_idempotent(env):
     assert r.status_code == 409 and r.json()["message"] == "This token has already been used for collection."
     with session() as db:
         assert db.get(Inventory, 1).AvailableQuantity == 95 and len(db.scalars(select(RationCollection)).all()) == 1
-    scan = c.post("/api/qr/scan", headers=env["shop"], json={"qrData": _qr(env, token["id"])}).json()["data"]
+    scan = c.post("/api/qr/scan", headers=env["shop"], json={"qrData": qr_payload(env, token["id"])}).json()["data"]
     assert scan["status"] == "ALREADY_COLLECTED"
 
 
@@ -317,7 +242,7 @@ def test_inventory_movements_and_permissions(env):
 
 def test_verification_audit_is_for_officials_only(env):
     token = book(env).json()["data"]
-    env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": _qr(env, token["id"])})
+    env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": qr_payload(env, token["id"])})
     assert env["client"].get("/api/audit/verification", headers=env["shop"]).status_code == 403
     rows = env["client"].get("/api/audit/verification", headers=env["official"]).json()["data"]
     assert rows and all("qrData" not in row for row in rows)

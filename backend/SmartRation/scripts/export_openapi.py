@@ -28,6 +28,7 @@ CSHARP_CONTRACT = OUT / "csharp-api.swagger.json"
 
 def render_python() -> str:
     settings = Settings(_env_file=None, database_url="sqlite://", jwt_secret_key="contract-export-only-" + "0" * 32,
+                        qr_secret="contract-export-only-" + "1" * 32,
                         legacy_api_url="", ai_service_url="")
     return json.dumps(create_app(settings).openapi(), indent=2, ensure_ascii=False, sort_keys=True) + "\n"
 

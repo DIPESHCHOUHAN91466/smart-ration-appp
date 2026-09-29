@@ -10,7 +10,9 @@ playwright-report/
 # Environment
 .env
 .env.*
+*.env
 !.env.example
+!*.env.example
 
 # .NET
 bin/
@@ -43,6 +45,7 @@ Thumbs.db
 __pycache__/
 .pytest_cache/
 .venv/
+venv/
 
 # Database backups (contain personal data)
 database/backups/

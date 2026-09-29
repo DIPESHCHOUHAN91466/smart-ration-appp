@@ -33,6 +33,7 @@ def make_settings(tmp_path, **overrides) -> Settings:
         cors_origins=["http://localhost:5173"],
         max_request_bytes=1024,
         jwt_secret_key="unit-test-signing-key-0123456789abcdef-0123456789",
+        qr_secret="unit-test-qr-secret-0123456789abcdef",  # test-only value
         log_level="WARNING",
         ai_service_url="",  # unit tests never depend on a running AI service
     )

@@ -7,9 +7,11 @@ GET /ready         -> 200 only when the app can serve traffic: database reachabl
                       schema at the Alembic head this code expects, and (while
                       routes are still proxied) the legacy C# API reachable.
 
-`/api/health` is NOT defined here yet: until the health area is migrated it
-is served by the C# API through the fallback proxy, so the frontend's
-existing health check keeps its current response shape.
+GET /api/health    -> the shape the frontend's AI panel reads (formerly the C# API's):
+                      {system: HEALTHY|DEGRADED|UNHEALTHY, api: UP, database: CONNECTED|UNAVAILABLE,
+                       ai: AVAILABLE|UNAVAILABLE|NOT_CONFIGURED}. Status words only — no versions,
+                      hosts or connection details. DEGRADED (not down) when only the optional AI
+                      service is unavailable: the core ration workflow keeps working.
 """
 
 from __future__ import annotations
@@ -117,5 +119,22 @@ async def health(request: Request):
     dependencies_ok = legacy in ("healthy", "disabled") and ai in ("healthy", "disabled") and chatbot == "healthy"
     status = "unhealthy" if not database else "healthy" if dependencies_ok else "degraded"
     body = HealthResponse(status=status, database="healthy" if database else "unhealthy", legacyApi=legacy,
-                          aiService=ai, chatbot=chatbot, dataMode=settings.data_mode)
+                          aiService=ai, chatbot=chatbot, dataMode=settings.data_mode,
+                          qrConfigured=settings.qr_secret_problem() is None)
     return JSONResponse(status_code=200 if database else 503, content=body.model_dump())
+
+
+@router.get("/api/health", summary="System status for the dashboard (status words only)", response_model=dict,
+            responses={503: {"description": "Database unreachable"}})
+async def api_health(request: Request):
+    database = await asyncio.to_thread(database_is_reachable)
+    configured = request.app.state.ai_client is not None and bool(request.app.state.settings.ai_service_api_key)
+    ai = configured and await _probe(request.app.state.ai_client) == "healthy"
+    body = {
+        "system": "UNHEALTHY" if not database else "HEALTHY" if ai else "DEGRADED",
+        "api": "UP",
+        "database": "CONNECTED" if database else "UNAVAILABLE",
+        "ai": "NOT_CONFIGURED" if not configured else "AVAILABLE" if ai else "UNAVAILABLE",
+        "qrConfigured": request.app.state.settings.qr_secret_problem() is None,   # yes/no only, never the value
+    }
+    return JSONResponse(status_code=200 if database else 503, content=body)

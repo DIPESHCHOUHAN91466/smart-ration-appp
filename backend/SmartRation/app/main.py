@@ -10,23 +10,27 @@ other /api/* request falls through to the C# API via the fallback proxy
 
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 
 import httpx
 from fastapi import FastAPI
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.ai.chatbot.knowledge_base import get_knowledge_base
 from app.ai.chatbot.providers import get_provider
-from app.api.routes import auth, counter, health, legacy_proxy, public_help, ration
+from app.api.routes import ai, auth, counter, government, health, legacy_proxy, people, public_help, ration
 from app.api.routes.frontend import mount_frontend
 from app.config.settings import Settings, get_settings
 from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
-from app.database.connection import configure_database
+from app.database.connection import configure_database, get_session_factory
 from app.middleware.api_version import ApiVersionAliasMiddleware
 from app.middleware.http import install_middleware
 from app.security.rate_limit import FixedWindowLimiter
+from app.services import slot_service
+from app.services.ai_client import AiClient
 from app.services.data_provider import check_data_mode
 
 API_DESCRIPTION = """
@@ -39,11 +43,33 @@ Python backend for Smart Ration HSD2C (side-by-side migration from the C#/.NET A
 """
 
 
+log = logging.getLogger("smartration.startup")
+
+
+def _top_up_demo_slots(settings: Settings) -> None:
+    """Synthetic (demo) mode: keep the next days bookable. Days that already have slots are never touched."""
+    if settings.data_mode.lower() != "synthetic" or settings.upcoming_slot_days == 0:
+        return
+    try:
+        with get_session_factory()() as db:
+            added = slot_service.ensure_upcoming(db, settings.upcoming_slot_days)
+        if added:
+            log.info("Added %s demo time slots for the next %s days", added, settings.upcoming_slot_days)
+    except Exception as exc:  # a missing table or unreachable database must not stop the API from starting
+        log.warning("Could not top up demo time slots: %s", type(exc).__name__)
+
+
 def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBaseTransport | None = None,
-               ai_transport: httpx.AsyncBaseTransport | None = None) -> FastAPI:
+               ai_transport: httpx.AsyncBaseTransport | None = None, ai_api_transport: httpx.BaseTransport | None = None) -> FastAPI:
     settings = settings or get_settings()
     if not settings.jwt_secret_key:
-        raise RuntimeError("JWT_SECRET_KEY is not set (it must equal the C# API's user-secret Jwt:Key). See .env.example.")
+        raise RuntimeError("JWT_SECRET_KEY is not set. See .env.example.")
+    qr_problem = settings.qr_secret_problem()
+    if qr_problem:  # bookings and QR verification cannot work without it; fail now, not at the first booking
+        raise RuntimeError("Refusing to start: " + qr_problem)
+    problems = settings.production_problems()
+    if problems:  # e.g. a fixed demo OTP or a silent mock SMS provider outside development
+        raise RuntimeError("Refusing to start: " + " ".join(problems))
     check_data_mode(settings.data_mode)  # real mode is BLOCKED until real integrations exist
     get_provider(settings.chatbot_provider)  # fail at startup on an unknown CHATBOT_PROVIDER
     get_knowledge_base()  # validate the Public Help content at startup, not on the first question
@@ -69,12 +95,17 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
         else None
     )
 
+    # Sync client for the AI analytics routes (X-Api-Key); `ai_client` above only probes /health.
+    ai_api = AiClient(settings.ai_service_url, settings.ai_service_api_key, settings.ai_service_timeout_seconds, ai_api_transport)
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
+        await run_in_threadpool(_top_up_demo_slots, settings)
         yield
         for client in (*legacy_clients, ai_client):
             if client is not None:
                 await client.aclose()
+        ai_api.close()
 
     app = FastAPI(
         title="Smart Ration HSD2C API (Python)",
@@ -87,6 +118,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     app.state.settings = settings
     app.state.legacy_client = legacy_client
     app.state.ai_client = ai_client
+    app.state.ai_api = ai_api
     app.state.rate_limiter = FixedWindowLimiter()
 
     install_exception_handlers(app)
@@ -107,6 +139,9 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     app.include_router(public_help.router)  # new: /api/public-help/*, /api/chatbot/* (no login)
     app.include_router(ration.router)  # items, shops, slots, bookings/tokens, token QR
     app.include_router(counter.router)  # scanner, shop, verification/OTP, collection, inventory, notifications
+    app.include_router(people.router)  # own profile, beneficiaries, families, search, public badge
+    app.include_router(ai.router)  # AI analytics / alerts / OCR (optional AI service, rule-based fallback)
+    app.include_router(government.router)  # admin dashboard, statistics, reports, users, map, database viewer
 
     # ---- Fallback proxy: MUST stay last ----
     if legacy_client is not None:

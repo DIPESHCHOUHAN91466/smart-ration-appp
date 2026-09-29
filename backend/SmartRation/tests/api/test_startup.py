@@ -20,6 +20,7 @@ def env(monkeypatch, tmp_path):
     # What the real .env provides, pointed at a throwaway database.
     monkeypatch.setenv("DATABASE_URL", f"sqlite:///{(tmp_path / 'startup.db').as_posix()}")
     monkeypatch.setenv("JWT_SECRET_KEY", "unit-test-signing-key-0123456789abcdef-0123456789")
+    monkeypatch.setenv("QR_SECRET", "unit-test-qr-secret-0123456789abcdef")
     monkeypatch.setenv("LEGACY_API_URL", "")
     monkeypatch.setenv("AI_SERVICE_URL", "")
     app.main.get_settings.cache_clear()

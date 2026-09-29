@@ -49,7 +49,7 @@ def test_get_is_forwarded_with_path_query_and_auth(make_client):
 def test_json_body_status_and_idempotency_key_are_preserved(make_client):
     c = make_client(echo_upstream)
     payload = {"tokenId": 51}
-    r = c.post("/api/ai/alerts/sync", json=payload, headers={"Idempotency-Key": "k-1"})
+    r = c.post("/api/legacy-only/echo", json=payload, headers={"Idempotency-Key": "k-1"})
     assert r.status_code == 201
     d = r.json()["data"]
     assert d["idem"] == "k-1" and d["ctype"] == "application/json"
@@ -58,7 +58,7 @@ def test_json_body_status_and_idempotency_key_are_preserved(make_client):
 
 def test_multipart_upload_is_forwarded_byte_for_byte(make_client):
     c = make_client(echo_upstream, max_request_bytes=10_000)
-    r = c.post("/api/ocr/extract", files={"file": ("x.png", b"\x89PNG" + b"\x00" * 100, "image/png")})
+    r = c.post("/api/legacy-only/upload", files={"file": ("x.png", b"\x89PNG" + b"\x00" * 100, "image/png")})
     d = r.json()["data"]
     assert d["ctype"].startswith("multipart/form-data; boundary=")
     assert d["body_len"] > 100
@@ -68,7 +68,7 @@ def test_upstream_status_and_error_body_pass_through(make_client):
     def upstream(_):
         return httpx.Response(409, json={"success": False, "message": "This token has already been used for collection.", "data": None, "errors": None, "errorCode": "X"})
 
-    r = make_client(upstream).post("/api/ai/alerts/sync", json={})
+    r = make_client(upstream).post("/api/legacy-only/echo", json={})
     assert r.status_code == 409 and r.json()["errorCode"] == "X"
 
 

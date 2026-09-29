@@ -185,9 +185,11 @@ def verify_by_qr(db: Session, secret: str, actor: Actor, qr_value: str) -> dict:
         verification_audit_service.log(db, actor, VerificationAction.QrScanned, "FAILED", "QR", reason=exc.message)
         db.commit()
         raise
-    # Log the opaque reference, never the raw scanned payload.
-    verification_audit_service.log(db, actor, VerificationAction.QrScanned, "SUCCESS", "QR",
-                                   reference=parsed.reference, token_number=token.TokenNumber)
+    # Log the opaque reference, never the raw scanned payload. The beneficiary and shop are recorded too
+    # (the C# API left them empty, so the repeated-scan and unusual-shop-activity rules could never fire).
+    beneficiary_id = db.scalar(select(Beneficiary.Id).where(Beneficiary.UserId == token.UserId).order_by(Beneficiary.Id).limit(1))
+    verification_audit_service.log(db, actor, VerificationAction.QrScanned, "SUCCESS", "QR", reference=parsed.reference,
+                                   token_number=token.TokenNumber, beneficiary_id=beneficiary_id, shop_id=token.RationShopId)
     return build_response(db, actor, token, "QR")
 
 

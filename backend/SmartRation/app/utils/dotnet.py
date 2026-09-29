@@ -12,7 +12,8 @@ formats. Python produces the same text so nothing in the browser has to change:
 from __future__ import annotations
 
 from datetime import date, datetime, time, timedelta
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
+from enum import IntEnum
 
 
 def dt(value: datetime | date | None) -> str | None:
@@ -72,11 +73,20 @@ def qty_text(value: Decimal | float | int) -> str:
     return format(d, "f")
 
 
-def one_decimal(value: float) -> str:
-    """.NET '0.#' format: at most one decimal, no trailing zero."""
-    rounded = round(value, 1)
-    return str(int(rounded)) if rounded == int(rounded) else f"{rounded:.1f}"
+def one_decimal(value: Decimal | float) -> str:
+    """.NET '0.#' format: at most one decimal, no trailing zero; a custom .NET format rounds half away from zero."""
+    rounded = Decimal(str(value)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+    text = format(rounded, "f")
+    return text[:-2] if text.endswith(".0") else text
 
 
 def midnight(value: datetime) -> datetime:
     return value.replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+def enum_name(enum: type[IntEnum], value: int) -> str:
+    """.NET Enum.ToString(): the member name, or the number itself for an undefined value."""
+    try:
+        return enum(value).name
+    except ValueError:
+        return str(value)

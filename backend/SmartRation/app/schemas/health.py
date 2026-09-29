@@ -15,6 +15,7 @@ class HealthResponse(BaseModel):
     aiService: str = Field(description="healthy | unhealthy | disabled — the Python AI/analytics service")
     chatbot: str = Field(description="healthy | unhealthy — knowledge base loaded and provider available")
     dataMode: str = Field(description="synthetic | real")
+    qrConfigured: bool = Field(description="QR_SECRET is set and usable (the value itself is never returned)")
 
 
 class ReadyResponse(BaseModel):
