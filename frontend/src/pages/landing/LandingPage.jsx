@@ -7,6 +7,7 @@ import {
 import QRCodeCanvas from "../../components/QRCodeCanvas";
 import { MessageText } from "../../components/chatbot/ChatbotMessage";
 import rationMitraLogo from "../../assets/ration-mitra-logo.webp";
+import BrandMark from "../../components/BrandMark";
 import { publicHelpService } from "../../services/chatbotService";
 import { openChatbot } from "../../state/chatbotStore";
 import { useTranslation } from "../../i18n/useTranslation";
@@ -101,6 +102,7 @@ export default function LandingPage() {
       <section className="land-hero">
         <div className="land-hero-inner">
           <div className="land-hero-copy">
+            <BrandMark variant="hero" />
             <span className="land-badge"><ShieldCheck size={15} aria-hidden="true" /> {t("land_badge")}</span>
             <h1>{t("land_title")}</h1>
             <p className="land-lead">{t("land_subtitle")}</p>

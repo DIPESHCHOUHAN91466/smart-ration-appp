@@ -15,6 +15,7 @@ from app.api.dependencies.auth import Actor
 from app.core.errors import ApiError, NotFound
 from app.database.enums import (
     AadhaarVerificationStatus,
+    Gender,
     MobileVerificationStatus,
     PassbookVerificationStatus,
     TokenStatus,
@@ -43,7 +44,7 @@ from app.services.mappers import (
     mobile_dto,
     passbook_dto,
 )
-from app.utils.dotnet import hhmm, midnight
+from app.utils.dotnet import enum_name, hhmm, midnight
 from app.utils.masking import mask_mobile
 from app.utils.time import utc_now
 
@@ -87,6 +88,39 @@ def mobile_record(db: Session, beneficiary: Beneficiary, user: User) -> MobileVe
 
 
 # ---------------------------------------------------------------- the verification bundle
+
+# Gender implied by the relationship itself; anything else (Spouse, Parent, Other) is not guessed.
+_RELATIONSHIP_GENDER = {"Son": "Male", "Daughter": "Female"}
+
+
+def family_with_member_details(family: dict, beneficiary: Beneficiary, aadhaar: AadhaarVerification, entitlement: dict) -> dict:
+    """Adds, per member, only what the records actually support (nothing is invented):
+      * head of family (the card holder): gender, masked Aadhaar (XXXX-XXXX-1234) and identity status
+        from their own verified records; profile photo URL if one is stored;
+      * other members: gender only where the relationship implies it (Son / Daughter); Aadhaar, photo and
+        identity status are null because FamilyMembers does not record them;
+      * every eligible member: their share of the family's monthly entitlement (scheme quota per member).
+    """
+    eligible_count = entitlement.get("eligibleMemberCount") or 0
+    share = [{"rationType": i["rationType"], "quantity": round(i["monthlyEntitlement"] / eligible_count, 3)}
+             for i in entitlement.get("items", [])] if eligible_count else []
+    head_seen = False
+    detailed = []
+    for m in family["members"]:
+        is_head = m["relationship"] == "Head" and not head_seen
+        head_seen = head_seen or is_head
+        eligible = m["eligibility"] == "Eligible"
+        detailed.append({
+            **m,
+            "isHead": is_head,
+            "gender": enum_name(Gender, beneficiary.Gender) if is_head else _RELATIONSHIP_GENDER.get(m["relationship"]),
+            "aadhaarMasked": aadhaar.AadhaarMasked if is_head else None,
+            "identityVerified": (aadhaar.Status == AadhaarVerificationStatus.Verified) if is_head else None,
+            "photoUrl": beneficiary.ProfilePhotoUrl if is_head else None,
+            "monthlyEntitlement": share if eligible else [],
+        })
+    return {**family, "members": detailed}
+
 
 def _summary(beneficiary: Beneficiary, token: Token, slot: TimeSlot, aadhaar: AadhaarVerification,
              passbook: PassbookVerification, mobile: MobileVerification, entitlement: dict) -> dict:
@@ -164,7 +198,8 @@ def build_response(db: Session, actor: Actor, token: Token, method: str) -> dict
     db.commit()
     return {
         "beneficiary": beneficiary_summary(beneficiary, user),
-        "family": family_dto(family.FamilyCode if family else "", members),
+        "family": family_with_member_details(family_dto(family.FamilyCode if family else "", members),
+                                             beneficiary, aadhaar, entitlement),
         "aadhaarVerification": aadhaar_dto(aadhaar),
         "passbookVerification": passbook_dto(passbook),
         "mobileVerification": mobile_dto(mobile),

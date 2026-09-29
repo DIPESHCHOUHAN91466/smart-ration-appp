@@ -174,3 +174,27 @@ def test_scan_reports_its_own_duration_only(env):
     timing = r.headers["Server-Timing"]
     assert timing.startswith("app;dur=") and float(timing.split("=")[1]) >= 0   # a number, nothing else
     assert QR_SECRET not in timing
+
+
+def test_scan_returns_member_details_without_inventing_any(env):
+    from app.database.models import Beneficiary, FamilyMember
+    with session() as db:
+        family_id = db.scalar(select(Beneficiary.FamilyId))
+        db.add_all([
+            FamilyMember(FamilyId=family_id, FullName="Son Test", Age=8, Relationship=3, Eligibility=1, DataSource="SYNTHETIC_DEMO"),
+            FamilyMember(FamilyId=family_id, FullName="Parent Test", Age=61, Relationship=5, Eligibility=2, DataSource="SYNTHETIC_DEMO"),
+        ])
+        db.commit()
+    token = book(env).json()["data"]
+    v = scan(env, qr_payload(env, token["id"]))["verification"]
+    members = {m["fullName"]: m for m in v["family"]["members"]}
+    head = next(m for m in members.values() if m["isHead"])
+    assert head["aadhaarMasked"].startswith("XXXX-XXXX-") and head["identityVerified"] is True and head["gender"]
+    son, parent = members["Son Test"], members["Parent Test"]
+    assert son["gender"] == "Male" and son["aadhaarMasked"] is None and son["identityVerified"] is None
+    assert parent["gender"] is None                                   # "Parent" does not imply a gender: not guessed
+    assert v["family"]["familySize"] == 3 and v["family"]["eligibleMemberCount"] == 2
+    # Each eligible member's share = the scheme quota per member (rice 5 kg, wheat 3 kg); none for ineligible.
+    assert {i["rationType"]: i["quantity"] for i in son["monthlyEntitlement"]} == {"Rice": 5, "Wheat": 3}
+    assert parent["monthlyEntitlement"] == []
+    assert all(len(m["aadhaarMasked"] or "XXXX-XXXX-0000") == 14 for m in members.values())   # never a full number

@@ -50,11 +50,7 @@ export default function Register() {
     <div className="login-page">
       <div className="login-art">
         <div className="login-brand">
-          <BrandMark variant="light" />
-          <div>
-            <b>{t("brand_name")}</b>
-            <small>{t("app_subtitle")}</small>
-          </div>
+          <BrandMark variant="login" />
         </div>
         <div className="art-content">
           <span className="eyebrow">{t("login_eyebrow")}</span>

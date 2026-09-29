@@ -31,14 +31,11 @@ export default function PublicLayout() {
       <header className="pub-header">
         <div className="pub-header-inner">
           <Link to="/" className="pub-brand" aria-label={`${t("app_name")} — ${t("nav_home")}`}>
-            <BrandMark variant="light" />
-            <span className="pub-brand-text">
-              <strong>{t("brand_name")}</strong>
-              <small>{t("footer_tagline")}</small>
-            </span>
+            <BrandMark variant="header" />
           </Link>
           <nav className="pub-nav" aria-label="Main">{nav}</nav>
           <div className="pub-header-actions">
+            <CompanyMark variant="header" />
             <LanguageSwitcher />
             <Link to="/register" className="pub-cta">{t("nav_get_started")} <ArrowRight size={16} aria-hidden="true" /></Link>
             <button

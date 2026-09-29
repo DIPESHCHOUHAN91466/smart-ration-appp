@@ -91,7 +91,9 @@ export default function QrScannerModal({ onClose }) {
           ) : (
             <span className="qr-header-spacer" />
           )}
-          <h2 id="qr-modal-title">{t("scan_customer_qr")}</h2>
+          <h2 id="qr-modal-title">
+            {view === VIEW.RESULT && result?.status === QR_STATUS.VERIFIED ? t("elig_title") : t("scan_customer_qr")}
+          </h2>
           <button ref={closeBtnRef} type="button" className="qr-header-btn" onClick={onClose} aria-label={t("close_scanner")}>
             <X size={20} />
           </button>
@@ -114,8 +116,9 @@ export default function QrScannerModal({ onClose }) {
           {view === VIEW.VERIFYING && (
             <div className="qr-verifying" role="status" aria-live="polite">
               <Loader2 className="qr-spin" size={42} />
-              <b>{t("verifying_qr")}</b>
-              <small className="muted">{t("qr_detected")}</small>
+              <b>{t("verifying_customer")}</b>
+              <small className="qr-verifying-step">✓ {t("qr_detected")}</small>
+              <small className="muted">{t("verifying_checks")}</small>
             </div>
           )}
 

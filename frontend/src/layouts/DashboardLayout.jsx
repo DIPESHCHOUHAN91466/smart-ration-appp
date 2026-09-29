@@ -11,7 +11,7 @@ import { useTranslation } from "../i18n/useTranslation";
 import { LANGUAGE_OPTIONS } from "../i18n/translations";
 import { globalSearch } from "../services/searchService";
 import { usePreferencesStore } from "../state/preferencesStore";
-import BrandMark from "../components/BrandMark";
+import BrandMark, { CompanyMark } from "../components/BrandMark";
 import GlobalQrScanner from "../components/qr/GlobalQrScanner";
 import { useQrScannerStore } from "../state/qrScannerStore";
 
@@ -180,11 +180,7 @@ export default function DashboardLayout() {
     <div className={shellClassName}>
       <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
         <div className="brand">
-          <BrandMark />
-          <div>
-            <strong>{t("brand_name")}</strong>
-            <span>{t("app_subtitle")}</span>
-          </div>
+          <BrandMark variant="sidebar" />
         </div>
         <div className="nav-section">{t("nav_section_main")}</div>
         {nav.map(([path, labelKey, Icon]) => (
@@ -242,6 +238,7 @@ export default function DashboardLayout() {
             </div>
           )}
           <div className="top-actions">
+            <CompanyMark variant="header" />
             {canScanQr && (
               <button type="button" className="primary-btn scan-qr-btn" onClick={openQrScanner} aria-label={t("open_qr_scanner")}>
                 <QrCode size={17} />
