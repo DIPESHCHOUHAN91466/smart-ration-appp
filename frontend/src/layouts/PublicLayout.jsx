@@ -31,7 +31,11 @@ export default function PublicLayout() {
       <header className="pub-header">
         <div className="pub-header-inner">
           <Link to="/" className="pub-brand" aria-label={`${t("app_name")} — ${t("nav_home")}`}>
-            <BrandMark variant="header" />
+            <BrandMark variant="compact" />
+            <span className="pub-brand-text">
+              <strong>{t("brand_name")}</strong>
+              <small>{t("footer_tagline")}</small>
+            </span>
           </Link>
           <nav className="pub-nav" aria-label="Main">{nav}</nav>
           <div className="pub-header-actions">

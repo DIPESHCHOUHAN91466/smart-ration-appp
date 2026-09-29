@@ -180,7 +180,11 @@ export default function DashboardLayout() {
     <div className={shellClassName}>
       <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
         <div className="brand">
-          <BrandMark variant="sidebar" />
+          <BrandMark variant="compact" />
+          <div>
+            <strong>{t("brand_name")}</strong>
+            <span>{t("app_subtitle")}</span>
+          </div>
         </div>
         <div className="nav-section">{t("nav_section_main")}</div>
         {nav.map(([path, labelKey, Icon]) => (

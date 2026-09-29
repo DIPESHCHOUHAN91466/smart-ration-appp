@@ -7,7 +7,7 @@ import hsd2cHeaderLogo from "../assets/hsd2c-logo-header.png";
 // proportionally (object-fit: contain, width-driven), so the AI/leaf/hand/cloud mark, "Ration Mitra",
 // "AI Powered • For Every Family" and "POWERED BY HSD2C" stay visible at every size. The artwork has a
 // white background, so on dark surfaces it sits on a white card instead of being altered.
-// variant: "sidebar" | "header" | "login" | "hero" (sizes live in global.css, .rm-logo--*; namespaced so a
+// variant: "compact" (84×40 header/sidebar logo) | "login" | "hero" (sizes live in global.css, .rm-logo--*; namespaced so a
 // variant can never pick up a layout class such as .sidebar).
 export const RATION_MITRA_LOGO_ALT = "Ration Mitra — AI Powered, For Every Family. Powered by HSD2C";
 

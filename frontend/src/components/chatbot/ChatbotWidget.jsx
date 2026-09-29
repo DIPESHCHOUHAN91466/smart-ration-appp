@@ -93,7 +93,7 @@ export default function ChatbotWidget() {
             aria-label={unread ? `${t("chat_open")} (${unread} ${t("chat_unread")})` : t("chat_open")}
             aria-describedby="chatbot-tooltip"
           >
-            <ChatbotAvatar size={46} />
+            <ChatbotAvatar size={48} />
             {unread > 0 && <span className="chatbot-badge" aria-hidden="true">{unread > 9 ? "9+" : unread}</span>}
           </button>
         </div>
