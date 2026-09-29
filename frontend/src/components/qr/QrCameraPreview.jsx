@@ -3,9 +3,6 @@ import { CameraOff, FlashlightOff, Flashlight, ImageUp, Keyboard, Loader2, Refre
 import { CAMERA_ERROR, CAMERA_STATE, useQrScanner } from "../../hooks/useQrScanner";
 import { useTranslation } from "../../i18n/useTranslation";
 
-const CAMERA_ELEMENT_ID = "global-qr-camera";
-const FILE_ELEMENT_ID = "global-qr-file-reader";
-
 const CAMERA_ERROR_KEYS = {
   [CAMERA_ERROR.DENIED]: ["camera_permission_required", "camera_permission_desc"],
   [CAMERA_ERROR.NOT_FOUND]: ["camera_unavailable", "camera_not_found_desc"],
@@ -20,7 +17,7 @@ const CAMERA_ERROR_KEYS = {
 export default function QrCameraPreview({ onDecode, onManual, onImageError }) {
   const { t } = useTranslation();
   const fileInputRef = useRef(null);
-  const camera = useQrScanner({ elementId: CAMERA_ELEMENT_ID, onDecode });
+  const camera = useQrScanner({ onDecode });
   const { start, stop } = camera;
 
   useEffect(() => {
@@ -34,9 +31,10 @@ export default function QrCameraPreview({ onDecode, onManual, onImageError }) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-    await stop();
+    stop();
     try {
-      const text = await camera.scanImageFile(file, FILE_ELEMENT_ID);
+      // Decoded here in the browser; only the QR text goes to the server.
+      const text = await camera.scanImageFile(file);
       onDecode(text);
     } catch {
       onImageError();
@@ -56,8 +54,7 @@ export default function QrCameraPreview({ onDecode, onManual, onImageError }) {
   return (
     <div className="qr-camera">
       <div className="qr-camera-viewport">
-        {/* html5-qrcode injects the <video> here. */}
-        <div id={CAMERA_ELEMENT_ID} className="qr-camera-feed" />
+        <video ref={camera.videoRef} className="qr-camera-feed" playsInline muted autoPlay aria-hidden="true" />
 
         {camera.state === CAMERA_STATE.READY && (
           <div className="qr-camera-overlay" aria-hidden="true">
@@ -139,7 +136,6 @@ export default function QrCameraPreview({ onDecode, onManual, onImageError }) {
       </div>
 
       <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={onFileChosen} />
-      <div id={FILE_ELEMENT_ID} hidden />
     </div>
   );
 }

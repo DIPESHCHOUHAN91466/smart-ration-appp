@@ -166,3 +166,11 @@ def test_login_still_works(env):
     r = env["client"].post("/api/auth/login", json={"email": "asha@example.com", "password": TEST_PASSWORD})
     assert r.status_code == 200 and r.json()["data"]["accessToken"]
     assert env["client"].post("/api/auth/login", json={"email": "asha@example.com", "password": "wrong-password"}).status_code == 401
+
+
+def test_scan_reports_its_own_duration_only(env):
+    token = book(env).json()["data"]
+    r = env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": qr_payload(env, token["id"])})
+    timing = r.headers["Server-Timing"]
+    assert timing.startswith("app;dur=") and float(timing.split("=")[1]) >= 0   # a number, nothing else
+    assert QR_SECRET not in timing

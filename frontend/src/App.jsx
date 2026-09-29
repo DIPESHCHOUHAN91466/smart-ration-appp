@@ -34,7 +34,7 @@ import ShopDashboard from "./pages/shop/ShopDashboard";
 import Queue from "./pages/shop/Queue";
 import ShopInventory from "./pages/shop/Inventory";
 
-// Lazy-loaded: pulls in the (large) html5-qrcode camera library, only needed on this one route.
+// Lazy-loaded: pulls in the QR camera/decoder code, only needed on this one route.
 const Scanner = lazy(() => import("./pages/shop/Scanner"));
 
 import GovernmentDashboard from "./pages/government/GovernmentDashboard";

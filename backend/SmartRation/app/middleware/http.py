@@ -40,6 +40,9 @@ def install_middleware(app: FastAPI, max_request_bytes: int) -> None:
                 except Exception as exc:  # unhandled: log with this request's id, answer with a clean 500
                     response = unexpected_error_response(request, exc)
             response.headers["X-Request-ID"] = request_id
+            # Standard Server-Timing header: how long the API itself took (a number only). The browser's
+            # dev tools and the scanner's development timing log read it.
+            response.headers["Server-Timing"] = f"app;dur={(time.perf_counter() - started) * 1000:.1f}"
             for name, value in SECURITY_HEADERS.items():
                 response.headers.setdefault(name, value)
             log.info(

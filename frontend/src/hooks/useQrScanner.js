@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { createFrameDecoder, decodeImageFile } from "../features/qr/qrDecoder";
+import { qrClear, qrLog, qrLogValue, qrMark } from "../features/qr/qrTiming";
 
 // Camera states surfaced to the UI.
 export const CAMERA_STATE = {
@@ -20,71 +21,130 @@ export const CAMERA_ERROR = {
   FAILED: "CAMERA_FAILED",
 };
 
-const SCANNER_CONFIG = {
-  verbose: false,
-  formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-  // Uses the browser's native BarcodeDetector (Chrome/Edge/Android) when
-  // present — much cheaper than the JS decoder on every frame.
-  experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-};
+// Upper bound on the wait between decode attempts when frame callbacks are not firing.
+const FRAME_FALLBACK_MS = 50;
 
-// No qrbox / aspectRatio: the whole frame is analysed and the <video> is
-// free to fill its container (the on-screen frame is only a visual guide).
-const START_CONFIG = { fps: 10, disableFlip: false };
+// 720p is plenty for a QR held near the camera and keeps every frame cheap to process; `ideal`
+// (never `exact`) so devices that can't do it still start, and laptops without a rear camera
+// simply get their only camera instead of an error.
+export function videoConstraints(deviceId) {
+  return {
+    ...(deviceId ? { deviceId: { exact: deviceId } } : { facingMode: { ideal: "environment" } }),
+    width: { ideal: 1280 },
+    height: { ideal: 720 },
+    frameRate: { ideal: 30 },
+  };
+}
 
-function classifyCameraError(error) {
+export function classifyCameraError(error) {
   const text = `${error?.name ?? ""} ${error?.message ?? ""} ${typeof error === "string" ? error : ""}`;
   if (/NotAllowedError|PermissionDenied|Permission denied|permission/i.test(text)) return CAMERA_ERROR.DENIED;
   if (/NotFoundError|DevicesNotFound|OverconstrainedError|Requested device not found|no camera/i.test(text)) return CAMERA_ERROR.NOT_FOUND;
-  if (/NotReadableError|TrackStartError|Could not start video source|in use/i.test(text)) return CAMERA_ERROR.IN_USE;
+  if (/NotReadableError|TrackStartError|AbortError|Could not start video source|in use/i.test(text)) return CAMERA_ERROR.IN_USE;
   if (/SecurityError|secure context|insecure/i.test(text)) return CAMERA_ERROR.INSECURE;
   return CAMERA_ERROR.FAILED;
 }
 
 /**
- * Drives one html5-qrcode instance bound to the element with `elementId`.
- * `onDecode(text)` fires at most once per start(): the first decoded frame
- * locks the scanner and releases the camera, so the same QR can't trigger
- * duplicate verification requests. Call start() again to scan another.
+ * Live QR scanning on a <video> element (attach `videoRef`). Frames are decoded locally
+ * (native BarcodeDetector, else jsQR in a worker) back-to-back: the next frame is taken as soon
+ * as the previous decode finishes — no fixed polling interval, never more than one in flight.
+ *
+ * `onDecode(text)` fires at most once per start(): the first decoded frame locks the scanner and
+ * stops the camera, so the same QR can't trigger duplicate verification requests. Call start()
+ * again (a new session) to scan another.
  */
-export function useQrScanner({ elementId, onDecode }) {
+export function useQrScanner({ onDecode }) {
   const [state, setState] = useState(CAMERA_STATE.IDLE);
   const [error, setError] = useState(null);
   const [cameras, setCameras] = useState([]);
   const [torchSupported, setTorchSupported] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
 
-  const scannerRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const decoderRef = useRef(null); // Promise of the decoder, created once and reused across sessions
+  const sessionRef = useRef(0); // bumped by every start/stop: stale async work checks it and bails out
   const lockedRef = useRef(false);
-  const cameraIndexRef = useRef(-1); // -1 = "rear camera via facingMode"
   const wantRunningRef = useRef(false);
-  const queueRef = useRef(Promise.resolve());
+  const deviceIdRef = useRef(null); // null = "rear camera via facingMode"
   const camerasRef = useRef([]);
   const onDecodeRef = useRef(onDecode);
   onDecodeRef.current = onDecode;
 
-  // html5-qrcode throws if start/stop overlap, so every transition is queued.
-  const enqueue = useCallback((task) => {
-    queueRef.current = queueRef.current.then(task, task);
-    return queueRef.current;
-  }, []);
-
-  const releaseCamera = useCallback(async () => {
-    const scanner = scannerRef.current;
-    scannerRef.current = null;
+  const releaseCamera = useCallback(() => {
+    const stream = streamRef.current;
+    streamRef.current = null;
+    stream?.getTracks().forEach((track) => track.stop());
+    if (videoRef.current) videoRef.current.srcObject = null;
     setTorchSupported(false);
     setTorchOn(false);
-    if (!scanner) return;
-    try {
-      if (scanner.isScanning) await scanner.stop();
-      scanner.clear();
-    } catch {
-      // Already stopped / element gone — nothing left to release.
-    }
   }, []);
 
-  const startInternal = useCallback(async () => {
-    await releaseCamera();
+  const getDecoder = useCallback(() => {
+    if (!decoderRef.current) {
+      decoderRef.current = createFrameDecoder().catch((err) => {
+        decoderRef.current = null;
+        throw err;
+      });
+    }
+    return decoderRef.current;
+  }, []);
+
+  const scanLoop = useCallback((session, decoder) => {
+    const video = videoRef.current;
+    let firstAttempt = true;
+    const next = () => {
+      if (session !== sessionRef.current || lockedRef.current || !videoRef.current) return;
+      // Decode on the next *new* camera frame where supported (else the next paint) — or after
+      // FRAME_FALLBACK_MS, whichever comes first: browsers stop painting a window that is covered
+      // by another one (while still reporting it "visible"), and then frame callbacks never fire.
+      let done = false;
+      const run = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        tick();
+      };
+      const timer = setTimeout(run, FRAME_FALLBACK_MS);
+      if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(run);
+      else requestAnimationFrame(run);
+    };
+    const tick = async () => {
+      if (session !== sessionRef.current || lockedRef.current) return;
+      let text = null;
+      if (video.readyState >= 2) {
+        if (firstAttempt) {
+          firstAttempt = false;
+          qrMark("scanStart");
+        }
+        try {
+          text = await decoder.decodeFrame(video);
+        } catch {
+          text = null; // one bad frame never stops the scanner
+        }
+      }
+      if (text && session === sessionRef.current && !lockedRef.current) {
+        lockedRef.current = true; // scanner locked: exactly one verification per session
+        wantRunningRef.current = false;
+        sessionRef.current += 1;
+        qrMark("detected");
+        qrLog("Detected (from first frame)", "scanStart", "detected");
+        releaseCamera();
+        setState(CAMERA_STATE.IDLE);
+        onDecodeRef.current?.(text);
+        return;
+      }
+      next();
+    };
+    next();
+  }, [releaseCamera]);
+
+  const start = useCallback(async () => {
+    wantRunningRef.current = true;
+    const session = ++sessionRef.current;
+    lockedRef.current = false;
+    releaseCamera();
 
     if (typeof window !== "undefined" && window.isSecureContext === false) {
       setError(CAMERA_ERROR.INSECURE);
@@ -96,163 +156,131 @@ export function useQrScanner({ elementId, onDecode }) {
       setState(CAMERA_STATE.ERROR);
       return;
     }
-    if (!document.getElementById(elementId)) return;
 
     setError(null);
     setState(CAMERA_STATE.STARTING);
-    lockedRef.current = false;
+    qrClear("scanStart", "detected");
+    qrMark("cameraRequested");
 
-    const scanner = new Html5Qrcode(elementId, SCANNER_CONFIG);
-    scannerRef.current = scanner;
-
-    const onSuccess = (decodedText) => {
-      if (lockedRef.current) return;
-      lockedRef.current = true;
-      wantRunningRef.current = false;
-      enqueue(async () => {
-        await releaseCamera();
-        setState(CAMERA_STATE.IDLE);
-      });
-      onDecodeRef.current?.(decodedText);
-    };
-
-    const knownCameras = camerasRef.current;
-    const primary =
-      cameraIndexRef.current >= 0 && knownCameras[cameraIndexRef.current]
-        ? { deviceId: { exact: knownCameras[cameraIndexRef.current].id } }
-        : { facingMode: "environment" };
-
+    let stream;
+    let decoder;
     try {
-      try {
-        await scanner.start(primary, START_CONFIG, onSuccess, () => {});
-      } catch (err) {
-        // Laptops/desktops often have no "environment" camera: fall back to
-        // any camera rather than failing outright.
-        const code = classifyCameraError(err);
-        if (code !== CAMERA_ERROR.NOT_FOUND || !primary.facingMode) throw err;
-        await scanner.start({ facingMode: "user" }, START_CONFIG, onSuccess, () => {});
-      }
+      // Camera and decoder start together, not one after the other.
+      [stream, decoder] = await Promise.all([
+        navigator.mediaDevices.getUserMedia({ video: videoConstraints(deviceIdRef.current), audio: false }),
+        getDecoder(),
+      ]);
     } catch (err) {
-      if (scannerRef.current === scanner) scannerRef.current = null;
-      try {
-        scanner.clear();
-      } catch {
-        // ignore
-      }
+      if (session !== sessionRef.current) return;
       setError(classifyCameraError(err));
       setState(CAMERA_STATE.ERROR);
       return;
     }
 
-    // Closed or tab hidden while the camera was starting up.
-    if (!wantRunningRef.current || scannerRef.current !== scanner) {
-      await releaseCamera();
+    // Closed, restarted or tab hidden while the camera was starting.
+    if (session !== sessionRef.current || !wantRunningRef.current || !videoRef.current) {
+      stream.getTracks().forEach((track) => track.stop());
       return;
     }
 
+    streamRef.current = stream;
+    const video = videoRef.current;
+    video.srcObject = stream;
+    try {
+      await video.play();
+    } catch {
+      // Autoplay of a muted inline video is allowed everywhere we support; frames still arrive.
+    }
+    if (session !== sessionRef.current) return;
+
+    const [track] = stream.getVideoTracks();
+    const caps = track?.getCapabilities?.() ?? {};
+    if (Array.isArray(caps.focusMode) && caps.focusMode.includes("continuous")) {
+      track.applyConstraints({ advanced: [{ focusMode: "continuous" }] }).catch(() => {});
+    }
+    setTorchSupported(Boolean(caps.torch));
+
+    qrMark("cameraReady");
+    qrLog("Camera started", "cameraRequested", "cameraReady");
+    const settings = track?.getSettings?.() ?? {};
+    qrLogValue("Camera", `${settings.width ?? "?"}x${settings.height ?? "?"} @ ${Math.round(settings.frameRate ?? 0) || "?"}fps, decoder ${decoder.engine}`);
     setState(CAMERA_STATE.READY);
 
-    try {
-      const torch = scanner.getRunningTrackCameraCapabilities().torchFeature();
-      setTorchSupported(torch.isSupported());
-    } catch {
-      setTorchSupported(false);
-    }
-
     // Labels/ids are only available after permission is granted.
-    if (knownCameras.length === 0) {
-      Html5Qrcode.getCameras()
-        .then((list) => {
-          camerasRef.current = list || [];
+    if (camerasRef.current.length === 0 && navigator.mediaDevices.enumerateDevices) {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          camerasRef.current = devices.filter((d) => d.kind === "videoinput").map((d) => ({ id: d.deviceId, label: d.label }));
           setCameras(camerasRef.current);
         })
         .catch(() => {});
     }
-  }, [elementId, enqueue, releaseCamera]);
 
-  const start = useCallback(() => {
-    wantRunningRef.current = true;
-    return enqueue(startInternal);
-  }, [enqueue, startInternal]);
+    scanLoop(session, decoder);
+  }, [getDecoder, releaseCamera, scanLoop]);
 
   const stop = useCallback(() => {
     wantRunningRef.current = false;
-    return enqueue(async () => {
-      await releaseCamera();
-      setState(CAMERA_STATE.IDLE);
-    });
-  }, [enqueue, releaseCamera]);
+    sessionRef.current += 1;
+    releaseCamera();
+    setState(CAMERA_STATE.IDLE);
+  }, [releaseCamera]);
 
   const switchCamera = useCallback(() => {
     const list = camerasRef.current;
     if (list.length < 2) return Promise.resolve();
-    if (cameraIndexRef.current < 0) {
-      // Started on the rear camera via facingMode: switch to a front one first.
-      const front = list.findIndex((c) => /front|user|facetime/i.test(c.label));
-      cameraIndexRef.current = front >= 0 ? front : 1;
-    } else {
-      cameraIndexRef.current = (cameraIndexRef.current + 1) % list.length;
-    }
+    const current = streamRef.current?.getVideoTracks()[0]?.getSettings?.().deviceId ?? deviceIdRef.current;
+    const index = list.findIndex((c) => c.id === current);
+    deviceIdRef.current = list[(index + 1) % list.length].id;
     return start();
   }, [start]);
 
   const toggleTorch = useCallback(async () => {
-    const scanner = scannerRef.current;
-    if (!scanner || !torchSupported) return;
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (!track || !torchSupported) return;
     try {
-      const torch = scanner.getRunningTrackCameraCapabilities().torchFeature();
-      await torch.apply(!torchOn);
+      await track.applyConstraints({ advanced: [{ torch: !torchOn }] });
       setTorchOn(!torchOn);
     } catch {
       setTorchSupported(false);
     }
   }, [torchOn, torchSupported]);
 
-  // Decode a QR from an uploaded/captured image — no live camera needed.
-  const scanImageFile = useCallback(
-    async (file, fileElementId) => {
-      const reader = new Html5Qrcode(fileElementId, SCANNER_CONFIG);
-      try {
-        return await reader.scanFile(file, false);
-      } finally {
-        try {
-          reader.clear();
-        } catch {
-          // ignore
-        }
-      }
-    },
-    [],
-  );
+  // Decode a QR from an uploaded/captured image — locally, no live camera or server upload.
+  const scanImageFile = useCallback((file) => decodeImageFile(file), []);
 
   // Release the camera when the tab is hidden, resume when it's back.
   useEffect(() => {
     const onVisibility = () => {
       if (document.hidden) {
-        if (scannerRef.current) {
-          enqueue(async () => {
-            await releaseCamera();
-            setState(CAMERA_STATE.PAUSED);
-          });
+        if (streamRef.current) {
+          sessionRef.current += 1;
+          releaseCamera();
+          setState(CAMERA_STATE.PAUSED);
         }
       } else if (wantRunningRef.current) {
-        enqueue(startInternal);
+        start();
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [enqueue, releaseCamera, startInternal]);
+  }, [releaseCamera, start]);
 
-  // Never leave the camera (and its LED) on after unmount.
+  // Never leave the camera (and its LED) or the decoder worker running after unmount.
   useEffect(
     () => () => {
       wantRunningRef.current = false;
-      enqueue(releaseCamera);
+      sessionRef.current += 1;
+      releaseCamera();
+      decoderRef.current?.then((d) => d.close()).catch(() => {});
+      decoderRef.current = null;
     },
-    [enqueue, releaseCamera],
+    [releaseCamera],
   );
 
   return {
+    videoRef,
     state,
     error,
     cameras,

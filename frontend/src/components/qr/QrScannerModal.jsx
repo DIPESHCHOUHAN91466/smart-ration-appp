@@ -8,11 +8,12 @@ import { precheckQr } from "../../features/qr/qrValidation";
 import { scanQr } from "../../services/qrService";
 import { QR_STATUS } from "../../features/qr/qrContract";
 import { useTranslation } from "../../i18n/useTranslation";
+import { qrLog, qrMark } from "../../features/qr/qrTiming";
 
 const VIEW = { CAMERA: "camera", MANUAL: "manual", VERIFYING: "verifying", RESULT: "result" };
 
 // Full-screen (mobile) / large modal (desktop) scanner. Lazy-loaded by
-// GlobalQrScanner so html5-qrcode is only downloaded when first opened.
+// GlobalQrScanner so the QR decoder is only downloaded when first opened.
 export default function QrScannerModal({ onClose }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -36,8 +37,12 @@ export default function QrScannerModal({ onClose }) {
     inFlightRef.current = true;
     lastValueRef.current = check.value;
     setView(VIEW.VERIFYING);
+    qrMark("apiStart");
     try {
       const response = await scanQr(check.value);
+      qrMark("apiEnd");
+      qrLog("API round trip", "apiStart", "apiEnd");
+      qrLog("Total (first camera frame -> result)", "scanStart", "apiEnd");
       setResult(response);
     } catch (err) {
       // 401 is handled globally (refresh / redirect to login); everything
