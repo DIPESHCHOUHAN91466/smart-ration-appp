@@ -17,7 +17,16 @@ from `state/chatbotStore.js`.
 | `ChatbotWindow.jsx` | header, conversation (search, typing indicator, empty and offline states), suggestions, input |
 | `ChatbotHeader.jsx` | avatar, title, status; search, clear, expand, minimize, close |
 | `ChatbotMessage.jsx` | a reply as paragraphs/lists (never HTML); in-app links only; related topics; error + retry |
-| `ChatbotInput.jsx` | textarea (Enter sends, Shift+Enter new line, 500 characters), privacy hint |
+| `ChatbotInput.jsx` | textarea (Enter sends, Shift+Enter new line, 500 characters), privacy hint, voice input button (🎤) |
+
+**Voice input** (`hooks/useSpeechRecognition.js`): the browser's own Web Speech API
+(`SpeechRecognition` / `webkitSpeechRecognition`) turns speech into text in the chat input — in the
+app language (English `en-IN`, Hindi `hi-IN`, Marathi `mr-IN`). Words appear live; nothing is sent
+until the user presses Send (Stop keeps the text for editing, Cancel/Esc restores what was typed).
+The app never records or uploads audio and only receives text; note that some browsers (e.g. Chrome)
+perform the recognition on their vendor's online speech service, so it needs a connection there.
+Unsupported browsers, denied permission, no microphone, no speech, network and unsupported-language
+errors each show a translated message. Sessions stop after 60 s, on language change and on close.
 | `ChatbotSuggestions.jsx` | quick-question chips (asked by topic id) |
 | `ChatbotAvatar.jsx` | assistant avatar and launcher image: the Ration Mitra emblem (`src/assets/ration-mitra-emblem.png`, Logo 2) |
 | `chatbot.css` | styles; bottom sheet on phones; reduced-motion aware |
