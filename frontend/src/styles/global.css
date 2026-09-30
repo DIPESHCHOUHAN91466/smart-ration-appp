@@ -98,7 +98,11 @@
    cropped or stretched), on a white chip so its own white background reads as part of the badge. */
 .rm-logo--compact{width:84px;height:40px;padding:0;border-radius:8px;box-shadow:0 2px 8px #001f4e26}
 .rm-logo--compact img{width:84px;height:40px;object-fit:contain}
-.rm-logo--login{width:min(100%,300px);padding:8px;border-radius:16px;box-shadow:0 14px 34px #00163a55}
+/* Login/register panel: a compact, fixed box (desktop 180×135, tablet 160×120, phone 140×105 — the logo's
+   own 4:3 ratio) with the complete artwork contained and centred in the white rounded card. */
+.rm-logo--login{width:180px;height:135px;padding:4px;display:flex;align-items:center;justify-content:center;border-radius:14px;box-shadow:0 12px 28px #00163a4d}
+.rm-logo--login img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
+@media(max-width:1050px){.rm-logo--login{width:160px;height:120px}}
 .rm-logo--hero{width:min(100%,520px);padding:10px 16px;border-radius:18px;margin:0 0 20px;box-shadow:0 18px 44px #00163a33}
 /* Sidebar: logo at full sidebar width; the column scrolls instead of letting the menu run under the footer. */
 .sidebar{display:flex;flex-direction:column;overflow-y:auto}
@@ -111,7 +115,7 @@
 /* HSD2C company logo on the right of the headers (the supplied, tightly framed file). */
 .brand-mark.hsd2c.header{height:54px;padding:3px 6px;box-shadow:0 2px 8px #001f4e1a;border:1px solid var(--border)}
 .brand-mark.hsd2c.header img{max-width:none}
-@media(max-width:640px){.top-actions .brand-mark.hsd2c.header,.pub-header-actions .brand-mark.hsd2c.header{display:none}.rm-logo--compact{flex:none}.rm-logo--login{width:min(100%,240px)}}
+@media(max-width:640px){.top-actions .brand-mark.hsd2c.header,.pub-header-actions .brand-mark.hsd2c.header{display:none}.rm-logo--compact{flex:none}.rm-logo--login{width:140px;height:105px;padding:3px}}
 
 /* ---------- Eligibility for collection (components/qr/QrScanResult.jsx + components/qr/eligibility/*) ---------- */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
