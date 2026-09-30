@@ -14,7 +14,7 @@ class FakeRecognition {
     this.aborted = false;
     FakeRecognition.instances.push(this);
   }
-  start() { this.started = true; }
+  start() { this.started = true; this.onstart?.(); } // real browsers fire onstart once capture begins
   stop() { this.stopped = true; this.onend?.(); }
   abort() { this.aborted = true; this.onend?.(); }
   // results: [[text, isFinal], ...] — the whole list so far, like event.results

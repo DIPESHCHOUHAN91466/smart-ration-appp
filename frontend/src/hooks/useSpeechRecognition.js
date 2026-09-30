@@ -18,6 +18,17 @@ export const VOICE_ERROR = {
   FAILED: "failed",
 };
 
+// Lifecycle of a voice session, for the UI.
+export const VOICE_STATUS = {
+  IDLE: "idle",
+  REQUESTING_PERMISSION: "requesting_permission", // start() called; waiting for the mic (and permission prompt)
+  LISTENING: "listening", // audio is being captured
+  PROCESSING: "processing", // stopped; the browser is finishing the last words
+  SUCCESS: "success", // ended with recognised text in the input
+  ERROR: "error",
+  UNSUPPORTED: "unsupported",
+};
+
 // Stop on our own after this long, whatever the browser does (a stuck session never keeps the mic open).
 export const MAX_SESSION_MS = 60_000;
 
@@ -61,6 +72,7 @@ export function mapRecognitionError(code) {
 export function useSpeechRecognition({ lang = "en-IN", onTranscript } = {}) {
   const Recognition = recognitionClass();
   const supported = Boolean(Recognition);
+  const [status, setStatus] = useState(supported ? VOICE_STATUS.IDLE : VOICE_STATUS.UNSUPPORTED);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [error, setError] = useState(null);
@@ -77,7 +89,7 @@ export function useSpeechRecognition({ lang = "en-IN", onTranscript } = {}) {
     const recognition = recognitionRef.current;
     recognitionRef.current = null;
     if (recognition) {
-      recognition.onresult = recognition.onerror = recognition.onend = recognition.onstart = null;
+      recognition.onresult = recognition.onerror = recognition.onend = recognition.onstart = recognition.onaudiostart = null;
     }
     return recognition;
   }, []);
@@ -85,11 +97,13 @@ export function useSpeechRecognition({ lang = "en-IN", onTranscript } = {}) {
   const stopListening = useCallback(() => {
     const recognition = recognitionRef.current;
     if (!recognition) return;
+    setStatus(VOICE_STATUS.PROCESSING);
     try {
       recognition.stop(); // delivers any final result, then onend
     } catch {
       release();
       setIsListening(false);
+      setStatus(VOICE_STATUS.IDLE);
     }
   }, [release]);
 
@@ -103,12 +117,14 @@ export function useSpeechRecognition({ lang = "en-IN", onTranscript } = {}) {
     }
     setIsListening(false);
     setTranscript("");
+    setStatus(VOICE_STATUS.IDLE);
   }, [release]);
 
   const startListening = useCallback(() => {
     setError(null);
     if (!Recognition) {
       setError(VOICE_ERROR.UNSUPPORTED);
+      setStatus(VOICE_STATUS.UNSUPPORTED);
       return;
     }
     if (recognitionRef.current) return; // already listening
@@ -134,16 +150,28 @@ export function useSpeechRecognition({ lang = "en-IN", onTranscript } = {}) {
       setTranscript(text);
       if (!cancelledRef.current) onTranscriptRef.current?.(text);
     };
+    let failed = false;
+    const markListening = () => {
+      if (recognitionRef.current === recognition) setStatus(VOICE_STATUS.LISTENING);
+    };
+    recognition.onaudiostart = markListening; // the microphone is live (permission granted)
+    recognition.onstart = markListening;
     recognition.onerror = (event) => {
       const code = mapRecognitionError(event.error);
-      if (code && !cancelledRef.current) setError(code);
+      if (code && !cancelledRef.current) {
+        failed = true;
+        setError(code);
+        setStatus(VOICE_STATUS.ERROR);
+      }
     };
     recognition.onend = () => {
       release();
       setIsListening(false);
+      if (!failed && !cancelledRef.current) setStatus(heardRef.current ? VOICE_STATUS.SUCCESS : VOICE_STATUS.IDLE);
     };
 
     recognitionRef.current = recognition;
+    setStatus(VOICE_STATUS.REQUESTING_PERMISSION); // before start(): onstart may fire synchronously
     try {
       recognition.start(); // the browser asks for microphone permission the first time
       setIsListening(true);
@@ -158,6 +186,7 @@ export function useSpeechRecognition({ lang = "en-IN", onTranscript } = {}) {
       release();
       setIsListening(false);
       setError(VOICE_ERROR.FAILED);
+      setStatus(VOICE_STATUS.ERROR);
     }
   }, [Recognition, lang, release, stopListening]);
 
@@ -180,7 +209,21 @@ export function useSpeechRecognition({ lang = "en-IN", onTranscript } = {}) {
     [release],
   );
 
-  const clearError = useCallback(() => setError(null), []);
+  const clearError = useCallback(() => {
+    setError(null);
+    setStatus((s) => (s === VOICE_STATUS.ERROR ? VOICE_STATUS.IDLE : s));
+  }, []);
 
-  return { supported, isListening, transcript, error, startListening, stopListening, cancelListening, clearError };
+  return {
+    supported,
+    isSupported: supported,
+    status,
+    isListening,
+    transcript,
+    error,
+    startListening,
+    stopListening,
+    cancelListening,
+    clearError,
+  };
 }

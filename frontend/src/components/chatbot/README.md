@@ -18,6 +18,10 @@ from `state/chatbotStore.js`.
 | `ChatbotHeader.jsx` | avatar, title, status; search, clear, expand, minimize, close |
 | `ChatbotMessage.jsx` | a reply as paragraphs/lists (never HTML); in-app links only; related topics; error + retry |
 | `ChatbotInput.jsx` | textarea (Enter sends, Shift+Enter new line, 500 characters), privacy hint, voice input button (🎤) |
+| `ChatbotSuggestions.jsx` | quick-question chips (asked by topic id) |
+| `ChatbotAvatar.jsx` | assistant avatar and launcher image: the official Ration Mitra logo (`src/assets/ration-mitra-logo.webp`, the same file as the headers), complete, in a round white badge |
+| `ChatLanguageMenu.jsx`, `LanguageMenuItems.jsx`, `useMenu.js` | header 🌐 language menu, the shared English / हिन्दी / मराठी items, accessible popup-menu behaviour |
+| `chatbot.css` | styles; bottom sheet on phones; reduced-motion aware |
 
 **Voice input** (`hooks/useSpeechRecognition.js`): the browser's own Web Speech API
 (`SpeechRecognition` / `webkitSpeechRecognition`) turns speech into text in the chat input — in the
@@ -27,8 +31,17 @@ The app never records or uploads audio and only receives text; note that some br
 perform the recognition on their vendor's online speech service, so it needs a connection there.
 Unsupported browsers, denied permission, no microphone, no speech, network and unsupported-language
 errors each show a translated message. Sessions stop after 60 s, on language change and on close.
-| `ChatbotSuggestions.jsx` | quick-question chips (asked by topic id) |
-| `ChatbotAvatar.jsx` | assistant avatar and launcher image: the Ration Mitra emblem (`src/assets/ration-mitra-emblem.png`, Logo 2) |
-| `chatbot.css` | styles; bottom sheet on phones; reduced-motion aware |
+States: idle → requesting_permission → listening → processing → success (or error / unsupported).
 
 Full design: [../../../../docs/chatbot/CHATBOT_ARCHITECTURE.md](../../../../docs/chatbot/CHATBOT_ARCHITECTURE.md).
+
+**Launcher** (`ChatbotWidget.jsx`): a 72px white badge (68 tablet, 62 phone) with a thin blue ring, the
+complete logo, a soft glow once every 7 s (off with prefers-reduced-motion), safe-area positioning and
+z-index 150 (above pages, below dialogs). Click opens the chat. Long-press, right-click, Up arrow,
+Shift+F10 or the ContextMenu key opens a compact menu: Voice input, English / हिन्दी / मराठी, Open chat.
+First visit only: "Need help? Ask Ration Mitra AI" shows ~1.5 s after load for 5 s
+(`localStorage.rationMitraTooltipSeen`). The chat header has **Voice input** and a **🌐 language** menu.
+Language is the app-wide setting (`useLanguageStore`, persisted as `smart-ration-language`), so the chat,
+the site and voice recognition always match. Voice from the header/menu goes through `pendingVoice` in
+`state/chatbotStore.js` to the one voice implementation in `ChatbotInput`.
+

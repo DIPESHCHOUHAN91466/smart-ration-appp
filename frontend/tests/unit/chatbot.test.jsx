@@ -37,7 +37,7 @@ describe("Public Help chatbot", () => {
     renderWidget();
     const launcher = screen.getByRole("button", { name: /open ration mitra ai assistant \(1 unread message\)/i });
     expect(launcher).toHaveClass("has-unread");
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Need help? Ask me");
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Need help? Ask Ration Mitra AI");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 

@@ -1,7 +1,8 @@
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { Mic, SendHorizontal, ShieldCheck, Square, X } from "lucide-react";
 import { useTranslation } from "../../i18n/useTranslation";
-import { SPEECH_LANG, VOICE_ERROR, useSpeechRecognition } from "../../hooks/useSpeechRecognition";
+import { SPEECH_LANG, VOICE_ERROR, VOICE_STATUS, useSpeechRecognition } from "../../hooks/useSpeechRecognition";
+import { useChatbotStore } from "../../state/chatbotStore";
 
 export const MAX_LENGTH = 500;
 
@@ -30,6 +31,19 @@ const ChatbotInput = forwardRef(function ChatbotInput({ onSend, disabled }, ref)
     },
   });
   const left = MAX_LENGTH - value.length;
+
+  // Voice requested from the header 🎤 or the launcher menu: start listening here (the only voice code).
+  const pendingVoice = useChatbotStore((s) => s.pendingVoice);
+  const consumeVoice = useChatbotStore((s) => s.consumeVoice);
+  const { startListening, isListening } = voice;
+  useEffect(() => {
+    if (!pendingVoice || disabled) return;
+    consumeVoice();
+    if (!isListening) {
+      baseRef.current = value;
+      startListening();
+    }
+  }, [pendingVoice, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const submit = (event) => {
     event?.preventDefault();
@@ -100,7 +114,13 @@ const ChatbotInput = forwardRef(function ChatbotInput({ onSend, disabled }, ref)
       {voice.isListening && (
         <div className="chat-voice-status" role="status" aria-live="polite">
           <span className="chat-voice-dot" aria-hidden="true" />
-          <span>{t("voice_listening")}</span>
+          <span>
+            {voice.status === VOICE_STATUS.REQUESTING_PERMISSION
+              ? t("voice_requesting")
+              : voice.status === VOICE_STATUS.PROCESSING
+                ? t("voice_processing")
+                : t("voice_listening")}
+          </span>
           <button type="button" className="chat-voice-cancel" onClick={cancelVoice}>
             <X size={13} aria-hidden="true" /> {t("voice_cancel")}
           </button>
