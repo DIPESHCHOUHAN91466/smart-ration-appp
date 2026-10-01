@@ -87,8 +87,12 @@ def test_full_profile_after_booking_and_collection(env):
     assert data["rationCard"]["schemeCode"] == "DEMO-NFSA" and data["rationCard"]["familySize"] == 1
     assert data["collectionHistory"][0]["items"] == [{"rationType": "Rice", "quantity": 5}, {"rationType": "Wheat", "quantity": 3}]
     assert data["entitlement"]["items"][0]["alreadyCollected"] == 5
-    assert data["aiInsight"]["riskLevel"] == "Low"
-    assert data["verificationHistory"] and all(v["action"] for v in data["verificationHistory"])
+    # A citizen never sees fraud-risk signals or the shop's verification/scan logs about them...
+    assert data["aiInsight"] is None and data["verificationHistory"] == [] and data["qrScanHistory"] == []
+    # ...while staff still do.
+    staff = env["client"].get(f"/api/beneficiaries/{ben}/full-profile", headers=env["shop"]).json()["data"]
+    assert staff["aiInsight"]["riskLevel"] == "Low"
+    assert staff["verificationHistory"] and all(v["action"] for v in staff["verificationHistory"])
     hist = env["client"].get(f"/api/ration/collection/history/{ben}", headers=env["citizen"]).json()["data"]
     assert len(hist) == 1
 

@@ -161,7 +161,10 @@ def full_profile(db: Session, actor: Actor, beneficiary_id: int) -> dict:
     mobile = mobile_record(db, beneficiary, user)
     db.commit()
     ent = entitlement_service.get_entitlement(db, beneficiary.FamilyId)
-    insight = ai_rules_service.beneficiary_insight(db, beneficiary.Id)
+    # Fraud-risk signals and the shop's verification/scan logs are for staff. A citizen viewing their own
+    # profile must not learn what was flagged about them, so these are not even computed for citizens.
+    staff_view = actor.role != UserRole.RuralUser
+    insight = ai_rules_service.beneficiary_insight(db, beneficiary.Id) if staff_view else None
     history = _collections(db, beneficiary.Id)
 
     today = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -171,7 +174,7 @@ def full_profile(db: Session, actor: Actor, beneficiary_id: int) -> dict:
         .where(Token.UserId == beneficiary.UserId, Token.Status == int(TokenStatus.Confirmed), TimeSlot.SlotDate >= today)
         .order_by(TimeSlot.SlotDate, Token.Id).limit(1)).first()
     logs = list(db.scalars(select(VerificationAuditLog).where(VerificationAuditLog.BeneficiaryId == beneficiary.Id)
-                           .order_by(VerificationAuditLog.Timestamp.desc(), VerificationAuditLog.Id.desc()).limit(50)))
+                           .order_by(VerificationAuditLog.Timestamp.desc(), VerificationAuditLog.Id.desc()).limit(50))) if staff_view else []
     family_row = db.get(Family, beneficiary.FamilyId)
     scheme = db.get(RationScheme, family_row.RationSchemeId) if family_row else None
     fam = _family(db, beneficiary.FamilyId)

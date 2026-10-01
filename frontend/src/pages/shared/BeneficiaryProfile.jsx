@@ -48,6 +48,10 @@ export default function BeneficiaryProfile() {
   if (!profile) return null;
 
   const { profile: p, family, rationCard, aadhaarVerification, passbookVerification, mobileVerification, entitlement, currentQr, collectionHistory, verificationHistory, qrScanHistory, aiInsight } = profile;
+  // The backend sends AI risk signals and verification/scan logs to staff only; a citizen viewing
+  // their own profile gets none, so those parts of the page are not shown to them.
+  const staffView = aiInsight != null;
+  const tabs = staffView ? TABS : TABS.filter((t) => t.key !== "ai");
 
   return (
     <>
@@ -101,7 +105,7 @@ export default function BeneficiaryProfile() {
       </section>
 
       <div className="stepper" style={{ marginBottom: 20 }}>
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <button key={t.key} className={tab === t.key ? "current" : ""} onClick={() => setTab(t.key)} style={{ border: 0, background: "none" }}>
             {t.label}
           </button>
@@ -249,30 +253,32 @@ export default function BeneficiaryProfile() {
             ))}
           </section>
 
-          <section className="panel">
-            <div className="panel-title">
-              <div>
-                <span className="eyebrow blue">QR SCAN HISTORY</span>
-                <h2>{qrScanHistory.length} scan(s)</h2>
-              </div>
-            </div>
-            {qrScanHistory.length === 0 && <p className="muted">No QR scans recorded yet.</p>}
-            {qrScanHistory.map((l) => (
-              <div className="complaint" key={l.id}>
-                <QrCode size={18} color="var(--blue)" />
+          {staffView && (
+            <section className="panel">
+              <div className="panel-title">
                 <div>
-                  <b>{l.verificationReference}</b>
-                  <small>
-                    {l.timestamp} • {l.status} {l.reason ? `— ${l.reason}` : ""}
-                  </small>
+                  <span className="eyebrow blue">QR SCAN HISTORY</span>
+                  <h2>{qrScanHistory.length} scan(s)</h2>
                 </div>
               </div>
-            ))}
-          </section>
+              {qrScanHistory.length === 0 && <p className="muted">No QR scans recorded yet.</p>}
+              {qrScanHistory.map((l) => (
+                <div className="complaint" key={l.id}>
+                  <QrCode size={18} color="var(--blue)" />
+                  <div>
+                    <b>{l.verificationReference}</b>
+                    <small>
+                      {l.timestamp} • {l.status} {l.reason ? `— ${l.reason}` : ""}
+                    </small>
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
         </>
       )}
 
-      {tab === "ai" && (
+      {tab === "ai" && staffView && (
         <>
           <section className="panel" style={{ marginBottom: 18 }}>
             <div className="panel-title">
