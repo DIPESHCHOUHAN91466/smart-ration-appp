@@ -9,6 +9,10 @@ import '../support/test_app.dart';
 
 Future<FakeBackend> openCitizenHome(WidgetTester tester,
     {FakeReply Function(RequestOptions)? handler, String language = 'en'}) async {
+  // A tall phone screen (540 x 1600 points), so the whole dashboard is built.
+  tester.view.physicalSize = const Size(1080, 3200);
+  tester.view.devicePixelRatio = 2.0;
+  addTearDown(tester.view.reset);
   final backend = FakeBackend(handler ?? demoServer);
   final app = await TestApp.build(backend, savedLanguage: language, signedInAs: citizen());
   await tester.pumpWidget(app.widget);
@@ -65,7 +69,7 @@ void main() {
     expect(find.text('Namaste, Asha Devi'), findsOneWidget);
     expect(find.text('Demo data: this is not a real ration card.'), findsOneWidget);
     expect(find.text('PB-DEMO-0001'), findsOneWidget);
-    expect(find.text('Satnavari Ration Shop'), findsOneWidget);
+    expect(find.text('Satnavari Ration Shop'), findsWidgets); // ration card and next collection
     expect(find.text('3 of 3 members eligible'), findsOneWidget);
     expect(find.text('10 kg left of 15 kg'), findsOneWidget);
     // The entitlement and history are fetched together, after the profile.

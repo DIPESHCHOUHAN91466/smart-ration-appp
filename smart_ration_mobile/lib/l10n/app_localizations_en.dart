@@ -432,4 +432,147 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get genderOther => 'Other';
+
+  @override
+  String get bookRation => 'Book ration';
+
+  @override
+  String get stepDay => '1. Choose a day';
+
+  @override
+  String get stepTime => '2. Choose a 5-minute time';
+
+  @override
+  String get stepItems => '3. Choose items';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get tomorrow => 'Tomorrow';
+
+  @override
+  String get noSlots =>
+      'No times are open on this day. Please choose another day.';
+
+  @override
+  String get slotFull => 'Full';
+
+  @override
+  String placesLeft(int count) {
+    return '$count left';
+  }
+
+  @override
+  String perVisitLimit(String amount, String unit) {
+    return 'Up to $amount $unit this visit';
+  }
+
+  @override
+  String get notAvailableNow => 'Not available now';
+
+  @override
+  String increaseItem(String item) {
+    return 'More $item';
+  }
+
+  @override
+  String decreaseItem(String item) {
+    return 'Less $item';
+  }
+
+  @override
+  String get bookAndGetToken => 'Book and get token';
+
+  @override
+  String get bookingInProgress => 'Booking...';
+
+  @override
+  String get chooseTimeFirst => 'Please choose a time.';
+
+  @override
+  String get chooseItemFirst => 'Please choose at least one item.';
+
+  @override
+  String get noShopAssigned =>
+      'Your ration shop is not set yet. Please contact your district office.';
+
+  @override
+  String get tokenReady => 'Your token is ready.';
+
+  @override
+  String get myToken => 'My token';
+
+  @override
+  String get myTokens => 'My tokens';
+
+  @override
+  String get tokenNumber => 'Token number';
+
+  @override
+  String get collectionDate => 'Date';
+
+  @override
+  String get collectionTime => 'Time';
+
+  @override
+  String get tokenItems => 'Items';
+
+  @override
+  String get stateBooked => 'Booked';
+
+  @override
+  String get stateCollected => 'Collected';
+
+  @override
+  String get stateCancelled => 'Cancelled';
+
+  @override
+  String get stateMissed => 'Missed';
+
+  @override
+  String get showQrAtShop => 'Show this QR code at the ration shop.';
+
+  @override
+  String get qrManualCode =>
+      'If the QR cannot be scanned, the shop can type this code:';
+
+  @override
+  String get qrNoPersonalData => 'The QR code holds no personal details.';
+
+  @override
+  String qrCodeLabel(String number) {
+    return 'QR code for token $number';
+  }
+
+  @override
+  String get cancelBooking => 'Cancel booking';
+
+  @override
+  String get cancelConfirmTitle => 'Cancel this booking?';
+
+  @override
+  String get cancelConfirmBody => 'Your time will be freed for someone else.';
+
+  @override
+  String get keepBooking => 'Keep it';
+
+  @override
+  String get bookingCancelled => 'Booking cancelled.';
+
+  @override
+  String get noTokens => 'You have no tokens yet.';
+
+  @override
+  String get nextCollection => 'Your next collection';
+
+  @override
+  String get noUpcomingBooking =>
+      'No upcoming booking. Book a time to collect your ration.';
+
+  @override
+  String get showQr => 'Show QR code';
+
+  @override
+  String get allMyTokens => 'All my tokens';
 }

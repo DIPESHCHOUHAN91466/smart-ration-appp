@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/auth_controller.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/session.dart';
+import '../features/booking/book_ration_screen.dart';
+import '../features/booking/token_screen.dart';
 import '../features/citizen/citizen_home_screen.dart';
 import '../features/citizen/eligibility_screen.dart';
 import '../features/citizen/family_screen.dart';
@@ -39,6 +41,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.citizenFamily, builder: (context, state) => const FamilyScreen()),
       GoRoute(path: Routes.citizenCard, builder: (context, state) => const RationCardScreen()),
       GoRoute(path: Routes.citizenEligibility, builder: (context, state) => const EligibilityScreen()),
+      GoRoute(path: Routes.citizenBook, builder: (context, state) => const BookRationScreen()),
+      GoRoute(path: Routes.citizenTokens, builder: (context, state) => const TokensScreen()),
+      GoRoute(
+        path: Routes.citizenTokenPattern,
+        builder: (context, state) => TokenScreen(tokenId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0),
+      ),
       GoRoute(path: Routes.shopHome, builder: (context, state) => const RoleHomeScreen()),
       GoRoute(path: Routes.officialHome, builder: (context, state) => const RoleHomeScreen()),
     ],

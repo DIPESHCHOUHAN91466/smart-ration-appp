@@ -79,12 +79,58 @@ FakeReply signedIn({String access = 'access-1', String refresh = 'refresh-1', Ma
 
 /// A backend with the demo citizen's data (same shapes as the real /api/beneficiaries answers),
 /// a working /health, and nothing else.
-FakeReply demoServer(RequestOptions r) => switch (r.path) {
-      '/api/beneficiaries/me' => FakeReply.ok(citizenProfileJson()),
-      '/api/beneficiaries/1/entitlement' => FakeReply.ok(citizenEntitlementJson()),
-      '/api/beneficiaries/1/collections' => FakeReply.ok(citizenCollectionsJson()),
+FakeReply demoServer(RequestOptions r) => switch ((r.method, r.path)) {
+      (_, '/api/beneficiaries/me') => FakeReply.ok(citizenProfileJson()),
+      (_, '/api/beneficiaries/1/entitlement') => FakeReply.ok(citizenEntitlementJson()),
+      (_, '/api/beneficiaries/1/collections') => FakeReply.ok(citizenCollectionsJson()),
+      ('GET', '/api/ration/bookings') => FakeReply.ok([tokenJson()]),
+      ('POST', '/api/ration/bookings') => FakeReply.ok(tokenJson(id: 502, number: 'SR-2026-000502')),
+      ('DELETE', '/api/ration/bookings/501') => FakeReply.ok(null),
+      (_, '/api/tokens/501') => FakeReply.ok(tokenJson()),
+      (_, '/api/tokens/502') => FakeReply.ok(tokenJson(id: 502, number: 'SR-2026-000502')),
+      (_, '/api/qr/payload/501') => FakeReply.ok(demoQrPayload),
+      (_, '/api/qr/payload/502') => FakeReply.ok(demoQrPayload),
+      (_, '/api/slots') => FakeReply.ok(slotsJson('${r.queryParameters['date']}')),
+      (_, '/api/ration/items') => FakeReply.ok(bookableItemsJson()),
       _ => const FakeReply(200, {'status': 'healthy', 'database': 'healthy', 'dataMode': 'synthetic'}),
     };
+
+/// The signed QR text the backend sends (shape only; the signature is not real).
+const demoQrPayload = '{"version":"1.0","project":"SMART_RATION_HSD2C","type":"RATION_TOKEN",'
+    '"reference":"SRQR-501-ABCDEF0123456789","token":"SR-2026-000501","signature":"00"}';
+
+String _ymd(DateTime d) => d.toIso8601String().substring(0, 10);
+
+/// A token for tomorrow (so it is always upcoming), as /api/ration/bookings returns it.
+Map<String, Object?> tokenJson({int id = 501, String number = 'SR-2026-000501', String status = 'Confirmed', int dayOffset = 1}) => {
+      'id': id,
+      'tokenNumber': number,
+      'status': status,
+      'rationShopId': 1,
+      'rationShopName': 'Satnavari Ration Shop',
+      'timeSlotId': 77,
+      'slotDate': '${_ymd(DateTime.now().add(Duration(days: dayOffset)))}T00:00:00',
+      'startTime': '10:05:00',
+      'endTime': '10:10:00',
+      'qrCodeValue': 'SRQR-$id-ABCDEF0123456789',
+      'items': [
+        {'rationType': 'Rice', 'quantity': 5},
+        {'rationType': 'EdibleOil', 'quantity': 0.5},
+      ],
+    };
+
+/// Three slots on [date]: 06:00 (always already started), 23:50 open, 23:55 full.
+List<Map<String, Object?>> slotsJson(String date) => [
+      {'id': 70, 'slotDate': '${date}T00:00:00', 'startTime': '00:00:00', 'endTime': '00:05:00', 'capacity': 2, 'bookedCount': 0, 'status': 'Available'},
+      {'id': 77, 'slotDate': '${date}T00:00:00', 'startTime': '23:50:00', 'endTime': '23:55:00', 'capacity': 2, 'bookedCount': 1, 'status': 'Available'},
+      {'id': 78, 'slotDate': '${date}T00:00:00', 'startTime': '23:55:00', 'endTime': '23:59:00', 'capacity': 2, 'bookedCount': 2, 'status': 'Full'},
+    ];
+
+List<Map<String, Object?>> bookableItemsJson() => [
+      {'rationType': 'Rice', 'standardQuotaPerBooking': 5, 'eligibleQuantity': 15, 'availableQuantity': 100},
+      {'rationType': 'Wheat', 'standardQuotaPerBooking': 5, 'eligibleQuantity': 3, 'availableQuantity': 100},
+      {'rationType': 'Salt', 'standardQuotaPerBooking': 1, 'eligibleQuantity': 0.75, 'availableQuantity': 50},
+    ];
 
 Map<String, Object?> citizenProfileJson({String cardStatus = 'ACTIVE', List<Map<String, Object?>>? members}) => {
       'beneficiary': {

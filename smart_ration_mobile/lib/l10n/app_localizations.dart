@@ -861,6 +861,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other'**
   String get genderOther;
+
+  /// No description provided for @bookRation.
+  ///
+  /// In en, this message translates to:
+  /// **'Book ration'**
+  String get bookRation;
+
+  /// No description provided for @stepDay.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Choose a day'**
+  String get stepDay;
+
+  /// No description provided for @stepTime.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Choose a 5-minute time'**
+  String get stepTime;
+
+  /// No description provided for @stepItems.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Choose items'**
+  String get stepItems;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrow;
+
+  /// No description provided for @noSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'No times are open on this day. Please choose another day.'**
+  String get noSlots;
+
+  /// No description provided for @slotFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get slotFull;
+
+  /// No description provided for @placesLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} left'**
+  String placesLeft(int count);
+
+  /// No description provided for @perVisitLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {amount} {unit} this visit'**
+  String perVisitLimit(String amount, String unit);
+
+  /// No description provided for @notAvailableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available now'**
+  String get notAvailableNow;
+
+  /// Screen-reader label of the + button.
+  ///
+  /// In en, this message translates to:
+  /// **'More {item}'**
+  String increaseItem(String item);
+
+  /// Screen-reader label of the - button.
+  ///
+  /// In en, this message translates to:
+  /// **'Less {item}'**
+  String decreaseItem(String item);
+
+  /// No description provided for @bookAndGetToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Book and get token'**
+  String get bookAndGetToken;
+
+  /// No description provided for @bookingInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking...'**
+  String get bookingInProgress;
+
+  /// No description provided for @chooseTimeFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a time.'**
+  String get chooseTimeFirst;
+
+  /// No description provided for @chooseItemFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose at least one item.'**
+  String get chooseItemFirst;
+
+  /// No description provided for @noShopAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ration shop is not set yet. Please contact your district office.'**
+  String get noShopAssigned;
+
+  /// No description provided for @tokenReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your token is ready.'**
+  String get tokenReady;
+
+  /// No description provided for @myToken.
+  ///
+  /// In en, this message translates to:
+  /// **'My token'**
+  String get myToken;
+
+  /// No description provided for @myTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'My tokens'**
+  String get myTokens;
+
+  /// No description provided for @tokenNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Token number'**
+  String get tokenNumber;
+
+  /// No description provided for @collectionDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get collectionDate;
+
+  /// No description provided for @collectionTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get collectionTime;
+
+  /// No description provided for @tokenItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get tokenItems;
+
+  /// No description provided for @stateBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get stateBooked;
+
+  /// No description provided for @stateCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
+  String get stateCollected;
+
+  /// No description provided for @stateCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get stateCancelled;
+
+  /// No description provided for @stateMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get stateMissed;
+
+  /// No description provided for @showQrAtShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this QR code at the ration shop.'**
+  String get showQrAtShop;
+
+  /// No description provided for @qrManualCode.
+  ///
+  /// In en, this message translates to:
+  /// **'If the QR cannot be scanned, the shop can type this code:'**
+  String get qrManualCode;
+
+  /// No description provided for @qrNoPersonalData.
+  ///
+  /// In en, this message translates to:
+  /// **'The QR code holds no personal details.'**
+  String get qrNoPersonalData;
+
+  /// Screen-reader label of the QR image.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code for token {number}'**
+  String qrCodeLabel(String number);
+
+  /// No description provided for @cancelBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel booking'**
+  String get cancelBooking;
+
+  /// No description provided for @cancelConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this booking?'**
+  String get cancelConfirmTitle;
+
+  /// No description provided for @cancelConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your time will be freed for someone else.'**
+  String get cancelConfirmBody;
+
+  /// No description provided for @keepBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get keepBooking;
+
+  /// No description provided for @bookingCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking cancelled.'**
+  String get bookingCancelled;
+
+  /// No description provided for @noTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no tokens yet.'**
+  String get noTokens;
+
+  /// No description provided for @nextCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Your next collection'**
+  String get nextCollection;
+
+  /// No description provided for @noUpcomingBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming booking. Book a time to collect your ration.'**
+  String get noUpcomingBooking;
+
+  /// No description provided for @showQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Show QR code'**
+  String get showQr;
+
+  /// No description provided for @allMyTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'All my tokens'**
+  String get allMyTokens;
 }
 
 class _AppLocalizationsDelegate

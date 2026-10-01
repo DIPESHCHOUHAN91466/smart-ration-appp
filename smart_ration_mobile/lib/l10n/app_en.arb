@@ -235,5 +235,89 @@
   },
   "genderMale": "Male",
   "genderFemale": "Female",
-  "genderOther": "Other"
+  "genderOther": "Other",
+  "bookRation": "Book ration",
+  "stepDay": "1. Choose a day",
+  "stepTime": "2. Choose a 5-minute time",
+  "stepItems": "3. Choose items",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "noSlots": "No times are open on this day. Please choose another day.",
+  "slotFull": "Full",
+  "placesLeft": "{count} left",
+  "@placesLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perVisitLimit": "Up to {amount} {unit} this visit",
+  "@perVisitLimit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "notAvailableNow": "Not available now",
+  "increaseItem": "More {item}",
+  "@increaseItem": {
+    "description": "Screen-reader label of the + button.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "decreaseItem": "Less {item}",
+  "@decreaseItem": {
+    "description": "Screen-reader label of the - button.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "bookAndGetToken": "Book and get token",
+  "bookingInProgress": "Booking...",
+  "chooseTimeFirst": "Please choose a time.",
+  "chooseItemFirst": "Please choose at least one item.",
+  "noShopAssigned": "Your ration shop is not set yet. Please contact your district office.",
+  "tokenReady": "Your token is ready.",
+  "myToken": "My token",
+  "myTokens": "My tokens",
+  "tokenNumber": "Token number",
+  "collectionDate": "Date",
+  "collectionTime": "Time",
+  "tokenItems": "Items",
+  "stateBooked": "Booked",
+  "stateCollected": "Collected",
+  "stateCancelled": "Cancelled",
+  "stateMissed": "Missed",
+  "showQrAtShop": "Show this QR code at the ration shop.",
+  "qrManualCode": "If the QR cannot be scanned, the shop can type this code:",
+  "qrNoPersonalData": "The QR code holds no personal details.",
+  "qrCodeLabel": "QR code for token {number}",
+  "@qrCodeLabel": {
+    "description": "Screen-reader label of the QR image.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelBooking": "Cancel booking",
+  "cancelConfirmTitle": "Cancel this booking?",
+  "cancelConfirmBody": "Your time will be freed for someone else.",
+  "keepBooking": "Keep it",
+  "bookingCancelled": "Booking cancelled.",
+  "noTokens": "You have no tokens yet.",
+  "nextCollection": "Your next collection",
+  "noUpcomingBooking": "No upcoming booking. Book a time to collect your ration.",
+  "showQr": "Show QR code",
+  "allMyTokens": "All my tokens"
 }

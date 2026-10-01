@@ -89,7 +89,9 @@ class FamilyMember {
 }
 
 class AssignedShop {
-  const AssignedShop({required this.name, required this.address, required this.district});
+  const AssignedShop({required this.id, required this.name, required this.address, required this.district});
+
+  final int id;
 
   final String name;
   final String address;
@@ -176,7 +178,8 @@ CitizenOverview parseOverview(Map<String, dynamic> me, Map<String, dynamic> enti
     isDemoData: passbook['verificationSource'] == 'SYNTHETIC_DEMO' || aadhaar['verificationSource'] == 'SYNTHETIC_DEMO',
     shop: shop == null
         ? null
-        : AssignedShop(name: _text(shop['shopName']), address: _text(shop['address']), district: _text(shop['district'])),
+        : AssignedShop(
+            id: _int(shop['id']), name: _text(shop['shopName']), address: _text(shop['address']), district: _text(shop['district'])),
     schemeName: _text(entitlement['schemeName']),
     entitlement: [
       for (final i in (entitlement['items'] as List? ?? const []).whereType<Map>())

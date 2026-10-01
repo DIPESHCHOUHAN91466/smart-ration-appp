@@ -12,6 +12,10 @@ abstract final class Routes {
   static const citizenFamily = '/citizen/family';
   static const citizenCard = '/citizen/card';
   static const citizenEligibility = '/citizen/eligibility';
+  static const citizenBook = '/citizen/book';
+  static const citizenTokens = '/citizen/tokens';
+  static const citizenTokenPattern = '/citizen/token/:id';
+  static String citizenToken(int id) => '/citizen/token/$id';
   static const shopHome = '/shop';
   static const officialHome = '/official';
 

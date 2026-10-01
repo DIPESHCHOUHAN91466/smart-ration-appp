@@ -6,6 +6,8 @@ import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_controller.dart';
+import '../booking/booking_data.dart';
+import '../booking/booking_widgets.dart';
 import 'citizen_data.dart';
 import 'citizen_widgets.dart';
 
@@ -45,6 +47,8 @@ class CitizenHomeScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(l.roleRuralUser, style: const TextStyle(color: AppColors.blue, fontWeight: FontWeight.w600, fontSize: 16)),
           const SizedBox(height: 16),
+          const _NextCollectionCard(),
+          const SizedBox(height: 12),
           SectionCard(
             title: l.rationCard,
             icon: Icons.credit_card,
@@ -86,6 +90,59 @@ class CitizenHomeScreen extends ConsumerWidget {
             onPressed: () => context.push(Routes.serverStatus),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The token to bring to the shop next, or a big "Book ration" button when nothing is booked.
+class _NextCollectionCard extends ConsumerWidget {
+  const _NextCollectionCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final tokens = ref.watch(myTokensProvider);
+    final next = tokens.whenOrNull(data: (all) => nextToken(all, DateTime.now()));
+    return Card(
+      color: const Color(0xFFE7F1FF),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(children: [
+            const Icon(Icons.confirmation_number_outlined, color: AppColors.blue, size: 26),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(l.nextCollection,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+            ),
+          ]),
+          const SizedBox(height: 12),
+          if (tokens.isLoading)
+            const Center(child: CircularProgressIndicator())
+          else if (next != null) ...[
+            Text(next.number, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.blue)),
+            const SizedBox(height: 4),
+            Text('${dayLabel(context, next.date)} · ${timeLabel(context, next.start)} – ${timeLabel(context, next.end)}',
+                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
+            Text(next.shopName, style: const TextStyle(color: AppColors.muted)),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              icon: const Icon(Icons.qr_code_2),
+              label: Text(l.showQr),
+              onPressed: () => context.push(Routes.citizenToken(next.id)),
+            ),
+          ] else ...[
+            Text(l.noUpcomingBooking, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              icon: const Icon(Icons.event_available),
+              label: Text(l.bookRation),
+              onPressed: () => context.push(Routes.citizenBook),
+            ),
+          ],
+          TextButton(onPressed: () => context.push(Routes.citizenTokens), child: Text(l.allMyTokens)),
+        ]),
       ),
     );
   }

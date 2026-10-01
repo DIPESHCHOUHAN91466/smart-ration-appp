@@ -433,4 +433,147 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get genderOther => 'इतर';
+
+  @override
+  String get bookRation => 'रेशन बुक करा';
+
+  @override
+  String get stepDay => '1. दिवस निवडा';
+
+  @override
+  String get stepTime => '2. 5 मिनिटांची वेळ निवडा';
+
+  @override
+  String get stepItems => '3. वस्तू निवडा';
+
+  @override
+  String get today => 'आज';
+
+  @override
+  String get tomorrow => 'उद्या';
+
+  @override
+  String get noSlots =>
+      'या दिवशी कोणतीही वेळ उपलब्ध नाही. कृपया दुसरा दिवस निवडा.';
+
+  @override
+  String get slotFull => 'भरले';
+
+  @override
+  String placesLeft(int count) {
+    return '$count शिल्लक';
+  }
+
+  @override
+  String perVisitLimit(String amount, String unit) {
+    return 'या वेळी जास्तीत जास्त $amount $unit';
+  }
+
+  @override
+  String get notAvailableNow => 'सध्या उपलब्ध नाही';
+
+  @override
+  String increaseItem(String item) {
+    return '$item वाढवा';
+  }
+
+  @override
+  String decreaseItem(String item) {
+    return '$item कमी करा';
+  }
+
+  @override
+  String get bookAndGetToken => 'बुक करा आणि टोकन मिळवा';
+
+  @override
+  String get bookingInProgress => 'बुकिंग होत आहे...';
+
+  @override
+  String get chooseTimeFirst => 'कृपया वेळ निवडा.';
+
+  @override
+  String get chooseItemFirst => 'कृपया किमान एक वस्तू निवडा.';
+
+  @override
+  String get noShopAssigned =>
+      'तुमचे रेशन दुकान अद्याप ठरलेले नाही. कृपया जिल्हा कार्यालयाशी संपर्क साधा.';
+
+  @override
+  String get tokenReady => 'तुमचे टोकन तयार आहे.';
+
+  @override
+  String get myToken => 'माझे टोकन';
+
+  @override
+  String get myTokens => 'माझी टोकने';
+
+  @override
+  String get tokenNumber => 'टोकन क्रमांक';
+
+  @override
+  String get collectionDate => 'तारीख';
+
+  @override
+  String get collectionTime => 'वेळ';
+
+  @override
+  String get tokenItems => 'वस्तू';
+
+  @override
+  String get stateBooked => 'बुक केले';
+
+  @override
+  String get stateCollected => 'घेतले';
+
+  @override
+  String get stateCancelled => 'रद्द';
+
+  @override
+  String get stateMissed => 'चुकले';
+
+  @override
+  String get showQrAtShop => 'रेशन दुकानात हा QR कोड दाखवा.';
+
+  @override
+  String get qrManualCode =>
+      'QR स्कॅन न झाल्यास दुकानदार हा कोड टाइप करू शकतो:';
+
+  @override
+  String get qrNoPersonalData => 'QR कोडमध्ये कोणतीही वैयक्तिक माहिती नाही.';
+
+  @override
+  String qrCodeLabel(String number) {
+    return 'टोकन $number चा QR कोड';
+  }
+
+  @override
+  String get cancelBooking => 'बुकिंग रद्द करा';
+
+  @override
+  String get cancelConfirmTitle => 'ही बुकिंग रद्द करायची?';
+
+  @override
+  String get cancelConfirmBody => 'तुमची वेळ दुसऱ्या कोणासाठी मोकळी होईल.';
+
+  @override
+  String get keepBooking => 'राहू द्या';
+
+  @override
+  String get bookingCancelled => 'बुकिंग रद्द झाली.';
+
+  @override
+  String get noTokens => 'तुमच्याकडे अद्याप टोकन नाही.';
+
+  @override
+  String get nextCollection => 'तुमचे पुढील रेशन';
+
+  @override
+  String get noUpcomingBooking =>
+      'पुढील बुकिंग नाही. रेशन घेण्यासाठी वेळ बुक करा.';
+
+  @override
+  String get showQr => 'QR कोड दाखवा';
+
+  @override
+  String get allMyTokens => 'माझी सर्व टोकने';
 }
