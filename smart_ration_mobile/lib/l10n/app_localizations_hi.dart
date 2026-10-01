@@ -813,4 +813,103 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get nothingToCheck =>
       'जाँचने के लिए कुछ नहीं। पहले QR कोड स्कैन करें।';
+
+  @override
+  String get queueButton => 'आज की कतार';
+
+  @override
+  String get stockButton => 'स्टॉक';
+
+  @override
+  String lowStockBanner(int count) {
+    return '$count चीज़ों का स्टॉक कम है';
+  }
+
+  @override
+  String queueWaitingHeader(int count) {
+    return 'बाकी ($count)';
+  }
+
+  @override
+  String queueDoneHeader(int count) {
+    return 'पूरे ($count)';
+  }
+
+  @override
+  String get queueEmpty => 'आज के लिए कोई टोकन बुक नहीं है।';
+
+  @override
+  String get queueServeHint =>
+      'जब यह ग्राहक आए, उनका QR स्कैन करें या मोबाइल कोड से जाँचें।';
+
+  @override
+  String get stockAvailable => 'स्टॉक में';
+
+  @override
+  String get stockMinimum => 'न्यूनतम स्तर';
+
+  @override
+  String get stockHandedOut => 'बाँटा गया';
+
+  @override
+  String get stockLow => 'कम';
+
+  @override
+  String get stockOk => 'ठीक';
+
+  @override
+  String get noStockLines => 'इस दुकान के लिए अभी कोई स्टॉक नहीं है।';
+
+  @override
+  String get receiveStock => 'आया माल दर्ज करें';
+
+  @override
+  String get writeOffStock => 'खराब माल घटाएँ';
+
+  @override
+  String quantityLabel(String unit) {
+    return 'मात्रा ($unit)';
+  }
+
+  @override
+  String get referenceLabel => 'डिलीवरी या रिपोर्ट नंबर (वैकल्पिक)';
+
+  @override
+  String get noteLabel => 'टिप्पणी (वैकल्पिक)';
+
+  @override
+  String get quantityInvalid => '0 से अधिक मात्रा लिखें।';
+
+  @override
+  String get quantityTooLarge => '1,000,000 तक की मात्रा लिखें।';
+
+  @override
+  String writeOffTooMuch(String max, String unit) {
+    return 'आप अधिकतम $max $unit घटा सकते हैं।';
+  }
+
+  @override
+  String get referenceInvalid =>
+      'केवल अक्षर, अंक, खाली जगह और - / _ . का उपयोग करें।';
+
+  @override
+  String get saveButton => 'सेव करें';
+
+  @override
+  String get cancelButton => 'रद्द करें';
+
+  @override
+  String writeOffConfirmTitle(String amount) {
+    return '$amount घटाएँ?';
+  }
+
+  @override
+  String get writeOffConfirmBody =>
+      'यह खराब माल को हमेशा के लिए घटाता है। यह स्टॉक रजिस्टर में दर्ज होता है।';
+
+  @override
+  String get stockReceived => 'आया माल दर्ज हो गया।';
+
+  @override
+  String get stockWrittenOff => 'खराब माल घटा दिया गया।';
 }

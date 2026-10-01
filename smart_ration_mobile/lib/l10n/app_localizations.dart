@@ -1569,6 +1569,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nothing to check. Scan a QR code first.'**
   String get nothingToCheck;
+
+  /// No description provided for @queueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s queue'**
+  String get queueButton;
+
+  /// No description provided for @stockButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get stockButton;
+
+  /// On the shop dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item is low on stock} other{{count} items are low on stock}}'**
+  String lowStockBanner(int count);
+
+  /// No description provided for @queueWaitingHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting ({count})'**
+  String queueWaitingHeader(int count);
+
+  /// No description provided for @queueDoneHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Done ({count})'**
+  String queueDoneHeader(int count);
+
+  /// No description provided for @queueEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No tokens booked for today.'**
+  String get queueEmpty;
+
+  /// No description provided for @queueServeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'When this customer arrives, scan their QR or verify by mobile code.'**
+  String get queueServeHint;
+
+  /// No description provided for @stockAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'In stock'**
+  String get stockAvailable;
+
+  /// No description provided for @stockMinimum.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum level'**
+  String get stockMinimum;
+
+  /// No description provided for @stockHandedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Handed out'**
+  String get stockHandedOut;
+
+  /// No description provided for @stockLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get stockLow;
+
+  /// No description provided for @stockOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get stockOk;
+
+  /// No description provided for @noStockLines.
+  ///
+  /// In en, this message translates to:
+  /// **'No stock lines for this shop yet.'**
+  String get noStockLines;
+
+  /// No description provided for @receiveStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Record delivery'**
+  String get receiveStock;
+
+  /// No description provided for @writeOffStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Write off damaged'**
+  String get writeOffStock;
+
+  /// No description provided for @quantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity ({unit})'**
+  String quantityLabel(String unit);
+
+  /// No description provided for @referenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery or report number (optional)'**
+  String get referenceLabel;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get noteLabel;
+
+  /// No description provided for @quantityInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a quantity greater than 0.'**
+  String get quantityInvalid;
+
+  /// No description provided for @quantityTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a quantity up to 1,000,000.'**
+  String get quantityTooLarge;
+
+  /// No description provided for @writeOffTooMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'You can write off at most {max} {unit}.'**
+  String writeOffTooMuch(String max, String unit);
+
+  /// No description provided for @referenceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use only letters, numbers, spaces and - / _ .'**
+  String get referenceInvalid;
+
+  /// No description provided for @saveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveButton;
+
+  /// No description provided for @cancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelButton;
+
+  /// e.g. 'Write off 2 kg Rice?'
+  ///
+  /// In en, this message translates to:
+  /// **'Write off {amount}?'**
+  String writeOffConfirmTitle(String amount);
+
+  /// No description provided for @writeOffConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes damaged stock for good. It is recorded in the stock ledger.'**
+  String get writeOffConfirmBody;
+
+  /// No description provided for @stockReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery recorded.'**
+  String get stockReceived;
+
+  /// No description provided for @stockWrittenOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged stock written off.'**
+  String get stockWrittenOff;
 }
 
 class _AppLocalizationsDelegate

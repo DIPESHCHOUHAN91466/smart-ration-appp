@@ -10,7 +10,6 @@ import '../auth/auth_controller.dart';
 import 'shop_data.dart';
 
 /// The shop owner's dashboard: today's counts, and the two ways to serve a customer.
-/// The queue and stock screens join it in the next milestone.
 class ShopHomeScreen extends ConsumerWidget {
   const ShopHomeScreen({super.key});
 
@@ -93,6 +92,37 @@ class ShopHomeScreen extends ConsumerWidget {
               label: Text(l.verifyByMobile),
               onPressed: () => open(Routes.shopOtp),
             ),
+            const SizedBox(height: 20),
+            if ((dashboard.value?.lowStock ?? 0) > 0) ...[
+              Card(
+                color: AppColors.dangerSoft,
+                child: ListTile(
+                  leading: const Icon(Icons.warning_amber_rounded, color: AppColors.danger, size: 30),
+                  title: Text(l.lowStockBanner(dashboard.value!.lowStock),
+                      style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.chevron_right, color: AppColors.danger),
+                  onTap: () => open(Routes.shopStock),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            Row(children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.format_list_numbered),
+                  label: Text(l.queueButton),
+                  onPressed: () => open(Routes.shopQueue),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.inventory_2_outlined),
+                  label: Text(l.stockButton),
+                  onPressed: () => open(Routes.shopStock),
+                ),
+              ),
+            ]),
             const SizedBox(height: 24),
             OutlinedButton.icon(
               icon: const Icon(Icons.dns_outlined),

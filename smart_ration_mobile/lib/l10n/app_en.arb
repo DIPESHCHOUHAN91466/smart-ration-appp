@@ -413,5 +413,80 @@
   "receiptSaved": "Saved. Stock has been reduced and the customer has been notified.",
   "scanNextCustomer": "Scan next customer",
   "backToDashboard": "Back to dashboard",
-  "nothingToCheck": "Nothing to check. Scan a QR code first."
+  "nothingToCheck": "Nothing to check. Scan a QR code first.",
+  "queueButton": "Today's queue",
+  "stockButton": "Stock",
+  "lowStockBanner": "{count, plural, =1{1 item is low on stock} other{{count} items are low on stock}}",
+  "@lowStockBanner": {
+    "description": "On the shop dashboard.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "queueWaitingHeader": "Waiting ({count})",
+  "@queueWaitingHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "queueDoneHeader": "Done ({count})",
+  "@queueDoneHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "queueEmpty": "No tokens booked for today.",
+  "queueServeHint": "When this customer arrives, scan their QR or verify by mobile code.",
+  "stockAvailable": "In stock",
+  "stockMinimum": "Minimum level",
+  "stockHandedOut": "Handed out",
+  "stockLow": "Low",
+  "stockOk": "OK",
+  "noStockLines": "No stock lines for this shop yet.",
+  "receiveStock": "Record delivery",
+  "writeOffStock": "Write off damaged",
+  "quantityLabel": "Quantity ({unit})",
+  "@quantityLabel": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "referenceLabel": "Delivery or report number (optional)",
+  "noteLabel": "Note (optional)",
+  "quantityInvalid": "Enter a quantity greater than 0.",
+  "quantityTooLarge": "Enter a quantity up to 1,000,000.",
+  "writeOffTooMuch": "You can write off at most {max} {unit}.",
+  "@writeOffTooMuch": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "referenceInvalid": "Use only letters, numbers, spaces and - / _ .",
+  "saveButton": "Save",
+  "cancelButton": "Cancel",
+  "writeOffConfirmTitle": "Write off {amount}?",
+  "@writeOffConfirmTitle": {
+    "description": "e.g. 'Write off 2 kg Rice?'",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "writeOffConfirmBody": "This removes damaged stock for good. It is recorded in the stock ledger.",
+  "stockReceived": "Delivery recorded.",
+  "stockWrittenOff": "Damaged stock written off."
 }

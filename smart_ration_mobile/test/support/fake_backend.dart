@@ -206,6 +206,10 @@ FakeReply shopServer(RequestOptions r) => switch ((r.method, r.path)) {
           ? FakeReply.ok(verificationJson())
           : FakeReply.fail(400, 'Incorrect OTP. 2 attempt(s) remaining.'),
       ('POST', '/api/ration/collection/confirm') => FakeReply.ok(receiptJson()),
+      (_, '/api/shop/queue') => FakeReply.ok(queueJson()),
+      ('GET', '/api/inventory') => FakeReply.ok(stockJson()),
+      ('POST', '/api/inventory/11/receive') => FakeReply.ok(stockJson().first),
+      ('POST', '/api/inventory/12/damage') => FakeReply.ok(stockJson().last),
       _ => healthyReply,
     };
 
@@ -218,7 +222,7 @@ Map<String, Object?> shopDashboardJson() => {
       'todayCompleted': 5,
       'todayPending': 6,
       'todayCancelled': 1,
-      'inventory': [],
+      'inventory': stockJson(),
     };
 
 /// What /api/qr/scan answers for the demo codes:
@@ -272,3 +276,17 @@ Map<String, Object?> receiptJson() => {
       'shopName': 'Satnavari Ration Shop',
       'collectedAt': '2026-10-01 04:37',
     };
+
+/// Today's queue: one customer still to come, one already served.
+List<Map<String, Object?>> queueJson() => [
+      {...tokenJson(dayOffset: 0), 'userName': 'Asha Devi'},
+      {...tokenJson(id: 400, number: 'SR-2026-000400', status: 'Completed', dayOffset: 0), 'startTime': '09:00:00', 'userName': 'Mohan Lal'},
+    ];
+
+/// Two stock lines: rice is fine, salt is low.
+List<Map<String, Object?>> stockJson() => [
+      {'id': 11, 'rationShopId': 3, 'rationType': 'Rice', 'availableQuantity': 480, 'allocatedQuantity': 120,
+          'minimumStockLevel': 100, 'isLowStock': false, 'updatedAt': '2026-10-01T04:00:00'},
+      {'id': 12, 'rationShopId': 3, 'rationType': 'Salt', 'availableQuantity': 3.5, 'allocatedQuantity': 20,
+          'minimumStockLevel': 10, 'isLowStock': true, 'updatedAt': '2026-10-01T04:00:00'},
+    ];

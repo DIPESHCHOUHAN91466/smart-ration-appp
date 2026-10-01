@@ -818,4 +818,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nothingToCheck => 'Nothing to check. Scan a QR code first.';
+
+  @override
+  String get queueButton => 'Today\'s queue';
+
+  @override
+  String get stockButton => 'Stock';
+
+  @override
+  String lowStockBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items are low on stock',
+      one: '1 item is low on stock',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String queueWaitingHeader(int count) {
+    return 'Waiting ($count)';
+  }
+
+  @override
+  String queueDoneHeader(int count) {
+    return 'Done ($count)';
+  }
+
+  @override
+  String get queueEmpty => 'No tokens booked for today.';
+
+  @override
+  String get queueServeHint =>
+      'When this customer arrives, scan their QR or verify by mobile code.';
+
+  @override
+  String get stockAvailable => 'In stock';
+
+  @override
+  String get stockMinimum => 'Minimum level';
+
+  @override
+  String get stockHandedOut => 'Handed out';
+
+  @override
+  String get stockLow => 'Low';
+
+  @override
+  String get stockOk => 'OK';
+
+  @override
+  String get noStockLines => 'No stock lines for this shop yet.';
+
+  @override
+  String get receiveStock => 'Record delivery';
+
+  @override
+  String get writeOffStock => 'Write off damaged';
+
+  @override
+  String quantityLabel(String unit) {
+    return 'Quantity ($unit)';
+  }
+
+  @override
+  String get referenceLabel => 'Delivery or report number (optional)';
+
+  @override
+  String get noteLabel => 'Note (optional)';
+
+  @override
+  String get quantityInvalid => 'Enter a quantity greater than 0.';
+
+  @override
+  String get quantityTooLarge => 'Enter a quantity up to 1,000,000.';
+
+  @override
+  String writeOffTooMuch(String max, String unit) {
+    return 'You can write off at most $max $unit.';
+  }
+
+  @override
+  String get referenceInvalid =>
+      'Use only letters, numbers, spaces and - / _ .';
+
+  @override
+  String get saveButton => 'Save';
+
+  @override
+  String get cancelButton => 'Cancel';
+
+  @override
+  String writeOffConfirmTitle(String amount) {
+    return 'Write off $amount?';
+  }
+
+  @override
+  String get writeOffConfirmBody =>
+      'This removes damaged stock for good. It is recorded in the stock ledger.';
+
+  @override
+  String get stockReceived => 'Delivery recorded.';
+
+  @override
+  String get stockWrittenOff => 'Damaged stock written off.';
 }

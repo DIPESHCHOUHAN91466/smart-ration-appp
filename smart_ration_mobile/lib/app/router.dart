@@ -16,10 +16,12 @@ import '../features/language/language_screen.dart';
 import '../features/server_status/server_status_screen.dart';
 import '../features/shop/customer_check_screen.dart';
 import '../features/shop/otp_check_screen.dart';
+import '../features/shop/queue_screen.dart';
 import '../features/shop/receipt_screen.dart';
 import '../features/shop/scanner_screen.dart';
 import '../features/shop/shop_data.dart';
 import '../features/shop/shop_home_screen.dart';
+import '../features/shop/stock_screen.dart';
 import '../features/splash/splash_screen.dart';
 import 'routes.dart';
 
@@ -60,6 +62,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: _child(Routes.shopScan), builder: (context, state) => const ScannerScreen()),
           GoRoute(path: _child(Routes.shopOtp), builder: (context, state) => const OtpCheckScreen()),
+          GoRoute(path: _child(Routes.shopQueue), builder: (context, state) => const QueueScreen()),
+          GoRoute(path: _child(Routes.shopStock), builder: (context, state) => const StockScreen()),
           GoRoute(
             path: _child(Routes.shopCheck),
             builder: (context, state) => CustomerCheckScreen(check: state.extra is CustomerCheck ? state.extra as CustomerCheck : null),

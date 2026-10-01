@@ -19,6 +19,8 @@ abstract final class Routes {
   static const shopHome = '/shop';
   static const shopScan = '/shop/scan';
   static const shopOtp = '/shop/otp';
+  static const shopQueue = '/shop/queue';
+  static const shopStock = '/shop/stock';
 
   /// The customer check and the receipt receive their data from the previous screen (`extra`).
   static const shopCheck = '/shop/check';

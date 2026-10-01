@@ -814,4 +814,103 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get nothingToCheck => 'तपासण्यासारखे काही नाही. आधी QR कोड स्कॅन करा.';
+
+  @override
+  String get queueButton => 'आजची रांग';
+
+  @override
+  String get stockButton => 'साठा';
+
+  @override
+  String lowStockBanner(int count) {
+    return '$count वस्तूंचा साठा कमी आहे';
+  }
+
+  @override
+  String queueWaitingHeader(int count) {
+    return 'बाकी ($count)';
+  }
+
+  @override
+  String queueDoneHeader(int count) {
+    return 'पूर्ण ($count)';
+  }
+
+  @override
+  String get queueEmpty => 'आजसाठी कोणतेही टोकन बुक केलेले नाही.';
+
+  @override
+  String get queueServeHint =>
+      'हा ग्राहक आल्यावर त्यांचा QR स्कॅन करा किंवा मोबाइल कोडने तपासा.';
+
+  @override
+  String get stockAvailable => 'साठ्यात';
+
+  @override
+  String get stockMinimum => 'किमान पातळी';
+
+  @override
+  String get stockHandedOut => 'वाटप केले';
+
+  @override
+  String get stockLow => 'कमी';
+
+  @override
+  String get stockOk => 'ठीक';
+
+  @override
+  String get noStockLines => 'या दुकानासाठी अजून कोणताही साठा नाही.';
+
+  @override
+  String get receiveStock => 'आलेला माल नोंदवा';
+
+  @override
+  String get writeOffStock => 'खराब माल वजा करा';
+
+  @override
+  String quantityLabel(String unit) {
+    return 'प्रमाण ($unit)';
+  }
+
+  @override
+  String get referenceLabel => 'डिलिव्हरी किंवा अहवाल क्रमांक (ऐच्छिक)';
+
+  @override
+  String get noteLabel => 'टीप (ऐच्छिक)';
+
+  @override
+  String get quantityInvalid => '0 पेक्षा जास्त प्रमाण लिहा.';
+
+  @override
+  String get quantityTooLarge => '1,000,000 पर्यंत प्रमाण लिहा.';
+
+  @override
+  String writeOffTooMuch(String max, String unit) {
+    return 'तुम्ही जास्तीत जास्त $max $unit वजा करू शकता.';
+  }
+
+  @override
+  String get referenceInvalid =>
+      'फक्त अक्षरे, अंक, मोकळी जागा आणि - / _ . वापरा.';
+
+  @override
+  String get saveButton => 'जतन करा';
+
+  @override
+  String get cancelButton => 'रद्द करा';
+
+  @override
+  String writeOffConfirmTitle(String amount) {
+    return '$amount वजा करायचे?';
+  }
+
+  @override
+  String get writeOffConfirmBody =>
+      'यामुळे खराब माल कायमचा वजा होतो. हे साठा नोंदवहीत नोंदवले जाते.';
+
+  @override
+  String get stockReceived => 'आलेला माल नोंदवला.';
+
+  @override
+  String get stockWrittenOff => 'खराब माल वजा केला.';
 }

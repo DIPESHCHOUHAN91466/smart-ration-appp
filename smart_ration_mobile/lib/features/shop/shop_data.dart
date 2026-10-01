@@ -17,13 +17,17 @@ import '../booking/booking_data.dart';
 ///                                            stock, completes the token and writes the receipt in one go
 
 class ShopDashboard {
-  const ShopDashboard({required this.shopName, required this.total, required this.collected, required this.waiting, required this.cancelled});
+  const ShopDashboard(
+      {required this.shopName, required this.total, required this.collected, required this.waiting, required this.cancelled, this.lowStock = 0});
 
   final String shopName;
   final int total;
   final int collected;
   final int waiting;
   final int cancelled;
+
+  /// How many items are at or below their minimum stock level.
+  final int lowStock;
 
   static ShopDashboard parse(Object? j) {
     if (j is! Map) throw const ApiException(ApiErrorKind.unknown);
@@ -33,6 +37,7 @@ class ShopDashboard {
       collected: _int(j['todayCompleted']),
       waiting: _int(j['todayPending']),
       cancelled: _int(j['todayCancelled']),
+      lowStock: (j['inventory'] as List? ?? const []).whereType<Map>().where((i) => i['isLowStock'] == true).length,
     );
   }
 }
@@ -225,12 +230,83 @@ class Receipt {
   }
 }
 
+/// One token in today's queue, with the customer's name so the shopkeeper can call them.
+class QueueEntry {
+  const QueueEntry({required this.token, required this.customerName});
+
+  final RationToken token;
+  final String customerName;
+
+  /// Still to be served (booked and not yet collected or cancelled).
+  bool get waiting => token.backendStatus == 'Confirmed' || token.backendStatus == 'Pending';
+
+  static QueueEntry? tryParse(Object? j) {
+    final token = RationToken.tryParse(j);
+    if (token == null || j is! Map) return null;
+    return QueueEntry(token: token, customerName: _text(j['userName']));
+  }
+}
+
+/// One item's stock at the shop.
+class StockLine {
+  const StockLine({required this.id, required this.rationType, required this.available, required this.handedOut, required this.minimum, required this.low});
+
+  final int id;
+  final String rationType;
+  final double available;
+
+  /// Given out to customers so far (the backend's AllocatedQuantity).
+  final double handedOut;
+  final double minimum;
+
+  /// At or below the minimum level (decided by the backend).
+  final bool low;
+
+  static StockLine? tryParse(Object? j) {
+    if (j is! Map || j['id'] is! int || j['rationType'] is! String) return null;
+    return StockLine(
+      id: j['id'] as int,
+      rationType: j['rationType'] as String,
+      available: _num(j['availableQuantity']),
+      handedOut: _num(j['allocatedQuantity']),
+      minimum: _num(j['minimumStockLevel']),
+      low: j['isLowStock'] == true,
+    );
+  }
+}
+
+/// The optional delivery-note or report number: what the backend accepts (letters, numbers, - / _ . and spaces, 64 max).
+final stockReferencePattern = RegExp(r'^[A-Za-z0-9\-/_. ]{0,64}$');
+
 class ShopRepository {
   const ShopRepository(this._api);
 
   final ApiClient _api;
 
   Future<ShopDashboard> dashboard() async => ShopDashboard.parse(await _api.get<Object?>('/api/shop/dashboard'));
+
+  /// Today's tokens at my shop, earliest time first.
+  Future<List<QueueEntry>> queue() async => _list(await _api.get<Object?>('/api/shop/queue'), QueueEntry.tryParse);
+
+  /// My shop's stock lines (the backend limits a shop owner to their own shop).
+  Future<List<StockLine>> stock() async => _list(await _api.get<Object?>('/api/inventory'), StockLine.tryParse);
+
+  /// A delivery arrived: adds [quantity] and records it in the stock ledger.
+  Future<StockLine> receive(int id, double quantity, {String? reference, String? note}) =>
+      _movement('/api/inventory/$id/receive', quantity, reference, note);
+
+  /// Damaged or spoiled stock: removes [quantity] (never more than is in stock) and records it.
+  Future<StockLine> writeOff(int id, double quantity, {String? reference, String? note}) =>
+      _movement('/api/inventory/$id/damage', quantity, reference, note);
+
+  Future<StockLine> _movement(String path, double quantity, String? reference, String? note) async {
+    final data = await _api.post<Object?>(path, body: {
+      'quantity': quantity,
+      if (reference != null && reference.trim().isNotEmpty) 'reference': reference.trim(),
+      if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+    });
+    return StockLine.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
+  }
 
   /// [text] is what the camera read, or the SRQR-… code typed by hand. The backend checks the signature.
   Future<ScanOutcome> scan(String text) async => ScanOutcome.parse(await _api.post<Object?>('/api/qr/scan', body: {'qrData': text.trim()}));
@@ -265,8 +341,15 @@ final shopRepositoryProvider = Provider<ShopRepository>((ref) => ShopRepository(
 
 final shopDashboardProvider = FutureProvider.autoDispose<ShopDashboard>((ref) => ref.watch(shopRepositoryProvider).dashboard());
 
+final shopQueueProvider = FutureProvider.autoDispose<List<QueueEntry>>((ref) => ref.watch(shopRepositoryProvider).queue());
+
+final shopStockProvider = FutureProvider.autoDispose<List<StockLine>>((ref) => ref.watch(shopRepositoryProvider).stock());
+
 /// The items on a token, as the shop sees it.
 final shopTokenProvider = FutureProvider.autoDispose.family<RationToken, int>((ref, id) => ref.watch(shopRepositoryProvider).token(id));
+
+List<T> _list<T>(Object? data, T? Function(Object?) parse) =>
+    data is List ? [for (final e in data) ?parse(e)] : (throw const ApiException(ApiErrorKind.unknown));
 
 Map<String, dynamic> _map(Object? value) => value is Map ? Map<String, dynamic>.from(value) : const {};
 String _text(Object? value) => value is String ? value : '';
