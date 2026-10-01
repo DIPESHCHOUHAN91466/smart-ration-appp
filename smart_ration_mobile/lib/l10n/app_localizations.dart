@@ -843,6 +843,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Demo data: this is not a real ration card.'**
   String get demoDataNotice;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// No description provided for @genderOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get genderOther;
 }
 
 class _AppLocalizationsDelegate

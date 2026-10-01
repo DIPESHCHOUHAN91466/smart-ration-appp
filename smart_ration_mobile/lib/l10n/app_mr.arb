@@ -123,5 +123,8 @@
   "aadhaarNotVerified": "आधार पडताळलेले नाही",
   "viewDetails": "तपशील पहा",
   "noBeneficiaryProfile": "तुमचे रेशन कार्ड अद्याप जोडलेले नाही. कृपया तुमच्या रेशन दुकानाशी संपर्क साधा.",
-  "demoDataNotice": "डेमो डेटा: हे खरे रेशन कार्ड नाही."
+  "demoDataNotice": "डेमो डेटा: हे खरे रेशन कार्ड नाही.",
+  "genderMale": "पुरुष",
+  "genderFemale": "स्त्री",
+  "genderOther": "इतर"
 }

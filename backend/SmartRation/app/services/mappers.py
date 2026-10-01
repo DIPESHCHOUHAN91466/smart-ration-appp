@@ -14,6 +14,7 @@ from app.database.enums import (
     AadhaarVerificationStatus,
     EligibilityStatus,
     FamilyRelationship,
+    Gender,
     MobileVerificationStatus,
     PassbookVerificationStatus,
     RationType,
@@ -35,7 +36,7 @@ from app.database.models import (
     TokenItem,
     User,
 )
-from app.utils.dotnet import dt, num, timespan, ymd, ymd_hm
+from app.utils.dotnet import dt, enum_name, num, timespan, ymd, ymd_hm
 from app.utils.masking import mask_mobile
 
 # ---------------------------------------------------------------- tokens (bookings)
@@ -136,7 +137,9 @@ def family_dto(family_code: str, members: Sequence[FamilyMember]) -> dict:
         "eligibleMemberCount": sum(1 for m in members if m.Eligibility == EligibilityStatus.Eligible),
         "members": [{"id": m.Id, "fullName": m.FullName, "age": m.Age,
                      "relationship": FamilyRelationship(m.Relationship).name,
-                     "eligibility": EligibilityStatus(m.Eligibility).name} for m in members],
+                     "eligibility": EligibilityStatus(m.Eligibility).name,
+                     # "Male" / "Female" / "Other", or null when not recorded.
+                     "gender": None if m.Gender is None else enum_name(Gender, m.Gender)} for m in members],
     }
 
 

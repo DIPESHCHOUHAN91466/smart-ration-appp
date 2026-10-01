@@ -423,4 +423,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoDataNotice => 'Demo data: this is not a real ration card.';
+
+  @override
+  String get genderMale => 'Male';
+
+  @override
+  String get genderFemale => 'Female';
+
+  @override
+  String get genderOther => 'Other';
 }

@@ -77,6 +77,13 @@ def test_my_profile_names_my_assigned_shop(env):
     assert "rationShop" not in staff
 
 
+def test_family_members_include_gender_when_recorded(env):
+    data = env["client"].get("/api/beneficiaries/me", headers=env["citizen"]).json()["data"]
+    member = data["family"]["members"][0]
+    assert "gender" in member
+    assert member["gender"] in (None, "Male", "Female", "Other")
+
+
 def test_full_profile_after_booking_and_collection(env):
     token = collect(env)
     book(env, slot_id=2)   # an upcoming booking tomorrow

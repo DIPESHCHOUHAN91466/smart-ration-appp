@@ -62,11 +62,21 @@ class CitizenOverview {
 enum FamilyEligibility { eligible, partiallyEligible, notEligible }
 
 class FamilyMember {
-  const FamilyMember({required this.id, required this.fullName, required this.age, required this.relationship, required this.eligibility});
+  const FamilyMember({
+    required this.id,
+    required this.fullName,
+    required this.age,
+    required this.relationship,
+    required this.eligibility,
+    this.gender,
+  });
 
   final int id;
   final String fullName;
   final int age;
+
+  /// Male, Female or Other; null when the record has no gender.
+  final String? gender;
 
   /// Head, Spouse, Son, Daughter, Parent or Other (the backend's words).
   final String relationship;
@@ -143,6 +153,7 @@ CitizenOverview parseOverview(Map<String, dynamic> me, Map<String, dynamic> enti
         age: _int(m['age']),
         relationship: _text(m['relationship']),
         eligibility: _text(m['eligibility']),
+        gender: m['gender'] is String ? m['gender'] as String : null,
       ),
   ];
 

@@ -424,4 +424,13 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get demoDataNotice => 'डेमो डेटा: हे खरे रेशन कार्ड नाही.';
+
+  @override
+  String get genderMale => 'पुरुष';
+
+  @override
+  String get genderFemale => 'स्त्री';
+
+  @override
+  String get genderOther => 'इतर';
 }

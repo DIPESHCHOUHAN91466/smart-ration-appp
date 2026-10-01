@@ -119,9 +119,9 @@ Map<String, Object?> citizenProfileJson({String cardStatus = 'ACTIVE', List<Map<
     };
 
 const _members = [
-  {'id': 1, 'fullName': 'Asha Devi', 'age': 34, 'relationship': 'Head', 'eligibility': 'Eligible'},
-  {'id': 2, 'fullName': 'Ramesh Devi', 'age': 37, 'relationship': 'Spouse', 'eligibility': 'Eligible'},
-  {'id': 3, 'fullName': 'Meena Devi', 'age': 9, 'relationship': 'Daughter', 'eligibility': 'Eligible'},
+  {'id': 1, 'fullName': 'Asha Devi', 'age': 34, 'relationship': 'Head', 'eligibility': 'Eligible', 'gender': 'Female'},
+  {'id': 2, 'fullName': 'Ramesh Devi', 'age': 37, 'relationship': 'Spouse', 'eligibility': 'Eligible', 'gender': null},
+  {'id': 3, 'fullName': 'Meena Devi', 'age': 9, 'relationship': 'Daughter', 'eligibility': 'Eligible', 'gender': 'Female'},
 ];
 
 Map<String, Object?> citizenEntitlementJson() => {

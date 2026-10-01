@@ -232,5 +232,8 @@
   "demoDataNotice": "Demo data: this is not a real ration card.",
   "@demoDataNotice": {
     "description": "Shown on every citizen screen while the backend serves synthetic data."
-  }
+  },
+  "genderMale": "Male",
+  "genderFemale": "Female",
+  "genderOther": "Other"
 }

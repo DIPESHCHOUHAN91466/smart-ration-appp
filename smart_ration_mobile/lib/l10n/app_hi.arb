@@ -123,5 +123,8 @@
   "aadhaarNotVerified": "आधार सत्यापित नहीं",
   "viewDetails": "विवरण देखें",
   "noBeneficiaryProfile": "आपका राशन कार्ड अभी जुड़ा नहीं है। कृपया अपनी राशन दुकान से संपर्क करें।",
-  "demoDataNotice": "डेमो डेटा: यह असली राशन कार्ड नहीं है।"
+  "demoDataNotice": "डेमो डेटा: यह असली राशन कार्ड नहीं है।",
+  "genderMale": "पुरुष",
+  "genderFemale": "महिला",
+  "genderOther": "अन्य"
 }

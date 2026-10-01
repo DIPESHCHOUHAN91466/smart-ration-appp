@@ -67,7 +67,17 @@ class _MemberCard extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(member.fullName, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
               const SizedBox(height: 2),
-              Text('${relationshipWord(l, member.relationship)} · ${l.ageYears(member.age)}',
+              Text(
+                  [
+                    relationshipWord(l, member.relationship),
+                    ?switch (member.gender) {
+                      'Male' => l.genderMale,
+                      'Female' => l.genderFemale,
+                      'Other' => l.genderOther,
+                      _ => null, // not recorded: say nothing rather than guess
+                    },
+                    l.ageYears(member.age),
+                  ].join(' · '),
                   style: const TextStyle(color: AppColors.muted, fontSize: 15)),
               if (member.isHead && overview.aadhaarMasked.isNotEmpty) ...[
                 const SizedBox(height: 6),

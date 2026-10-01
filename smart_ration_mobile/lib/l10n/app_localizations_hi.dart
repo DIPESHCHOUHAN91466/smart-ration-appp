@@ -423,4 +423,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get demoDataNotice => 'डेमो डेटा: यह असली राशन कार्ड नहीं है।';
+
+  @override
+  String get genderMale => 'पुरुष';
+
+  @override
+  String get genderFemale => 'महिला';
+
+  @override
+  String get genderOther => 'अन्य';
 }

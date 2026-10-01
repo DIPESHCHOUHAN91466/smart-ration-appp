@@ -223,6 +223,8 @@ class FamilyMember(Base):
     Relationship: Mapped[int] = mapped_column(Integer, nullable=False)
     Eligibility: Mapped[int] = mapped_column(Integer, nullable=False)
     DataSource: Mapped[str] = mapped_column(LongText, nullable=False)
+    # Gender enum (1 Male, 2 Female, 3 Other); NULL = not recorded. Added in migration 0002.
+    Gender: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     __table_args__ = (
         Index("IX_FamilyMembers_FamilyId", "FamilyId"),

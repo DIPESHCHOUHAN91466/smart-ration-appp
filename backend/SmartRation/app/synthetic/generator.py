@@ -125,6 +125,18 @@ class SyntheticPerson:
         return self.aadhaar_masked[-4:]
 
 
+def member_gender(member: SyntheticMember, person: SyntheticPerson) -> int | None:
+    """Only what the data already says (no extra random draws, so a seed gives the same people as before):
+    the head is the citizen, a son is male, a daughter is female; anyone else is left unrecorded (None)."""
+    if member.relationship is FamilyRelationship.Head:
+        return int(person.gender)
+    if member.relationship is FamilyRelationship.Son:
+        return int(Gender.Male)
+    if member.relationship is FamilyRelationship.Daughter:
+        return int(Gender.Female)
+    return None
+
+
 def is_synthetic_mobile(mobile: str) -> bool:
     return bool(_MOBILE.match(mobile or ""))
 
@@ -254,7 +266,8 @@ def insert(db: Session, people: Sequence[SyntheticPerson], password_hash: str, b
     family_ids = _ids(db, Family.Id, Family.FamilyCode, (p.ration_card for p in people), batch_size)
 
     members = [dict(FamilyId=family_ids[p.ration_card], FullName=m.full_name, Age=m.age, Relationship=int(m.relationship),
-                    Eligibility=int(EligibilityStatus.Eligible), DataSource=SOURCE) for p in people for m in p.members]
+                    Eligibility=int(EligibilityStatus.Eligible), DataSource=SOURCE, Gender=member_gender(m, p))
+               for p in people for m in p.members]
     bulk(FamilyMember, members)
 
     bulk(Beneficiary, [dict(BeneficiaryCode=p.beneficiary_code, Address=p.address, Gender=int(p.gender),

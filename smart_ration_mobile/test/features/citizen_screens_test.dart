@@ -78,8 +78,9 @@ void main() {
     await open(tester, 'Family members');
 
     expect(find.text('Asha Devi'), findsWidgets);
-    expect(find.text('Head of family · 34 years'), findsOneWidget);
-    expect(find.text('Daughter · 9 years'), findsOneWidget);
+    expect(find.text('Head of family · Female · 34 years'), findsOneWidget);
+    expect(find.text('Spouse · 37 years'), findsOneWidget); // gender not recorded: nothing guessed
+    expect(find.text('Daughter · Female · 9 years'), findsOneWidget);
     expect(find.text('XXXX-XXXX-7173 · Aadhaar verified'), findsOneWidget);
     expect(find.textContaining('XXXX'), findsOneWidget);
     expect(find.text('Eligible'), findsNWidgets(3));

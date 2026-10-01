@@ -421,3 +421,15 @@ CREATE TABLE `RationCollectionItems` (
 CREATE INDEX `IX_RationCollectionItems_RationCollectionId` ON `RationCollectionItems` (`RationCollectionId`);
 
 INSERT INTO alembic_version (version_num) VALUES ('0001_initial');
+
+-- Running upgrade 0001_initial -> 0002_family_member_gender
+
+ALTER TABLE `FamilyMembers` ADD COLUMN `Gender` INTEGER;
+
+UPDATE FamilyMembers SET Gender = 1 WHERE Relationship = 3 AND Gender IS NULL;
+
+UPDATE FamilyMembers SET Gender = 2 WHERE Relationship = 4 AND Gender IS NULL;
+
+UPDATE FamilyMembers SET Gender = ( SELECT b.Gender FROM Beneficiaries b WHERE b.FamilyId = FamilyMembers.FamilyId ORDER BY b.Id LIMIT 1) WHERE Relationship = 1 AND Gender IS NULL;
+
+UPDATE alembic_version SET version_num='0002_family_member_gender' WHERE alembic_version.version_num = '0001_initial';

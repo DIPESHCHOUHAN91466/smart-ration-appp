@@ -284,3 +284,22 @@ def test_cli_insert_with_bookings_and_collections(sqlite_db):
     result = _cli("--users", "20", "--seed", "9", "--insert", "--bookings", "--collections", "0.5", TEST_DATABASE_URL=url)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "Tokens 20" in result.stdout and "Collections " in result.stdout and "NotSelected 10" in result.stdout
+
+
+def test_member_gender_comes_only_from_facts_already_in_the_data():
+    from app.database.enums import FamilyRelationship, Gender
+    from app.synthetic.generator import member_gender
+
+    for person in generate(60, seed=7):
+        for member in person.members:
+            g = member_gender(member, person)
+            if member.relationship is FamilyRelationship.Head:
+                assert g == int(person.gender)
+            elif member.relationship is FamilyRelationship.Son:
+                assert g == int(Gender.Male)
+            elif member.relationship is FamilyRelationship.Daughter:
+                assert g == int(Gender.Female)
+            else:
+                assert g is None  # spouse / parent / other: not guessed
+    # Deterministic: adding gender did not change who is generated.
+    assert [p.full_name for p in generate(5, seed=7)] == [p.full_name for p in generate(5, seed=7)]

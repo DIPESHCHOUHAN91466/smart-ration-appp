@@ -45,6 +45,16 @@ from app.database.schema_utils import comparable_metadata
 
 BASELINE = "0001_initial"
 
+# Columns the models have that a database created before them (e.g. by the C# API) can't have yet.
+# Adoption stamps BASELINE and then upgrades, which adds them, so their absence is not drift.
+# Every later migration that adds a column lists it here: (table, column).
+ADDED_AFTER_BASELINE = {("familymembers", "gender")}  # 0002_family_member_gender (lower case: MySQL reports names that way)
+
+
+def _added_later(diff) -> bool:
+    return (isinstance(diff, tuple) and diff[0] == "add_column"
+            and (str(diff[2]).lower(), diff[3].name.lower()) in ADDED_AFTER_BASELINE)
+
 
 def schema_drift(eng) -> list:
     with eng.connect() as conn:
@@ -53,7 +63,7 @@ def schema_drift(eng) -> list:
             "compare_server_default": True,
             "include_object": lambda obj, n, type_, r, c: not (type_ == "table" and n.lower() in {LEGACY_MARKER_TABLE, "alembic_version"}),
         })
-        return compare_metadata(ctx, comparable_metadata(conn, Base.metadata))
+        return [d for d in compare_metadata(ctx, comparable_metadata(conn, Base.metadata)) if not _added_later(d)]
 
 
 def main() -> int:
