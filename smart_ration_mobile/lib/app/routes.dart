@@ -17,6 +17,12 @@ abstract final class Routes {
   static const citizenTokenPattern = '/citizen/token/:id';
   static String citizenToken(int id) => '/citizen/token/$id';
   static const shopHome = '/shop';
+  static const shopScan = '/shop/scan';
+  static const shopOtp = '/shop/otp';
+
+  /// The customer check and the receipt receive their data from the previous screen (`extra`).
+  static const shopCheck = '/shop/check';
+  static const shopReceipt = '/shop/receipt';
   static const officialHome = '/official';
 
   /// Screens anyone may open without signing in.

@@ -575,4 +575,247 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allMyTokens => 'All my tokens';
+
+  @override
+  String get shopTodayTitle => 'Today at your shop';
+
+  @override
+  String get shopTokensToday => 'Tokens';
+
+  @override
+  String get shopCollected => 'Collected';
+
+  @override
+  String get shopWaiting => 'Waiting';
+
+  @override
+  String get shopCancelled => 'Cancelled';
+
+  @override
+  String get scanCustomerQr => 'Scan customer\'s QR';
+
+  @override
+  String get verifyByMobile => 'No QR? Verify with mobile code';
+
+  @override
+  String get scannerTitle => 'Scan QR code';
+
+  @override
+  String get scannerHelp => 'Point the camera at the customer\'s QR code.';
+
+  @override
+  String get typeCodeLabel => 'Or type the code shown under the QR';
+
+  @override
+  String get typeCodeInvalid => 'Please type the code that starts with SRQR-.';
+
+  @override
+  String get checkCode => 'Check';
+
+  @override
+  String get checking => 'Checking…';
+
+  @override
+  String get cameraDenied =>
+      'Camera permission is off. Allow it in the phone\'s Settings, or type the code below.';
+
+  @override
+  String get cameraUnavailable =>
+      'The camera could not start. Type the code below instead.';
+
+  @override
+  String get scanRejectedTitle => 'Cannot accept this token';
+
+  @override
+  String get scanInvalidSignature =>
+      'This QR code is not genuine. Do not hand over ration.';
+
+  @override
+  String get scanNotOurs => 'This is not a Smart Ration token QR code.';
+
+  @override
+  String get scanUnreadable =>
+      'The QR code could not be read. Scan again or type the code.';
+
+  @override
+  String get scanExpired => 'This token\'s collection day has passed.';
+
+  @override
+  String get scanNoBooking => 'No booking matches this code.';
+
+  @override
+  String get scanWrongShop => 'This token is for a different ration shop.';
+
+  @override
+  String get scanAlreadyCollected =>
+      'This token has already been used to collect ration.';
+
+  @override
+  String get scanBookingCancelled => 'This booking was cancelled.';
+
+  @override
+  String get scanAgain => 'Scan again';
+
+  @override
+  String get checkTitle => 'Customer check';
+
+  @override
+  String get readyTitle => 'Ready to collect';
+
+  @override
+  String get readyBody => 'All checks passed. Hand over the items below.';
+
+  @override
+  String get blockedTitle => 'Do not hand over ration';
+
+  @override
+  String get identifiedByQr => 'Identified by QR code';
+
+  @override
+  String get identifiedByOtp => 'Identified by mobile code';
+
+  @override
+  String get customer => 'Customer';
+
+  @override
+  String get beneficiaryId => 'Beneficiary ID';
+
+  @override
+  String get registeredMobile => 'Registered mobile';
+
+  @override
+  String get checksTitle => 'Checks';
+
+  @override
+  String get checkAadhaar => 'Aadhaar verified';
+
+  @override
+  String get checkPassbook => 'Passbook verified';
+
+  @override
+  String get checkMobile => 'Mobile number verified';
+
+  @override
+  String get checkToken => 'Token valid for collection';
+
+  @override
+  String get checkFamily => 'Family eligible';
+
+  @override
+  String get checkEntitlement => 'Ration left this month';
+
+  @override
+  String get checkPassed => 'Yes';
+
+  @override
+  String get checkFailed => 'No';
+
+  @override
+  String get itemsToHandOver => 'Items to hand over';
+
+  @override
+  String get handOverButton => 'Hand over and confirm';
+
+  @override
+  String get handOverConfirmTitle => 'Confirm handover?';
+
+  @override
+  String handOverConfirmBody(String name) {
+    return 'Confirm only after you have given these items to $name. Your stock will be reduced.';
+  }
+
+  @override
+  String get notYet => 'Not yet';
+
+  @override
+  String get yesHandedOver => 'Yes, handed over';
+
+  @override
+  String get saving => 'Saving…';
+
+  @override
+  String get errorInsufficientStock =>
+      'Not enough stock for this token. Nothing was handed over or deducted.';
+
+  @override
+  String get errorConcurrentUpdate =>
+      'This token was just updated at another counter. Please scan it again.';
+
+  @override
+  String get reasonAccountBlocked => 'This beneficiary account is blocked.';
+
+  @override
+  String get reasonAccountInactive => 'This beneficiary account is not active.';
+
+  @override
+  String get reasonTokenInvalid => 'This token is not valid for collection.';
+
+  @override
+  String get reasonAadhaarFailed => 'Aadhaar verification failed.';
+
+  @override
+  String get reasonAadhaarExpired => 'Aadhaar verification has expired.';
+
+  @override
+  String get reasonAadhaarPending => 'Aadhaar verification is pending.';
+
+  @override
+  String get reasonPassbookPending => 'Passbook verification is pending.';
+
+  @override
+  String get reasonMobileRequired =>
+      'The customer\'s mobile number must be verified first.';
+
+  @override
+  String get reasonNotEligible =>
+      'This family is not eligible under its scheme.';
+
+  @override
+  String get reasonNoEntitlement =>
+      'No ration is left for this family this month.';
+
+  @override
+  String get otpCheckTitle => 'Verify with mobile code';
+
+  @override
+  String get otpCheckHelp =>
+      'Type the customer\'s registered mobile number. A 6-digit code will be sent to it.';
+
+  @override
+  String get customerMobileLabel => 'Customer\'s mobile number';
+
+  @override
+  String askCustomerForCode(String mobile, int minutes) {
+    return 'Ask the customer for the code sent to $mobile. It is valid for $minutes minutes.';
+  }
+
+  @override
+  String get verifyCodeButton => 'Verify code';
+
+  @override
+  String get otpNoCustomer =>
+      'No customer is registered with this mobile number.';
+
+  @override
+  String get otpNoBookingHere =>
+      'This customer has no active booking at your shop.';
+
+  @override
+  String get receiptTitle => 'Ration handed over';
+
+  @override
+  String get receiptCollectionId => 'Collection ID';
+
+  @override
+  String get receiptSaved =>
+      'Saved. Stock has been reduced and the customer has been notified.';
+
+  @override
+  String get scanNextCustomer => 'Scan next customer';
+
+  @override
+  String get backToDashboard => 'Back to dashboard';
+
+  @override
+  String get nothingToCheck => 'Nothing to check. Scan a QR code first.';
 }

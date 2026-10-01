@@ -48,15 +48,16 @@ void main() {
   });
 
   testWidgets('a shop owner lands on the shop dashboard with their shop', (tester) async {
-    final backend = FakeBackend(
-        (_) => signedIn(user: userJson(id: 3, fullName: 'Ramesh Patil', role: 'ShopOwner', rationShopId: 3)));
+    final backend = FakeBackend((r) => r.path == '/api/shop/dashboard'
+        ? shopServer(r)
+        : signedIn(user: userJson(id: 3, fullName: 'Ramesh Patil', role: 'ShopOwner', rationShopId: 3)));
     await start(tester, backend);
 
     await signIn(tester, 'shop@example.com', 'secret-pass');
 
     expect(find.text('Namaste, Ramesh Patil'), findsOneWidget);
     expect(find.text('Shop Owner'), findsOneWidget);
-    expect(find.text('Ration shop no. 3'), findsOneWidget);
+    expect(find.text('Satnavari Ration Shop'), findsOneWidget);
   });
 
   testWidgets('a wrong password keeps you on the sign-in screen with a plain message', (tester) async {

@@ -574,4 +574,243 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get allMyTokens => 'मेरे सभी टोकन';
+
+  @override
+  String get shopTodayTitle => 'आज आपकी दुकान पर';
+
+  @override
+  String get shopTokensToday => 'टोकन';
+
+  @override
+  String get shopCollected => 'दिया गया';
+
+  @override
+  String get shopWaiting => 'बाकी';
+
+  @override
+  String get shopCancelled => 'रद्द';
+
+  @override
+  String get scanCustomerQr => 'ग्राहक का QR स्कैन करें';
+
+  @override
+  String get verifyByMobile => 'QR नहीं है? मोबाइल कोड से जाँचें';
+
+  @override
+  String get scannerTitle => 'QR कोड स्कैन करें';
+
+  @override
+  String get scannerHelp => 'कैमरा ग्राहक के QR कोड की ओर रखें।';
+
+  @override
+  String get typeCodeLabel => 'या QR के नीचे दिखा कोड लिखें';
+
+  @override
+  String get typeCodeInvalid => 'कृपया SRQR- से शुरू होने वाला कोड लिखें।';
+
+  @override
+  String get checkCode => 'जाँचें';
+
+  @override
+  String get checking => 'जाँच हो रही है…';
+
+  @override
+  String get cameraDenied =>
+      'कैमरे की अनुमति बंद है। फ़ोन की सेटिंग में अनुमति दें, या नीचे कोड लिखें।';
+
+  @override
+  String get cameraUnavailable =>
+      'कैमरा शुरू नहीं हो सका। इसके बजाय नीचे कोड लिखें।';
+
+  @override
+  String get scanRejectedTitle => 'यह टोकन स्वीकार नहीं किया जा सकता';
+
+  @override
+  String get scanInvalidSignature => 'यह QR कोड असली नहीं है। राशन न दें।';
+
+  @override
+  String get scanNotOurs => 'यह Smart Ration टोकन का QR कोड नहीं है।';
+
+  @override
+  String get scanUnreadable =>
+      'QR कोड पढ़ा नहीं जा सका। फिर से स्कैन करें या कोड लिखें।';
+
+  @override
+  String get scanExpired => 'इस टोकन का राशन लेने का दिन निकल गया है।';
+
+  @override
+  String get scanNoBooking => 'इस कोड से कोई बुकिंग नहीं मिली।';
+
+  @override
+  String get scanWrongShop => 'यह टोकन किसी दूसरी राशन दुकान का है।';
+
+  @override
+  String get scanAlreadyCollected => 'इस टोकन पर राशन पहले ही दिया जा चुका है।';
+
+  @override
+  String get scanBookingCancelled => 'यह बुकिंग रद्द कर दी गई थी।';
+
+  @override
+  String get scanAgain => 'फिर से स्कैन करें';
+
+  @override
+  String get checkTitle => 'ग्राहक जाँच';
+
+  @override
+  String get readyTitle => 'राशन देने के लिए तैयार';
+
+  @override
+  String get readyBody => 'सभी जाँच सही हैं। नीचे दी गई चीज़ें दें।';
+
+  @override
+  String get blockedTitle => 'राशन न दें';
+
+  @override
+  String get identifiedByQr => 'QR कोड से पहचाना गया';
+
+  @override
+  String get identifiedByOtp => 'मोबाइल कोड से पहचाना गया';
+
+  @override
+  String get customer => 'ग्राहक';
+
+  @override
+  String get beneficiaryId => 'लाभार्थी ID';
+
+  @override
+  String get registeredMobile => 'पंजीकृत मोबाइल';
+
+  @override
+  String get checksTitle => 'जाँच';
+
+  @override
+  String get checkAadhaar => 'आधार सत्यापित';
+
+  @override
+  String get checkPassbook => 'पासबुक सत्यापित';
+
+  @override
+  String get checkMobile => 'मोबाइल नंबर सत्यापित';
+
+  @override
+  String get checkToken => 'टोकन राशन लेने के लिए मान्य';
+
+  @override
+  String get checkFamily => 'परिवार पात्र';
+
+  @override
+  String get checkEntitlement => 'इस महीने का राशन बाकी';
+
+  @override
+  String get checkPassed => 'हाँ';
+
+  @override
+  String get checkFailed => 'नहीं';
+
+  @override
+  String get itemsToHandOver => 'देने वाली चीज़ें';
+
+  @override
+  String get handOverButton => 'राशन दें और पुष्टि करें';
+
+  @override
+  String get handOverConfirmTitle => 'राशन देने की पुष्टि करें?';
+
+  @override
+  String handOverConfirmBody(String name) {
+    return 'पुष्टि तभी करें जब आपने ये चीज़ें $name को दे दी हों। आपका स्टॉक कम हो जाएगा।';
+  }
+
+  @override
+  String get notYet => 'अभी नहीं';
+
+  @override
+  String get yesHandedOver => 'हाँ, दे दिया';
+
+  @override
+  String get saving => 'सेव हो रहा है…';
+
+  @override
+  String get errorInsufficientStock =>
+      'इस टोकन के लिए स्टॉक काफ़ी नहीं है। कुछ भी नहीं दिया गया और स्टॉक नहीं घटा।';
+
+  @override
+  String get errorConcurrentUpdate =>
+      'यह टोकन अभी किसी दूसरे काउंटर पर बदला गया। कृपया फिर से स्कैन करें।';
+
+  @override
+  String get reasonAccountBlocked => 'यह लाभार्थी खाता रोका गया है।';
+
+  @override
+  String get reasonAccountInactive => 'यह लाभार्थी खाता सक्रिय नहीं है।';
+
+  @override
+  String get reasonTokenInvalid => 'यह टोकन राशन लेने के लिए मान्य नहीं है।';
+
+  @override
+  String get reasonAadhaarFailed => 'आधार सत्यापन विफल रहा।';
+
+  @override
+  String get reasonAadhaarExpired => 'आधार सत्यापन की अवधि समाप्त हो गई है।';
+
+  @override
+  String get reasonAadhaarPending => 'आधार सत्यापन बाकी है।';
+
+  @override
+  String get reasonPassbookPending => 'पासबुक सत्यापन बाकी है।';
+
+  @override
+  String get reasonMobileRequired =>
+      'पहले ग्राहक का मोबाइल नंबर सत्यापित होना चाहिए।';
+
+  @override
+  String get reasonNotEligible => 'यह परिवार अपनी योजना के तहत पात्र नहीं है।';
+
+  @override
+  String get reasonNoEntitlement => 'इस महीने इस परिवार का राशन बाकी नहीं है।';
+
+  @override
+  String get otpCheckTitle => 'मोबाइल कोड से जाँचें';
+
+  @override
+  String get otpCheckHelp =>
+      'ग्राहक का पंजीकृत मोबाइल नंबर लिखें। उस पर 6 अंकों का कोड भेजा जाएगा।';
+
+  @override
+  String get customerMobileLabel => 'ग्राहक का मोबाइल नंबर';
+
+  @override
+  String askCustomerForCode(String mobile, int minutes) {
+    return '$mobile पर भेजा गया कोड ग्राहक से पूछें। यह $minutes मिनट तक मान्य है।';
+  }
+
+  @override
+  String get verifyCodeButton => 'कोड जाँचें';
+
+  @override
+  String get otpNoCustomer => 'इस मोबाइल नंबर से कोई ग्राहक पंजीकृत नहीं है।';
+
+  @override
+  String get otpNoBookingHere =>
+      'इस ग्राहक की आपकी दुकान पर कोई सक्रिय बुकिंग नहीं है।';
+
+  @override
+  String get receiptTitle => 'राशन दे दिया गया';
+
+  @override
+  String get receiptCollectionId => 'वितरण ID';
+
+  @override
+  String get receiptSaved =>
+      'सेव हो गया। स्टॉक घटा दिया गया है और ग्राहक को सूचना भेज दी गई है।';
+
+  @override
+  String get scanNextCustomer => 'अगले ग्राहक का स्कैन करें';
+
+  @override
+  String get backToDashboard => 'डैशबोर्ड पर वापस';
+
+  @override
+  String get nothingToCheck =>
+      'जाँचने के लिए कुछ नहीं। पहले QR कोड स्कैन करें।';
 }

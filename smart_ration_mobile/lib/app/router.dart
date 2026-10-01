@@ -14,6 +14,12 @@ import '../features/citizen/ration_card_screen.dart';
 import '../features/home/role_home_screen.dart';
 import '../features/language/language_screen.dart';
 import '../features/server_status/server_status_screen.dart';
+import '../features/shop/customer_check_screen.dart';
+import '../features/shop/otp_check_screen.dart';
+import '../features/shop/receipt_screen.dart';
+import '../features/shop/scanner_screen.dart';
+import '../features/shop/shop_data.dart';
+import '../features/shop/shop_home_screen.dart';
 import '../features/splash/splash_screen.dart';
 import 'routes.dart';
 
@@ -47,11 +53,30 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.citizenTokenPattern,
         builder: (context, state) => TokenScreen(tokenId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0),
       ),
-      GoRoute(path: Routes.shopHome, builder: (context, state) => const RoleHomeScreen()),
+      // Nested, so going straight to e.g. /shop/scan still has the dashboard behind it for "back".
+      GoRoute(
+        path: Routes.shopHome,
+        builder: (context, state) => const ShopHomeScreen(),
+        routes: [
+          GoRoute(path: _child(Routes.shopScan), builder: (context, state) => const ScannerScreen()),
+          GoRoute(path: _child(Routes.shopOtp), builder: (context, state) => const OtpCheckScreen()),
+          GoRoute(
+            path: _child(Routes.shopCheck),
+            builder: (context, state) => CustomerCheckScreen(check: state.extra is CustomerCheck ? state.extra as CustomerCheck : null),
+          ),
+          GoRoute(
+            path: _child(Routes.shopReceipt),
+            builder: (context, state) => ReceiptScreen(receipt: state.extra is Receipt ? state.extra as Receipt : null),
+          ),
+        ],
+      ),
       GoRoute(path: Routes.officialHome, builder: (context, state) => const RoleHomeScreen()),
     ],
   );
 });
+
+/// '/shop/scan' -> 'scan' (child routes are written relative to their parent).
+String _child(String path) => path.substring(path.lastIndexOf('/') + 1);
 
 /// Where to send someone instead of [location], or null to let them in. Kept separate so it can be tested.
 String? redirectFor(SessionUser? user, String location) {

@@ -71,7 +71,8 @@ class ApiClient {
   Future<T?> get<T>(String path, {Map<String, dynamic>? query}) =>
       _envelope<T>(() => _dio.get<Object?>(path, queryParameters: query));
 
-  Future<T?> post<T>(String path, {Object? body}) => _envelope<T>(() => _dio.post<Object?>(path, data: body));
+  Future<T?> post<T>(String path, {Object? body, Map<String, String>? headers}) =>
+      _envelope<T>(() => _dio.post<Object?>(path, data: body, options: headers == null ? null : Options(headers: headers)));
 
   Future<T?> delete<T>(String path) => _envelope<T>(() => _dio.delete<Object?>(path));
 

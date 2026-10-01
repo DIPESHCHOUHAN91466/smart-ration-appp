@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_ration_mobile/app/app.dart';
 import 'package:smart_ration_mobile/app/env.dart';
@@ -14,7 +15,8 @@ import 'fake_backend.dart';
 
 /// The whole app, wired to a fake backend and fake phone storage.
 ///  * [savedLanguage]: what the phone remembers from a previous launch (null = first launch);
-///  * [signedInAs]: a session saved on the phone from a previous launch (null = signed out).
+///  * [signedInAs]: a session saved on the phone from a previous launch (null = signed out);
+///  * [overrides]: anything else to replace, e.g. the camera.
 class TestApp {
   TestApp._(this.widget, this.preferences, this.tokens);
 
@@ -22,7 +24,7 @@ class TestApp {
   final SharedPreferences preferences;
   final MemoryTokenStorage tokens;
 
-  static Future<TestApp> build(FakeBackend backend, {String? savedLanguage, SessionUser? signedInAs}) async {
+  static Future<TestApp> build(FakeBackend backend, {String? savedLanguage, SessionUser? signedInAs, List<Override> overrides = const []}) async {
     SharedPreferences.setMockInitialValues({LanguageController.storageKey: ?savedLanguage});
     final preferences = await SharedPreferences.getInstance();
     final tokens = MemoryTokenStorage();
@@ -38,6 +40,7 @@ class TestApp {
         httpAdapterProvider.overrideWithValue(backend),
         tokenStorageProvider.overrideWithValue(tokens),
         restoredSessionProvider.overrideWithValue(signedInAs),
+        ...overrides,
       ],
       child: const SmartRationApp(),
     );

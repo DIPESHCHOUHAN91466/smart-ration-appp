@@ -576,4 +576,242 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get allMyTokens => 'माझी सर्व टोकने';
+
+  @override
+  String get shopTodayTitle => 'आज तुमच्या दुकानात';
+
+  @override
+  String get shopTokensToday => 'टोकन';
+
+  @override
+  String get shopCollected => 'दिले';
+
+  @override
+  String get shopWaiting => 'बाकी';
+
+  @override
+  String get shopCancelled => 'रद्द';
+
+  @override
+  String get scanCustomerQr => 'ग्राहकाचा QR स्कॅन करा';
+
+  @override
+  String get verifyByMobile => 'QR नाही? मोबाइल कोडने तपासा';
+
+  @override
+  String get scannerTitle => 'QR कोड स्कॅन करा';
+
+  @override
+  String get scannerHelp => 'कॅमेरा ग्राहकाच्या QR कोडकडे धरा.';
+
+  @override
+  String get typeCodeLabel => 'किंवा QR खाली दिसणारा कोड लिहा';
+
+  @override
+  String get typeCodeInvalid => 'कृपया SRQR- ने सुरू होणारा कोड लिहा.';
+
+  @override
+  String get checkCode => 'तपासा';
+
+  @override
+  String get checking => 'तपासत आहे…';
+
+  @override
+  String get cameraDenied =>
+      'कॅमेऱ्याची परवानगी बंद आहे. फोनच्या सेटिंगमध्ये परवानगी द्या, किंवा खाली कोड लिहा.';
+
+  @override
+  String get cameraUnavailable =>
+      'कॅमेरा सुरू होऊ शकला नाही. त्याऐवजी खाली कोड लिहा.';
+
+  @override
+  String get scanRejectedTitle => 'हे टोकन स्वीकारता येत नाही';
+
+  @override
+  String get scanInvalidSignature => 'हा QR कोड खरा नाही. रेशन देऊ नका.';
+
+  @override
+  String get scanNotOurs => 'हा Smart Ration टोकनचा QR कोड नाही.';
+
+  @override
+  String get scanUnreadable =>
+      'QR कोड वाचता आला नाही. पुन्हा स्कॅन करा किंवा कोड लिहा.';
+
+  @override
+  String get scanExpired => 'या टोकनचा रेशन घेण्याचा दिवस निघून गेला आहे.';
+
+  @override
+  String get scanNoBooking => 'या कोडशी जुळणारी बुकिंग नाही.';
+
+  @override
+  String get scanWrongShop => 'हे टोकन दुसऱ्या रेशन दुकानाचे आहे.';
+
+  @override
+  String get scanAlreadyCollected => 'या टोकनवर रेशन आधीच दिले गेले आहे.';
+
+  @override
+  String get scanBookingCancelled => 'ही बुकिंग रद्द केली होती.';
+
+  @override
+  String get scanAgain => 'पुन्हा स्कॅन करा';
+
+  @override
+  String get checkTitle => 'ग्राहक तपासणी';
+
+  @override
+  String get readyTitle => 'रेशन देण्यास तयार';
+
+  @override
+  String get readyBody => 'सर्व तपासण्या बरोबर आहेत. खालील वस्तू द्या.';
+
+  @override
+  String get blockedTitle => 'रेशन देऊ नका';
+
+  @override
+  String get identifiedByQr => 'QR कोडने ओळखले';
+
+  @override
+  String get identifiedByOtp => 'मोबाइल कोडने ओळखले';
+
+  @override
+  String get customer => 'ग्राहक';
+
+  @override
+  String get beneficiaryId => 'लाभार्थी ID';
+
+  @override
+  String get registeredMobile => 'नोंदणीकृत मोबाइल';
+
+  @override
+  String get checksTitle => 'तपासण्या';
+
+  @override
+  String get checkAadhaar => 'आधार पडताळले';
+
+  @override
+  String get checkPassbook => 'पासबुक पडताळले';
+
+  @override
+  String get checkMobile => 'मोबाइल नंबर पडताळला';
+
+  @override
+  String get checkToken => 'टोकन रेशनसाठी वैध';
+
+  @override
+  String get checkFamily => 'कुटुंब पात्र';
+
+  @override
+  String get checkEntitlement => 'या महिन्याचे रेशन बाकी';
+
+  @override
+  String get checkPassed => 'होय';
+
+  @override
+  String get checkFailed => 'नाही';
+
+  @override
+  String get itemsToHandOver => 'द्यायच्या वस्तू';
+
+  @override
+  String get handOverButton => 'रेशन द्या आणि खात्री करा';
+
+  @override
+  String get handOverConfirmTitle => 'रेशन दिल्याची खात्री करायची?';
+
+  @override
+  String handOverConfirmBody(String name) {
+    return '$name यांना या वस्तू दिल्यानंतरच खात्री करा. तुमचा साठा कमी होईल.';
+  }
+
+  @override
+  String get notYet => 'अजून नाही';
+
+  @override
+  String get yesHandedOver => 'होय, दिले';
+
+  @override
+  String get saving => 'जतन होत आहे…';
+
+  @override
+  String get errorInsufficientStock =>
+      'या टोकनसाठी पुरेसा साठा नाही. काहीही दिले नाही आणि साठा कमी झाला नाही.';
+
+  @override
+  String get errorConcurrentUpdate =>
+      'हे टोकन आत्ताच दुसऱ्या काउंटरवर बदलले. कृपया पुन्हा स्कॅन करा.';
+
+  @override
+  String get reasonAccountBlocked => 'हे लाभार्थी खाते रोखले आहे.';
+
+  @override
+  String get reasonAccountInactive => 'हे लाभार्थी खाते सक्रिय नाही.';
+
+  @override
+  String get reasonTokenInvalid => 'हे टोकन रेशनसाठी वैध नाही.';
+
+  @override
+  String get reasonAadhaarFailed => 'आधार पडताळणी अयशस्वी झाली.';
+
+  @override
+  String get reasonAadhaarExpired => 'आधार पडताळणीची मुदत संपली आहे.';
+
+  @override
+  String get reasonAadhaarPending => 'आधार पडताळणी बाकी आहे.';
+
+  @override
+  String get reasonPassbookPending => 'पासबुक पडताळणी बाकी आहे.';
+
+  @override
+  String get reasonMobileRequired =>
+      'आधी ग्राहकाचा मोबाइल नंबर पडताळला गेला पाहिजे.';
+
+  @override
+  String get reasonNotEligible => 'हे कुटुंब त्याच्या योजनेअंतर्गत पात्र नाही.';
+
+  @override
+  String get reasonNoEntitlement => 'या महिन्यात या कुटुंबाचे रेशन बाकी नाही.';
+
+  @override
+  String get otpCheckTitle => 'मोबाइल कोडने तपासा';
+
+  @override
+  String get otpCheckHelp =>
+      'ग्राहकाचा नोंदणीकृत मोबाइल नंबर लिहा. त्यावर 6 अंकी कोड पाठवला जाईल.';
+
+  @override
+  String get customerMobileLabel => 'ग्राहकाचा मोबाइल नंबर';
+
+  @override
+  String askCustomerForCode(String mobile, int minutes) {
+    return '$mobile वर पाठवलेला कोड ग्राहकाला विचारा. तो $minutes मिनिटे वैध आहे.';
+  }
+
+  @override
+  String get verifyCodeButton => 'कोड तपासा';
+
+  @override
+  String get otpNoCustomer => 'या मोबाइल नंबरवर कोणताही ग्राहक नोंदणीकृत नाही.';
+
+  @override
+  String get otpNoBookingHere =>
+      'या ग्राहकाची तुमच्या दुकानात कोणतीही सक्रिय बुकिंग नाही.';
+
+  @override
+  String get receiptTitle => 'रेशन दिले';
+
+  @override
+  String get receiptCollectionId => 'वितरण ID';
+
+  @override
+  String get receiptSaved =>
+      'जतन झाले. साठा कमी केला आहे आणि ग्राहकाला सूचना पाठवली आहे.';
+
+  @override
+  String get scanNextCustomer => 'पुढच्या ग्राहकाचे स्कॅन करा';
+
+  @override
+  String get backToDashboard => 'डॅशबोर्डवर परत';
+
+  @override
+  String get nothingToCheck => 'तपासण्यासारखे काही नाही. आधी QR कोड स्कॅन करा.';
 }

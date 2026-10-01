@@ -1119,6 +1119,456 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All my tokens'**
   String get allMyTokens;
+
+  /// No description provided for @shopTodayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today at your shop'**
+  String get shopTodayTitle;
+
+  /// No description provided for @shopTokensToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokens'**
+  String get shopTokensToday;
+
+  /// No description provided for @shopCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
+  String get shopCollected;
+
+  /// No description provided for @shopWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get shopWaiting;
+
+  /// No description provided for @shopCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get shopCancelled;
+
+  /// No description provided for @scanCustomerQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan customer\'s QR'**
+  String get scanCustomerQr;
+
+  /// No description provided for @verifyByMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'No QR? Verify with mobile code'**
+  String get verifyByMobile;
+
+  /// No description provided for @scannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code'**
+  String get scannerTitle;
+
+  /// No description provided for @scannerHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the customer\'s QR code.'**
+  String get scannerHelp;
+
+  /// No description provided for @typeCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Or type the code shown under the QR'**
+  String get typeCodeLabel;
+
+  /// No description provided for @typeCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please type the code that starts with SRQR-.'**
+  String get typeCodeInvalid;
+
+  /// No description provided for @checkCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get checkCode;
+
+  /// No description provided for @checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get checking;
+
+  /// No description provided for @cameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is off. Allow it in the phone\'s Settings, or type the code below.'**
+  String get cameraDenied;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera could not start. Type the code below instead.'**
+  String get cameraUnavailable;
+
+  /// No description provided for @scanRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot accept this token'**
+  String get scanRejectedTitle;
+
+  /// No description provided for @scanInvalidSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code is not genuine. Do not hand over ration.'**
+  String get scanInvalidSignature;
+
+  /// No description provided for @scanNotOurs.
+  ///
+  /// In en, this message translates to:
+  /// **'This is not a Smart Ration token QR code.'**
+  String get scanNotOurs;
+
+  /// No description provided for @scanUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'The QR code could not be read. Scan again or type the code.'**
+  String get scanUnreadable;
+
+  /// No description provided for @scanExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This token\'s collection day has passed.'**
+  String get scanExpired;
+
+  /// No description provided for @scanNoBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'No booking matches this code.'**
+  String get scanNoBooking;
+
+  /// No description provided for @scanWrongShop.
+  ///
+  /// In en, this message translates to:
+  /// **'This token is for a different ration shop.'**
+  String get scanWrongShop;
+
+  /// No description provided for @scanAlreadyCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'This token has already been used to collect ration.'**
+  String get scanAlreadyCollected;
+
+  /// No description provided for @scanBookingCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'This booking was cancelled.'**
+  String get scanBookingCancelled;
+
+  /// No description provided for @scanAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan again'**
+  String get scanAgain;
+
+  /// No description provided for @checkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer check'**
+  String get checkTitle;
+
+  /// No description provided for @readyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to collect'**
+  String get readyTitle;
+
+  /// No description provided for @readyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All checks passed. Hand over the items below.'**
+  String get readyBody;
+
+  /// No description provided for @blockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not hand over ration'**
+  String get blockedTitle;
+
+  /// No description provided for @identifiedByQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Identified by QR code'**
+  String get identifiedByQr;
+
+  /// No description provided for @identifiedByOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Identified by mobile code'**
+  String get identifiedByOtp;
+
+  /// No description provided for @customer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get customer;
+
+  /// No description provided for @beneficiaryId.
+  ///
+  /// In en, this message translates to:
+  /// **'Beneficiary ID'**
+  String get beneficiaryId;
+
+  /// No description provided for @registeredMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered mobile'**
+  String get registeredMobile;
+
+  /// No description provided for @checksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checks'**
+  String get checksTitle;
+
+  /// No description provided for @checkAadhaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar verified'**
+  String get checkAadhaar;
+
+  /// No description provided for @checkPassbook.
+  ///
+  /// In en, this message translates to:
+  /// **'Passbook verified'**
+  String get checkPassbook;
+
+  /// No description provided for @checkMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number verified'**
+  String get checkMobile;
+
+  /// No description provided for @checkToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Token valid for collection'**
+  String get checkToken;
+
+  /// No description provided for @checkFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family eligible'**
+  String get checkFamily;
+
+  /// No description provided for @checkEntitlement.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration left this month'**
+  String get checkEntitlement;
+
+  /// No description provided for @checkPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get checkPassed;
+
+  /// No description provided for @checkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get checkFailed;
+
+  /// No description provided for @itemsToHandOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Items to hand over'**
+  String get itemsToHandOver;
+
+  /// No description provided for @handOverButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Hand over and confirm'**
+  String get handOverButton;
+
+  /// No description provided for @handOverConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm handover?'**
+  String get handOverConfirmTitle;
+
+  /// Asked before the handover is saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm only after you have given these items to {name}. Your stock will be reduced.'**
+  String handOverConfirmBody(String name);
+
+  /// No description provided for @notYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet'**
+  String get notYet;
+
+  /// No description provided for @yesHandedOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, handed over'**
+  String get yesHandedOver;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get saving;
+
+  /// No description provided for @errorInsufficientStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough stock for this token. Nothing was handed over or deducted.'**
+  String get errorInsufficientStock;
+
+  /// No description provided for @errorConcurrentUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'This token was just updated at another counter. Please scan it again.'**
+  String get errorConcurrentUpdate;
+
+  /// No description provided for @reasonAccountBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'This beneficiary account is blocked.'**
+  String get reasonAccountBlocked;
+
+  /// No description provided for @reasonAccountInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'This beneficiary account is not active.'**
+  String get reasonAccountInactive;
+
+  /// No description provided for @reasonTokenInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This token is not valid for collection.'**
+  String get reasonTokenInvalid;
+
+  /// No description provided for @reasonAadhaarFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar verification failed.'**
+  String get reasonAadhaarFailed;
+
+  /// No description provided for @reasonAadhaarExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar verification has expired.'**
+  String get reasonAadhaarExpired;
+
+  /// No description provided for @reasonAadhaarPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar verification is pending.'**
+  String get reasonAadhaarPending;
+
+  /// No description provided for @reasonPassbookPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Passbook verification is pending.'**
+  String get reasonPassbookPending;
+
+  /// No description provided for @reasonMobileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'The customer\'s mobile number must be verified first.'**
+  String get reasonMobileRequired;
+
+  /// No description provided for @reasonNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'This family is not eligible under its scheme.'**
+  String get reasonNotEligible;
+
+  /// No description provided for @reasonNoEntitlement.
+  ///
+  /// In en, this message translates to:
+  /// **'No ration is left for this family this month.'**
+  String get reasonNoEntitlement;
+
+  /// No description provided for @otpCheckTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify with mobile code'**
+  String get otpCheckTitle;
+
+  /// No description provided for @otpCheckHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the customer\'s registered mobile number. A 6-digit code will be sent to it.'**
+  String get otpCheckHelp;
+
+  /// No description provided for @customerMobileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer\'s mobile number'**
+  String get customerMobileLabel;
+
+  /// After a code is sent to the customer's mobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the customer for the code sent to {mobile}. It is valid for {minutes} minutes.'**
+  String askCustomerForCode(String mobile, int minutes);
+
+  /// No description provided for @verifyCodeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify code'**
+  String get verifyCodeButton;
+
+  /// No description provided for @otpNoCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'No customer is registered with this mobile number.'**
+  String get otpNoCustomer;
+
+  /// No description provided for @otpNoBookingHere.
+  ///
+  /// In en, this message translates to:
+  /// **'This customer has no active booking at your shop.'**
+  String get otpNoBookingHere;
+
+  /// No description provided for @receiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration handed over'**
+  String get receiptTitle;
+
+  /// No description provided for @receiptCollectionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection ID'**
+  String get receiptCollectionId;
+
+  /// No description provided for @receiptSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. Stock has been reduced and the customer has been notified.'**
+  String get receiptSaved;
+
+  /// No description provided for @scanNextCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan next customer'**
+  String get scanNextCustomer;
+
+  /// No description provided for @backToDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to dashboard'**
+  String get backToDashboard;
+
+  /// No description provided for @nothingToCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to check. Scan a QR code first.'**
+  String get nothingToCheck;
 }
 
 class _AppLocalizationsDelegate

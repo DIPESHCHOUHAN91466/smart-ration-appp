@@ -193,3 +193,82 @@ List<Map<String, Object?>> citizenCollectionsJson() => [
         ],
       },
     ];
+
+/// A backend with the demo shop's counter (same shapes as the real /api/shop, /api/qr/scan,
+/// /api/verification and /api/ration/collection answers).
+FakeReply shopServer(RequestOptions r) => switch ((r.method, r.path)) {
+      (_, '/api/shop/dashboard') => FakeReply.ok(shopDashboardJson()),
+      ('POST', '/api/qr/scan') => FakeReply.ok(scanJson('${(r.data as Map)['qrData']}')),
+      (_, '/api/tokens/501') => FakeReply.ok(tokenJson()),
+      ('POST', '/api/verification/otp/request') => FakeReply.ok(
+          {'otpVerificationId': 31, 'mobileMasked': '******0007', 'expiresInMinutes': 5, 'demoOtpValue': '123456'}),
+      ('POST', '/api/verification/otp/verify') => (r.data as Map)['code'] == '123456'
+          ? FakeReply.ok(verificationJson())
+          : FakeReply.fail(400, 'Incorrect OTP. 2 attempt(s) remaining.'),
+      ('POST', '/api/ration/collection/confirm') => FakeReply.ok(receiptJson()),
+      _ => healthyReply,
+    };
+
+const healthyReply = FakeReply(200, {'status': 'healthy', 'database': 'healthy', 'dataMode': 'synthetic'});
+
+Map<String, Object?> shopDashboardJson() => {
+      'shopId': 3,
+      'shopName': 'Satnavari Ration Shop',
+      'todayTotalTokens': 12,
+      'todayCompleted': 5,
+      'todayPending': 6,
+      'todayCancelled': 1,
+      'inventory': [],
+    };
+
+/// What /api/qr/scan answers for the demo codes:
+///   SRQR-501-…  ready;  SRQR-777-…  already collected;  SRQR-999-…  forged;  anything else  not ours.
+Map<String, Object?> scanJson(String code) {
+  if (code.startsWith('SRQR-501-')) {
+    return {'verified': true, 'status': 'VERIFIED', 'message': 'QR verified successfully', 'tokenNumber': 'SR-2026-000501',
+        'verification': verificationJson()};
+  }
+  if (code.startsWith('SRQR-777-')) {
+    return {'verified': false, 'status': 'ALREADY_COLLECTED', 'message': 'This token has already been used for collection.',
+        'tokenNumber': 'SR-2026-000501',
+        'verification': verificationJson(ready: false, reason: 'This token has already been used for collection.')};
+  }
+  if (code.startsWith('SRQR-999-')) {
+    return {'verified': false, 'status': 'INVALID_SIGNATURE', 'message': 'QR code signature is invalid.', 'tokenNumber': null, 'verification': null};
+  }
+  return {'verified': false, 'status': 'INVALID_PROJECT', 'message': 'This QR code does not belong to the Smart Ration system.',
+      'tokenNumber': null, 'verification': null};
+}
+
+/// The verification bundle (verification_service.build_response), trimmed to what the app reads.
+Map<String, Object?> verificationJson({bool ready = true, String? reason}) => {
+      'beneficiary': {'id': 1, 'beneficiaryCode': 'BEN-DEMO-0001', 'fullName': 'Asha Devi', 'mobileMasked': '******0007',
+          'isActive': true, 'isBlocked': false},
+      'family': {'familyCode': 'FAM-DEMO-0001', 'familyHeadName': 'Asha Devi', 'familySize': 4, 'eligibleMemberCount': 3,
+          'members': [
+            {'fullName': 'Asha Devi', 'relationship': 'Head', 'eligibility': 'Eligible'},
+            {'fullName': 'Ravi Devi', 'relationship': 'Son', 'eligibility': 'Eligible'},
+          ]},
+      'booking': {'tokenId': 501, 'tokenNumber': 'SR-2026-000501', 'status': ready ? 'Confirmed' : 'Completed',
+          'collectionDate': DateTime.now().toIso8601String().substring(0, 10), 'bookingTime': '10:05', 'shopId': 3,
+          'shopName': 'Satnavari Ration Shop', 'collectionCompleted': !ready},
+      'entitlement': {'schemeCode': 'PHH', 'schemeName': 'Priority Household', 'items': []},
+      'verificationSummary': {'aadhaarVerified': true, 'passbookVerified': true, 'mobileVerified': true, 'tokenValid': ready,
+          'familyEligible': true, 'entitlementAvailable': true,
+          'overallStatus': ready ? 'READY_FOR_RATION_COLLECTION' : 'COLLECTION_BLOCKED', 'blockedReason': reason},
+    };
+
+Map<String, Object?> receiptJson() => {
+      'collectionCode': 'COL-DEMO-000042',
+      'tokenNumber': 'SR-2026-000501',
+      'beneficiaryName': 'Asha Devi',
+      'familySize': 4,
+      'schemeCode': 'PHH',
+      'issuedItems': [
+        {'rationType': 'Rice', 'quantity': 5},
+        {'rationType': 'EdibleOil', 'quantity': 0.5},
+      ],
+      'totalQuantityKg': 5.5,
+      'shopName': 'Satnavari Ration Shop',
+      'collectedAt': '2026-10-01 04:37',
+    };
