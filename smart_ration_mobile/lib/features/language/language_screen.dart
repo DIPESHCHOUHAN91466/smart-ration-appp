@@ -19,7 +19,7 @@ class LanguageScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final selected = ref.watch(languageProvider);
 
-    void done() => firstLaunch ? context.go(Routes.home) : context.pop();
+    void done() => firstLaunch ? context.go(Routes.login) : context.pop();
 
     return Scaffold(
       appBar: firstLaunch ? null : AppBar(title: Text(l.language)),

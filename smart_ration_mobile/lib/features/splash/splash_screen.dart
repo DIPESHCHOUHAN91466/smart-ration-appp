@@ -5,12 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../auth/auth_controller.dart';
 import '../language/app_language.dart';
 
 /// How long the logo stays on screen. Tests set it to zero.
 final splashDurationProvider = Provider<Duration>((ref) => const Duration(milliseconds: 1500));
 
-/// The first screen: the Ration Mitra logo, then the language choice (first launch) or the home screen.
+/// The first screen: the Ration Mitra logo, then the language choice (first launch), the sign-in
+/// screen, or straight to the dashboard when a session was saved.
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -24,8 +26,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     super.initState();
     Future.delayed(ref.read(splashDurationProvider), () {
       if (!mounted) return;
-      final firstLaunch = ref.read(languageProvider) == null;
-      context.go(firstLaunch ? Routes.chooseLanguage : Routes.home);
+      final user = ref.read(authControllerProvider);
+      if (ref.read(languageProvider) == null) {
+        context.go(Routes.chooseLanguage);
+      } else {
+        context.go(user == null ? Routes.login : Routes.homeFor(user.role));
+      }
     });
   }
 

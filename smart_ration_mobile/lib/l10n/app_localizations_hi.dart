@@ -113,4 +113,95 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get errorRequestFailed =>
       'अनुरोध पूरा नहीं हो सका। कृपया जाँचकर पुनः प्रयास करें।';
+
+  @override
+  String get signInTitle => 'साइन इन करें';
+
+  @override
+  String get signInSubtitle =>
+      'अपने स्मार्ट राशन खाते का ईमेल और पासवर्ड डालें।';
+
+  @override
+  String get emailLabel => 'ईमेल';
+
+  @override
+  String get passwordLabel => 'पासवर्ड';
+
+  @override
+  String get showPassword => 'पासवर्ड दिखाएं';
+
+  @override
+  String get hidePassword => 'पासवर्ड छिपाएं';
+
+  @override
+  String get signInButton => 'साइन इन करें';
+
+  @override
+  String get signingIn => 'साइन इन हो रहा है...';
+
+  @override
+  String get emailRequired => 'कृपया अपना ईमेल डालें।';
+
+  @override
+  String get emailInvalid => 'कृपया सही ईमेल पता डालें।';
+
+  @override
+  String get passwordRequired => 'कृपया अपना पासवर्ड डालें।';
+
+  @override
+  String get loginInvalid => 'ईमेल या पासवर्ड सही नहीं है।';
+
+  @override
+  String get loginAccountDisabled =>
+      'यह खाता बंद कर दिया गया है। कृपया अपनी राशन दुकान या जिला कार्यालय से संपर्क करें।';
+
+  @override
+  String get demoAccountsTitle => 'डेमो खाते (केवल डेवलपमेंट बिल्ड में)';
+
+  @override
+  String get demoAccountsHelp =>
+      'ईमेल भरने के लिए किसी एक पर टैप करें। डेमो पासवर्ड प्रोजेक्ट की README में है।';
+
+  @override
+  String get checkServer => 'सर्वर कनेक्शन जाँचें';
+
+  @override
+  String get serverStatusTitle => 'सर्वर की स्थिति';
+
+  @override
+  String get roleRuralUser => 'ग्रामीण उपयोगकर्ता';
+
+  @override
+  String get roleShopOwner => 'दुकान मालिक';
+
+  @override
+  String get roleOfficial => 'सरकारी अधिकारी';
+
+  @override
+  String get roleAdmin => 'प्रशासक';
+
+  @override
+  String greeting(String name) {
+    return 'नमस्ते, $name';
+  }
+
+  @override
+  String get signOut => 'साइन आउट';
+
+  @override
+  String shopLinked(int id) {
+    return 'राशन दुकान क्र. $id';
+  }
+
+  @override
+  String get citizenDashboardIntro =>
+      'आपका राशन कार्ड, परिवार के सदस्य, बुकिंग और टोकन यहाँ दिखाई देंगे।';
+
+  @override
+  String get shopDashboardIntro =>
+      'आज के टोकन, QR स्कैनर, स्टॉक और वितरण यहाँ दिखाई देंगे।';
+
+  @override
+  String get officialDashboardIntro =>
+      'दुकानें, वितरण, स्टॉक चेतावनियाँ और रिपोर्ट यहाँ दिखाई देंगी।';
 }

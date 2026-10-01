@@ -12,12 +12,49 @@ import 'api_exception.dart';
 class ApiClient {
   ApiClient(this._dio);
 
+  /// [refreshAccessToken] is called once when the backend answers 401 (the 15-minute access token
+  /// has expired). It returns a new token, or null when the session is over; the request is then
+  /// sent once more with the new token.
   factory ApiClient.create({
     required String baseUrl,
     required TokenStorage tokens,
+    Future<String?> Function()? refreshAccessToken,
     bool logRequests = false,
     HttpClientAdapter? adapter,
   }) {
+    final dio = createDio(baseUrl, adapter: adapter);
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final token = await tokens.readAccessToken();
+        if (token != null && token.isNotEmpty) options.headers['Authorization'] = 'Bearer $token';
+        handler.next(options);
+      },
+      onError: (error, handler) async {
+        final request = error.requestOptions;
+        final canRetry = error.response?.statusCode == 401 &&
+            refreshAccessToken != null &&
+            request.extra['retriedAfterRefresh'] != true &&
+            !request.path.startsWith('/api/auth/');
+        if (!canRetry) return handler.next(error);
+        try {
+          final newToken = await refreshAccessToken();
+          if (newToken == null) return handler.next(error);
+          request.extra['retriedAfterRefresh'] = true;
+          return handler.resolve(await dio.fetch<Object?>(request));
+        } on DioException catch (retryError) {
+          return handler.next(retryError);
+        } on ApiException catch (refreshError) {
+          // Could not reach the server to refresh: report that problem (e.g. "no connection").
+          return handler.reject(DioException(requestOptions: request, error: refreshError, type: DioExceptionType.unknown));
+        }
+      },
+    ));
+    if (logRequests) dio.interceptors.add(_RequestLog());
+    return ApiClient(dio);
+  }
+
+  /// A plain client with the app's address and timeouts, without any sign-in handling.
+  static Dio createDio(String baseUrl, {HttpClientAdapter? adapter}) {
     final dio = Dio(BaseOptions(
       baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 10),
@@ -26,13 +63,7 @@ class ApiClient {
       responseType: ResponseType.json,
     ));
     if (adapter != null) dio.httpClientAdapter = adapter;
-    dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
-      final token = await tokens.readAccessToken();
-      if (token != null && token.isNotEmpty) options.headers['Authorization'] = 'Bearer $token';
-      handler.next(options);
-    }));
-    if (logRequests) dio.interceptors.add(_RequestLog());
-    return ApiClient(dio);
+    return dio;
   }
 
   final Dio _dio;
@@ -67,7 +98,8 @@ class ApiClient {
     try {
       return await call();
     } on DioException catch (e) {
-      throw ApiException.fromDio(e);
+      final inner = e.error;
+      throw inner is ApiException ? inner : ApiException.fromDio(e);
     }
   }
 }

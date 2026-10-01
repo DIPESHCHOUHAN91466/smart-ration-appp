@@ -114,4 +114,95 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get errorRequestFailed =>
       'विनंती पूर्ण होऊ शकली नाही. कृपया तपासून पुन्हा प्रयत्न करा.';
+
+  @override
+  String get signInTitle => 'साइन इन करा';
+
+  @override
+  String get signInSubtitle =>
+      'तुमच्या स्मार्ट रेशन खात्याचा ईमेल आणि पासवर्ड वापरा.';
+
+  @override
+  String get emailLabel => 'ईमेल';
+
+  @override
+  String get passwordLabel => 'पासवर्ड';
+
+  @override
+  String get showPassword => 'पासवर्ड दाखवा';
+
+  @override
+  String get hidePassword => 'पासवर्ड लपवा';
+
+  @override
+  String get signInButton => 'साइन इन करा';
+
+  @override
+  String get signingIn => 'साइन इन होत आहे...';
+
+  @override
+  String get emailRequired => 'कृपया तुमचा ईमेल टाका.';
+
+  @override
+  String get emailInvalid => 'कृपया योग्य ईमेल पत्ता टाका.';
+
+  @override
+  String get passwordRequired => 'कृपया तुमचा पासवर्ड टाका.';
+
+  @override
+  String get loginInvalid => 'ईमेल किंवा पासवर्ड चुकीचा आहे.';
+
+  @override
+  String get loginAccountDisabled =>
+      'हे खाते बंद केले आहे. कृपया तुमच्या रेशन दुकानाशी किंवा जिल्हा कार्यालयाशी संपर्क साधा.';
+
+  @override
+  String get demoAccountsTitle => 'डेमो खाती (फक्त डेव्हलपमेंट बिल्डमध्ये)';
+
+  @override
+  String get demoAccountsHelp =>
+      'ईमेल भरण्यासाठी एकावर टॅप करा. डेमो पासवर्ड प्रोजेक्टच्या README मध्ये आहे.';
+
+  @override
+  String get checkServer => 'सर्व्हर कनेक्शन तपासा';
+
+  @override
+  String get serverStatusTitle => 'सर्व्हरची स्थिती';
+
+  @override
+  String get roleRuralUser => 'ग्रामीण वापरकर्ता';
+
+  @override
+  String get roleShopOwner => 'दुकान मालक';
+
+  @override
+  String get roleOfficial => 'सरकारी अधिकारी';
+
+  @override
+  String get roleAdmin => 'प्रशासक';
+
+  @override
+  String greeting(String name) {
+    return 'नमस्कार, $name';
+  }
+
+  @override
+  String get signOut => 'साइन आउट';
+
+  @override
+  String shopLinked(int id) {
+    return 'रेशन दुकान क्र. $id';
+  }
+
+  @override
+  String get citizenDashboardIntro =>
+      'तुमचे रेशन कार्ड, कुटुंबातील सदस्य, बुकिंग आणि टोकन येथे दिसतील.';
+
+  @override
+  String get shopDashboardIntro =>
+      'आजचे टोकन, QR स्कॅनर, साठा आणि वितरण येथे दिसतील.';
+
+  @override
+  String get officialDashboardIntro =>
+      'दुकाने, वितरण, साठ्याचे इशारे आणि अहवाल येथे दिसतील.';
 }

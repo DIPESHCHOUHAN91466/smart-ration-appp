@@ -6,9 +6,9 @@ import '../support/fake_backend.dart';
 import '../support/test_app.dart';
 
 void main() {
-  testWidgets('first launch: splash, then language choice, then home in that language', (tester) async {
-    final (app, preferences) = await buildTestApp(FakeBackend((_) => healthyServer));
-    await tester.pumpWidget(app);
+  testWidgets('first launch: splash, then language choice, then sign-in in that language', (tester) async {
+    final app = await TestApp.build(FakeBackend((_) => healthyServer));
+    await tester.pumpWidget(app.widget);
     await tester.pumpAndSettle();
 
     // The language screen lists every language in its own script.
@@ -17,8 +17,7 @@ void main() {
     expect(find.text('मराठी'), findsOneWidget);
 
     // Continue does nothing until a language is picked.
-    final continueButton = find.byType(FilledButton);
-    expect(tester.widget<FilledButton>(continueButton).onPressed, isNull);
+    expect(tester.widget<FilledButton>(find.byType(FilledButton)).onPressed, isNull);
 
     // Picking Hindi switches the screen to Hindi at once.
     await tester.tap(find.text('हिंदी'));
@@ -27,25 +26,24 @@ void main() {
 
     await tester.tap(find.text('आगे बढ़ें'));
     await tester.pumpAndSettle();
-    expect(find.text('सर्वर से जुड़ गए'), findsOneWidget);
-    expect(find.text('स्मार्ट राशन AI'), findsOneWidget);
-    expect(preferences.getString(LanguageController.storageKey), 'hi');
+    expect(find.text('अपने स्मार्ट राशन खाते का ईमेल और पासवर्ड डालें।'), findsOneWidget);
+    expect(app.preferences.getString(LanguageController.storageKey), 'hi');
   });
 
   testWidgets('next launch: the saved language skips the choice', (tester) async {
-    final (app, _) = await buildTestApp(FakeBackend((_) => healthyServer), savedLanguage: 'mr');
-    await tester.pumpWidget(app);
+    final app = await TestApp.build(FakeBackend((_) => healthyServer), savedLanguage: 'mr');
+    await tester.pumpWidget(app.widget);
     await tester.pumpAndSettle();
 
-    expect(find.text('सर्व्हरशी जोडले गेले'), findsOneWidget);
+    expect(find.text('तुमच्या स्मार्ट रेशन खात्याचा ईमेल आणि पासवर्ड वापरा.'), findsOneWidget);
     expect(find.text('तुमची भाषा निवडा'), findsNothing);
   });
 
-  testWidgets('the language button changes the language and returns home', (tester) async {
-    final (app, preferences) = await buildTestApp(FakeBackend((_) => healthyServer), savedLanguage: 'en');
-    await tester.pumpWidget(app);
+  testWidgets('the language button changes the language and returns to the same screen', (tester) async {
+    final app = await TestApp.build(FakeBackend((_) => healthyServer), savedLanguage: 'en');
+    await tester.pumpWidget(app.widget);
     await tester.pumpAndSettle();
-    expect(find.text('Connected to the server'), findsOneWidget);
+    expect(find.text('Use the email and password of your Smart Ration account.'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Language'));
     await tester.pumpAndSettle();
@@ -54,13 +52,13 @@ void main() {
     await tester.tap(find.text('पुढे चला'));
     await tester.pumpAndSettle();
 
-    expect(find.text('सर्व्हरशी जोडले गेले'), findsOneWidget);
-    expect(preferences.getString(LanguageController.storageKey), 'mr');
+    expect(find.text('तुमच्या स्मार्ट रेशन खात्याचा ईमेल आणि पासवर्ड वापरा.'), findsOneWidget);
+    expect(app.preferences.getString(LanguageController.storageKey), 'mr');
   });
 
   testWidgets('the splash screen shows the logo with a spoken description', (tester) async {
-    final (app, _) = await buildTestApp(FakeBackend((_) => healthyServer), savedLanguage: 'en');
-    await tester.pumpWidget(app);
+    final app = await TestApp.build(FakeBackend((_) => healthyServer), savedLanguage: 'en');
+    await tester.pumpWidget(app.widget);
     await tester.pump();
 
     expect(find.bySemanticsLabel('Smart Ration AI logo, powered by HSD2C'), findsOneWidget);

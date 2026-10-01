@@ -113,4 +113,95 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorRequestFailed =>
       'The request could not be completed. Please check and try again.';
+
+  @override
+  String get signInTitle => 'Sign in';
+
+  @override
+  String get signInSubtitle =>
+      'Use the email and password of your Smart Ration account.';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get signInButton => 'Sign in';
+
+  @override
+  String get signingIn => 'Signing in...';
+
+  @override
+  String get emailRequired => 'Please enter your email.';
+
+  @override
+  String get emailInvalid => 'Please enter a valid email address.';
+
+  @override
+  String get passwordRequired => 'Please enter your password.';
+
+  @override
+  String get loginInvalid => 'The email or password is not correct.';
+
+  @override
+  String get loginAccountDisabled =>
+      'This account has been turned off. Please contact your ration shop or district office.';
+
+  @override
+  String get demoAccountsTitle => 'Demo accounts (development builds only)';
+
+  @override
+  String get demoAccountsHelp =>
+      'Tap one to fill in its email. The demo password is in the project README.';
+
+  @override
+  String get checkServer => 'Check server connection';
+
+  @override
+  String get serverStatusTitle => 'Server status';
+
+  @override
+  String get roleRuralUser => 'Rural User';
+
+  @override
+  String get roleShopOwner => 'Shop Owner';
+
+  @override
+  String get roleOfficial => 'Government Official';
+
+  @override
+  String get roleAdmin => 'Administrator';
+
+  @override
+  String greeting(String name) {
+    return 'Namaste, $name';
+  }
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String shopLinked(int id) {
+    return 'Ration shop no. $id';
+  }
+
+  @override
+  String get citizenDashboardIntro =>
+      'Your ration card, family members, booking and token will appear here.';
+
+  @override
+  String get shopDashboardIntro =>
+      'Today\'s tokens, the QR scanner, stock and collections will appear here.';
+
+  @override
+  String get officialDashboardIntro =>
+      'Shops, distribution, stock alerts and reports will appear here.';
 }

@@ -29,7 +29,7 @@ void main() {
 
     test('sends the saved sign-in token', () async {
       final tokens = MemoryTokenStorage();
-      await tokens.saveTokens(accessToken: 'abc.def.ghi', refreshToken: 'r');
+      await tokens.saveSession(accessToken: 'abc.def.ghi', refreshToken: 'r', userJson: '{}');
       final backend = FakeBackend((_) => const FakeReply(200, {'success': true, 'data': null}));
       await clientFor(backend, tokens: tokens).get<void>('/api/ration/bookings');
       expect(backend.requests.single.headers['Authorization'], 'Bearer abc.def.ghi');

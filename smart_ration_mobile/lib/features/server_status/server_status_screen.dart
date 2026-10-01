@@ -9,7 +9,7 @@ import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import 'server_status.dart';
 
-/// Home screen for now: proves the app can reach the backend. Login and the dashboards replace it later.
+/// Shows whether the app can reach the backend. Opened from the sign-in screen and the dashboards.
 class ServerStatusScreen extends ConsumerWidget {
   const ServerStatusScreen({super.key});
 
@@ -22,7 +22,7 @@ class ServerStatusScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l.appTitle),
+        title: Text(l.serverStatusTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.translate),

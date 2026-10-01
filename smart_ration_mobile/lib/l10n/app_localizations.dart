@@ -291,6 +291,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The request could not be completed. Please check and try again.'**
   String get errorRequestFailed;
+
+  /// No description provided for @signInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInTitle;
+
+  /// No description provided for @signInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the email and password of your Smart Ration account.'**
+  String get signInSubtitle;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @signInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInButton;
+
+  /// No description provided for @signingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in...'**
+  String get signingIn;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email.'**
+  String get emailRequired;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get emailInvalid;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password.'**
+  String get passwordRequired;
+
+  /// No description provided for @loginInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The email or password is not correct.'**
+  String get loginInvalid;
+
+  /// No description provided for @loginAccountDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been turned off. Please contact your ration shop or district office.'**
+  String get loginAccountDisabled;
+
+  /// Shown only in development builds.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo accounts (development builds only)'**
+  String get demoAccountsTitle;
+
+  /// No description provided for @demoAccountsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap one to fill in its email. The demo password is in the project README.'**
+  String get demoAccountsHelp;
+
+  /// No description provided for @checkServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Check server connection'**
+  String get checkServer;
+
+  /// No description provided for @serverStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Server status'**
+  String get serverStatusTitle;
+
+  /// No description provided for @roleRuralUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Rural User'**
+  String get roleRuralUser;
+
+  /// No description provided for @roleShopOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop Owner'**
+  String get roleShopOwner;
+
+  /// No description provided for @roleOfficial.
+  ///
+  /// In en, this message translates to:
+  /// **'Government Official'**
+  String get roleOfficial;
+
+  /// No description provided for @roleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator'**
+  String get roleAdmin;
+
+  /// Greeting on the dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste, {name}'**
+  String greeting(String name);
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOut;
+
+  /// The shop a shop owner serves.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration shop no. {id}'**
+  String shopLinked(int id);
+
+  /// No description provided for @citizenDashboardIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ration card, family members, booking and token will appear here.'**
+  String get citizenDashboardIntro;
+
+  /// No description provided for @shopDashboardIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s tokens, the QR scanner, stock and collections will appear here.'**
+  String get shopDashboardIntro;
+
+  /// No description provided for @officialDashboardIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Shops, distribution, stock alerts and reports will appear here.'**
+  String get officialDashboardIntro;
 }
 
 class _AppLocalizationsDelegate

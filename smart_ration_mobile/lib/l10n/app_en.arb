@@ -1,19 +1,20 @@
 {
   "@@locale": "en",
-
   "appTitle": "Smart Ration AI",
   "poweredBy": "Powered by HSD2C",
-  "@poweredBy": { "description": "Brand line under the app name. HSD2C is a company name and is never translated." },
+  "@poweredBy": {
+    "description": "Brand line under the app name. HSD2C is a company name and is never translated."
+  },
   "tagline": "AI powered · For every family",
   "loading": "Loading...",
   "logoDescription": "Smart Ration AI logo, powered by HSD2C",
-  "@logoDescription": { "description": "Read aloud by screen readers instead of the logo image." },
-
+  "@logoDescription": {
+    "description": "Read aloud by screen readers instead of the logo image."
+  },
   "chooseLanguageTitle": "Choose your language",
   "chooseLanguageHelp": "You can change it later from the language button at the top of the screen.",
   "continueButton": "Continue",
   "language": "Language",
-
   "serverChecking": "Checking the connection to the server…",
   "serverConnected": "Connected to the server",
   "serverNoDatabase": "The server cannot reach its database",
@@ -29,10 +30,16 @@
   "serverAddress": "Server: {url} · {environment}",
   "@serverAddress": {
     "description": "Developer information at the bottom of the screen.",
-    "placeholders": { "url": { "type": "String" }, "environment": { "type": "String" } }
+    "placeholders": {
+      "url": {
+        "type": "String"
+      },
+      "environment": {
+        "type": "String"
+      }
+    }
   },
   "tryAgain": "Try again",
-
   "errorNoConnection": "Unable to connect. Please check your internet connection.",
   "errorTimeout": "The server is taking too long to answer. Please try again.",
   "errorSessionEnded": "Your session has ended. Please sign in again.",
@@ -41,5 +48,51 @@
   "errorGeneric": "Something went wrong. Please try again.",
   "errorForbidden": "You do not have permission to do this.",
   "errorNotFound": "The requested information was not found.",
-  "errorRequestFailed": "The request could not be completed. Please check and try again."
+  "errorRequestFailed": "The request could not be completed. Please check and try again.",
+  "signInTitle": "Sign in",
+  "signInSubtitle": "Use the email and password of your Smart Ration account.",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "signInButton": "Sign in",
+  "signingIn": "Signing in...",
+  "emailRequired": "Please enter your email.",
+  "emailInvalid": "Please enter a valid email address.",
+  "passwordRequired": "Please enter your password.",
+  "loginInvalid": "The email or password is not correct.",
+  "loginAccountDisabled": "This account has been turned off. Please contact your ration shop or district office.",
+  "demoAccountsTitle": "Demo accounts (development builds only)",
+  "@demoAccountsTitle": {
+    "description": "Shown only in development builds."
+  },
+  "demoAccountsHelp": "Tap one to fill in its email. The demo password is in the project README.",
+  "checkServer": "Check server connection",
+  "serverStatusTitle": "Server status",
+  "roleRuralUser": "Rural User",
+  "roleShopOwner": "Shop Owner",
+  "roleOfficial": "Government Official",
+  "roleAdmin": "Administrator",
+  "greeting": "Namaste, {name}",
+  "@greeting": {
+    "description": "Greeting on the dashboard.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "signOut": "Sign out",
+  "shopLinked": "Ration shop no. {id}",
+  "@shopLinked": {
+    "description": "The shop a shop owner serves.",
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "citizenDashboardIntro": "Your ration card, family members, booking and token will appear here.",
+  "shopDashboardIntro": "Today's tokens, the QR scanner, stock and collections will appear here.",
+  "officialDashboardIntro": "Shops, distribution, stock alerts and reports will appear here."
 }
