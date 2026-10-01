@@ -488,5 +488,59 @@
   },
   "writeOffConfirmBody": "This removes damaged stock for good. It is recorded in the stock ledger.",
   "stockReceived": "Delivery recorded.",
-  "stockWrittenOff": "Damaged stock written off."
+  "stockWrittenOff": "Damaged stock written off.",
+  "officialTodayTitle": "Today across all shops",
+  "statShops": "Shops",
+  "statBeneficiaries": "Beneficiaries",
+  "statBookings": "Bookings",
+  "statHandedOutToday": "Handed out today",
+  "statLowStockAlerts": "Low-stock items",
+  "periodTitle": "Last 30 days",
+  "statTokensBooked": "Tokens booked",
+  "collectionRateLabel": "Collection rate",
+  "collectionRateValue": "{percent}% of booked tokens were collected",
+  "@collectionRateValue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsButton": "Alerts ({count})",
+  "@alertsButton": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alertsTitle": "Alerts",
+  "filterAll": "All",
+  "stockCritical": "Critical",
+  "shopTodayLine": "Today: {booked} booked · {collected} collected",
+  "@shopTodayLine": {
+    "placeholders": {
+      "booked": {
+        "type": "int"
+      },
+      "collected": {
+        "type": "int"
+      }
+    }
+  },
+  "shopOwnerLabel": "Shop owner",
+  "shopPlaceLabel": "Place",
+  "shopCodeLabel": "Shop code",
+  "noShops": "No shops found.",
+  "alertsNotice": "These are warnings to review, not proof of fraud. Check before acting.",
+  "noAlerts": "No open alerts.",
+  "severityHigh": "High",
+  "severityMedium": "Medium",
+  "severityLow": "Low",
+  "alertDuplicateCollection": "Repeated collection attempts",
+  "alertRepeatedQrScan": "Same QR scanned many times",
+  "alertFailedVerification": "Repeated failed checks",
+  "alertLowStock": "Low stock",
+  "alertUnusualConsumption": "Unusual consumption",
+  "alertDetailsInEnglish": "Details from the system (English):"
 }

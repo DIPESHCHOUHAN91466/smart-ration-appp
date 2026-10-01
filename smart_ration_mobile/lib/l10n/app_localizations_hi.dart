@@ -912,4 +912,101 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get stockWrittenOff => 'खराब माल घटा दिया गया।';
+
+  @override
+  String get officialTodayTitle => 'आज सभी दुकानों में';
+
+  @override
+  String get statShops => 'दुकानें';
+
+  @override
+  String get statBeneficiaries => 'लाभार्थी';
+
+  @override
+  String get statBookings => 'बुकिंग';
+
+  @override
+  String get statHandedOutToday => 'आज बाँटा गया';
+
+  @override
+  String get statLowStockAlerts => 'कम स्टॉक वाली चीज़ें';
+
+  @override
+  String get periodTitle => 'पिछले 30 दिन';
+
+  @override
+  String get statTokensBooked => 'बुक हुए टोकन';
+
+  @override
+  String get collectionRateLabel => 'राशन लेने की दर';
+
+  @override
+  String collectionRateValue(String percent) {
+    return '$percent% बुक टोकन पर राशन लिया गया';
+  }
+
+  @override
+  String alertsButton(int count) {
+    return 'अलर्ट ($count)';
+  }
+
+  @override
+  String get alertsTitle => 'अलर्ट';
+
+  @override
+  String get filterAll => 'सभी';
+
+  @override
+  String get stockCritical => 'गंभीर';
+
+  @override
+  String shopTodayLine(int booked, int collected) {
+    return 'आज: $booked बुक · $collected दिया गया';
+  }
+
+  @override
+  String get shopOwnerLabel => 'दुकानदार';
+
+  @override
+  String get shopPlaceLabel => 'स्थान';
+
+  @override
+  String get shopCodeLabel => 'दुकान कोड';
+
+  @override
+  String get noShops => 'कोई दुकान नहीं मिली।';
+
+  @override
+  String get alertsNotice =>
+      'ये जाँचने लायक चेतावनियाँ हैं, धोखाधड़ी का सबूत नहीं। कार्रवाई से पहले जाँचें।';
+
+  @override
+  String get noAlerts => 'कोई खुला अलर्ट नहीं।';
+
+  @override
+  String get severityHigh => 'उच्च';
+
+  @override
+  String get severityMedium => 'मध्यम';
+
+  @override
+  String get severityLow => 'निम्न';
+
+  @override
+  String get alertDuplicateCollection => 'बार-बार राशन लेने की कोशिश';
+
+  @override
+  String get alertRepeatedQrScan => 'एक ही QR कई बार स्कैन';
+
+  @override
+  String get alertFailedVerification => 'बार-बार जाँच विफल';
+
+  @override
+  String get alertLowStock => 'कम स्टॉक';
+
+  @override
+  String get alertUnusualConsumption => 'असामान्य खपत';
+
+  @override
+  String get alertDetailsInEnglish => 'सिस्टम का विवरण (अंग्रेज़ी में):';
 }

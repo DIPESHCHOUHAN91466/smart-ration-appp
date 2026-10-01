@@ -923,4 +923,101 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stockWrittenOff => 'Damaged stock written off.';
+
+  @override
+  String get officialTodayTitle => 'Today across all shops';
+
+  @override
+  String get statShops => 'Shops';
+
+  @override
+  String get statBeneficiaries => 'Beneficiaries';
+
+  @override
+  String get statBookings => 'Bookings';
+
+  @override
+  String get statHandedOutToday => 'Handed out today';
+
+  @override
+  String get statLowStockAlerts => 'Low-stock items';
+
+  @override
+  String get periodTitle => 'Last 30 days';
+
+  @override
+  String get statTokensBooked => 'Tokens booked';
+
+  @override
+  String get collectionRateLabel => 'Collection rate';
+
+  @override
+  String collectionRateValue(String percent) {
+    return '$percent% of booked tokens were collected';
+  }
+
+  @override
+  String alertsButton(int count) {
+    return 'Alerts ($count)';
+  }
+
+  @override
+  String get alertsTitle => 'Alerts';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get stockCritical => 'Critical';
+
+  @override
+  String shopTodayLine(int booked, int collected) {
+    return 'Today: $booked booked · $collected collected';
+  }
+
+  @override
+  String get shopOwnerLabel => 'Shop owner';
+
+  @override
+  String get shopPlaceLabel => 'Place';
+
+  @override
+  String get shopCodeLabel => 'Shop code';
+
+  @override
+  String get noShops => 'No shops found.';
+
+  @override
+  String get alertsNotice =>
+      'These are warnings to review, not proof of fraud. Check before acting.';
+
+  @override
+  String get noAlerts => 'No open alerts.';
+
+  @override
+  String get severityHigh => 'High';
+
+  @override
+  String get severityMedium => 'Medium';
+
+  @override
+  String get severityLow => 'Low';
+
+  @override
+  String get alertDuplicateCollection => 'Repeated collection attempts';
+
+  @override
+  String get alertRepeatedQrScan => 'Same QR scanned many times';
+
+  @override
+  String get alertFailedVerification => 'Repeated failed checks';
+
+  @override
+  String get alertLowStock => 'Low stock';
+
+  @override
+  String get alertUnusualConsumption => 'Unusual consumption';
+
+  @override
+  String get alertDetailsInEnglish => 'Details from the system (English):';
 }

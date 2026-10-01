@@ -1737,6 +1737,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Damaged stock written off.'**
   String get stockWrittenOff;
+
+  /// No description provided for @officialTodayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today across all shops'**
+  String get officialTodayTitle;
+
+  /// No description provided for @statShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Shops'**
+  String get statShops;
+
+  /// No description provided for @statBeneficiaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Beneficiaries'**
+  String get statBeneficiaries;
+
+  /// No description provided for @statBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get statBookings;
+
+  /// No description provided for @statHandedOutToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Handed out today'**
+  String get statHandedOutToday;
+
+  /// No description provided for @statLowStockAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-stock items'**
+  String get statLowStockAlerts;
+
+  /// No description provided for @periodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get periodTitle;
+
+  /// No description provided for @statTokensBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokens booked'**
+  String get statTokensBooked;
+
+  /// No description provided for @collectionRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection rate'**
+  String get collectionRateLabel;
+
+  /// No description provided for @collectionRateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of booked tokens were collected'**
+  String collectionRateValue(String percent);
+
+  /// No description provided for @alertsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts ({count})'**
+  String alertsButton(int count);
+
+  /// No description provided for @alertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get alertsTitle;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @stockCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get stockCritical;
+
+  /// No description provided for @shopTodayLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Today: {booked} booked · {collected} collected'**
+  String shopTodayLine(int booked, int collected);
+
+  /// No description provided for @shopOwnerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop owner'**
+  String get shopOwnerLabel;
+
+  /// No description provided for @shopPlaceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Place'**
+  String get shopPlaceLabel;
+
+  /// No description provided for @shopCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop code'**
+  String get shopCodeLabel;
+
+  /// No description provided for @noShops.
+  ///
+  /// In en, this message translates to:
+  /// **'No shops found.'**
+  String get noShops;
+
+  /// No description provided for @alertsNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'These are warnings to review, not proof of fraud. Check before acting.'**
+  String get alertsNotice;
+
+  /// No description provided for @noAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No open alerts.'**
+  String get noAlerts;
+
+  /// No description provided for @severityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get severityHigh;
+
+  /// No description provided for @severityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get severityMedium;
+
+  /// No description provided for @severityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get severityLow;
+
+  /// No description provided for @alertDuplicateCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeated collection attempts'**
+  String get alertDuplicateCollection;
+
+  /// No description provided for @alertRepeatedQrScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Same QR scanned many times'**
+  String get alertRepeatedQrScan;
+
+  /// No description provided for @alertFailedVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeated failed checks'**
+  String get alertFailedVerification;
+
+  /// No description provided for @alertLowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock'**
+  String get alertLowStock;
+
+  /// No description provided for @alertUnusualConsumption.
+  ///
+  /// In en, this message translates to:
+  /// **'Unusual consumption'**
+  String get alertUnusualConsumption;
+
+  /// No description provided for @alertDetailsInEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Details from the system (English):'**
+  String get alertDetailsInEnglish;
 }
 
 class _AppLocalizationsDelegate

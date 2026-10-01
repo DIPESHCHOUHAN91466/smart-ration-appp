@@ -11,8 +11,10 @@ import '../features/citizen/citizen_home_screen.dart';
 import '../features/citizen/eligibility_screen.dart';
 import '../features/citizen/family_screen.dart';
 import '../features/citizen/ration_card_screen.dart';
-import '../features/home/role_home_screen.dart';
 import '../features/language/language_screen.dart';
+import '../features/official/alerts_screen.dart';
+import '../features/official/official_home_screen.dart';
+import '../features/official/shops_screen.dart';
 import '../features/server_status/server_status_screen.dart';
 import '../features/shop/customer_check_screen.dart';
 import '../features/shop/otp_check_screen.dart';
@@ -74,7 +76,23 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      GoRoute(path: Routes.officialHome, builder: (context, state) => const RoleHomeScreen()),
+      GoRoute(
+        path: Routes.officialHome,
+        builder: (context, state) => const OfficialHomeScreen(),
+        routes: [
+          GoRoute(
+            path: _child(Routes.officialShops),
+            builder: (context, state) => const ShopsScreen(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (context, state) => ShopDetailScreen(shopId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0),
+              ),
+            ],
+          ),
+          GoRoute(path: _child(Routes.officialAlerts), builder: (context, state) => const AlertsScreen()),
+        ],
+      ),
     ],
   );
 });

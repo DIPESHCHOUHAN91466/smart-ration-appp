@@ -290,3 +290,40 @@ List<Map<String, Object?>> stockJson() => [
       {'id': 12, 'rationShopId': 3, 'rationType': 'Salt', 'availableQuantity': 3.5, 'allocatedQuantity': 20,
           'minimumStockLevel': 10, 'isLowStock': true, 'updatedAt': '2026-10-01T04:00:00'},
     ];
+
+/// A backend with the official's read-only views (same shapes as the real /api/admin, /api/shops
+/// and /api/ai/alerts answers).
+FakeReply officialServer(RequestOptions r) => switch (r.path) {
+      '/api/admin/dashboard' => FakeReply.ok({'totalBeneficiaries': 257, 'totalShops': 10, 'todayBookings': 14, 'todayCollections': 9,
+          'pendingCollections': 5, 'rationDistributedTodayKg': 114.75, 'lowStockAlerts': 33}),
+      '/api/admin/statistics' => FakeReply.ok({'tokensGenerated': 453, 'collectionsCompleted': 349, 'collectionsCancelled': 26,
+          'collectionEfficiencyPercent': 77.0, 'shopPerformance': []}),
+      '/api/shops/map' => FakeReply.ok([
+          shopMarkerJson(1, 'Satnavari Ration Shop', 'Critical'),
+          shopMarkerJson(2, 'Butibori Ration Shop', 'Normal'),
+          shopMarkerJson(3, 'Hingna Ration Shop', 'Low'),
+        ]),
+      '/api/shops/1/location' => FakeReply.ok({'id': 1, 'shopName': 'Satnavari Ration Shop', 'shopCode': 'SR-SATNAVARI-001',
+          'operatorName': 'Satnavari Shop Owner', 'village': 'Satnavari', 'district': 'Nagpur', 'state': 'Maharashtra',
+          'inventory': stockJson()}),
+      '/api/ai/alerts/active' => FakeReply.ok({
+          'sync': {'available': false},
+          'items': [
+            alertJson(47, 'RepeatedQrScan', 'MEDIUM'),
+            alertJson(40, 'DuplicateCollectionAttempt', 'HIGH'),
+          ],
+        }),
+      _ => healthyReply,
+    };
+
+Map<String, Object?> shopMarkerJson(int id, String name, String status) => {
+      'id': id, 'shopName': name, 'shopCode': 'SR-$id', 'village': name.split(' ').first, 'district': 'Nagpur',
+      'state': 'Maharashtra', 'inventoryStatus': status, 'todayBookings': id * 2, 'completedCollections': id,
+      'pendingCollections': id, 'eligibleBeneficiaries': 30, 'verificationIssues': 0, 'dataSource': 'SYNTHETIC_DEMO',
+    };
+
+Map<String, Object?> alertJson(int id, String type, String severity) => {
+      'id': id, 'source': 'RULES', 'alertType': type, 'severity': severity, 'status': 'Open', 'shopId': 1,
+      'shopName': 'Satnavari Ration Shop', 'title': type, 'description': 'Rule text $id from the backend.',
+      'detectedAt': '2026-09-24T02:41:19.949443',
+    };
