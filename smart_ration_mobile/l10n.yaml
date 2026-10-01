@@ -1,0 +1,6 @@
+# Flutter's translation generator. The English file is the master list of every sentence;
+# Hindi and Marathi must contain the same keys (a test checks this).
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+nullable-getter: false

@@ -1,0 +1,45 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Smart Ration AI",
+  "poweredBy": "Powered by HSD2C",
+  "@poweredBy": { "description": "Brand line under the app name. HSD2C is a company name and is never translated." },
+  "tagline": "AI powered · For every family",
+  "loading": "Loading...",
+  "logoDescription": "Smart Ration AI logo, powered by HSD2C",
+  "@logoDescription": { "description": "Read aloud by screen readers instead of the logo image." },
+
+  "chooseLanguageTitle": "Choose your language",
+  "chooseLanguageHelp": "You can change it later from the language button at the top of the screen.",
+  "continueButton": "Continue",
+  "language": "Language",
+
+  "serverChecking": "Checking the connection to the server…",
+  "serverConnected": "Connected to the server",
+  "serverNoDatabase": "The server cannot reach its database",
+  "statusOverall": "Overall",
+  "statusDatabase": "Database",
+  "statusData": "Data",
+  "statusHealthy": "Working",
+  "statusDegraded": "Partly working",
+  "statusUnhealthy": "Not working",
+  "statusUnknown": "Unknown",
+  "dataSynthetic": "Demo data (synthetic)",
+  "dataReal": "Real data",
+  "serverAddress": "Server: {url} · {environment}",
+  "@serverAddress": {
+    "description": "Developer information at the bottom of the screen.",
+    "placeholders": { "url": { "type": "String" }, "environment": { "type": "String" } }
+  },
+  "tryAgain": "Try again",
+
+  "errorNoConnection": "Unable to connect. Please check your internet connection.",
+  "errorTimeout": "The server is taking too long to answer. Please try again.",
+  "errorSessionEnded": "Your session has ended. Please sign in again.",
+  "errorTooManyRequests": "Too many attempts. Please wait a minute and try again.",
+  "errorServer": "The server had a problem. Please try again in a few minutes.",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "errorForbidden": "You do not have permission to do this.",
+  "errorNotFound": "The requested information was not found.",
+  "errorRequestFailed": "The request could not be completed. Please check and try again."
+}

@@ -1,0 +1,39 @@
+{
+  "@@locale": "mr",
+
+  "appTitle": "स्मार्ट रेशन AI",
+  "poweredBy": "HSD2C द्वारे संचालित",
+  "tagline": "AI ची शक्ती · प्रत्येक कुटुंबासाठी",
+  "loading": "लोड होत आहे...",
+  "logoDescription": "स्मार्ट रेशन AI चा लोगो, HSD2C द्वारे संचालित",
+
+  "chooseLanguageTitle": "तुमची भाषा निवडा",
+  "chooseLanguageHelp": "तुम्ही ती नंतर स्क्रीनच्या वरच्या भाषा बटणावरून बदलू शकता.",
+  "continueButton": "पुढे चला",
+  "language": "भाषा",
+
+  "serverChecking": "सर्व्हरशी कनेक्शन तपासत आहे…",
+  "serverConnected": "सर्व्हरशी जोडले गेले",
+  "serverNoDatabase": "सर्व्हर त्याच्या डेटाबेसपर्यंत पोहोचू शकत नाही",
+  "statusOverall": "एकूण स्थिती",
+  "statusDatabase": "डेटाबेस",
+  "statusData": "डेटा",
+  "statusHealthy": "व्यवस्थित",
+  "statusDegraded": "अंशतः सुरू",
+  "statusUnhealthy": "काम करत नाही",
+  "statusUnknown": "अज्ञात",
+  "dataSynthetic": "डेमो डेटा (सिंथेटिक)",
+  "dataReal": "वास्तविक डेटा",
+  "serverAddress": "सर्व्हर: {url} · {environment}",
+  "tryAgain": "पुन्हा प्रयत्न करा",
+
+  "errorNoConnection": "कनेक्ट होऊ शकले नाही. कृपया तुमचे इंटरनेट कनेक्शन तपासा.",
+  "errorTimeout": "सर्व्हर उत्तर द्यायला खूप वेळ घेत आहे. कृपया पुन्हा प्रयत्न करा.",
+  "errorSessionEnded": "तुमचे सत्र संपले आहे. कृपया पुन्हा साइन इन करा.",
+  "errorTooManyRequests": "खूप जास्त प्रयत्न झाले. कृपया एक मिनिट थांबून पुन्हा प्रयत्न करा.",
+  "errorServer": "सर्व्हरमध्ये अडचण आली. कृपया काही मिनिटांनी पुन्हा प्रयत्न करा.",
+  "errorGeneric": "काहीतरी चुकले. कृपया पुन्हा प्रयत्न करा.",
+  "errorForbidden": "तुम्हाला हे करण्याची परवानगी नाही.",
+  "errorNotFound": "मागितलेली माहिती सापडली नाही.",
+  "errorRequestFailed": "विनंती पूर्ण होऊ शकली नाही. कृपया तपासून पुन्हा प्रयत्न करा."
+}

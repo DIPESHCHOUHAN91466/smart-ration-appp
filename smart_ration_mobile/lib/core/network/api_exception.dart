@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 
+import '../../l10n/app_localizations.dart';
+
 /// What kind of failure happened, so screens can react (e.g. go to login on [unauthorized]).
 enum ApiErrorKind {
   noConnection,
@@ -17,7 +19,7 @@ enum ApiErrorKind {
   unknown,
 }
 
-/// Every failed backend call becomes one of these. Screens show [userMessage], never the raw error.
+/// Every failed backend call becomes one of these. Screens show [messageIn], never the raw error.
 class ApiException implements Exception {
   const ApiException(this.kind, {this.serverMessage, this.errorCode, this.statusCode});
 
@@ -31,20 +33,21 @@ class ApiException implements Exception {
   final String? errorCode;
   final int? statusCode;
 
-  // TODO(M3): these sentences move into the English / Hindi / Marathi translation files.
-  String get userMessage => switch (kind) {
-        ApiErrorKind.noConnection => 'Unable to connect. Please check your internet connection.',
-        ApiErrorKind.timeout => 'The server is taking too long to answer. Please try again.',
-        ApiErrorKind.unauthorized => 'Your session has ended. Please sign in again.',
-        ApiErrorKind.tooManyRequests => 'Too many attempts. Please wait a minute and try again.',
-        ApiErrorKind.server => 'The server had a problem. Please try again in a few minutes.',
-        ApiErrorKind.unknown => 'Something went wrong. Please try again.',
-        ApiErrorKind.forbidden => serverMessage ?? 'You do not have permission to do this.',
-        ApiErrorKind.notFound => serverMessage ?? 'The requested information was not found.',
-        ApiErrorKind.badRequest ||
-        ApiErrorKind.conflict ||
-        ApiErrorKind.validation =>
-          serverMessage ?? 'The request could not be completed. Please check and try again.',
+  /// The sentence to show, in the user's language.
+  ///
+  /// When the backend explained a refusal (e.g. "This time slot is full.") that explanation is shown,
+  /// because it is more useful than a general sentence. The backend writes these in English only, so
+  /// later features translate the ones they expect by [errorCode].
+  String messageIn(AppLocalizations l) => switch (kind) {
+        ApiErrorKind.noConnection => l.errorNoConnection,
+        ApiErrorKind.timeout => l.errorTimeout,
+        ApiErrorKind.unauthorized => l.errorSessionEnded,
+        ApiErrorKind.tooManyRequests => l.errorTooManyRequests,
+        ApiErrorKind.server => l.errorServer,
+        ApiErrorKind.unknown => l.errorGeneric,
+        ApiErrorKind.forbidden => serverMessage ?? l.errorForbidden,
+        ApiErrorKind.notFound => serverMessage ?? l.errorNotFound,
+        ApiErrorKind.badRequest || ApiErrorKind.conflict || ApiErrorKind.validation => serverMessage ?? l.errorRequestFailed,
       };
 
   factory ApiException.fromDio(DioException e) {

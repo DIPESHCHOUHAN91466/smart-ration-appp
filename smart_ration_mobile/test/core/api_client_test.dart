@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smart_ration_mobile/l10n/app_localizations.dart';
 import 'package:smart_ration_mobile/core/network/api_client.dart';
 import 'package:smart_ration_mobile/core/network/api_exception.dart';
 import 'package:smart_ration_mobile/core/storage/token_storage.dart';
@@ -8,6 +10,8 @@ import '../support/fake_backend.dart';
 
 ApiClient clientFor(FakeBackend backend, {TokenStorage? tokens}) =>
     ApiClient.create(baseUrl: 'http://test.local', tokens: tokens ?? MemoryTokenStorage(), adapter: backend);
+
+final en = lookupAppLocalizations(const Locale('en'));
 
 void main() {
   group('ApiClient', () {
@@ -52,7 +56,7 @@ void main() {
       expect(error, isA<ApiException>());
       final e = error! as ApiException;
       expect(e.kind, ApiErrorKind.conflict);
-      expect(e.userMessage, 'This time slot is full. Please choose another slot.');
+      expect(e.messageIn(en), 'This time slot is full. Please choose another slot.');
       expect(e.errorCode, 'SLOT_FULL');
     });
 
@@ -68,7 +72,7 @@ void main() {
         clientFor(backend).get<void>('/api/shops'),
         throwsA(isA<ApiException>()
             .having((e) => e.kind, 'kind', ApiErrorKind.noConnection)
-            .having((e) => e.userMessage, 'message', 'Unable to connect. Please check your internet connection.')),
+            .having((e) => e.messageIn(en), 'message', 'Unable to connect. Please check your internet connection.')),
       );
     });
   });

@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smart_ration_mobile/l10n/app_localizations.dart';
 import 'package:smart_ration_mobile/core/network/api_exception.dart';
+
+final en = lookupAppLocalizations(const Locale('en'));
 
 void main() {
   group('ApiException.fromResponse', () {
@@ -24,22 +28,22 @@ void main() {
     test('a server error never shows the backend wording', () {
       final e = ApiException.fromResponse(500, {'message': 'IntegrityError at line 42'});
       expect(e.serverMessage, isNull);
-      expect(e.userMessage, 'The server had a problem. Please try again in a few minutes.');
+      expect(e.messageIn(en), 'The server had a problem. Please try again in a few minutes.');
     });
 
     test('an expired session asks the user to sign in again', () {
-      expect(ApiException.fromResponse(401, {'message': 'Authentication required.'}).userMessage,
+      expect(ApiException.fromResponse(401, {'message': 'Authentication required.'}).messageIn(en),
           'Your session has ended. Please sign in again.');
     });
 
     test('a forbidden action shows the backend reason', () {
       final e = ApiException.fromResponse(403, {'message': 'This token belongs to another ration shop.', 'errorCode': 'WRONG_SHOP'});
-      expect(e.userMessage, 'This token belongs to another ration shop.');
+      expect(e.messageIn(en), 'This token belongs to another ration shop.');
       expect(e.errorCode, 'WRONG_SHOP');
     });
 
     test('a body without a message still gives a sentence', () {
-      expect(ApiException.fromResponse(400, 'not json').userMessage, isNotEmpty);
+      expect(ApiException.fromResponse(400, 'not json').messageIn(en), isNotEmpty);
     });
   });
 
@@ -58,8 +62,8 @@ void main() {
 
     test('a technical error never reaches the user', () {
       final e = ApiException.fromDio(dio(DioExceptionType.unknown));
-      expect(e.userMessage, 'Something went wrong. Please try again.');
-      expect(e.userMessage, isNot(contains('Exception')));
+      expect(e.messageIn(en), 'Something went wrong. Please try again.');
+      expect(e.messageIn(en), isNot(contains('Exception')));
     });
   });
 }

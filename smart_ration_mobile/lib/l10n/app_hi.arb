@@ -1,0 +1,39 @@
+{
+  "@@locale": "hi",
+
+  "appTitle": "स्मार्ट राशन AI",
+  "poweredBy": "HSD2C द्वारा संचालित",
+  "tagline": "AI की शक्ति · हर परिवार के लिए",
+  "loading": "लोड हो रहा है...",
+  "logoDescription": "स्मार्ट राशन AI का लोगो, HSD2C द्वारा संचालित",
+
+  "chooseLanguageTitle": "अपनी भाषा चुनें",
+  "chooseLanguageHelp": "आप इसे बाद में स्क्रीन के ऊपर दिए भाषा बटन से बदल सकते हैं।",
+  "continueButton": "आगे बढ़ें",
+  "language": "भाषा",
+
+  "serverChecking": "सर्वर से कनेक्शन जाँचा जा रहा है…",
+  "serverConnected": "सर्वर से जुड़ गए",
+  "serverNoDatabase": "सर्वर अपने डेटाबेस तक नहीं पहुँच पा रहा है",
+  "statusOverall": "कुल स्थिति",
+  "statusDatabase": "डेटाबेस",
+  "statusData": "डेटा",
+  "statusHealthy": "ठीक है",
+  "statusDegraded": "आंशिक रूप से चालू",
+  "statusUnhealthy": "काम नहीं कर रहा",
+  "statusUnknown": "अज्ञात",
+  "dataSynthetic": "डेमो डेटा (सिंथेटिक)",
+  "dataReal": "वास्तविक डेटा",
+  "serverAddress": "सर्वर: {url} · {environment}",
+  "tryAgain": "पुनः प्रयास करें",
+
+  "errorNoConnection": "कनेक्ट नहीं हो सका। कृपया अपना इंटरनेट कनेक्शन जाँचें।",
+  "errorTimeout": "सर्वर जवाब देने में बहुत समय ले रहा है। कृपया पुनः प्रयास करें।",
+  "errorSessionEnded": "आपका सत्र समाप्त हो गया है। कृपया फिर से साइन इन करें।",
+  "errorTooManyRequests": "बहुत अधिक प्रयास हुए। कृपया एक मिनट रुककर पुनः प्रयास करें।",
+  "errorServer": "सर्वर में समस्या आई। कृपया कुछ मिनट बाद पुनः प्रयास करें।",
+  "errorGeneric": "कुछ गलत हो गया। कृपया पुनः प्रयास करें।",
+  "errorForbidden": "आपको यह करने की अनुमति नहीं है।",
+  "errorNotFound": "मांगी गई जानकारी नहीं मिली।",
+  "errorRequestFailed": "अनुरोध पूरा नहीं हो सका। कृपया जाँचकर पुनः प्रयास करें।"
+}

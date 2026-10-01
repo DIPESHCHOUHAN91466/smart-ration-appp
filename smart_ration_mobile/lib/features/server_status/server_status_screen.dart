@@ -1,40 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/providers.dart';
+import '../../l10n/app_localizations.dart';
 import 'server_status.dart';
 
-// TODO(M3): every sentence on this screen moves into the English / Hindi / Marathi translation files.
-
-/// First screen for now: proves the app can reach the backend. Later milestones put the splash,
-/// language choice and login in front of it.
+/// Home screen for now: proves the app can reach the backend. Login and the dashboards replace it later.
 class ServerStatusScreen extends ConsumerWidget {
   const ServerStatusScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final status = ref.watch(serverStatusProvider);
     final env = ref.watch(envProvider);
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Smart Ration AI')),
+      appBar: AppBar(
+        title: Text(l.appTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.translate),
+            tooltip: l.language,
+            iconSize: 28,
+            onPressed: () => context.push(Routes.changeLanguage),
+          ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(serverStatusProvider.future),
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Text('Powered by HSD2C', style: text.titleMedium?.copyWith(color: AppColors.muted)),
+            Text(l.poweredBy, style: text.titleMedium?.copyWith(color: AppColors.muted)),
             const SizedBox(height: 20),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: status.when(
-                  loading: () => const _Checking(),
+                  loading: () => _Checking(label: l.serverChecking),
                   error: (error, _) => _Failed(
-                    message: error is ApiException ? error.userMessage : 'Something went wrong. Please try again.',
+                    message: error is ApiException ? error.messageIn(l) : l.errorGeneric,
+                    retryLabel: l.tryAgain,
                     onRetry: () => ref.invalidate(serverStatusProvider),
                   ),
                   data: (s) => _Connected(status: s),
@@ -42,7 +54,7 @@ class ServerStatusScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text('Server: ${env.apiBaseUrl}  ·  ${env.environment.name}',
+            Text(l.serverAddress(env.apiBaseUrl, env.environment.name),
                 style: text.bodySmall?.copyWith(color: AppColors.muted)),
           ],
         ),
@@ -52,13 +64,15 @@ class ServerStatusScreen extends ConsumerWidget {
 }
 
 class _Checking extends StatelessWidget {
-  const _Checking();
+  const _Checking({required this.label});
+
+  final String label;
 
   @override
-  Widget build(BuildContext context) => const Row(children: [
-        SizedBox(width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 3)),
-        SizedBox(width: 16),
-        Expanded(child: Text('Checking the connection to the server…')),
+  Widget build(BuildContext context) => Row(children: [
+        const SizedBox(width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 3)),
+        const SizedBox(width: 16),
+        Expanded(child: Text(label)),
       ]);
 }
 
@@ -69,28 +83,36 @@ class _Connected extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final ok = status.isUsable;
+    String word(String value) => switch (value) {
+          'healthy' => l.statusHealthy,
+          'degraded' => l.statusDegraded,
+          'unhealthy' => l.statusUnhealthy,
+          _ => l.statusUnknown,
+        };
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         Icon(ok ? Icons.check_circle : Icons.error, color: ok ? AppColors.success : AppColors.danger, size: 32),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(ok ? 'Connected to the server' : 'The server cannot reach its database',
-              style: Theme.of(context).textTheme.titleLarge),
+          child: Text(ok ? l.serverConnected : l.serverNoDatabase, style: Theme.of(context).textTheme.titleLarge),
         ),
       ]),
       const SizedBox(height: 16),
-      _Row(label: 'Overall', value: status.status, good: status.isHealthy, warn: ok && !status.isHealthy),
-      _Row(label: 'Database', value: status.database, good: ok),
-      _Row(label: 'Data', value: status.dataMode == 'synthetic' ? 'Demo data (synthetic)' : status.dataMode, good: true),
+      _Row(label: l.statusOverall, value: word(status.status), good: status.isHealthy, warn: ok && !status.isHealthy),
+      _Row(label: l.statusDatabase, value: word(status.database), good: ok),
+      _Row(label: l.statusData, value: status.dataMode == 'synthetic' ? l.dataSynthetic : l.dataReal, good: true),
     ]);
   }
 }
 
 class _Failed extends StatelessWidget {
-  const _Failed({required this.message, required this.onRetry});
+  const _Failed({required this.message, required this.retryLabel, required this.onRetry});
 
   final String message;
+  final String retryLabel;
   final VoidCallback onRetry;
 
   @override
@@ -101,7 +123,7 @@ class _Failed extends StatelessWidget {
           Expanded(child: Text(message, style: Theme.of(context).textTheme.titleMedium)),
         ]),
         const SizedBox(height: 16),
-        FilledButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: const Text('Try again')),
+        FilledButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: Text(retryLabel)),
       ]);
 }
 
@@ -125,10 +147,17 @@ class _Row extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(children: [
         Expanded(child: Text(label, style: const TextStyle(color: AppColors.muted, fontSize: 16))),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(99)),
-          child: Text(value, style: TextStyle(color: fg, fontWeight: FontWeight.w700, fontSize: 15)),
+        const SizedBox(width: 8),
+        // Flexible lets a long word wrap instead of overflowing; Align keeps the pill on the right.
+        Flexible(
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(99)),
+              child: Text(value, style: TextStyle(color: fg, fontWeight: FontWeight.w700, fontSize: 15)),
+            ),
+          ),
         ),
       ]),
     );
