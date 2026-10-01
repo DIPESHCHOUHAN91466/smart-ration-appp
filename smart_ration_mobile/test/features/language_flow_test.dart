@@ -26,7 +26,7 @@ void main() {
 
     await tester.tap(find.text('आगे बढ़ें'));
     await tester.pumpAndSettle();
-    expect(find.text('अपने स्मार्ट राशन खाते का ईमेल और पासवर्ड डालें।'), findsOneWidget);
+    expect(find.text('हम आपके पंजीकृत मोबाइल नंबर पर 6 अंकों का कोड भेजेंगे।'), findsOneWidget);
     expect(app.preferences.getString(LanguageController.storageKey), 'hi');
   });
 
@@ -35,7 +35,7 @@ void main() {
     await tester.pumpWidget(app.widget);
     await tester.pumpAndSettle();
 
-    expect(find.text('तुमच्या स्मार्ट रेशन खात्याचा ईमेल आणि पासवर्ड वापरा.'), findsOneWidget);
+    expect(find.text('आम्ही तुमच्या नोंदणीकृत मोबाइल नंबरवर 6 अंकी कोड पाठवू.'), findsOneWidget);
     expect(find.text('तुमची भाषा निवडा'), findsNothing);
   });
 
@@ -43,7 +43,7 @@ void main() {
     final app = await TestApp.build(FakeBackend((_) => healthyServer), savedLanguage: 'en');
     await tester.pumpWidget(app.widget);
     await tester.pumpAndSettle();
-    expect(find.text('Use the email and password of your Smart Ration account.'), findsOneWidget);
+    expect(find.text('We will send a 6-digit code to your registered mobile number.'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Language'));
     await tester.pumpAndSettle();
@@ -52,7 +52,7 @@ void main() {
     await tester.tap(find.text('पुढे चला'));
     await tester.pumpAndSettle();
 
-    expect(find.text('तुमच्या स्मार्ट रेशन खात्याचा ईमेल आणि पासवर्ड वापरा.'), findsOneWidget);
+    expect(find.text('आम्ही तुमच्या नोंदणीकृत मोबाइल नंबरवर 6 अंकी कोड पाठवू.'), findsOneWidget);
     expect(app.preferences.getString(LanguageController.storageKey), 'mr');
   });
 

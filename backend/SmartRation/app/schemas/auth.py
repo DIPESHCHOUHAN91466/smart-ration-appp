@@ -21,6 +21,10 @@ REGISTER_RULES = {
 
 REFRESH_RULES = {"RefreshToken": [required]}
 
+OTP_REQUEST_RULES = {"MobileNumber": [required, string_length(20)]}
+
+OTP_VERIFY_RULES = {"MobileNumber": [required, string_length(20)], "Otp": [required, string_length(6, 6)]}
+
 
 class LoginRequest(BaseModel):
     email: str = Field(examples=["rural@example.com"])
@@ -37,6 +41,29 @@ class RegisterRequest(BaseModel):
 
 class RefreshRequest(BaseModel):
     refreshToken: str
+
+
+class OtpLoginRequest(BaseModel):
+    mobileNumber: str = Field(examples=["9000000001"], description="10-digit mobile; spaces, +91 or a leading 0 are accepted")
+
+
+class OtpLoginVerify(BaseModel):
+    mobileNumber: str = Field(examples=["9000000001"])
+    otp: str = Field(min_length=6, max_length=6, examples=["123456"])
+
+
+class OtpSent(BaseModel):
+    mobileMasked: str
+    expiresInSeconds: int
+    resendAfterSeconds: int
+    demoOtpValue: str | None = Field(description="Development demo mode only; always null elsewhere")
+
+
+class OtpSentEnvelope(BaseModel):
+    success: bool
+    message: str
+    data: OtpSent | None
+    errors: list[str] | None
 
 
 class UserSummary(BaseModel):

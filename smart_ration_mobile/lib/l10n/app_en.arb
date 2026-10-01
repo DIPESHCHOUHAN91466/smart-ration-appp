@@ -94,5 +94,45 @@
   },
   "citizenDashboardIntro": "Your ration card, family members, booking and token will appear here.",
   "shopDashboardIntro": "Today's tokens, the QR scanner, stock and collections will appear here.",
-  "officialDashboardIntro": "Shops, distribution, stock alerts and reports will appear here."
+  "officialDashboardIntro": "Shops, distribution, stock alerts and reports will appear here.",
+  "signInWithMobile": "Mobile & code",
+  "signInWithEmail": "Email & password",
+  "mobileSignInSubtitle": "We will send a 6-digit code to your registered mobile number.",
+  "mobileLabel": "Mobile number",
+  "mobileInvalid": "Please enter a 10-digit mobile number.",
+  "sendCode": "Send code",
+  "sendingCode": "Sending code...",
+  "codeSentTo": "If {mobile} is registered, a code has been sent to it.",
+  "@codeSentTo": {
+    "placeholders": {
+      "mobile": {
+        "type": "String",
+        "example": "******0001"
+      }
+    }
+  },
+  "codeLabel": "6-digit code",
+  "codeInvalidFormat": "Please enter the 6-digit code.",
+  "otpInvalid": "The code is wrong or has expired. Please try again or ask for a new code.",
+  "otpSendFailed": "The code could not be sent right now. Please try again, or sign in with email and password.",
+  "resendIn": "Send a new code in {seconds} s",
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "resendCode": "Send a new code",
+  "changeNumber": "Change number",
+  "demoCodeHint": "Development demo code: {code}",
+  "@demoCodeHint": {
+    "description": "Development builds only, when the server is in demo mode.",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "otpStaffNote": "Ration shop owners and officials sign in with email and password."
 }

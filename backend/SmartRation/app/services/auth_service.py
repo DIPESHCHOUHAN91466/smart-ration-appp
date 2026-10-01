@@ -59,6 +59,12 @@ def _issue_tokens(db: Session, user: User, settings: Settings) -> dict:
     return {"accessToken": access, "refreshToken": raw_refresh, "accessTokenExpiresAt": format_utc(access_expires), "user": user_summary(user)}
 
 
+def issue_session(db: Session, user: User, settings: Settings) -> dict:
+    """Access + refresh tokens and the user summary, exactly as a password login returns them.
+    For other ways of signing in (login_otp_service). Does not commit."""
+    return _issue_tokens(db, user, settings)
+
+
 def register(db: Session, settings: Settings, ctx: RequestContext, full_name: str, email: str, mobile: str, password: str) -> dict:
     email = email.strip().lower()
     if users.email_taken(db, email):

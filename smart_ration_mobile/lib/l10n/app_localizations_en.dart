@@ -204,4 +204,65 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get officialDashboardIntro =>
       'Shops, distribution, stock alerts and reports will appear here.';
+
+  @override
+  String get signInWithMobile => 'Mobile & code';
+
+  @override
+  String get signInWithEmail => 'Email & password';
+
+  @override
+  String get mobileSignInSubtitle =>
+      'We will send a 6-digit code to your registered mobile number.';
+
+  @override
+  String get mobileLabel => 'Mobile number';
+
+  @override
+  String get mobileInvalid => 'Please enter a 10-digit mobile number.';
+
+  @override
+  String get sendCode => 'Send code';
+
+  @override
+  String get sendingCode => 'Sending code...';
+
+  @override
+  String codeSentTo(String mobile) {
+    return 'If $mobile is registered, a code has been sent to it.';
+  }
+
+  @override
+  String get codeLabel => '6-digit code';
+
+  @override
+  String get codeInvalidFormat => 'Please enter the 6-digit code.';
+
+  @override
+  String get otpInvalid =>
+      'The code is wrong or has expired. Please try again or ask for a new code.';
+
+  @override
+  String get otpSendFailed =>
+      'The code could not be sent right now. Please try again, or sign in with email and password.';
+
+  @override
+  String resendIn(int seconds) {
+    return 'Send a new code in $seconds s';
+  }
+
+  @override
+  String get resendCode => 'Send a new code';
+
+  @override
+  String get changeNumber => 'Change number';
+
+  @override
+  String demoCodeHint(String code) {
+    return 'Development demo code: $code';
+  }
+
+  @override
+  String get otpStaffNote =>
+      'Ration shop owners and officials sign in with email and password.';
 }

@@ -205,4 +205,65 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get officialDashboardIntro =>
       'दुकाने, वितरण, साठ्याचे इशारे आणि अहवाल येथे दिसतील.';
+
+  @override
+  String get signInWithMobile => 'मोबाइल व कोड';
+
+  @override
+  String get signInWithEmail => 'ईमेल व पासवर्ड';
+
+  @override
+  String get mobileSignInSubtitle =>
+      'आम्ही तुमच्या नोंदणीकृत मोबाइल नंबरवर 6 अंकी कोड पाठवू.';
+
+  @override
+  String get mobileLabel => 'मोबाइल नंबर';
+
+  @override
+  String get mobileInvalid => 'कृपया 10 अंकी मोबाइल नंबर टाका.';
+
+  @override
+  String get sendCode => 'कोड पाठवा';
+
+  @override
+  String get sendingCode => 'कोड पाठवत आहे...';
+
+  @override
+  String codeSentTo(String mobile) {
+    return '$mobile नोंदणीकृत असल्यास त्यावर कोड पाठवला आहे.';
+  }
+
+  @override
+  String get codeLabel => '6 अंकी कोड';
+
+  @override
+  String get codeInvalidFormat => 'कृपया 6 अंकी कोड टाका.';
+
+  @override
+  String get otpInvalid =>
+      'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. कृपया पुन्हा प्रयत्न करा किंवा नवीन कोड मागवा.';
+
+  @override
+  String get otpSendFailed =>
+      'आत्ता कोड पाठवता आला नाही. कृपया पुन्हा प्रयत्न करा किंवा ईमेल व पासवर्डने साइन इन करा.';
+
+  @override
+  String resendIn(int seconds) {
+    return '$seconds सेकंदांत नवीन कोड पाठवा';
+  }
+
+  @override
+  String get resendCode => 'नवीन कोड पाठवा';
+
+  @override
+  String get changeNumber => 'नंबर बदला';
+
+  @override
+  String demoCodeHint(String code) {
+    return 'डेव्हलपमेंट डेमो कोड: $code';
+  }
+
+  @override
+  String get otpStaffNote =>
+      'रेशन दुकानदार आणि अधिकारी ईमेल व पासवर्डने साइन इन करतात.';
 }

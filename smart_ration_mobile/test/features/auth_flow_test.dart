@@ -16,7 +16,14 @@ Future<TestApp> start(WidgetTester tester, FakeBackend backend, {String language
   return app;
 }
 
+/// Switches to the email & password tab (the sign-in screen opens on mobile & code).
+Future<void> useEmail(WidgetTester tester, {String label = 'Email & password'}) async {
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
+}
+
 Future<void> signIn(WidgetTester tester, String email, String password) async {
+  if (find.widgetWithText(TextFormField, 'Email').evaluate().isEmpty) await useEmail(tester);
   await tester.enterText(find.widgetWithText(TextFormField, 'Email'), email);
   await tester.enterText(find.widgetWithText(TextFormField, 'Password'), password);
   await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
@@ -66,6 +73,7 @@ void main() {
   testWidgets('the wrong-password message is translated', (tester) async {
     final backend = FakeBackend((_) => FakeReply.fail(401, 'Invalid email or password.'));
     await start(tester, backend, language: 'hi');
+    await useEmail(tester, label: 'ईमेल और पासवर्ड');
 
     await tester.enterText(find.widgetWithText(TextFormField, 'ईमेल'), 'rural@example.com');
     await tester.enterText(find.widgetWithText(TextFormField, 'पासवर्ड'), 'wrong');
@@ -78,6 +86,7 @@ void main() {
   testWidgets('empty or invalid fields are caught before anything is sent', (tester) async {
     final backend = FakeBackend((_) => signedIn());
     await start(tester, backend);
+    await useEmail(tester);
 
     await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
     await tester.pumpAndSettle();
@@ -104,7 +113,7 @@ void main() {
     await tester.tap(find.byTooltip('Sign out'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Use the email and password of your Smart Ration account.'), findsOneWidget);
+    expect(find.text('We will send a 6-digit code to your registered mobile number.'), findsOneWidget);
     expect(await app.tokens.readRefreshToken(), isNull);
     final logout = backend.requests.singleWhere((r) => r.path == '/api/auth/logout');
     expect(logout.data, {'refreshToken': 'saved-refresh'});
@@ -117,7 +126,7 @@ void main() {
     await tester.tap(find.byTooltip('Sign out'));
     await tester.pumpAndSettle();
 
-    expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Send code'), findsOneWidget);
     expect(await app.tokens.readRefreshToken(), isNull);
   });
 

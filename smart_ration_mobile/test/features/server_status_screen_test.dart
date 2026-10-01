@@ -11,8 +11,12 @@ Future<void> openServerStatus(WidgetTester tester, FakeBackend backend, {String 
   await tester.pumpWidget(app.widget);
   await tester.pumpAndSettle();
   // The button is at the bottom of the sign-in form: scroll to it like a user would.
-  await tester.scrollUntilVisible(find.byIcon(Icons.dns_outlined), 200, scrollable: find.byType(Scrollable).first);
-  await tester.tap(find.byIcon(Icons.dns_outlined));
+  // Found by its icon, so the same helper works in every language.
+  final button = find.ancestor(of: find.byIcon(Icons.dns_outlined), matching: find.byWidgetPredicate((w) => w is ButtonStyleButton));
+  await tester.scrollUntilVisible(button, 200, scrollable: find.byType(Scrollable).first);
+  await tester.ensureVisible(button);
+  await tester.pumpAndSettle();
+  await tester.tap(button);
   await tester.pumpAndSettle();
 }
 

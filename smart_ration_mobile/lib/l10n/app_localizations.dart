@@ -453,6 +453,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Shops, distribution, stock alerts and reports will appear here.'**
   String get officialDashboardIntro;
+
+  /// No description provided for @signInWithMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile & code'**
+  String get signInWithMobile;
+
+  /// No description provided for @signInWithEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email & password'**
+  String get signInWithEmail;
+
+  /// No description provided for @mobileSignInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We will send a 6-digit code to your registered mobile number.'**
+  String get mobileSignInSubtitle;
+
+  /// No description provided for @mobileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number'**
+  String get mobileLabel;
+
+  /// No description provided for @mobileInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a 10-digit mobile number.'**
+  String get mobileInvalid;
+
+  /// No description provided for @sendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send code'**
+  String get sendCode;
+
+  /// No description provided for @sendingCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending code...'**
+  String get sendingCode;
+
+  /// No description provided for @codeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'If {mobile} is registered, a code has been sent to it.'**
+  String codeSentTo(String mobile);
+
+  /// No description provided for @codeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit code'**
+  String get codeLabel;
+
+  /// No description provided for @codeInvalidFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the 6-digit code.'**
+  String get codeInvalidFormat;
+
+  /// No description provided for @otpInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The code is wrong or has expired. Please try again or ask for a new code.'**
+  String get otpInvalid;
+
+  /// No description provided for @otpSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The code could not be sent right now. Please try again, or sign in with email and password.'**
+  String get otpSendFailed;
+
+  /// No description provided for @resendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a new code in {seconds} s'**
+  String resendIn(int seconds);
+
+  /// No description provided for @resendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a new code'**
+  String get resendCode;
+
+  /// No description provided for @changeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Change number'**
+  String get changeNumber;
+
+  /// Development builds only, when the server is in demo mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Development demo code: {code}'**
+  String demoCodeHint(String code);
+
+  /// No description provided for @otpStaffNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration shop owners and officials sign in with email and password.'**
+  String get otpStaffNote;
 }
 
 class _AppLocalizationsDelegate

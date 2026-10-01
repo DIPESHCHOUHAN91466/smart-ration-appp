@@ -280,6 +280,86 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "OtpSent": {
+        "properties": {
+          "demoOtpValue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Development demo mode only; always null elsewhere",
+            "title": "Demootpvalue"
+          },
+          "expiresInSeconds": {
+            "title": "Expiresinseconds",
+            "type": "integer"
+          },
+          "mobileMasked": {
+            "title": "Mobilemasked",
+            "type": "string"
+          },
+          "resendAfterSeconds": {
+            "title": "Resendafterseconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "mobileMasked",
+          "expiresInSeconds",
+          "resendAfterSeconds",
+          "demoOtpValue"
+        ],
+        "title": "OtpSent",
+        "type": "object"
+      },
+      "OtpSentEnvelope": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OtpSent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "data",
+          "errors"
+        ],
+        "title": "OtpSentEnvelope",
+        "type": "object"
+      },
       "ReadyResponse": {
         "properties": {
           "checks": {
@@ -1841,6 +1921,123 @@
           }
         },
         "summary": "Revoke a refresh token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/otp/request": {
+      "post": {
+        "operationId": "otp_request_api_auth_otp_request_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "mobileNumber": {
+                    "description": "10-digit mobile; spaces, +91 or a leading 0 are accepted",
+                    "examples": [
+                      "9000000001"
+                    ],
+                    "title": "Mobilenumber",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mobileNumber"
+                ],
+                "title": "OtpLoginRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpSentEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          },
+          "503": {
+            "description": "The SMS could not be sent"
+          }
+        },
+        "summary": "Send a sign-in code to a citizen's registered mobile",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/otp/verify": {
+      "post": {
+        "operationId": "otp_verify_api_auth_otp_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "mobileNumber": {
+                    "examples": [
+                      "9000000001"
+                    ],
+                    "title": "Mobilenumber",
+                    "type": "string"
+                  },
+                  "otp": {
+                    "examples": [
+                      "123456"
+                    ],
+                    "maxLength": 6,
+                    "minLength": 6,
+                    "title": "Otp",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mobileNumber",
+                  "otp"
+                ],
+                "title": "OtpLoginVerify",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "401": {
+            "description": "Invalid credentials / refresh token"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          }
+        },
+        "summary": "Sign in with the code (Rural Users)",
         "tags": [
           "auth"
         ]
