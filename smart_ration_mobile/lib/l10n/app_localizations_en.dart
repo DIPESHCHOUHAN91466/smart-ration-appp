@@ -1020,4 +1020,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alertDetailsInEnglish => 'Details from the system (English):';
+
+  @override
+  String get helpTitle => 'Help — Ration Mitra';
+
+  @override
+  String get helpButton => 'Help';
+
+  @override
+  String get assistantName => 'Ration Mitra';
+
+  @override
+  String get youLabel => 'You';
+
+  @override
+  String get helpPrivacy =>
+      'Don\'t type Aadhaar numbers, OTPs or passwords. Nothing you type is saved on this phone.';
+
+  @override
+  String get askHint => 'Type your question';
+
+  @override
+  String get sendQuestion => 'Send';
+
+  @override
+  String get speakQuestion => 'Ask by voice';
+
+  @override
+  String get stopListening => 'Stop listening';
+
+  @override
+  String get listening => 'Listening… speak now';
+
+  @override
+  String get voiceNote =>
+      'Your phone\'s speech service turns your voice into text and may use the internet to do so.';
+
+  @override
+  String get voiceUnavailable =>
+      'Voice input is not available. Allow the microphone in Settings, or type your question.';
+
+  @override
+  String get readAloud => 'Read aloud';
+
+  @override
+  String get stopReading => 'Stop reading';
+
+  @override
+  String get voiceMissing =>
+      'This phone has no voice for this language. You can add one in the phone\'s text-to-speech settings.';
+
+  @override
+  String get relatedTitle => 'Related';
+
+  @override
+  String get thinking => 'Ration Mitra is typing…';
+
+  @override
+  String get noSpeechHeard =>
+      'I didn\'t hear anything. Tap the mic and try again.';
 }

@@ -1917,6 +1917,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Details from the system (English):'**
   String get alertDetailsInEnglish;
+
+  /// No description provided for @helpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help — Ration Mitra'**
+  String get helpTitle;
+
+  /// No description provided for @helpButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get helpButton;
+
+  /// No description provided for @assistantName.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration Mitra'**
+  String get assistantName;
+
+  /// No description provided for @youLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get youLabel;
+
+  /// No description provided for @helpPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t type Aadhaar numbers, OTPs or passwords. Nothing you type is saved on this phone.'**
+  String get helpPrivacy;
+
+  /// No description provided for @askHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your question'**
+  String get askHint;
+
+  /// No description provided for @sendQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get sendQuestion;
+
+  /// No description provided for @speakQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask by voice'**
+  String get speakQuestion;
+
+  /// No description provided for @stopListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop listening'**
+  String get stopListening;
+
+  /// No description provided for @listening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening… speak now'**
+  String get listening;
+
+  /// No description provided for @voiceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone\'s speech service turns your voice into text and may use the internet to do so.'**
+  String get voiceNote;
+
+  /// No description provided for @voiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice input is not available. Allow the microphone in Settings, or type your question.'**
+  String get voiceUnavailable;
+
+  /// No description provided for @readAloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Read aloud'**
+  String get readAloud;
+
+  /// No description provided for @stopReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop reading'**
+  String get stopReading;
+
+  /// No description provided for @voiceMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone has no voice for this language. You can add one in the phone\'s text-to-speech settings.'**
+  String get voiceMissing;
+
+  /// No description provided for @relatedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Related'**
+  String get relatedTitle;
+
+  /// No description provided for @thinking.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration Mitra is typing…'**
+  String get thinking;
+
+  /// No description provided for @noSpeechHeard.
+  ///
+  /// In en, this message translates to:
+  /// **'I didn\'t hear anything. Tap the mic and try again.'**
+  String get noSpeechHeard;
 }
 
 class _AppLocalizationsDelegate

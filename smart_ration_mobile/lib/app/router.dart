@@ -11,6 +11,7 @@ import '../features/citizen/citizen_home_screen.dart';
 import '../features/citizen/eligibility_screen.dart';
 import '../features/citizen/family_screen.dart';
 import '../features/citizen/ration_card_screen.dart';
+import '../features/help/help_chat_screen.dart';
 import '../features/language/language_screen.dart';
 import '../features/official/alerts_screen.dart';
 import '../features/official/official_home_screen.dart';
@@ -47,6 +48,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.changeLanguage, builder: (context, state) => const LanguageScreen(firstLaunch: false)),
       GoRoute(path: Routes.serverStatus, builder: (context, state) => const ServerStatusScreen()),
       GoRoute(path: Routes.login, builder: (context, state) => const LoginScreen()),
+      GoRoute(path: Routes.help, builder: (context, state) => const HelpChatScreen()),
       GoRoute(path: Routes.citizenHome, builder: (context, state) => const CitizenHomeScreen()),
       GoRoute(path: Routes.citizenFamily, builder: (context, state) => const FamilyScreen()),
       GoRoute(path: Routes.citizenCard, builder: (context, state) => const RationCardScreen()),

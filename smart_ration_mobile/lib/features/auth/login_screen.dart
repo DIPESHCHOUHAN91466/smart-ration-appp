@@ -42,6 +42,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
+            icon: const Icon(Icons.help_outline),
+            tooltip: l.helpButton,
+            iconSize: 28,
+            onPressed: () => context.push(Routes.help),
+          ),
+          IconButton(
             icon: const Icon(Icons.translate),
             tooltip: l.language,
             iconSize: 28,

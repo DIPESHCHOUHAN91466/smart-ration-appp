@@ -8,6 +8,9 @@ abstract final class Routes {
   static const serverStatus = '/settings/server';
   static const login = '/login';
 
+  /// The Public Help assistant: open to everyone, signed in or not.
+  static const help = '/help';
+
   static const citizenHome = '/citizen';
   static const citizenFamily = '/citizen/family';
   static const citizenCard = '/citizen/card';
@@ -32,7 +35,7 @@ abstract final class Routes {
   static const officialAlerts = '/official/alerts';
 
   /// Screens anyone may open without signing in.
-  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login};
+  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, help};
 
   /// The dashboard for each role. Admins use the officials' dashboard, as on the website.
   static String homeFor(AppRole role) => switch (role) {

@@ -1009,4 +1009,62 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get alertDetailsInEnglish => 'सिस्टम का विवरण (अंग्रेज़ी में):';
+
+  @override
+  String get helpTitle => 'सहायता — राशन मित्र';
+
+  @override
+  String get helpButton => 'सहायता';
+
+  @override
+  String get assistantName => 'राशन मित्र';
+
+  @override
+  String get youLabel => 'आप';
+
+  @override
+  String get helpPrivacy =>
+      'आधार नंबर, OTP या पासवर्ड न लिखें। आप जो लिखते हैं वह इस फ़ोन पर सेव नहीं होता।';
+
+  @override
+  String get askHint => 'अपना सवाल लिखें';
+
+  @override
+  String get sendQuestion => 'भेजें';
+
+  @override
+  String get speakQuestion => 'बोलकर पूछें';
+
+  @override
+  String get stopListening => 'सुनना बंद करें';
+
+  @override
+  String get listening => 'सुन रहा है… अब बोलें';
+
+  @override
+  String get voiceNote =>
+      'आपके फ़ोन की स्पीच सेवा आवाज़ को टेक्स्ट में बदलती है और इसके लिए इंटरनेट का उपयोग कर सकती है।';
+
+  @override
+  String get voiceUnavailable =>
+      'आवाज़ से पूछना उपलब्ध नहीं है। सेटिंग में माइक्रोफ़ोन की अनुमति दें, या सवाल लिखें।';
+
+  @override
+  String get readAloud => 'पढ़कर सुनाएँ';
+
+  @override
+  String get stopReading => 'पढ़ना बंद करें';
+
+  @override
+  String get voiceMissing =>
+      'इस फ़ोन में इस भाषा की आवाज़ नहीं है। फ़ोन की टेक्स्ट-टू-स्पीच सेटिंग में जोड़ सकते हैं।';
+
+  @override
+  String get relatedTitle => 'संबंधित';
+
+  @override
+  String get thinking => 'राशन मित्र लिख रहा है…';
+
+  @override
+  String get noSpeechHeard => 'कुछ सुनाई नहीं दिया। माइक दबाकर फिर से बोलें।';
 }

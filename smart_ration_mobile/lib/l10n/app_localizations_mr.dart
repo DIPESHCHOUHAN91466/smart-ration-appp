@@ -1010,4 +1010,62 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get alertDetailsInEnglish => 'प्रणालीकडील तपशील (इंग्रजीत):';
+
+  @override
+  String get helpTitle => 'मदत — रेशन मित्र';
+
+  @override
+  String get helpButton => 'मदत';
+
+  @override
+  String get assistantName => 'रेशन मित्र';
+
+  @override
+  String get youLabel => 'तुम्ही';
+
+  @override
+  String get helpPrivacy =>
+      'आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका. तुम्ही लिहिलेले या फोनवर जतन होत नाही.';
+
+  @override
+  String get askHint => 'तुमचा प्रश्न लिहा';
+
+  @override
+  String get sendQuestion => 'पाठवा';
+
+  @override
+  String get speakQuestion => 'बोलून विचारा';
+
+  @override
+  String get stopListening => 'ऐकणे थांबवा';
+
+  @override
+  String get listening => 'ऐकत आहे… आता बोला';
+
+  @override
+  String get voiceNote =>
+      'तुमच्या फोनची स्पीच सेवा आवाजाचे मजकुरात रूपांतर करते आणि त्यासाठी इंटरनेट वापरू शकते.';
+
+  @override
+  String get voiceUnavailable =>
+      'आवाजाने विचारणे उपलब्ध नाही. सेटिंगमध्ये मायक्रोफोनला परवानगी द्या, किंवा प्रश्न लिहा.';
+
+  @override
+  String get readAloud => 'वाचून दाखवा';
+
+  @override
+  String get stopReading => 'वाचन थांबवा';
+
+  @override
+  String get voiceMissing =>
+      'या फोनमध्ये या भाषेचा आवाज नाही. फोनच्या टेक्स्ट-टू-स्पीच सेटिंगमध्ये जोडू शकता.';
+
+  @override
+  String get relatedTitle => 'संबंधित';
+
+  @override
+  String get thinking => 'रेशन मित्र लिहित आहे…';
+
+  @override
+  String get noSpeechHeard => 'काहीच ऐकू आले नाही. माइक दाबून पुन्हा बोला.';
 }
