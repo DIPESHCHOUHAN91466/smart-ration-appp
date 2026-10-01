@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_ration_mobile/features/auth/auth_controller.dart';
-import 'package:smart_ration_mobile/features/home/role_home_screen.dart';
+import 'package:smart_ration_mobile/features/citizen/citizen_home_screen.dart';
 
 import '../support/fake_backend.dart';
 import '../support/test_app.dart';
@@ -16,7 +16,7 @@ FakeReply otpBackend(RequestOptions r) => switch (r.path) {
       '/api/auth/otp/verify' => (r.data as Map)['otp'] == '123456'
           ? signedIn()
           : FakeReply.fail(401, 'The code is wrong or has expired.'),
-      _ => healthyServer,
+      _ => demoServer(r),
     };
 
 Future<TestApp> start(WidgetTester tester, FakeBackend backend, {String language = 'en'}) async {
@@ -61,9 +61,9 @@ void main() {
     await enterCode(tester, '123456');
     await tester.pumpAndSettle();
 
-    expect(find.byType(RoleHomeScreen), findsOneWidget);
+    expect(find.byType(CitizenHomeScreen), findsOneWidget);
     expect(find.text('Namaste, Asha Devi'), findsOneWidget);
-    expect(backend.requests.last.data, {'mobileNumber': '9000000001', 'otp': '123456'});
+    expect(backend.requests.singleWhere((r) => r.path == '/api/auth/otp/verify').data, {'mobileNumber': '9000000001', 'otp': '123456'});
     expect(await app.tokens.readRefreshToken(), 'refresh-1');
   });
 
@@ -75,7 +75,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('The code is wrong or has expired. Please try again or ask for a new code.'), findsOneWidget);
-    expect(find.byType(RoleHomeScreen), findsNothing);
+    expect(find.byType(CitizenHomeScreen), findsNothing);
   });
 
   testWidgets('a wrong code message is translated', (tester) async {

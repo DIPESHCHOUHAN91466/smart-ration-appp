@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_ration_mobile/features/auth/auth_controller.dart';
-import 'package:smart_ration_mobile/features/home/role_home_screen.dart';
+import 'package:smart_ration_mobile/features/citizen/citizen_home_screen.dart';
 
 import '../support/fake_backend.dart';
 import '../support/test_app.dart';
@@ -32,16 +32,16 @@ Future<void> signIn(WidgetTester tester, String email, String password) async {
 
 void main() {
   testWidgets('a citizen signs in and reaches the citizen dashboard', (tester) async {
-    final backend = FakeBackend((r) => r.path == '/api/auth/login' ? signedIn() : healthyServer);
+    final backend = FakeBackend((r) => r.path == '/api/auth/login' ? signedIn() : demoServer(r));
     final app = await start(tester, backend);
 
     await signIn(tester, '  rural@example.com ', 'secret-pass');
 
     expect(find.text('Namaste, Asha Devi'), findsOneWidget);
     expect(find.text('Rural User'), findsOneWidget);
-    expect(find.byType(RoleHomeScreen), findsOneWidget);
+    expect(find.byType(CitizenHomeScreen), findsOneWidget);
     // The email is trimmed; the password is sent as typed.
-    expect(backend.requests.single.data, {'email': 'rural@example.com', 'password': 'secret-pass'});
+    expect(backend.requests.singleWhere((r) => r.path == '/api/auth/login').data, {'email': 'rural@example.com', 'password': 'secret-pass'});
     // The session is saved so the next launch opens signed in.
     expect(await app.tokens.readRefreshToken(), 'refresh-1');
     expect(jsonDecode((await app.tokens.readUserJson())!)['role'], 'RuralUser');
@@ -66,7 +66,7 @@ void main() {
     await signIn(tester, 'rural@example.com', 'wrong');
 
     expect(find.text('The email or password is not correct.'), findsOneWidget);
-    expect(find.byType(RoleHomeScreen), findsNothing);
+    expect(find.byType(CitizenHomeScreen), findsNothing);
     expect(await app.tokens.readRefreshToken(), isNull);
   });
 
@@ -99,7 +99,7 @@ void main() {
   });
 
   testWidgets('a saved session opens straight on the dashboard, without signing in again', (tester) async {
-    final backend = FakeBackend((_) => healthyServer);
+    final backend = FakeBackend(demoServer);
     await start(tester, backend, signedIn: true);
 
     expect(find.text('Namaste, Asha Devi'), findsOneWidget);
@@ -131,10 +131,10 @@ void main() {
   });
 
   testWidgets('an ended session sends you to sign-in and says why', (tester) async {
-    await start(tester, FakeBackend((_) => healthyServer), signedIn: true);
-    expect(find.byType(RoleHomeScreen), findsOneWidget);
+    await start(tester, FakeBackend(demoServer), signedIn: true);
+    expect(find.byType(CitizenHomeScreen), findsOneWidget);
 
-    containerOf(tester.element(find.byType(RoleHomeScreen))).read(authControllerProvider.notifier).sessionExpired();
+    containerOf(tester.element(find.byType(CitizenHomeScreen))).read(authControllerProvider.notifier).sessionExpired();
     await tester.pumpAndSettle();
 
     expect(find.text('Your session has ended. Please sign in again.'), findsOneWidget);

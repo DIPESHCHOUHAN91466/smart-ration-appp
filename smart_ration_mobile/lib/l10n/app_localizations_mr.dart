@@ -266,4 +266,162 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get otpStaffNote =>
       'रेशन दुकानदार आणि अधिकारी ईमेल व पासवर्डने साइन इन करतात.';
+
+  @override
+  String get rationCard => 'रेशन कार्ड';
+
+  @override
+  String get cardNumber => 'कार्ड क्रमांक';
+
+  @override
+  String get cardScheme => 'कार्डचा प्रकार (योजना)';
+
+  @override
+  String get cardStatus => 'स्थिती';
+
+  @override
+  String get cardActive => 'सक्रिय';
+
+  @override
+  String get cardInactive => 'निष्क्रिय';
+
+  @override
+  String get familyId => 'कुटुंब आयडी';
+
+  @override
+  String get familySizeLabel => 'कुटुंबाचा आकार';
+
+  @override
+  String memberCount(int count) {
+    return '$count सदस्य';
+  }
+
+  @override
+  String get assignedShop => 'रेशन दुकान';
+
+  @override
+  String get familyMembers => 'कुटुंबातील सदस्य';
+
+  @override
+  String ageYears(int age) {
+    return '$age वर्षे';
+  }
+
+  @override
+  String get relHead => 'कुटुंबप्रमुख';
+
+  @override
+  String get relSpouse => 'पती/पत्नी';
+
+  @override
+  String get relSon => 'मुलगा';
+
+  @override
+  String get relDaughter => 'मुलगी';
+
+  @override
+  String get relParent => 'आई/वडील';
+
+  @override
+  String get relOther => 'इतर नातेवाईक';
+
+  @override
+  String get memberEligible => 'पात्र';
+
+  @override
+  String get memberNotEligible => 'अपात्र';
+
+  @override
+  String get memberPending => 'प्रलंबित';
+
+  @override
+  String get memberVerificationRequired => 'पडताळणी आवश्यक';
+
+  @override
+  String get eligibilityTitle => 'पात्रता';
+
+  @override
+  String get familyEligible => 'पात्र';
+
+  @override
+  String get familyPartiallyEligible => 'अंशतः पात्र';
+
+  @override
+  String get familyNotEligible => 'अपात्र';
+
+  @override
+  String eligibleMembersOf(int eligible, int total) {
+    return '$total पैकी $eligible सदस्य पात्र';
+  }
+
+  @override
+  String get eligibilityExplainEligible =>
+      'तुमच्या कुटुंबातील सर्व सदस्य या महिन्यात रेशन घेऊ शकतात.';
+
+  @override
+  String get eligibilityExplainPartial =>
+      'काही सदस्य अद्याप पात्र नाहीत. तुमचा हक्क फक्त पात्र सदस्यांवर मोजला जातो.';
+
+  @override
+  String get eligibilityExplainNot =>
+      'तुमचे कुटुंब सध्या रेशन घेऊ शकत नाही. कृपया तुमच्या रेशन दुकानाशी किंवा जिल्हा कार्यालयाशी संपर्क साधा.';
+
+  @override
+  String get monthlyEntitlement => 'या महिन्याचा हक्क';
+
+  @override
+  String remainingOf(String remaining, String total, String unit) {
+    return '$total $unit पैकी $remaining $unit शिल्लक';
+  }
+
+  @override
+  String collectedAmount(String amount, String unit) {
+    return 'घेतले: $amount $unit';
+  }
+
+  @override
+  String get itemRice => 'तांदूळ';
+
+  @override
+  String get itemWheat => 'गहू';
+
+  @override
+  String get itemSugar => 'साखर';
+
+  @override
+  String get itemPulses => 'डाळी';
+
+  @override
+  String get itemOil => 'खाद्यतेल';
+
+  @override
+  String get itemSalt => 'मीठ';
+
+  @override
+  String get unitKg => 'किलो';
+
+  @override
+  String get unitLitre => 'लिटर';
+
+  @override
+  String get collectionHistory => 'रेशन घेतल्याचा इतिहास';
+
+  @override
+  String get noCollections => 'अद्याप रेशन घेतलेले नाही.';
+
+  @override
+  String get aadhaarVerified => 'आधार पडताळलेले';
+
+  @override
+  String get aadhaarNotVerified => 'आधार पडताळलेले नाही';
+
+  @override
+  String get viewDetails => 'तपशील पहा';
+
+  @override
+  String get noBeneficiaryProfile =>
+      'तुमचे रेशन कार्ड अद्याप जोडलेले नाही. कृपया तुमच्या रेशन दुकानाशी संपर्क साधा.';
+
+  @override
+  String get demoDataNotice => 'डेमो डेटा: हे खरे रेशन कार्ड नाही.';
 }

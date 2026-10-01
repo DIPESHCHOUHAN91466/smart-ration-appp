@@ -69,6 +69,14 @@ def test_verification_profile_masks_identity(env):
     assert "9000000001" not in json.dumps(data)
 
 
+def test_my_profile_names_my_assigned_shop(env):
+    data = env["client"].get("/api/beneficiaries/me", headers=env["citizen"]).json()["data"]
+    assert data["rationShop"] == {"id": 1, "shopName": "Satnavari FPS", "shopCode": "FPS-001", "address": "a", "district": "Nagpur"}
+    # The staff view of a beneficiary is unchanged.
+    staff = env["client"].get(f"/api/beneficiaries/{data['beneficiary']['id']}/verification", headers=env["shop"]).json()["data"]
+    assert "rationShop" not in staff
+
+
 def test_full_profile_after_booking_and_collection(env):
     token = collect(env)
     book(env, slot_id=2)   # an upcoming booking tomorrow

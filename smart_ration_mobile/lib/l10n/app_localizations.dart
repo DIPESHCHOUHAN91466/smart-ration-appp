@@ -555,6 +555,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ration shop owners and officials sign in with email and password.'**
   String get otpStaffNote;
+
+  /// No description provided for @rationCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration card'**
+  String get rationCard;
+
+  /// No description provided for @cardNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Card number'**
+  String get cardNumber;
+
+  /// No description provided for @cardScheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Card type (scheme)'**
+  String get cardScheme;
+
+  /// No description provided for @cardStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get cardStatus;
+
+  /// No description provided for @cardActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get cardActive;
+
+  /// No description provided for @cardInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Not active'**
+  String get cardInactive;
+
+  /// No description provided for @familyId.
+  ///
+  /// In en, this message translates to:
+  /// **'Family ID'**
+  String get familyId;
+
+  /// No description provided for @familySizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Family size'**
+  String get familySizeLabel;
+
+  /// No description provided for @memberCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} members'**
+  String memberCount(int count);
+
+  /// No description provided for @assignedShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration shop'**
+  String get assignedShop;
+
+  /// No description provided for @familyMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Family members'**
+  String get familyMembers;
+
+  /// No description provided for @ageYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years'**
+  String ageYears(int age);
+
+  /// No description provided for @relHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Head of family'**
+  String get relHead;
+
+  /// No description provided for @relSpouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouse'**
+  String get relSpouse;
+
+  /// No description provided for @relSon.
+  ///
+  /// In en, this message translates to:
+  /// **'Son'**
+  String get relSon;
+
+  /// No description provided for @relDaughter.
+  ///
+  /// In en, this message translates to:
+  /// **'Daughter'**
+  String get relDaughter;
+
+  /// No description provided for @relParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent'**
+  String get relParent;
+
+  /// No description provided for @relOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other relative'**
+  String get relOther;
+
+  /// No description provided for @memberEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'Eligible'**
+  String get memberEligible;
+
+  /// No description provided for @memberNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'Not eligible'**
+  String get memberNotEligible;
+
+  /// No description provided for @memberPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get memberPending;
+
+  /// No description provided for @memberVerificationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification required'**
+  String get memberVerificationRequired;
+
+  /// No description provided for @eligibilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Eligibility'**
+  String get eligibilityTitle;
+
+  /// No description provided for @familyEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'Eligible'**
+  String get familyEligible;
+
+  /// No description provided for @familyPartiallyEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially eligible'**
+  String get familyPartiallyEligible;
+
+  /// No description provided for @familyNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'Not eligible'**
+  String get familyNotEligible;
+
+  /// No description provided for @eligibleMembersOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{eligible} of {total} members eligible'**
+  String eligibleMembersOf(int eligible, int total);
+
+  /// No description provided for @eligibilityExplainEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'Every member of your family can receive rations this month.'**
+  String get eligibilityExplainEligible;
+
+  /// No description provided for @eligibilityExplainPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Some members are not eligible yet. Your entitlement counts only the eligible members.'**
+  String get eligibilityExplainPartial;
+
+  /// No description provided for @eligibilityExplainNot.
+  ///
+  /// In en, this message translates to:
+  /// **'Your family cannot receive rations right now. Please contact your ration shop or district office.'**
+  String get eligibilityExplainNot;
+
+  /// No description provided for @monthlyEntitlement.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s entitlement'**
+  String get monthlyEntitlement;
+
+  /// No description provided for @remainingOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} {unit} left of {total} {unit}'**
+  String remainingOf(String remaining, String total, String unit);
+
+  /// No description provided for @collectedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected: {amount} {unit}'**
+  String collectedAmount(String amount, String unit);
+
+  /// No description provided for @itemRice.
+  ///
+  /// In en, this message translates to:
+  /// **'Rice'**
+  String get itemRice;
+
+  /// No description provided for @itemWheat.
+  ///
+  /// In en, this message translates to:
+  /// **'Wheat'**
+  String get itemWheat;
+
+  /// No description provided for @itemSugar.
+  ///
+  /// In en, this message translates to:
+  /// **'Sugar'**
+  String get itemSugar;
+
+  /// No description provided for @itemPulses.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulses (dal)'**
+  String get itemPulses;
+
+  /// No description provided for @itemOil.
+  ///
+  /// In en, this message translates to:
+  /// **'Edible oil'**
+  String get itemOil;
+
+  /// No description provided for @itemSalt.
+  ///
+  /// In en, this message translates to:
+  /// **'Salt'**
+  String get itemSalt;
+
+  /// No description provided for @unitKg.
+  ///
+  /// In en, this message translates to:
+  /// **'kg'**
+  String get unitKg;
+
+  /// No description provided for @unitLitre.
+  ///
+  /// In en, this message translates to:
+  /// **'L'**
+  String get unitLitre;
+
+  /// No description provided for @collectionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection history'**
+  String get collectionHistory;
+
+  /// No description provided for @noCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'No rations collected yet.'**
+  String get noCollections;
+
+  /// No description provided for @aadhaarVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar verified'**
+  String get aadhaarVerified;
+
+  /// No description provided for @aadhaarNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar not verified'**
+  String get aadhaarNotVerified;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get viewDetails;
+
+  /// No description provided for @noBeneficiaryProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ration card is not linked yet. Please contact your ration shop.'**
+  String get noBeneficiaryProfile;
+
+  /// Shown on every citizen screen while the backend serves synthetic data.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo data: this is not a real ration card.'**
+  String get demoDataNotice;
 }
 
 class _AppLocalizationsDelegate

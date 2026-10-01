@@ -265,4 +265,162 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get otpStaffNote =>
       'Ration shop owners and officials sign in with email and password.';
+
+  @override
+  String get rationCard => 'Ration card';
+
+  @override
+  String get cardNumber => 'Card number';
+
+  @override
+  String get cardScheme => 'Card type (scheme)';
+
+  @override
+  String get cardStatus => 'Status';
+
+  @override
+  String get cardActive => 'Active';
+
+  @override
+  String get cardInactive => 'Not active';
+
+  @override
+  String get familyId => 'Family ID';
+
+  @override
+  String get familySizeLabel => 'Family size';
+
+  @override
+  String memberCount(int count) {
+    return '$count members';
+  }
+
+  @override
+  String get assignedShop => 'Ration shop';
+
+  @override
+  String get familyMembers => 'Family members';
+
+  @override
+  String ageYears(int age) {
+    return '$age years';
+  }
+
+  @override
+  String get relHead => 'Head of family';
+
+  @override
+  String get relSpouse => 'Spouse';
+
+  @override
+  String get relSon => 'Son';
+
+  @override
+  String get relDaughter => 'Daughter';
+
+  @override
+  String get relParent => 'Parent';
+
+  @override
+  String get relOther => 'Other relative';
+
+  @override
+  String get memberEligible => 'Eligible';
+
+  @override
+  String get memberNotEligible => 'Not eligible';
+
+  @override
+  String get memberPending => 'Pending';
+
+  @override
+  String get memberVerificationRequired => 'Verification required';
+
+  @override
+  String get eligibilityTitle => 'Eligibility';
+
+  @override
+  String get familyEligible => 'Eligible';
+
+  @override
+  String get familyPartiallyEligible => 'Partially eligible';
+
+  @override
+  String get familyNotEligible => 'Not eligible';
+
+  @override
+  String eligibleMembersOf(int eligible, int total) {
+    return '$eligible of $total members eligible';
+  }
+
+  @override
+  String get eligibilityExplainEligible =>
+      'Every member of your family can receive rations this month.';
+
+  @override
+  String get eligibilityExplainPartial =>
+      'Some members are not eligible yet. Your entitlement counts only the eligible members.';
+
+  @override
+  String get eligibilityExplainNot =>
+      'Your family cannot receive rations right now. Please contact your ration shop or district office.';
+
+  @override
+  String get monthlyEntitlement => 'This month\'s entitlement';
+
+  @override
+  String remainingOf(String remaining, String total, String unit) {
+    return '$remaining $unit left of $total $unit';
+  }
+
+  @override
+  String collectedAmount(String amount, String unit) {
+    return 'Collected: $amount $unit';
+  }
+
+  @override
+  String get itemRice => 'Rice';
+
+  @override
+  String get itemWheat => 'Wheat';
+
+  @override
+  String get itemSugar => 'Sugar';
+
+  @override
+  String get itemPulses => 'Pulses (dal)';
+
+  @override
+  String get itemOil => 'Edible oil';
+
+  @override
+  String get itemSalt => 'Salt';
+
+  @override
+  String get unitKg => 'kg';
+
+  @override
+  String get unitLitre => 'L';
+
+  @override
+  String get collectionHistory => 'Collection history';
+
+  @override
+  String get noCollections => 'No rations collected yet.';
+
+  @override
+  String get aadhaarVerified => 'Aadhaar verified';
+
+  @override
+  String get aadhaarNotVerified => 'Aadhaar not verified';
+
+  @override
+  String get viewDetails => 'View details';
+
+  @override
+  String get noBeneficiaryProfile =>
+      'Your ration card is not linked yet. Please contact your ration shop.';
+
+  @override
+  String get demoDataNotice => 'Demo data: this is not a real ration card.';
 }

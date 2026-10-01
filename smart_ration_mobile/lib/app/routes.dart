@@ -9,6 +9,9 @@ abstract final class Routes {
   static const login = '/login';
 
   static const citizenHome = '/citizen';
+  static const citizenFamily = '/citizen/family';
+  static const citizenCard = '/citizen/card';
+  static const citizenEligibility = '/citizen/eligibility';
   static const shopHome = '/shop';
   static const officialHome = '/official';
 

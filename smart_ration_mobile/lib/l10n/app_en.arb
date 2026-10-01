@@ -134,5 +134,103 @@
       }
     }
   },
-  "otpStaffNote": "Ration shop owners and officials sign in with email and password."
+  "otpStaffNote": "Ration shop owners and officials sign in with email and password.",
+  "rationCard": "Ration card",
+  "cardNumber": "Card number",
+  "cardScheme": "Card type (scheme)",
+  "cardStatus": "Status",
+  "cardActive": "Active",
+  "cardInactive": "Not active",
+  "familyId": "Family ID",
+  "familySizeLabel": "Family size",
+  "memberCount": "{count} members",
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "assignedShop": "Ration shop",
+  "familyMembers": "Family members",
+  "ageYears": "{age} years",
+  "@ageYears": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "relHead": "Head of family",
+  "relSpouse": "Spouse",
+  "relSon": "Son",
+  "relDaughter": "Daughter",
+  "relParent": "Parent",
+  "relOther": "Other relative",
+  "memberEligible": "Eligible",
+  "memberNotEligible": "Not eligible",
+  "memberPending": "Pending",
+  "memberVerificationRequired": "Verification required",
+  "eligibilityTitle": "Eligibility",
+  "familyEligible": "Eligible",
+  "familyPartiallyEligible": "Partially eligible",
+  "familyNotEligible": "Not eligible",
+  "eligibleMembersOf": "{eligible} of {total} members eligible",
+  "@eligibleMembersOf": {
+    "placeholders": {
+      "eligible": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "eligibilityExplainEligible": "Every member of your family can receive rations this month.",
+  "eligibilityExplainPartial": "Some members are not eligible yet. Your entitlement counts only the eligible members.",
+  "eligibilityExplainNot": "Your family cannot receive rations right now. Please contact your ration shop or district office.",
+  "monthlyEntitlement": "This month's entitlement",
+  "remainingOf": "{remaining} {unit} left of {total} {unit}",
+  "@remainingOf": {
+    "placeholders": {
+      "remaining": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "collectedAmount": "Collected: {amount} {unit}",
+  "@collectedAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "itemRice": "Rice",
+  "itemWheat": "Wheat",
+  "itemSugar": "Sugar",
+  "itemPulses": "Pulses (dal)",
+  "itemOil": "Edible oil",
+  "itemSalt": "Salt",
+  "unitKg": "kg",
+  "unitLitre": "L",
+  "collectionHistory": "Collection history",
+  "noCollections": "No rations collected yet.",
+  "aadhaarVerified": "Aadhaar verified",
+  "aadhaarNotVerified": "Aadhaar not verified",
+  "viewDetails": "View details",
+  "noBeneficiaryProfile": "Your ration card is not linked yet. Please contact your ration shop.",
+  "demoDataNotice": "Demo data: this is not a real ration card.",
+  "@demoDataNotice": {
+    "description": "Shown on every citizen screen while the backend serves synthetic data."
+  }
 }

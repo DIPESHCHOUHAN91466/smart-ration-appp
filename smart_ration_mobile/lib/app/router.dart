@@ -5,6 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/auth_controller.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/session.dart';
+import '../features/citizen/citizen_home_screen.dart';
+import '../features/citizen/eligibility_screen.dart';
+import '../features/citizen/family_screen.dart';
+import '../features/citizen/ration_card_screen.dart';
 import '../features/home/role_home_screen.dart';
 import '../features/language/language_screen.dart';
 import '../features/server_status/server_status_screen.dart';
@@ -31,7 +35,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.changeLanguage, builder: (context, state) => const LanguageScreen(firstLaunch: false)),
       GoRoute(path: Routes.serverStatus, builder: (context, state) => const ServerStatusScreen()),
       GoRoute(path: Routes.login, builder: (context, state) => const LoginScreen()),
-      GoRoute(path: Routes.citizenHome, builder: (context, state) => const RoleHomeScreen()),
+      GoRoute(path: Routes.citizenHome, builder: (context, state) => const CitizenHomeScreen()),
+      GoRoute(path: Routes.citizenFamily, builder: (context, state) => const FamilyScreen()),
+      GoRoute(path: Routes.citizenCard, builder: (context, state) => const RationCardScreen()),
+      GoRoute(path: Routes.citizenEligibility, builder: (context, state) => const EligibilityScreen()),
       GoRoute(path: Routes.shopHome, builder: (context, state) => const RoleHomeScreen()),
       GoRoute(path: Routes.officialHome, builder: (context, state) => const RoleHomeScreen()),
     ],

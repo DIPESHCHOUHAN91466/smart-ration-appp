@@ -37,7 +37,7 @@ def update_my_profile(body: Body = Depends(json_body), who: Actor = Depends(any_
 
 @router.get("/beneficiaries/me", summary="My beneficiary verification profile")
 def my_beneficiary(who: Actor = Depends(actor(UserRole.RuralUser)), db: Session = Depends(get_db)):
-    return ok(profile_service.verification(db, who, profile_service.my_beneficiary_id(db, who)))
+    return ok(profile_service.my_verification(db, who))
 
 
 @router.get("/beneficiaries/{beneficiary_id}/verification", summary="Beneficiary verification profile")

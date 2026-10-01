@@ -120,6 +120,20 @@ def verification(db: Session, actor: Actor, beneficiary_id: int) -> dict:
             "aadhaarVerification": aadhaar_dto(aadhaar), "passbookVerification": passbook_dto(passbook), "mobileVerification": mobile_dto(mobile)}
 
 
+def my_verification(db: Session, actor: Actor) -> dict:
+    """The citizen's own profile (/beneficiaries/me): `verification` plus the ration shop their family is
+    assigned to, which the mobile app shows on the ration card. Staff views are unchanged."""
+    data = verification(db, actor, my_beneficiary_id(db, actor))
+    beneficiary = db.get(Beneficiary, data["beneficiary"]["id"])
+    family = db.get(Family, beneficiary.FamilyId) if beneficiary else None
+    shop = db.get(RationShop, family.RationShopId) if family else None
+    data["rationShop"] = None if shop is None else {
+        "id": shop.Id, "shopName": shop.ShopName, "shopCode": shop.ShopCode,
+        "address": shop.Address, "district": shop.District,
+    }
+    return data
+
+
 def family(db: Session, actor: Actor, beneficiary_id: int) -> dict:
     beneficiary, _ = _load(db, actor, beneficiary_id)
     return _family(db, beneficiary.FamilyId)
