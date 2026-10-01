@@ -1,0 +1,97 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+
+/// What kind of failure happened, so screens can react (e.g. go to login on [unauthorized]).
+enum ApiErrorKind {
+  noConnection,
+  timeout,
+  badRequest,
+  unauthorized,
+  forbidden,
+  notFound,
+  conflict,
+  validation,
+  tooManyRequests,
+  server,
+  unknown,
+}
+
+/// Every failed backend call becomes one of these. Screens show [userMessage], never the raw error.
+class ApiException implements Exception {
+  const ApiException(this.kind, {this.serverMessage, this.errorCode, this.statusCode});
+
+  final ApiErrorKind kind;
+
+  /// The backend's own explanation (e.g. "This time slot is full."). The backend writes these for
+  /// users and never puts technical details in them.
+  final String? serverMessage;
+
+  /// A stable code from the backend, e.g. `INVALID_SIGNATURE` or `WRONG_SHOP`.
+  final String? errorCode;
+  final int? statusCode;
+
+  // TODO(M3): these sentences move into the English / Hindi / Marathi translation files.
+  String get userMessage => switch (kind) {
+        ApiErrorKind.noConnection => 'Unable to connect. Please check your internet connection.',
+        ApiErrorKind.timeout => 'The server is taking too long to answer. Please try again.',
+        ApiErrorKind.unauthorized => 'Your session has ended. Please sign in again.',
+        ApiErrorKind.tooManyRequests => 'Too many attempts. Please wait a minute and try again.',
+        ApiErrorKind.server => 'The server had a problem. Please try again in a few minutes.',
+        ApiErrorKind.unknown => 'Something went wrong. Please try again.',
+        ApiErrorKind.forbidden => serverMessage ?? 'You do not have permission to do this.',
+        ApiErrorKind.notFound => serverMessage ?? 'The requested information was not found.',
+        ApiErrorKind.badRequest ||
+        ApiErrorKind.conflict ||
+        ApiErrorKind.validation =>
+          serverMessage ?? 'The request could not be completed. Please check and try again.',
+      };
+
+  factory ApiException.fromDio(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+      case DioExceptionType.transformTimeout:
+        return const ApiException(ApiErrorKind.timeout);
+      case DioExceptionType.connectionError:
+        return const ApiException(ApiErrorKind.noConnection);
+      case DioExceptionType.badResponse:
+        return ApiException.fromResponse(e.response?.statusCode, e.response?.data);
+      case DioExceptionType.unknown:
+        return ApiException(e.error is SocketException ? ApiErrorKind.noConnection : ApiErrorKind.unknown);
+      case DioExceptionType.badCertificate:
+      case DioExceptionType.cancel:
+        return const ApiException(ApiErrorKind.unknown);
+    }
+  }
+
+  /// Builds the exception from an HTTP status and the backend's `{success, message, errorCode}` body.
+  factory ApiException.fromResponse(int? status, Object? body) {
+    String? message;
+    String? code;
+    if (body is Map) {
+      final m = body['message'];
+      final c = body['errorCode'];
+      if (m is String && m.trim().isNotEmpty) message = m;
+      if (c is String && c.isNotEmpty) code = c;
+    }
+    final kind = switch (status) {
+      400 => ApiErrorKind.badRequest,
+      401 => ApiErrorKind.unauthorized,
+      403 => ApiErrorKind.forbidden,
+      404 => ApiErrorKind.notFound,
+      409 => ApiErrorKind.conflict,
+      422 => ApiErrorKind.validation,
+      429 => ApiErrorKind.tooManyRequests,
+      final s? when s >= 500 => ApiErrorKind.server,
+      _ => ApiErrorKind.unknown,
+    };
+    // Server errors (5xx) are never shown in the backend's words: they are not written for users.
+    final shown = kind == ApiErrorKind.server ? null : message;
+    return ApiException(kind, serverMessage: shown, errorCode: code, statusCode: status);
+  }
+
+  @override
+  String toString() => 'ApiException($kind, status: $statusCode, code: $errorCode)';
+}

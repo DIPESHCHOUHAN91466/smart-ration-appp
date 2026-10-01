@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The app talks to the Smart Ration backend over the internet. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="smart_ration_mobile"
+        android:label="Smart Ration AI"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
