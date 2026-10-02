@@ -16,6 +16,7 @@ jobs:
   python:
     name: Python backend (${{ matrix.python }})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -41,8 +42,8 @@ jobs:
       LEGACY_API_URL: ""
       SEED_DEMO_PASSWORD: ci-demo-password
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
           cache: pip
@@ -78,12 +79,13 @@ jobs:
   ai:
     name: AI service (lint + tests)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: ai
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
           cache: pip
@@ -97,9 +99,10 @@ jobs:
   csharp:
     name: C# API build + tests (SmartRation.sln)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
       - run: dotnet build SmartRation.sln --configuration Release
@@ -108,12 +111,13 @@ jobs:
   frontend:
     name: Frontend lint + tests + build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: "20"
           cache: npm
@@ -128,11 +132,12 @@ jobs:
   android:
     name: Android app (Flutter analyze + tests)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: smart_ration_mobile
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.47.5"
@@ -151,9 +156,10 @@ jobs:
   security:
     name: Dependency vulnerabilities
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - run: python -m pip install pip-audit==2.10.1
@@ -164,7 +170,7 @@ jobs:
       - name: Frontend (production dependencies, high or critical)
         working-directory: frontend
         run: npm audit --omit=dev --audit-level=high
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
       - name: C# (including transitive packages)
@@ -176,9 +182,10 @@ jobs:
   docker:
     name: Docker images (Python API + website, C# API)
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     needs: python
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build
         run: docker build -f backend/SmartRation/Dockerfile -t smartration-api:ci .
       - name: Image contains no secrets or env files
@@ -189,6 +196,7 @@ jobs:
           docker run -d --name api -p 8000:8000 \
             -e DATABASE_URL=sqlite:////tmp/ci.db -e JWT_SECRET_KEY=ci-only-signing-key-not-a-secret-0123456789abcdef \
             -e QR_SECRET=ci-only-qr-secret-not-a-secret-0123456789abcdef \
+            -e DEMO_OTP_ENABLED=false -e SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true \
             -e LEGACY_API_URL= -e AI_SERVICE_URL= smartration-api:ci
           # On failure: the container's last log lines as a public annotation (logs hold no secrets; the
           # QR/JWT values here are CI-only dummies), so the cause is visible without opening the raw log.
