@@ -58,10 +58,13 @@ def _ctx(request: Request) -> RequestContext:
              dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 409, 429)},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": RegisterRequest.model_json_schema()}}, "required": True}})
 async def register(request: Request, db: Session = Depends(get_db)):
-    v = validate(await _json(request), REGISTER_RULES)
+    body = await _json(request)
+    v = validate(body, REGISTER_RULES)
+    # Optional, so older clients keep working; the website requires it (DPDP: consent is recorded in the audit log).
+    consent = isinstance(body, dict) and any(k.lower() == "consenttoprivacypolicy" and val is True for k, val in body.items())
     # Blocking DB work and Argon2 hashing run off the event loop.
     data = await run_in_threadpool(auth_service.register, db, request.app.state.settings, _ctx(request),
-                                   v["FullName"], v["Email"], v["MobileNumber"], v["Password"])
+                                   v["FullName"], v["Email"], v["MobileNumber"], v["Password"], consent)
     return ok(data, "Registration successful")
 
 

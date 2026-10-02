@@ -146,6 +146,20 @@ def test_register_creates_rural_user_and_synthetic_beneficiary(api):
         assert db.scalar(select(AuditLog.Action).where(AuditLog.UserId == u.Id)) == "REGISTER"
 
 
+def test_register_records_privacy_consent_when_given(api):
+    """DPDP Act 2023: the consent the website requires is provable later (audit log row with its time)."""
+    agreed = api.post("/api/auth/register", json={"fullName": "Asha Consent", "email": "consent@example.com", "mobileNumber": "9123400001",
+                                                  "password": "strongpass1", "consentToPrivacyPolicy": True})
+    silent = api.post("/api/auth/register", json={"fullName": "Old Client", "email": "old-client@example.com", "mobileNumber": "9123400002",
+                                                  "password": "strongpass1"})   # older clients still register
+    assert agreed.status_code == silent.status_code == 200
+    with session() as db:
+        def actions(user):
+            return set(db.scalars(select(AuditLog.Action).where(AuditLog.UserId == user.json()["data"]["user"]["id"])))
+        assert actions(agreed) == {"REGISTER", "CONSENT_GIVEN"}
+        assert actions(silent) == {"REGISTER"}
+
+
 def test_register_ignores_client_supplied_role(api):
     r = api.post("/api/auth/register", json={"fullName": "Eve", "email": "eve@example.com", "mobileNumber": "9000000009", "password": "strongpass1", "role": "Admin"})
     assert r.json()["data"]["user"]["role"] == "RuralUser"

@@ -65,7 +65,8 @@ def issue_session(db: Session, user: User, settings: Settings) -> dict:
     return _issue_tokens(db, user, settings)
 
 
-def register(db: Session, settings: Settings, ctx: RequestContext, full_name: str, email: str, mobile: str, password: str) -> dict:
+def register(db: Session, settings: Settings, ctx: RequestContext, full_name: str, email: str, mobile: str, password: str,
+             consent_to_privacy_policy: bool = False) -> dict:
     email = email.strip().lower()
     if users.email_taken(db, email):
         raise Conflict("An account with this email already exists.")
@@ -79,6 +80,9 @@ def register(db: Session, settings: Settings, ctx: RequestContext, full_name: st
         users.add(db, user)
         beneficiary = get_data_provider(settings.data_mode).provision_citizen(db, user)
         audit_service.record(db, user.Id, "REGISTER", "User", str(user.Id), ip_address=ctx.ip_address)
+        if consent_to_privacy_policy:   # DPDP Act 2023: proof that consent was given, and when (the audit row's time)
+            audit_service.record(db, user.Id, "CONSENT_GIVEN", "User", str(user.Id), "privacy policy, at registration",
+                                 ip_address=ctx.ip_address)
         response = _issue_tokens(db, user, settings)
         db.commit()
     except IntegrityError:

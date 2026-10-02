@@ -2188,6 +2188,12 @@
               "schema": {
                 "description": "Self-registration always creates a Rural User account.",
                 "properties": {
+                  "consentToPrivacyPolicy": {
+                    "default": false,
+                    "description": "the person agreed to the privacy policy (recorded in the audit log)",
+                    "title": "Consenttoprivacypolicy",
+                    "type": "boolean"
+                  },
                   "email": {
                     "maxLength": 200,
                     "title": "Email",

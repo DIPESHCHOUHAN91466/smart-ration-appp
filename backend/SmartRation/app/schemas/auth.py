@@ -37,6 +37,7 @@ class RegisterRequest(BaseModel):
     email: str = Field(max_length=200)
     mobileNumber: str = Field(max_length=20)
     password: str = Field(min_length=8, max_length=100)
+    consentToPrivacyPolicy: bool = Field(False, description="the person agreed to the privacy policy (recorded in the audit log)")
 
 
 class RefreshRequest(BaseModel):

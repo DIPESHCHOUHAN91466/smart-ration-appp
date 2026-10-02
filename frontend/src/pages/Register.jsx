@@ -14,6 +14,8 @@ export default function Register() {
   const { t } = useTranslation();
 
   const [form, setForm] = useState({ fullName: "", email: "", mobileNumber: "", password: "", confirmPassword: "" });
+  // DPDP Act 2023: registration needs the person's informed consent; the backend records it in the audit log.
+  const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -27,6 +29,10 @@ export default function Register() {
       setErrors([t("passwords_mismatch")]);
       return;
     }
+    if (!consent) {
+      setErrors([t("consent_required")]);
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -35,6 +41,7 @@ export default function Register() {
         email: form.email.trim(),
         mobileNumber: form.mobileNumber.trim(),
         password: form.password,
+        consentToPrivacyPolicy: true,
       });
       notify(t("registration_success"));
       navigate(homePathForRole(result.user.role), { replace: true });
@@ -101,6 +108,15 @@ export default function Register() {
               autoComplete="new-password"
             />
           </label>
+
+          <label className="consent-row" style={{ display: "flex", gap: 10, alignItems: "flex-start", fontWeight: 500 }}>
+            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} required
+              style={{ width: 18, height: 18, marginTop: 2, flex: "0 0 auto" }} />
+            <span>{t("consent_privacy")}</span>
+          </label>
+          <p className="muted" style={{ marginTop: -4 }}>
+            <Link to="/privacy" target="_blank" rel="noopener noreferrer">{t("consent_read")}</Link>
+          </p>
 
           {errors.length > 0 && (
             <ul className="muted" role="alert" style={{ color: "var(--red)", paddingLeft: 18 }}>
