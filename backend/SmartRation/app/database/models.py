@@ -296,9 +296,12 @@ class InventoryMovement(Base):
     Note: Mapped[str | None] = mapped_column(String(256), nullable=True)
     RecordedByUserId: Mapped[int | None] = mapped_column(Integer, nullable=True)
     CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    # The client's Idempotency-Key for a delivery / write-off, so a retried request is recorded once.
+    IdempotencyKey: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
     __table_args__ = (
         Index("IX_InventoryMovements_RationShopId_RationType_CreatedAt", "RationShopId", "RationType", "CreatedAt"),
+        Index("IX_InventoryMovements_IdempotencyKey", "IdempotencyKey", unique=True),
     )
 
 

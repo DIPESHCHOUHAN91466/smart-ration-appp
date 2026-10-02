@@ -121,6 +121,9 @@ class _MovementForm extends ConsumerStatefulWidget {
 }
 
 class _MovementFormState extends ConsumerState<_MovementForm> {
+  /// Chosen once while this form is open and reused on every retry, so a save whose answer was lost
+  /// (e.g. a timeout) is not recorded twice when Save is pressed again.
+  final _requestKey = newRequestKey();
   final _quantity = TextEditingController();
   final _reference = TextEditingController();
   final _note = TextEditingController();
@@ -187,13 +190,15 @@ class _MovementFormState extends ConsumerState<_MovementForm> {
     final repo = ref.read(shopRepositoryProvider);
     try {
       if (widget.kind == _Movement.receive) {
-        await repo.receive(widget.line.id, quantity, reference: _reference.text, note: _note.text);
+        await repo.receive(widget.line.id, quantity, requestKey: _requestKey, reference: _reference.text, note: _note.text);
       } else {
-        await repo.writeOff(widget.line.id, quantity, reference: _reference.text, note: _note.text);
+        await repo.writeOff(widget.line.id, quantity, requestKey: _requestKey, reference: _reference.text, note: _note.text);
       }
       if (mounted) Navigator.pop(context, true);
     } on ApiException catch (e) {
-      if (mounted) setState(() => _error = e.messageIn(l));
+      // The key was already used: an earlier press of Save did go through, with different numbers.
+      final alreadySaved = e.errorCode == 'IDEMPOTENCY_KEY_REUSED' || e.errorCode == 'CONCURRENT_UPDATE';
+      if (mounted) setState(() => _error = alreadySaved ? l.stockAlreadySaved : e.messageIn(l));
     } finally {
       if (mounted) setState(() => _saving = false);
     }

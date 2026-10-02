@@ -461,6 +461,7 @@
   },
   "referenceLabel": "Delivery or report number (optional)",
   "noteLabel": "Note (optional)",
+  "stockAlreadySaved": "This was already saved a moment ago. Close this form and check the stock before entering it again.",
   "quantityInvalid": "Enter a quantity greater than 0.",
   "quantityTooLarge": "Enter a quantity up to 1,000,000.",
   "writeOffTooMuch": "You can write off at most {max} {unit}.",

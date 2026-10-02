@@ -292,19 +292,21 @@ class ShopRepository {
   Future<List<StockLine>> stock() async => _list(await _api.get<Object?>('/api/inventory'), StockLine.tryParse);
 
   /// A delivery arrived: adds [quantity] and records it in the stock ledger.
-  Future<StockLine> receive(int id, double quantity, {String? reference, String? note}) =>
-      _movement('/api/inventory/$id/receive', quantity, reference, note);
+  /// [requestKey] must stay the same when the same delivery is retried, so it is recorded once.
+  Future<StockLine> receive(int id, double quantity, {required String requestKey, String? reference, String? note}) =>
+      _movement('/api/inventory/$id/receive', quantity, requestKey, reference, note);
 
   /// Damaged or spoiled stock: removes [quantity] (never more than is in stock) and records it.
-  Future<StockLine> writeOff(int id, double quantity, {String? reference, String? note}) =>
-      _movement('/api/inventory/$id/damage', quantity, reference, note);
+  /// [requestKey] as for [receive].
+  Future<StockLine> writeOff(int id, double quantity, {required String requestKey, String? reference, String? note}) =>
+      _movement('/api/inventory/$id/damage', quantity, requestKey, reference, note);
 
-  Future<StockLine> _movement(String path, double quantity, String? reference, String? note) async {
+  Future<StockLine> _movement(String path, double quantity, String requestKey, String? reference, String? note) async {
     final data = await _api.post<Object?>(path, body: {
       'quantity': quantity,
       if (reference != null && reference.trim().isNotEmpty) 'reference': reference.trim(),
       if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
-    });
+    }, headers: {'Idempotency-Key': requestKey});
     return StockLine.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
   }
 
@@ -331,7 +333,7 @@ class ShopRepository {
       ));
 }
 
-/// A random 32-character key for one handover (see [ShopRepository.confirm]).
+/// A random 32-character key for one handover or stock change (see [ShopRepository.confirm]).
 String newRequestKey([Random? random]) {
   final r = random ?? Random.secure();
   return List.generate(32, (_) => r.nextInt(16).toRadixString(16)).join();

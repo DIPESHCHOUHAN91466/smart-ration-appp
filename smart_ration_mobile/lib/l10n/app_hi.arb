@@ -263,6 +263,7 @@
   "quantityLabel": "मात्रा ({unit})",
   "referenceLabel": "डिलीवरी या रिपोर्ट नंबर (वैकल्पिक)",
   "noteLabel": "टिप्पणी (वैकल्पिक)",
+  "stockAlreadySaved": "यह अभी-अभी सेव हो चुका है। यह फ़ॉर्म बंद करें और दोबारा दर्ज करने से पहले स्टॉक जाँचें।",
   "quantityInvalid": "0 से अधिक मात्रा लिखें।",
   "quantityTooLarge": "1,000,000 तक की मात्रा लिखें।",
   "writeOffTooMuch": "आप अधिकतम {max} {unit} घटा सकते हैं।",

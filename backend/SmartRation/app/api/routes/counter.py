@@ -156,15 +156,19 @@ def inventory_update(inventory_id: int, body: Body = Depends(json_body), who: Ac
 
 
 @router.post("/inventory/{inventory_id}/receive", summary="Record a stock delivery")
-def inventory_receive(inventory_id: int, body: Body = Depends(json_body), who: Actor = Depends(staff), db: Session = Depends(get_db)):
+def inventory_receive(inventory_id: int, request: Request, body: Body = Depends(json_body), who: Actor = Depends(staff),
+                      db: Session = Depends(get_db)):
     qty, reference, note = _movement(body)
-    return ok(inventory_service.receive(db, who, inventory_id, qty, reference, note), "Stock received")
+    key = _key(request, strict=True)
+    return ok(inventory_service.receive(db, who, inventory_id, qty, reference, note, key), "Stock received")
 
 
 @router.post("/inventory/{inventory_id}/damage", summary="Write off damaged stock")
-def inventory_damage(inventory_id: int, body: Body = Depends(json_body), who: Actor = Depends(staff), db: Session = Depends(get_db)):
+def inventory_damage(inventory_id: int, request: Request, body: Body = Depends(json_body), who: Actor = Depends(staff),
+                     db: Session = Depends(get_db)):
     qty, reference, note = _movement(body)
-    return ok(inventory_service.damage(db, who, inventory_id, qty, reference, note), "Damaged stock recorded")
+    key = _key(request, strict=True)
+    return ok(inventory_service.damage(db, who, inventory_id, qty, reference, note, key), "Damaged stock recorded")
 
 
 # ---------------------------------------------------------------- notifications and verification audit

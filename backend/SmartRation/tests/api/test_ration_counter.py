@@ -240,6 +240,39 @@ def test_inventory_movements_and_permissions(env):
         assert kinds == [InventoryMovementType.Received, InventoryMovementType.Adjustment]
 
 
+def test_stock_changes_retried_with_the_same_key_are_recorded_once(env):
+    c = env["client"]
+    deliver = {**env["shop"], "Idempotency-Key": "stock-req-1"}
+    first = c.post("/api/inventory/1/receive", headers=deliver, json={"quantity": 20, "reference": "CH-2026/002"})
+    again = c.post("/api/inventory/1/receive", headers=deliver, json={"quantity": 20, "reference": "CH-2026/002"})
+    assert first.status_code == again.status_code == 200
+    assert first.json()["data"]["availableQuantity"] == again.json()["data"]["availableQuantity"] == 120
+
+    write_off = {**env["shop"], "Idempotency-Key": "stock-req-2"}
+    assert c.post("/api/inventory/1/damage", headers=write_off, json={"quantity": 115}).json()["data"]["availableQuantity"] == 5
+    # The retry succeeds even though 115 more would no longer be in stock: it is the same write-off.
+    r = c.post("/api/inventory/1/damage", headers=write_off, json={"quantity": 115})
+    assert r.status_code == 200 and r.json()["data"]["availableQuantity"] == 5
+
+    # The same key for a different change is refused, and nothing is recorded.
+    r = c.post("/api/inventory/1/receive", headers=deliver, json={"quantity": 7})
+    assert r.status_code == 409 and r.json()["errorCode"] == "IDEMPOTENCY_KEY_REUSED"
+    r = c.post("/api/inventory/1/damage", headers=deliver, json={"quantity": 20})
+    assert r.status_code == 409 and r.json()["errorCode"] == "IDEMPOTENCY_KEY_REUSED"
+    long_key = {**env["shop"], "Idempotency-Key": "k" * 65}
+    assert c.post("/api/inventory/1/receive", headers=long_key, json={"quantity": 1}).json()["errorCode"] == "INVALID_IDEMPOTENCY_KEY"
+
+    # Without a key every request is a new movement, as before.
+    for _ in range(2):
+        assert c.post("/api/inventory/1/receive", headers=env["shop"], json={"quantity": 1}).status_code == 200
+    with session() as db:
+        assert db.get(Inventory, 1).AvailableQuantity == 7
+        moves = db.scalars(select(InventoryMovement).order_by(InventoryMovement.Id)).all()
+        assert [(m.MovementType, m.Quantity, m.IdempotencyKey) for m in moves] == [
+            (InventoryMovementType.Received, 20, "stock-req-1"), (InventoryMovementType.Damaged, 115, "stock-req-2"),
+            (InventoryMovementType.Received, 1, None), (InventoryMovementType.Received, 1, None)]
+
+
 def test_verification_audit_is_for_officials_only(env):
     token = book(env).json()["data"]
     env["client"].post("/api/qr/scan", headers=env["shop"], json={"qrData": qr_payload(env, token["id"])})

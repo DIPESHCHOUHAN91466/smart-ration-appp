@@ -1,6 +1,7 @@
 """Shop stock: view, add a new item line, correct a balance, receive a delivery, write off damage.
 
 Every balance change also writes an InventoryMovement row (see inventory_ledger) in the same commit.
+Deliveries and write-offs accept the client's Idempotency-Key: a retry with the same key is recorded once.
 Shop owners see and manage only their own shop; officials and admins any shop.
 """
 
@@ -9,12 +10,13 @@ from __future__ import annotations
 from decimal import Decimal
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.auth import Actor
 from app.core.errors import BadRequest, Conflict, Forbidden, NotFound
 from app.database.enums import InventoryMovementType, NotificationType, RationType, UserRole, parse_enum
-from app.database.models import Inventory, RationShop, User
+from app.database.models import Inventory, InventoryMovement, RationShop, User
 from app.services import inventory_ledger, notification_service
 from app.services.mappers import inventory_dto
 from app.utils.dotnet import qty_text
@@ -85,22 +87,55 @@ def update(db: Session, actor: Actor, inventory_id: int, available: Decimal, min
     return inventory_dto(inventory)
 
 
-def receive(db: Session, actor: Actor, inventory_id: int, quantity: Decimal, reference: str | None, note: str | None) -> dict:
+def _already_recorded(db: Session, actor: Actor, inventory: Inventory, kind: InventoryMovementType, quantity: Decimal,
+                      idempotency_key: str | None) -> bool:
+    """True when this exact movement was already saved under the key (a client retry): record nothing again.
+
+    Runs after the stock row is locked, so two copies of the same request are handled one after the other.
+    """
+    if not idempotency_key:
+        return False
+    previous = db.scalar(select(InventoryMovement).where(InventoryMovement.IdempotencyKey == idempotency_key))
+    if previous is None:
+        return False
+    same = (previous.RationShopId, previous.RationType, previous.MovementType, previous.Quantity, previous.RecordedByUserId) == (
+        inventory.RationShopId, inventory.RationType, int(kind), quantity, actor.user_id)
+    if not same:
+        raise Conflict("This request key was already used for a different stock change.", "IDEMPOTENCY_KEY_REUSED")
+    return True
+
+
+def _commit_movement(db: Session) -> None:
+    try:
+        db.commit()
+    except IntegrityError:
+        # Unique IdempotencyKey: the same request was saved at the same moment by another worker. Nothing was saved here.
+        db.rollback()
+        raise Conflict("Could not record the stock change due to a concurrent update. Please try again.", "CONCURRENT_UPDATE") from None
+
+
+def receive(db: Session, actor: Actor, inventory_id: int, quantity: Decimal, reference: str | None, note: str | None,
+            idempotency_key: str | None = None) -> dict:
     inventory = _load_managed(db, actor, inventory_id)
+    if _already_recorded(db, actor, inventory, InventoryMovementType.Received, quantity, idempotency_key):
+        return inventory_dto(inventory)
     inventory.AvailableQuantity += quantity
     inventory.UpdatedAt = utc_now()
-    inventory_ledger.record(db, inventory, InventoryMovementType.Received, quantity, actor.user_id, reference, note)
-    db.commit()
+    inventory_ledger.record(db, inventory, InventoryMovementType.Received, quantity, actor.user_id, reference, note, idempotency_key)
+    _commit_movement(db)
     return inventory_dto(inventory)
 
 
-def damage(db: Session, actor: Actor, inventory_id: int, quantity: Decimal, reference: str | None, note: str | None) -> dict:
+def damage(db: Session, actor: Actor, inventory_id: int, quantity: Decimal, reference: str | None, note: str | None,
+           idempotency_key: str | None = None) -> dict:
     inventory = _load_managed(db, actor, inventory_id)
+    if _already_recorded(db, actor, inventory, InventoryMovementType.Damaged, quantity, idempotency_key):
+        return inventory_dto(inventory)
     if quantity > inventory.AvailableQuantity:
         raise BadRequest(f"Cannot write off {qty_text(quantity)} — only {qty_text(inventory.AvailableQuantity)} in stock.",
                          "INSUFFICIENT_STOCK")
     inventory.AvailableQuantity -= quantity
     inventory.UpdatedAt = utc_now()
-    inventory_ledger.record(db, inventory, InventoryMovementType.Damaged, quantity, actor.user_id, reference, note)
-    db.commit()
+    inventory_ledger.record(db, inventory, InventoryMovementType.Damaged, quantity, actor.user_id, reference, note, idempotency_key)
+    _commit_movement(db)
     return inventory_dto(inventory)

@@ -889,6 +889,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noteLabel => 'Note (optional)';
 
   @override
+  String get stockAlreadySaved =>
+      'This was already saved a moment ago. Close this form and check the stock before entering it again.';
+
+  @override
   String get quantityInvalid => 'Enter a quantity greater than 0.';
 
   @override

@@ -879,6 +879,10 @@ class AppLocalizationsMr extends AppLocalizations {
   String get noteLabel => 'टीप (ऐच्छिक)';
 
   @override
+  String get stockAlreadySaved =>
+      'हे आत्ताच जतन झाले आहे. हा फॉर्म बंद करा आणि पुन्हा नोंदवण्यापूर्वी साठा तपासा.';
+
+  @override
   String get quantityInvalid => '0 पेक्षा जास्त प्रमाण लिहा.';
 
   @override

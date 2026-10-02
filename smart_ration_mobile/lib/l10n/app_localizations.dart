@@ -1678,6 +1678,12 @@ abstract class AppLocalizations {
   /// **'Note (optional)'**
   String get noteLabel;
 
+  /// No description provided for @stockAlreadySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'This was already saved a moment ago. Close this form and check the stock before entering it again.'**
+  String get stockAlreadySaved;
+
   /// No description provided for @quantityInvalid.
   ///
   /// In en, this message translates to:

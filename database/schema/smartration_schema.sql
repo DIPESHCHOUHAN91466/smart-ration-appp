@@ -433,3 +433,11 @@ UPDATE FamilyMembers SET Gender = 2 WHERE Relationship = 4 AND Gender IS NULL;
 UPDATE FamilyMembers SET Gender = ( SELECT b.Gender FROM Beneficiaries b WHERE b.FamilyId = FamilyMembers.FamilyId ORDER BY b.Id LIMIT 1) WHERE Relationship = 1 AND Gender IS NULL;
 
 UPDATE alembic_version SET version_num='0002_family_member_gender' WHERE alembic_version.version_num = '0001_initial';
+
+-- Running upgrade 0002_family_member_gender -> 0003_stock_movement_keys
+
+ALTER TABLE `InventoryMovements` ADD COLUMN `IdempotencyKey` VARCHAR(64);
+
+CREATE UNIQUE INDEX `IX_InventoryMovements_IdempotencyKey` ON `InventoryMovements` (`IdempotencyKey`);
+
+UPDATE alembic_version SET version_num='0003_stock_movement_keys' WHERE alembic_version.version_num = '0002_family_member_gender';

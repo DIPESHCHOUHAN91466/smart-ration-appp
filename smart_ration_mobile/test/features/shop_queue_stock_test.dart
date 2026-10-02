@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_ration_mobile/app/routes.dart';
 import 'package:smart_ration_mobile/features/shop/scanner_screen.dart';
 import 'package:smart_ration_mobile/features/shop/stock_screen.dart';
 
+import '../support/fake_backend.dart';
 import 'shop_test.dart' show openShop, tapText;
 
 void main() {
@@ -83,5 +85,55 @@ void main() {
     await tester.pumpAndSettle();
     expect(writeOffs().single, {'quantity': 1.5});
     expect(find.text('Damaged stock written off.'), findsOneWidget);
+  });
+
+  group('a stock change is recorded once', () {
+    String keyOf(RequestOptions r) => r.headers['Idempotency-Key'] as String;
+
+    testWidgets('a retry after a lost answer sends the same request key; a new form uses a new one', (tester) async {
+      var calls = 0;
+      final backend = await openShop(tester, path: Routes.shopStock, handler: (r) {
+        if (r.path == '/api/inventory/11/receive' && ++calls == 1) return const FakeReply.fails(DioExceptionType.receiveTimeout);
+        return shopServer(r);
+      });
+      List<RequestOptions> deliveries() => backend.requests.where((r) => r.path == '/api/inventory/11/receive').toList();
+
+      await tester.tap(find.text('Record delivery').last); // rice
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).at(0), '50');
+      await tapText(tester, 'Save');
+      expect(find.text('Delivery recorded.'), findsNothing); // the answer was lost; the form stays open
+      await tapText(tester, 'Save');
+      expect(find.text('Delivery recorded.'), findsOneWidget);
+
+      expect(deliveries(), hasLength(2));
+      expect(keyOf(deliveries()[0]), matches(RegExp(r'^[0-9a-f]{32}$')));
+      expect(keyOf(deliveries()[1]), keyOf(deliveries()[0]));
+
+      await tester.tap(find.text('Record delivery').last);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).at(0), '10');
+      await tapText(tester, 'Save');
+      expect(deliveries(), hasLength(3));
+      expect(keyOf(deliveries()[2]), isNot(keyOf(deliveries()[0])));
+    });
+
+    testWidgets('if the key was already used, the shopkeeper is told it was saved and to check the stock', (tester) async {
+      await openShop(tester, path: Routes.shopStock, handler: (r) {
+        if (r.path == '/api/inventory/11/receive') {
+          return const FakeReply(409, {'success': false, 'message': 'This request key was already used for a different stock change.',
+              'errorCode': 'IDEMPOTENCY_KEY_REUSED', 'data': null, 'errors': null});
+        }
+        return shopServer(r);
+      });
+
+      await tester.tap(find.text('Record delivery').last);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).at(0), '50');
+      await tapText(tester, 'Save');
+      expect(find.text('This was already saved a moment ago. Close this form and check the stock before entering it again.'),
+          findsOneWidget);
+      expect(find.text('Delivery recorded.'), findsNothing);
+    });
   });
 }

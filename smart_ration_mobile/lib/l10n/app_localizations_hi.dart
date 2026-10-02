@@ -878,6 +878,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noteLabel => 'टिप्पणी (वैकल्पिक)';
 
   @override
+  String get stockAlreadySaved =>
+      'यह अभी-अभी सेव हो चुका है। यह फ़ॉर्म बंद करें और दोबारा दर्ज करने से पहले स्टॉक जाँचें।';
+
+  @override
   String get quantityInvalid => '0 से अधिक मात्रा लिखें।';
 
   @override

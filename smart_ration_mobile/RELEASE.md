@@ -71,6 +71,9 @@ The app is only as ready as the backend it talks to (`backend/SmartRation`):
       phones; the backend refuses the mock SMS provider with real data.
 - [ ] `QR_SECRET` set and **never changed** afterwards (changing it makes every issued QR invalid).
 - [ ] `LEGACY_API_URL` unset (the old C# API is no longer used).
+- [ ] Database migrated to the latest version after a backup (`alembic upgrade head`; this app needs
+      revision `0003_stock_movement_keys`, which protects stock deliveries and write-offs from being
+      recorded twice).
 - [ ] Regular database backups.
 - [ ] If a generative AI provider is ever added to the help assistant, update `PRIVACY_POLICY.md`
       first: today questions never leave your server.
@@ -113,5 +116,3 @@ Some things cannot be tested on the emulator. Before release, on at least one lo
 - The backend's own messages (refusal reasons, alert texts, notification texts) are in English; the
   app translates the ones it knows and labels the rest as English.
 - The backend checks booking dates but not times of day, so the app hides slots that already started.
-- Stock deliveries and write-offs have no repeat protection on the backend: a retry after a timeout
-  could record a movement twice.
