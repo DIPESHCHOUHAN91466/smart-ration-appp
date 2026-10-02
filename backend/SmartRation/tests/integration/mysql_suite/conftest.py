@@ -31,7 +31,7 @@ from app.database.models import User
 from app.main import create_app
 from app.security.passwords import hash_password
 from app.utils.time import utc_now
-from mysql_suite.support import _REPORT, KEY, new_session, record_fixture  # noqa: F401
+from mysql_suite.support import _REPORT, KEY, QR_TEST_SECRET, new_session, record_fixture  # noqa: F401
 
 ROOT = BACKEND_ROOT
 REFERENCE_TABLES = {"rationitems", "rationschemes", "schemeentitlementitems", "rationshops", "inventory", "timeslots"}
@@ -122,7 +122,7 @@ def make_user(password_hash) -> Callable[..., User]:
 @pytest.fixture
 def api(db, test_url) -> Iterator[TestClient]:
     settings = Settings(_env_file=None, database_url=test_url, legacy_api_url="", jwt_secret_key=KEY,
-                        auth_rate_limit_per_minute=100_000, log_level="WARNING")
+                        qr_secret=QR_TEST_SECRET, ai_service_url="", auth_rate_limit_per_minute=100_000, log_level="WARNING")
     with TestClient(create_app(settings), raise_server_exceptions=False) as client:
         yield client
 

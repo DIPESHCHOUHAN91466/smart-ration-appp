@@ -16,7 +16,7 @@ from app.database.models import Beneficiary, Family, TimeSlot, User
 from app.services import auth_service
 from app.services.auth_service import RequestContext
 from mysql_suite.sample_data import people
-from mysql_suite.support import KEY, new_session
+from mysql_suite.support import KEY, QR_TEST_SECRET, new_session
 
 THREADS = 20
 
@@ -90,7 +90,8 @@ def _ctx() -> RequestContext:
 @pytest.fixture
 def settings(test_url):
     from app.config.settings import Settings
-    return Settings(_env_file=None, database_url=test_url, legacy_api_url="", jwt_secret_key=KEY)
+    return Settings(_env_file=None, database_url=test_url, legacy_api_url="", jwt_secret_key=KEY, qr_secret=QR_TEST_SECRET,
+                    ai_service_url="")
 
 
 def test_100_concurrent_registrations(db, settings):

@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.database import connection as database
 
 KEY = "mysql-suite-signing-key-0123456789abcdef-0123456789"
+QR_TEST_SECRET = "mysql-suite-qr-secret-0123456789abcdef"  # test-only value; the app refuses to start without one
 
 
 def new_session() -> Session:

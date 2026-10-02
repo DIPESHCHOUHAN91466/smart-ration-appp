@@ -17,7 +17,7 @@ from app.config.settings import Settings
 from app.database import connection as database
 from app.database.models import User
 from app.main import create_app
-from mysql_suite.support import KEY, new_session
+from mysql_suite.support import KEY, QR_TEST_SECRET, new_session
 
 
 @pytest.fixture
@@ -48,7 +48,8 @@ def test_unreachable_server_times_out_quickly(test_url):
 
 def test_health_reports_database_down_without_details(test_url, restore_engine):
     bad = make_url(test_url).set(password="definitely-wrong-pw").render_as_string(hide_password=False)
-    app = create_app(Settings(_env_file=None, database_url=bad, legacy_api_url="", jwt_secret_key=KEY))
+    app = create_app(Settings(_env_file=None, database_url=bad, legacy_api_url="", jwt_secret_key=KEY, qr_secret=QR_TEST_SECRET,
+                    ai_service_url=""))
     with TestClient(app, raise_server_exceptions=False) as client:
         health, ready = client.get("/health"), client.get("/ready")
         login = client.post("/api/auth/login", json={"email": "a@example.test", "password": "whatever-123"})
