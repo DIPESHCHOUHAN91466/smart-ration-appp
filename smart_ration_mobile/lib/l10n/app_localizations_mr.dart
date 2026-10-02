@@ -1159,5 +1159,126 @@ class AppLocalizationsMr extends AppLocalizations {
   String get nAlert => 'सूचना';
 
   @override
+  String get complaintTitle => 'समस्या कळवा';
+
+  @override
+  String get complaintWhat => 'काय समस्या आहे?';
+
+  @override
+  String get catLessRation => 'रेशन कमी मिळाले';
+
+  @override
+  String get catPoorQuality => 'धान्य खराब होते';
+
+  @override
+  String get catShopClosed => 'दुकान बंद होते';
+
+  @override
+  String get catOvercharged => 'जास्त पैसे मागितले';
+
+  @override
+  String get catTokenProblem => 'टोकन किंवा QR ची समस्या';
+
+  @override
+  String get catVerificationProblem => 'ओळख पडताळणीची समस्या';
+
+  @override
+  String get catStaffBehaviour => 'उद्धट वागणूक';
+
+  @override
+  String get catOther => 'दुसरे काही';
+
+  @override
+  String get complaintItem => 'कोणती वस्तू? (ऐच्छिक)';
+
+  @override
+  String get complaintNoItem => 'एक वस्तू नाही';
+
+  @override
+  String get complaintDescribe => 'काय झाले ते सांगा';
+
+  @override
+  String get complaintDescribeHint =>
+      'उदाहरण: या महिन्यात मला 2 किलो गहू कमी मिळाला.';
+
+  @override
+  String get complaintDescribeShort =>
+      'कृपया थोडे अधिक लिहा (किमान 10 अक्षरे).';
+
+  @override
+  String get complaintNoPrivate => 'आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका.';
+
+  @override
+  String get complaintChooseCategory => 'समस्या निवडा.';
+
+  @override
+  String get complaintYourDetails => 'तुमचा तपशील (तुमच्या खात्यातून)';
+
+  @override
+  String get complaintNameLabel => 'नाव';
+
+  @override
+  String get complaintReviewButton => 'तपासा';
+
+  @override
+  String get complaintReviewTitle => 'पाठवण्यापूर्वी तपासा';
+
+  @override
+  String get complaintReviewNote =>
+      'सादर करण्यापूर्वी कृपया तुमची माहिती तपासा.';
+
+  @override
+  String get complaintEdit => 'बदला';
+
+  @override
+  String get complaintSubmit => 'खात्री करा आणि पाठवा';
+
+  @override
+  String get complaintSent => 'तक्रार नोंदवली गेली';
+
+  @override
+  String get complaintReference => 'संदर्भ क्रमांक';
+
+  @override
+  String complaintSentSpoken(String reference) {
+    return 'तुमची तक्रार यशस्वीपणे नोंदवली गेली आहे. तुमचा संदर्भ क्रमांक $reference आहे.';
+  }
+
+  @override
+  String get complaintKeepReference =>
+      'हा क्रमांक जपून ठेवा. स्थिती बदलल्यावर तुम्हाला सूचनांमध्ये कळवले जाईल.';
+
+  @override
+  String get complaintFilledByAi =>
+      'तुम्ही सांगितलेल्यावरून भरले आहे. कृपया तपासा.';
+
+  @override
+  String get myComplaints => 'माझ्या तक्रारी';
+
+  @override
+  String get noComplaints => 'तुम्ही कोणतीही समस्या नोंदवलेली नाही.';
+
+  @override
+  String get complaintStatusSubmitted => 'मिळाली';
+
+  @override
+  String get complaintStatusUnderReview => 'तपासणी सुरू';
+
+  @override
+  String get complaintStatusResolved => 'सोडवली';
+
+  @override
+  String get complaintStatusRejected => 'बंद';
+
+  @override
+  String get complaintOfficeReply => 'कार्यालयाचे उत्तर';
+
+  @override
+  String get doneButton => 'झाले';
+
+  @override
+  String get nComplaint => 'तक्रार';
+
+  @override
   String get nAnnouncement => 'घोषणा';
 }

@@ -4,12 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_ration_mobile/app/router.dart';
 import 'package:smart_ration_mobile/app/routes.dart';
 import 'package:smart_ration_mobile/features/auth/session.dart';
+import 'package:smart_ration_mobile/features/grievance/grievance_data.dart';
 import 'package:smart_ration_mobile/features/help/voice.dart';
 import 'package:smart_ration_mobile/features/shop/scanner_screen.dart';
 import 'package:smart_ration_mobile/features/shop/shop_data.dart';
 
 import '../support/fake_backend.dart';
 import '../support/fake_help.dart';
+import '../support/fake_grievance.dart';
 import '../support/test_app.dart';
 
 /// Release check: every main screen, in every language, on a small low-cost phone (360 x 640) with
@@ -36,6 +38,10 @@ class _SilentSpeaker implements Speaker {
 FakeReply everything(RequestOptions r) {
   final p = r.path;
   if (p.startsWith('/api/chatbot')) return helpServer(r);
+  if (p == '/api/grievances/mine') {
+    return FakeReply.ok([complaintJson(1, 'LessRation', 'This month I got 2 kg less wheat.', rationType: 'Wheat', status: 'UnderReview',
+        reply: 'The shop owner has been asked to explain.')]);
+  }
   if (p == '/api/notifications') {
     return FakeReply.ok([
       {'id': 1, 'type': 'CollectionCompleted', 'title': 'Ration collected', 'message': 'Collection ID COL-DEMO-000042.',
@@ -63,6 +69,10 @@ final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('citizen', citizen, Routes.citizenTokens, () => null),
   ('citizen', citizen, Routes.citizenToken(501), () => null),
   ('citizen', citizen, Routes.notifications, () => null),
+  ('citizen', citizen, Routes.citizenComplaint, () => null),
+  ('citizen', citizen, Routes.citizenComplaint,
+      () => ComplaintDraft.fromAssistantFields({'category': 'StaffBehaviour', 'rationType': 'EdibleOil', 'description': 'The shop owner shouted at my mother.'})),
+  ('citizen', citizen, Routes.citizenComplaints, () => null),
   ('shop', shopOwner, Routes.shopHome, () => null),
   ('shop', shopOwner, Routes.shopScan, () => null),
   ('shop', shopOwner, Routes.shopOtp, () => null),

@@ -22,6 +22,10 @@ abstract final class Routes {
   static const citizenTokens = '/citizen/tokens';
   static const citizenTokenPattern = '/citizen/token/:id';
   static String citizenToken(int id) => '/citizen/token/$id';
+
+  /// Report a problem; may receive a ComplaintDraft (pre-filled by the AI assistant) as `extra`.
+  static const citizenComplaint = '/citizen/complaint';
+  static const citizenComplaints = '/citizen/complaints';
   static const shopHome = '/shop';
   static const shopScan = '/shop/scan';
   static const shopOtp = '/shop/otp';

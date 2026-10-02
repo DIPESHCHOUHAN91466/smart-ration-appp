@@ -154,6 +154,7 @@ String notificationTitle(AppLocalizations l, String type, String fallback) => sw
       'VerificationResult' => l.nVerificationResult,
       'AIAlert' => l.nAlert,
       'SystemAnnouncement' => l.nAnnouncement,
+      'GrievanceUpdate' => l.nComplaint,
       _ => fallback,
     };
 
@@ -165,5 +166,6 @@ IconData notificationIcon(String type) => switch (type) {
       'LowInventory' => Icons.inventory_2_outlined,
       'VerificationResult' => Icons.verified_user_outlined,
       'AIAlert' => Icons.notification_important_outlined,
+      'GrievanceUpdate' => Icons.report_problem_outlined,
       _ => Icons.campaign_outlined,
     };

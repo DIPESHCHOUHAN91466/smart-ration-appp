@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
+import '../../core/privacy.dart';
 import '../../l10n/app_localizations.dart';
 import '../citizen/citizen_widgets.dart';
 import 'official_data.dart';

@@ -1174,5 +1174,127 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nAlert => 'Alert';
 
   @override
+  String get complaintTitle => 'Report a problem';
+
+  @override
+  String get complaintWhat => 'What is the problem?';
+
+  @override
+  String get catLessRation => 'Got less ration';
+
+  @override
+  String get catPoorQuality => 'Bad quality grain';
+
+  @override
+  String get catShopClosed => 'Shop was closed';
+
+  @override
+  String get catOvercharged => 'Asked for extra money';
+
+  @override
+  String get catTokenProblem => 'Token or QR problem';
+
+  @override
+  String get catVerificationProblem => 'Identity check problem';
+
+  @override
+  String get catStaffBehaviour => 'Rude behaviour';
+
+  @override
+  String get catOther => 'Something else';
+
+  @override
+  String get complaintItem => 'Which item? (optional)';
+
+  @override
+  String get complaintNoItem => 'Not one item';
+
+  @override
+  String get complaintDescribe => 'Tell us what happened';
+
+  @override
+  String get complaintDescribeHint =>
+      'For example: This month I got 2 kg less wheat.';
+
+  @override
+  String get complaintDescribeShort =>
+      'Please write a little more (at least 10 letters).';
+
+  @override
+  String get complaintNoPrivate =>
+      'Do not write Aadhaar numbers, OTPs or passwords.';
+
+  @override
+  String get complaintChooseCategory => 'Choose what the problem is.';
+
+  @override
+  String get complaintYourDetails => 'Your details (from your account)';
+
+  @override
+  String get complaintNameLabel => 'Name';
+
+  @override
+  String get complaintReviewButton => 'Review';
+
+  @override
+  String get complaintReviewTitle => 'Check before sending';
+
+  @override
+  String get complaintReviewNote =>
+      'Please review your information before submitting.';
+
+  @override
+  String get complaintEdit => 'Change';
+
+  @override
+  String get complaintSubmit => 'Confirm and send';
+
+  @override
+  String get complaintSent => 'Complaint registered';
+
+  @override
+  String get complaintReference => 'Reference number';
+
+  @override
+  String complaintSentSpoken(String reference) {
+    return 'Your complaint has been registered. Your reference number is $reference.';
+  }
+
+  @override
+  String get complaintKeepReference =>
+      'Keep this number. You will be told in Notifications when the status changes.';
+
+  @override
+  String get complaintFilledByAi =>
+      'Filled in from what you said. Please check it.';
+
+  @override
+  String get myComplaints => 'My complaints';
+
+  @override
+  String get noComplaints => 'You have not reported any problem.';
+
+  @override
+  String get complaintStatusSubmitted => 'Received';
+
+  @override
+  String get complaintStatusUnderReview => 'Being checked';
+
+  @override
+  String get complaintStatusResolved => 'Resolved';
+
+  @override
+  String get complaintStatusRejected => 'Closed';
+
+  @override
+  String get complaintOfficeReply => 'Reply from the office';
+
+  @override
+  String get doneButton => 'Done';
+
+  @override
+  String get nComplaint => 'Complaint';
+
+  @override
   String get nAnnouncement => 'Announcement';
 }

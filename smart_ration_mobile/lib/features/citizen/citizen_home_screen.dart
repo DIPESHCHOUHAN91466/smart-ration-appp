@@ -96,6 +96,23 @@ class CitizenHomeScreen extends ConsumerWidget {
               for (final m in data.members) Chip(avatar: Initials(name: m.fullName, radius: 12), label: Text(m.fullName)),
             ]),
           ),
+          const SizedBox(height: 12),
+          SectionCard(
+            title: l.complaintTitle,
+            icon: Icons.report_problem_outlined,
+            child: Wrap(spacing: 8, runSpacing: 8, children: [
+              FilledButton.tonalIcon(
+                icon: const Icon(Icons.edit_note),
+                label: Text(l.complaintTitle),
+                onPressed: () => context.push(Routes.citizenComplaint),
+              ),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.list_alt),
+                label: Text(l.myComplaints),
+                onPressed: () => context.push(Routes.citizenComplaints),
+              ),
+            ]),
+          ),
           const SizedBox(height: 16),
           OutlinedButton.icon(
             icon: const Icon(Icons.dns_outlined),

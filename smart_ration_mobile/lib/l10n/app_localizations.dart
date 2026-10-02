@@ -2182,6 +2182,234 @@ abstract class AppLocalizations {
   /// **'Alert'**
   String get nAlert;
 
+  /// No description provided for @complaintTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem'**
+  String get complaintTitle;
+
+  /// No description provided for @complaintWhat.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the problem?'**
+  String get complaintWhat;
+
+  /// No description provided for @catLessRation.
+  ///
+  /// In en, this message translates to:
+  /// **'Got less ration'**
+  String get catLessRation;
+
+  /// No description provided for @catPoorQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Bad quality grain'**
+  String get catPoorQuality;
+
+  /// No description provided for @catShopClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop was closed'**
+  String get catShopClosed;
+
+  /// No description provided for @catOvercharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Asked for extra money'**
+  String get catOvercharged;
+
+  /// No description provided for @catTokenProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Token or QR problem'**
+  String get catTokenProblem;
+
+  /// No description provided for @catVerificationProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity check problem'**
+  String get catVerificationProblem;
+
+  /// No description provided for @catStaffBehaviour.
+  ///
+  /// In en, this message translates to:
+  /// **'Rude behaviour'**
+  String get catStaffBehaviour;
+
+  /// No description provided for @catOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get catOther;
+
+  /// No description provided for @complaintItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Which item? (optional)'**
+  String get complaintItem;
+
+  /// No description provided for @complaintNoItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Not one item'**
+  String get complaintNoItem;
+
+  /// No description provided for @complaintDescribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what happened'**
+  String get complaintDescribe;
+
+  /// No description provided for @complaintDescribeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: This month I got 2 kg less wheat.'**
+  String get complaintDescribeHint;
+
+  /// No description provided for @complaintDescribeShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Please write a little more (at least 10 letters).'**
+  String get complaintDescribeShort;
+
+  /// No description provided for @complaintNoPrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not write Aadhaar numbers, OTPs or passwords.'**
+  String get complaintNoPrivate;
+
+  /// No description provided for @complaintChooseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what the problem is.'**
+  String get complaintChooseCategory;
+
+  /// No description provided for @complaintYourDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Your details (from your account)'**
+  String get complaintYourDetails;
+
+  /// No description provided for @complaintNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get complaintNameLabel;
+
+  /// No description provided for @complaintReviewButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get complaintReviewButton;
+
+  /// No description provided for @complaintReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check before sending'**
+  String get complaintReviewTitle;
+
+  /// No description provided for @complaintReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Please review your information before submitting.'**
+  String get complaintReviewNote;
+
+  /// No description provided for @complaintEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get complaintEdit;
+
+  /// No description provided for @complaintSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and send'**
+  String get complaintSubmit;
+
+  /// No description provided for @complaintSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint registered'**
+  String get complaintSent;
+
+  /// No description provided for @complaintReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference number'**
+  String get complaintReference;
+
+  /// No description provided for @complaintSentSpoken.
+  ///
+  /// In en, this message translates to:
+  /// **'Your complaint has been registered. Your reference number is {reference}.'**
+  String complaintSentSpoken(String reference);
+
+  /// No description provided for @complaintKeepReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this number. You will be told in Notifications when the status changes.'**
+  String get complaintKeepReference;
+
+  /// No description provided for @complaintFilledByAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled in from what you said. Please check it.'**
+  String get complaintFilledByAi;
+
+  /// No description provided for @myComplaints.
+  ///
+  /// In en, this message translates to:
+  /// **'My complaints'**
+  String get myComplaints;
+
+  /// No description provided for @noComplaints.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not reported any problem.'**
+  String get noComplaints;
+
+  /// No description provided for @complaintStatusSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get complaintStatusSubmitted;
+
+  /// No description provided for @complaintStatusUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Being checked'**
+  String get complaintStatusUnderReview;
+
+  /// No description provided for @complaintStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get complaintStatusResolved;
+
+  /// No description provided for @complaintStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get complaintStatusRejected;
+
+  /// No description provided for @complaintOfficeReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply from the office'**
+  String get complaintOfficeReply;
+
+  /// No description provided for @doneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get doneButton;
+
+  /// No description provided for @nComplaint.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint'**
+  String get nComplaint;
+
   /// No description provided for @nAnnouncement.
   ///
   /// In en, this message translates to:

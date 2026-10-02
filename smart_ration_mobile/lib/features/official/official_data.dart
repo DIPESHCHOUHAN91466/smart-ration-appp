@@ -195,10 +195,6 @@ enum AlertDecision {
   final String wire;
 }
 
-/// Twelve digits, with or without spaces or dashes: looks like an Aadhaar number, which must never
-/// be written in a note.
-final aadhaarLikePattern = RegExp(r'(?<!\d)\d{4}[\s-]?\d{4}[\s-]?\d{4}(?!\d)');
-
 class OfficialRepository {
   const OfficialRepository(this._api);
 

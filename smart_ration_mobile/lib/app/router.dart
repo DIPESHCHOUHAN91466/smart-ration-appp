@@ -11,6 +11,9 @@ import '../features/citizen/citizen_home_screen.dart';
 import '../features/citizen/eligibility_screen.dart';
 import '../features/citizen/family_screen.dart';
 import '../features/citizen/ration_card_screen.dart';
+import '../features/grievance/complaint_screen.dart';
+import '../features/grievance/grievance_data.dart';
+import '../features/grievance/my_complaints_screen.dart';
 import '../features/help/help_chat_screen.dart';
 import '../features/language/language_screen.dart';
 import '../features/notifications/notifications_screen.dart';
@@ -57,6 +60,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.citizenEligibility, builder: (context, state) => const EligibilityScreen()),
       GoRoute(path: Routes.citizenBook, builder: (context, state) => const BookRationScreen()),
       GoRoute(path: Routes.citizenTokens, builder: (context, state) => const TokensScreen()),
+      GoRoute(
+        path: Routes.citizenComplaint,
+        builder: (context, state) => ComplaintScreen(draft: state.extra is ComplaintDraft ? state.extra as ComplaintDraft : null),
+      ),
+      GoRoute(path: Routes.citizenComplaints, builder: (context, state) => const MyComplaintsScreen()),
       GoRoute(
         path: Routes.citizenTokenPattern,
         builder: (context, state) => TokenScreen(tokenId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0),
