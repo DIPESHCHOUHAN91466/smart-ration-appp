@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Bell, Globe2, Home, LogOut, Menu, Package, QrCode, Search, ClipboardList,
   Ticket, Users, Store, FileText, TrendingUp, ChevronDown, ShieldCheck, MapPin, History,
-  Sparkles, Database, Settings as SettingsIcon, User as UserIcon,
+  Sparkles, Database, Settings as SettingsIcon, User as UserIcon, MessageSquareWarning,
 } from "lucide-react";
 import { useAuthStore } from "../state/authStore";
 import { getNotifications } from "../services/notificationsService";
@@ -24,6 +24,7 @@ const NAV_BY_ROLE = {
     ["/rural/book", "nav_book_ration", Ticket],
     ["/rural/history", "nav_booking_history", ClipboardList],
     ["/rural/verification", "nav_my_verification", ShieldCheck],
+    ["/rural/complaints", "nav_complaints", MessageSquareWarning],
     ["/rural/notifications", "notifications", Bell],
     ["/settings", "nav_settings", SettingsIcon],
   ],
@@ -46,6 +47,7 @@ const NAV_BY_ROLE = {
     ["/gov/ai", "nav_ai_center", Sparkles],
     ["/gov/synthetic-data", "nav_synthetic_data", Users],
     ["/gov/database", "nav_database_viewer", Database],
+    ["/gov/complaints", "nav_complaints", MessageSquareWarning],
     ["/gov/audit", "nav_audit_log", History],
     ["/gov/reports", "nav_reports", FileText],
     ["/gov/notifications", "notifications", Bell],

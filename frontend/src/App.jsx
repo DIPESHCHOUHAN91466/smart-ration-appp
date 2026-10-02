@@ -45,6 +45,8 @@ import GovInventory from "./pages/government/Inventory";
 import Statistics from "./pages/government/Statistics";
 import Reports from "./pages/government/Reports";
 import Audit from "./pages/government/Audit";
+import GovComplaints from "./pages/government/Complaints";
+import RuralComplaints from "./pages/rural/Complaints";
 import AIIntelligenceCenter from "./pages/government/AIIntelligenceCenter";
 import SyntheticData from "./pages/government/SyntheticData";
 import AdminDatabase from "./pages/government/AdminDatabase";
@@ -94,6 +96,7 @@ export default function App() {
               <Route path="/rural/token/:id" element={<MyToken />} />
               <Route path="/rural/history" element={<BookingHistory />} />
               <Route path="/rural/verification" element={<MyVerification />} />
+              <Route path="/rural/complaints" element={<RuralComplaints />} />
               <Route path="/rural/notifications" element={<NotificationsPage />} />
             </Route>
           </Route>
@@ -125,6 +128,7 @@ export default function App() {
               <Route path="/gov/statistics" element={<Statistics />} />
               <Route path="/gov/reports" element={<Reports />} />
               <Route path="/gov/audit" element={<Audit />} />
+              <Route path="/gov/complaints" element={<GovComplaints />} />
               <Route path="/gov/ai" element={<AIIntelligenceCenter />} />
               <Route path="/gov/synthetic-data" element={<SyntheticData />} />
               <Route path="/gov/database" element={<AdminDatabase />} />

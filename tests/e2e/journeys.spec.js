@@ -13,7 +13,7 @@ const ROLES = [
     role: "citizen",
     email: process.env.E2E_CITIZEN_EMAIL || "rural@example.com",
     home: "/rural/dashboard",
-    pages: ["/rural/dashboard", "/rural/book", "/rural/history", "/rural/verification", "/rural/notifications", "/settings", "/help"],
+    pages: ["/rural/dashboard", "/rural/book", "/rural/history", "/rural/verification", "/rural/complaints", "/rural/notifications", "/settings", "/help"],
   },
   {
     role: "shop owner",
@@ -26,7 +26,7 @@ const ROLES = [
     email: process.env.E2E_OFFICIAL_EMAIL || "officer@example.com",
     home: "/gov/dashboard",
     pages: ["/gov/dashboard", "/gov/statistics", "/gov/shops", "/gov/inventory", "/gov/bookings", "/gov/map", "/gov/ai",
-      "/gov/reports", "/gov/audit", "/gov/users", "/gov/notifications", "/settings"],
+      "/gov/reports", "/gov/complaints", "/gov/audit", "/gov/users", "/gov/notifications", "/settings"],
   },
 ];
 
@@ -84,4 +84,52 @@ test("a wrong password shows an error and does not sign in", async ({ page }) =>
   await page.locator('button[type="submit"]').click();
   await expect(page.getByRole("alert").first()).toBeVisible({ timeout: 10_000 });
   await expect(page).toHaveURL(/\/login$/);
+});
+
+async function signIn(page, email) {
+  await page.addInitScript(() => window.localStorage.setItem("smart-ration-language", "en"));
+  await page.goto("/login");
+  await page.locator('input[type="email"]').fill(email);
+  await page.locator('input[type="password"]').fill(PASSWORD);
+  await page.locator('button[type="submit"]').click();
+  await page.waitForURL(/\/(rural|shop|gov)\//, { timeout: 20_000 });
+}
+
+test("complaint lifecycle on the website: citizen files, official resolves with a reply, citizen sees it", async ({ browser }) => {
+  test.skip(!PASSWORD, "E2E_DEMO_PASSWORD not set");
+  const text = `Live browser check ${Date.now()}: this month I got less wheat than my card shows.`;
+  const reply = "The shop has been asked to give the missing wheat.";
+
+  const citizen = await (await browser.newContext()).newPage();
+  await signIn(citizen, ROLES[0].email);
+  await citizen.goto("/rural/complaints");
+  await citizen.getByRole("button", { name: "Report a problem" }).click();
+  await citizen.getByRole("button", { name: "Review" }).click();
+  await expect(citizen.getByText("Choose what the problem is.")).toBeVisible();          // nothing chosen yet
+  await citizen.getByLabel("Problem", { exact: true }).selectOption("LessRation");
+  await citizen.getByLabel("Item", { exact: true }).selectOption("Wheat");
+  await citizen.getByLabel("What happened", { exact: true }).fill("My Aadhaar is 1234 5678 9012");
+  await expect(citizen.getByRole("alert")).toContainText("Do not write Aadhaar numbers");
+  await citizen.getByLabel("What happened", { exact: true }).fill(text);
+  await citizen.getByRole("button", { name: "Review" }).click();
+  await expect(citizen.getByText("Please review your information before submitting.")).toBeVisible();
+  await citizen.getByRole("button", { name: "Confirm and send" }).click();
+  const sent = citizen.getByRole("status").filter({ hasText: "Complaint registered" });
+  await expect(sent).toContainText(/GRV-\d{4}-\d{6}/);
+  const reference = (await sent.textContent()).match(/GRV-\d{4}-\d{6}/)[0];
+
+  const official = await (await browser.newContext()).newPage();
+  await signIn(official, ROLES[2].email);
+  await official.goto("/gov/complaints");
+  const row = official.getByRole("row").filter({ hasText: reference });
+  await expect(row).toBeVisible();
+  await row.getByRole("button", { name: "Resolve" }).click();
+  await official.getByLabel("Reply to the citizen (optional)").fill(reply);
+  await official.getByRole("button", { name: "Resolve", exact: true }).last().click();
+  await expect(official.getByRole("status").filter({ hasText: "Complaint updated" })).toBeVisible();
+
+  await citizen.goto("/rural/complaints");
+  const mine = citizen.getByRole("row").filter({ hasText: reference });
+  await expect(mine).toContainText("Resolved");
+  await expect(mine).toContainText(reply);
 });
