@@ -63,6 +63,8 @@ for (const { role, email, home, pages } of ROLES) {
     }
     if (consoleErrors.length) await testInfo.attach("console errors", { body: consoleErrors.join("\n"), contentType: "text/plain" });
     expect(problems, "page errors, server errors or failed API calls").toEqual([]);
+    expect(consoleErrors.filter((m) => /Content Security Policy|Refused to (load|execute|connect|apply|create)/i.test(m)),
+      "Content-Security-Policy violations").toEqual([]);
   });
 }
 

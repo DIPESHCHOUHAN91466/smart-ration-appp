@@ -24,6 +24,18 @@ def test_the_app_is_served_on_every_client_route(site):
         assert r.headers["cache-control"] == "no-store" and r.headers["x-frame-options"] == "DENY"
 
 
+def test_pages_carry_a_strict_content_security_policy_and_allow_the_voice_and_camera_features(site):
+    headers = site.get("/rural/dashboard").headers
+    csp = dict(part.strip().split(" ", 1) for part in headers["content-security-policy"].split(";"))
+    assert csp["script-src"] == "'self'"                         # no inline or third-party script
+    assert csp["object-src"] == "'none'" and csp["frame-ancestors"] == "'none'" and csp["base-uri"] == "'self'"
+    assert csp["connect-src"] == "'self'"                        # API calls only to this site
+    assert "https://fonts.googleapis.com" in csp["style-src"] and "https://*.tile.openstreetmap.org" in csp["img-src"]
+    permissions = headers["permissions-policy"]
+    assert "camera=(self)" in permissions and "microphone=(self)" in permissions   # QR scanner and chatbot voice input
+    assert "content-security-policy" not in site.get("/docs").headers               # Swagger's CDN assets keep working
+
+
 def test_built_files_are_served_with_caching(site):
     r = site.get("/assets/app-123.js")
     assert r.status_code == 200 and r.text == "console.log(1)"

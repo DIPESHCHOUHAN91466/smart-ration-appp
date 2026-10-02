@@ -4,11 +4,18 @@ import { expect, test } from "@playwright/test";
 
 let pageErrors;
 let serverErrors;
+let cspViolations;
 
 test.beforeEach(async ({ page }) => {
   pageErrors = [];
   serverErrors = [];
+  cspViolations = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error" && /Content Security Policy|Refused to (load|execute|connect|apply|create)/i.test(message.text())) {
+      cspViolations.push(message.text());
+    }
+  });
   page.on("response", (response) => {
     if (response.status() >= 500) serverErrors.push(`${response.status()} ${response.url()}`);
   });
@@ -25,6 +32,7 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(() => {
   expect(pageErrors, "uncaught errors in the page").toEqual([]);
   expect(serverErrors, "server errors (5xx)").toEqual([]);
+  expect(cspViolations, "Content-Security-Policy violations").toEqual([]);
 });
 
 test("landing page shows the Ration Mitra brand and the main message", async ({ page }) => {

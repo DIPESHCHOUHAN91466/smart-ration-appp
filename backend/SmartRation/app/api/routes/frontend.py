@@ -22,7 +22,24 @@ _HTML_HEADERS = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy": "camera=(self), microphone=(), geolocation=(self)",  # camera: QR scanner
+    # camera: QR scanner; microphone: the help chatbot's voice input (it was "()", which silently blocked it)
+    "Permissions-Policy": "camera=(self), microphone=(self), geolocation=(self)",
+    # Only what the built website really loads: its own files, Google Fonts, OpenStreetMap tiles for the shop map, and
+    # its own QR-decoder worker. No inline or eval'd script. Inline style attributes are allowed (React style={...}).
+    "Content-Security-Policy": "; ".join([
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com data:",
+        "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
+        "connect-src 'self'",
+        "worker-src 'self' blob:",
+        "media-src 'self' blob:",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "frame-ancestors 'none'",
+    ]),
 }
 
 
