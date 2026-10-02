@@ -88,7 +88,8 @@ test("a protected page sends a signed-out visitor to the login page", async ({ p
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.locator('input[type="email"]')).toBeVisible();
   await expect(page.locator('input[type="password"]')).toBeVisible();
-  await expect(page.locator(".login-brand")).toContainText("Ration Mitra");
+  // The brand is the Ration Mitra logo: check its accessible name (what screen readers announce).
+  await expect(page.locator(".login-brand").getByRole("img", { name: /Ration Mitra/ })).toBeVisible();
 });
 
 test("status page reports every service", async ({ page }) => {

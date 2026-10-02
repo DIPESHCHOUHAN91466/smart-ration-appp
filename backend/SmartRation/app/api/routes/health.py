@@ -110,10 +110,9 @@ async def live() -> dict:
     responses={503: {"model": HealthResponse, "description": "Database unreachable"}},
 )
 async def health(request: Request):
-    database = await asyncio.to_thread(database_is_reachable)
-
-    legacy = await _legacy_status(request)
-    ai = await _probe(request.app.state.ai_client)
+    # Probed together: an unreachable optional service costs one timeout, not the sum of all of them.
+    database, legacy, ai = await asyncio.gather(
+        asyncio.to_thread(database_is_reachable), _legacy_status(request), _probe(request.app.state.ai_client))
     settings = request.app.state.settings
     chatbot = _chatbot_status(settings)
     dependencies_ok = legacy in ("healthy", "disabled") and ai in ("healthy", "disabled") and chatbot == "healthy"
