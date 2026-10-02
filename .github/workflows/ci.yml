@@ -190,9 +190,17 @@ jobs:
             -e DATABASE_URL=sqlite:////tmp/ci.db -e JWT_SECRET_KEY=ci-only-signing-key-not-a-secret-0123456789abcdef \
             -e QR_SECRET=ci-only-qr-secret-not-a-secret-0123456789abcdef \
             -e LEGACY_API_URL= -e AI_SERVICE_URL= smartration-api:ci
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/health/live && break; sleep 1; done
-          curl -fsS http://127.0.0.1:8000/health/live || { docker logs api; exit 1; }
-          curl -fsS http://127.0.0.1:8000/rural/dashboard | grep -q '<div id="root">' || { docker logs api; exit 1; }
+          # On failure: the container's last log lines as a public annotation (logs hold no secrets; the
+          # QR/JWT values here are CI-only dummies), so the cause is visible without opening the raw log.
+          fail() {
+            docker logs api > container.log 2>&1 || true
+            echo "::error title=$1::$(tail -n 40 container.log | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
+            exit 1
+          }
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8000/health/live && break; sleep 1; done
+          curl -fsS http://127.0.0.1:8000/health/live || fail "container not live after 60 s"
+          status=$(curl -s -o page.html -w "%{http_code}" http://127.0.0.1:8000/rural/dashboard)
+          grep -q '<div id="root">' page.html || fail "website not served (HTTP $status)"
       - name: Build the C# API image
         run: docker build -f backend/SmartRation.Api/Dockerfile -t smartration-csharp-api:ci .
       - name: C# image has no local database, dev settings or env files; runs as non-root
