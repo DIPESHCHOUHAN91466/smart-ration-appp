@@ -2569,6 +2569,155 @@
         ]
       }
     },
+    "/api/grievances": {
+      "get": {
+        "operationId": "all_grievances_api_grievances_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "shopId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Shopid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "All complaints (officials), optionally one status or shop",
+        "tags": [
+          "grievances"
+        ]
+      },
+      "post": {
+        "operationId": "submit_api_grievances_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "File a complaint about my ration shop (returns its reference number)",
+        "tags": [
+          "grievances"
+        ]
+      }
+    },
+    "/api/grievances/mine": {
+      "get": {
+        "operationId": "mine_api_grievances_mine_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My complaints, newest first",
+        "tags": [
+          "grievances"
+        ]
+      }
+    },
+    "/api/grievances/{grievance_id}/status": {
+      "post": {
+        "operationId": "update_status_api_grievances__grievance_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "grievance_id",
+            "required": true,
+            "schema": {
+              "title": "Grievance Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move a complaint to UnderReview / Resolved / Rejected (officials)",
+        "tags": [
+          "grievances"
+        ]
+      }
+    },
     "/api/health": {
       "get": {
         "operationId": "api_health_api_health_get",

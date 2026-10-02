@@ -93,6 +93,26 @@ class NotificationType(IntEnum):
     VerificationResult = 7
     AIAlert = 8
     SystemAnnouncement = 9
+    GrievanceUpdate = 10
+
+
+class GrievanceCategory(IntEnum):
+    """What a citizen's complaint is about."""
+    LessRation = 1           # received less than entitled / booked
+    PoorQuality = 2          # spoiled, mixed or bad-quality grain
+    ShopClosed = 3           # shop closed during its hours / slot
+    Overcharged = 4          # asked to pay more than allowed
+    TokenProblem = 5         # booking / token / QR did not work
+    VerificationProblem = 6  # Aadhaar / OTP / identity check failed
+    StaffBehaviour = 7       # rude or unfair treatment
+    Other = 8
+
+
+class GrievanceStatus(IntEnum):
+    Submitted = 1
+    UnderReview = 2
+    Resolved = 3
+    Rejected = 4
 
 
 class OtpStatus(IntEnum):

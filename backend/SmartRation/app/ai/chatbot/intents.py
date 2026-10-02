@@ -57,11 +57,16 @@ _GREETINGS = {normalize(w) for w in GREETINGS}
 _THANKS = {normalize(w) for w in THANKS}
 
 
+def contains_sensitive(text: str) -> bool:
+    """An Aadhaar-like number, an OTP with its code, or a password value: never stored or passed on."""
+    return bool(_AADHAAR_LIKE.search(text) or _OTP_WITH_CODE.search(text) or _PASSWORD_VALUE.search(text))
+
+
 def classify(text: str, norm: str, tokens: list[str], has_article_match: Callable[[], bool]) -> str | None:
     """The intent of a cleaned message (`text`), its normalised form and tokens. `has_article_match`
     is only called for short greetings ("hi, ration card?" is a question, not a greeting)."""
     token_set = set(tokens)
-    if _AADHAAR_LIKE.search(text) or _OTP_WITH_CODE.search(text) or _PASSWORD_VALUE.search(text):
+    if contains_sensitive(text):
         return "sensitive_input"
     if any(phrase in norm for phrase in INTERNAL_PHRASES):
         return "internal"

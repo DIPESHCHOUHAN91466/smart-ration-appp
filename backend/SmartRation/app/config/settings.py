@@ -72,6 +72,7 @@ class Settings(BaseSettings):
     chatbot_api_key: str = Field(default="", repr=False)
     chatbot_rate_limit_per_minute: int = 30
     public_help_rate_limit_per_minute: int = 120
+    grievance_rate_limit_per_minute: int = 5   # complaints filed per client IP (stops scripted flooding)
 
     # ---- QR codes ----
     # HMAC key that signs every booking's QR code. Changing it invalidates all issued QR codes, so an

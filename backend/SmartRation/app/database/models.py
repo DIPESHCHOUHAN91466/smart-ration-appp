@@ -416,6 +416,36 @@ class RationCollectionItem(Base):
     )
 
 
+# ---------------- grievances: Citizens' complaints, each with a reference number.
+
+
+class Grievance(Base):
+    __tablename__ = "Grievances"
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ReferenceNumber: Mapped[str] = mapped_column(String(32), nullable=False)     # GRV-2026-000123
+    UserId: Mapped[int] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="RESTRICT"), nullable=False)
+    RationShopId: Mapped[int | None] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=True)
+    Category: Mapped[int] = mapped_column(Integer, nullable=False)             # GrievanceCategory
+    RationType: Mapped[int | None] = mapped_column(Integer, nullable=True)     # the item concerned, when there is one
+    Description: Mapped[str] = mapped_column(String(1000), nullable=False)
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)               # GrievanceStatus
+    # How the form was filled: "APP" (typed) or "ASSISTANT" (pre-filled by the AI assistant, then reviewed).
+    Source: Mapped[str] = mapped_column(String(16), nullable=False, server_default="APP")
+    IdempotencyKey: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    ResolutionNote: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    ResolvedByUserId: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    UpdatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+
+    __table_args__ = (
+        Index("IX_Grievances_ReferenceNumber", "ReferenceNumber", unique=True),
+        Index("IX_Grievances_IdempotencyKey", "IdempotencyKey", unique=True),
+        Index("IX_Grievances_UserId_CreatedAt", "UserId", "CreatedAt"),
+        Index("IX_Grievances_Status_CreatedAt", "Status", "CreatedAt"),
+        Index("IX_Grievances_RationShopId_Status", "RationShopId", "Status"),
+    )
+
+
 # ---------------- ai: Alerts and insights written by the AI service.
 
 
