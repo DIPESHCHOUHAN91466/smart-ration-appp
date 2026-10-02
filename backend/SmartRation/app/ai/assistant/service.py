@@ -44,7 +44,7 @@ def understand(db: Session, actor: Actor, chat: ChatProvider, text: str, languag
 
     if u.intent == "navigate" and screen_allowed(u.target, actor.role):
         return {**base, "action": "navigate", "target": u.target}
-    if u.intent == "fill_form" and form_allowed(u.target, actor.role):
+    if u.intent == "fill_form" and u.target is not None and form_allowed(u.target, actor.role):
         fields, missing = FORMS[u.target].draft(u.fields)
         return {**base, "action": "fill_form", "form": u.target, "fields": fields, "missing": missing}
     if u.intent == "change_language" and u.target in LANGUAGES:

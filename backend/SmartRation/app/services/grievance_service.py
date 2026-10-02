@@ -44,7 +44,9 @@ def _dto(g: Grievance, shop_names: dict[int, str]) -> dict:
 
 def _dtos(db: Session, rows: list[Grievance]) -> list[dict]:
     ids = {g.RationShopId for g in rows if g.RationShopId is not None}
-    names = dict(db.execute(select(RationShop.Id, RationShop.ShopName).where(RationShop.Id.in_(ids))).all()) if ids else {}
+    names: dict[int, str] = {}
+    if ids:
+        names = {row.Id: row.ShopName for row in db.execute(select(RationShop.Id, RationShop.ShopName).where(RationShop.Id.in_(ids)))}
     return [_dto(g, names) for g in rows]
 
 
