@@ -286,9 +286,8 @@ flowchart LR
     T -. "push to main (independently of CI)" .-> RD["Render builds and deploys"]
 ```
 
-**Gap:** Render deploys every push to `main` whether or not CI passed (`render.yaml` sets no deploy
-trigger). Setting the services to deploy only after checks pass (Render's "after CI checks pass" auto-deploy
-option) closes it. NOT DONE: it can only be verified on a connected Render account.
+**Closed in `render.yaml` (2026-10-02):** `autoDeployTrigger: checksPass` deploys a push to `main` only after the
+GitHub CI checks pass. NOT VERIFIED yet: it can only be confirmed on a connected Render account.
 
 Not in CI: the Playwright end-to-end tests and the HTTP load test, because they need the whole stack
 running (`sr.ps1 e2e`, `sr.ps1 load`).

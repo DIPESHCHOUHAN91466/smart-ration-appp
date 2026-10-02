@@ -30,6 +30,7 @@ from sqlalchemy.orm import Session
 from app.database.enums import RationType, UserRole
 from app.database.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
 from app.security.passwords import hash_password
+from app.services.data_provider import SyntheticDataProvider
 from app.utils.time import utc_now
 
 # The synthetic reference data lives in <repo>/database/seeds/synthetic/*.json (clearly labelled
@@ -116,15 +117,20 @@ def seed(db: Session) -> list[str]:
         satnavari = next((s.Id for s in shops if s.ShopCode == "SR-SATNAVARI-001"), None)
         if demo_password:
             h = hash_password(demo_password)
+            citizen = User(FullName="Rahul Patil", Email="rural@example.com", MobileNumber="9000000001", PasswordHash=h,
+                           Role=int(UserRole.RuralUser), IsActive=True, CreatedAt=now)
             db.add_all([
-                User(FullName="Rahul Patil", Email="rural@example.com", MobileNumber="9000000001", PasswordHash=h,
-                     Role=int(UserRole.RuralUser), IsActive=True, CreatedAt=now),
+                citizen,
                 User(FullName="Satnavari Shop Owner", Email="shop@example.com", MobileNumber="9000000051", PasswordHash=h,
                      Role=int(UserRole.ShopOwner), RationShopId=satnavari, IsActive=True, CreatedAt=now),
                 User(FullName="District Government Officer", Email="officer@example.com", MobileNumber="9000000052",
                      PasswordHash=h, Role=int(UserRole.GovernmentOfficial), IsActive=True, CreatedAt=now),
             ])
-            done.append("3 demo users")
+            # The demo citizen gets a ration card, family and identity records exactly as a newly registered citizen
+            # does (same code path as POST /api/auth/register), so booking works on a fresh database.
+            db.flush()
+            SyntheticDataProvider().provision_citizen(db, citizen)
+            done.append("3 demo users (the citizen with a synthetic ration card)")
         if admin_email and admin_password:
             if len(admin_password) < 12:
                 raise SystemExit("SEED_ADMIN_PASSWORD must be at least 12 characters.")

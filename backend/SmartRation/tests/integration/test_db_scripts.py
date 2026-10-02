@@ -47,6 +47,37 @@ def test_setup_creates_seeds_and_verifies_empty_database(db_url):
     assert count(db_url, RationItem) == 6 and count(db_url, User) == 3
 
 
+def test_first_boot_demo_citizen_can_sign_in_see_their_card_and_book(db_url, tmp_path):
+    """What a fresh cloud deployment does (RUN_DB_SETUP + RUN_DB_SEED with SEED_DEMO_PASSWORD), then the demo
+    citizen's first journey through the real API: sign in, ration card, book a slot, get the signed QR."""
+    from datetime import date, timedelta
+
+    from fastapi.testclient import TestClient
+    from py_testkit import make_settings
+
+    from app.main import create_app
+
+    assert run("setup_database.py", db_url, "--seed").returncode == 0
+    client = TestClient(create_app(make_settings(tmp_path, database_url=db_url, legacy_api_url="", max_request_bytes=65536)))
+
+    r = client.post("/api/auth/login", json={"email": "rural@example.com", "password": "unit-demo-password"})
+    assert r.status_code == 200, r.text
+    citizen = {"Authorization": f"Bearer {r.json()['data']['accessToken']}"}
+    me = client.get("/api/beneficiaries/me", headers=citizen)
+    assert me.status_code == 200, me.text
+    shop = me.json()["data"]["rationShop"]
+    assert shop["shopName"].startswith("Satnavari"), shop   # the same shop as the demo shop owner
+
+    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    slots = client.get(f"/api/slots?shopId={shop['id']}&date={tomorrow}", headers=citizen).json()["data"]
+    assert slots, "the seed creates bookable slots"
+    booked = client.post("/api/ration/bookings", headers=citizen, json={
+        "rationShopId": shop["id"], "timeSlotId": slots[0]["id"], "items": [{"rationType": "Rice", "quantity": 1}]})
+    assert booked.status_code == 200, booked.text
+    qr = client.get(f"/api/qr/payload/{booked.json()['data']['id']}", headers=citizen)
+    assert qr.status_code == 200 and qr.json()["data"]
+
+
 def test_setup_and_seed_are_idempotent(db_url):
     assert run("setup_database.py", db_url, "--seed").returncode == 0
     again = run("setup_database.py", db_url, "--seed")
