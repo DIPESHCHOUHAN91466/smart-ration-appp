@@ -67,7 +67,7 @@ export default function OtpModal({ onClose, onVerified }) {
                 placeholder="9000000001"
               />
             </label>
-            {error && <p style={{ color: "var(--red)", fontSize: 12 }}>{error}</p>}
+            {error && <p role="alert" style={{ color: "var(--red)", fontSize: 12 }}>{error}</p>}
             <button className="primary-btn wide" type="submit" disabled={loading}>
               <Smartphone size={16} /> {loading ? "Sending..." : "Request OTP"}
             </button>
@@ -92,7 +92,7 @@ export default function OtpModal({ onClose, onVerified }) {
                 placeholder="123456"
               />
             </label>
-            {error && <p style={{ color: "var(--red)", fontSize: 12 }}>{error}</p>}
+            {error && <p role="alert" style={{ color: "var(--red)", fontSize: 12 }}>{error}</p>}
             <button className="primary-btn wide" type="submit" disabled={loading || code.length !== 6}>
               {loading ? "Verifying..." : "Verify OTP"}
             </button>

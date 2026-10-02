@@ -15,12 +15,15 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={notify}>
       {children}
-      {toast && (
-        <div className={`toast ${toast.type === "error" ? "error" : ""}`}>
-          {toast.type === "error" ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
-          {toast.message}
-        </div>
-      )}
+      {/* Always in the page, so screen readers announce what appears in it (WCAG 4.1.3): errors at once, others politely. */}
+      <div className="toast-region" aria-live="polite" aria-atomic="true">
+        {toast && (
+          <div className={`toast ${toast.type === "error" ? "error" : ""}`} role={toast.type === "error" ? "alert" : "status"}>
+            {toast.type === "error" ? <AlertCircle size={18} aria-hidden="true" /> : <CheckCircle2 size={18} aria-hidden="true" />}
+            {toast.message}
+          </div>
+        )}
+      </div>
     </ToastContext.Provider>
   );
 }

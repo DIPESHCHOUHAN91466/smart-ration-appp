@@ -185,7 +185,7 @@ export default function Login() {
             </div>
           </label>
 
-          {error && <p className="muted" style={{ color: "var(--red)" }}>{error}</p>}
+          {error && <p className="muted" role="alert" style={{ color: "var(--red)" }}>{error}</p>}
 
           <button className="primary-btn" type="submit" disabled={submitting}>
             {submitting ? (

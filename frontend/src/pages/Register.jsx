@@ -103,7 +103,7 @@ export default function Register() {
           </label>
 
           {errors.length > 0 && (
-            <ul className="muted" style={{ color: "var(--red)", paddingLeft: 18 }}>
+            <ul className="muted" role="alert" style={{ color: "var(--red)", paddingLeft: 18 }}>
               {errors.map((message) => (
                 <li key={message}>{message}</li>
               ))}
