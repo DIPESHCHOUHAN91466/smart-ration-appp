@@ -216,7 +216,7 @@ export default function LandingPage() {
       <Faq />
 
       {/* ---------------------------------------------------------------- contact */}
-      <section className="land-section tinted" aria-labelledby="contact-title">
+      <section id="contact" className="land-section tinted" aria-labelledby="contact-title">
         <h2 id="contact-title" className="land-h2">{t("land_contact_title")}</h2>
         <div className="land-grid three">
           {contacts.map((c) => (

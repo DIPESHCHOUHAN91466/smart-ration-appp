@@ -82,6 +82,10 @@ export default function PublicLayout() {
             <Link to="/help">{t("nav_public_help")}</Link>
             <Link to="/login">{t("nav_login")}</Link>
             <Link to="/register">{t("nav_get_started")}</Link>
+            <Link to="/#contact">{t("footer_contact")}</Link>
+            <Link to="/privacy">{t("footer_privacy")}</Link>
+            <Link to="/terms">{t("footer_terms")}</Link>
+            <Link to="/accessibility">{t("footer_accessibility")}</Link>
           </nav>
         </div>
         <p className="pub-copy">© {new Date().getFullYear()} HSD2C · {t("footer_rights")}</p>

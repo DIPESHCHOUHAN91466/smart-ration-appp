@@ -215,3 +215,11 @@
   .token-card, .float-chip, .help-card.skeleton, .help-skeleton span { animation: none; }
   .land-card, .land-btn { transition: none; }
 }
+
+/* Policy pages (privacy, terms, accessibility): a readable single column */
+.legal-page { max-width: 820px; margin: 0 auto; padding: 40px 24px 64px; color: var(--text); line-height: 1.65; }
+.legal-page h1 { font-size: 30px; color: #063b7a; margin: 0 0 6px; }
+.legal-page .legal-updated { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
+.legal-page h2 { font-size: 19px; color: #063b7a; margin: 28px 0 8px; }
+.legal-page p, .legal-page li { font-size: 16px; }
+.legal-page ul { padding-left: 22px; }

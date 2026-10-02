@@ -13,6 +13,7 @@ import { SHOW_STATUS_PAGE as SHOW_STATUS } from "./config/env";
 // Public pages (no login): loaded on demand so the dashboards bundle stays the same size.
 const LandingPage = lazy(() => import("./pages/landing/LandingPage"));
 const PublicHelpPage = lazy(() => import("./pages/public-help/PublicHelpPage"));
+const LegalPage = lazy(() => import("./pages/legal/LegalPage"));
 // Developer status page: only in development builds (or VITE_SHOW_STATUS=true) — config/env.js.
 const StatusPage = lazy(() => import("./pages/status/StatusPage"));
 
@@ -80,6 +81,9 @@ export default function App() {
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Suspense fallback={publicFallback}><Home /></Suspense>} />
             <Route path="/help" element={<Suspense fallback={publicFallback}><PublicHelpPage /></Suspense>} />
+            <Route path="/privacy" element={<Suspense fallback={publicFallback}><LegalPage doc="privacy" /></Suspense>} />
+            <Route path="/terms" element={<Suspense fallback={publicFallback}><LegalPage doc="terms" /></Suspense>} />
+            <Route path="/accessibility" element={<Suspense fallback={publicFallback}><LegalPage doc="accessibility" /></Suspense>} />
           </Route>
 
           <Route element={<ProtectedRoute roles={["RuralUser", "ShopOwner", "GovernmentOfficial", "Admin"]} />}>
