@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Which backend the app talks to. It is chosen when the app is built, never typed in by a user:
 ///
 ///   flutter run                                  -> development: the emulator talks to your PC
@@ -25,10 +27,15 @@ class Env {
         apiBaseUrl: const String.fromEnvironment('API_BASE_URL'),
       );
 
-  static Env parse({required String environment, required String apiBaseUrl}) {
+  /// [release] is true in a release build (`flutter build ... --release`); tests pass it explicitly.
+  static Env parse({required String environment, required String apiBaseUrl, bool release = kReleaseMode}) {
     final env = AppEnvironment.values.where((e) => e.name == environment).firstOrNull;
     if (env == null) {
       throw ArgumentError('Unknown APP_ENV "$environment". Use development, staging or production.');
+    }
+    // A release build in development mode would talk plain http to this PC and show demo hints.
+    if (release && env == AppEnvironment.development) {
+      throw ArgumentError('Release builds need APP_ENV=staging or APP_ENV=production with an https API_BASE_URL.');
     }
 
     var url = apiBaseUrl.trim();

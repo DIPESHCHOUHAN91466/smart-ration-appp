@@ -3,10 +3,14 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Voice questions in the help chat; asked for only when the mic button is tapped. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- No cloud/device backups: the session and the saved token QR codes are encrypted with a key
+         that never leaves this phone, so a restored copy would be unreadable (and must not travel). -->
     <application
         android:label="Smart Ration AI"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"

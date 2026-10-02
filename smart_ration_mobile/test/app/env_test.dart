@@ -3,6 +3,12 @@ import 'package:smart_ration_mobile/app/env.dart';
 
 void main() {
   group('Env.parse', () {
+    test('a release build refuses development mode, and accepts production over https', () {
+      expect(() => Env.parse(environment: 'development', apiBaseUrl: '', release: true), throwsArgumentError);
+      expect(() => Env.parse(environment: 'development', apiBaseUrl: 'https://api.example.org', release: true), throwsArgumentError);
+      expect(Env.parse(environment: 'production', apiBaseUrl: 'https://api.example.org', release: true).isDevelopment, isFalse);
+    });
+
     test('development defaults to the PC as seen from the emulator', () {
       final env = Env.parse(environment: 'development', apiBaseUrl: '');
       expect(env.environment, AppEnvironment.development);

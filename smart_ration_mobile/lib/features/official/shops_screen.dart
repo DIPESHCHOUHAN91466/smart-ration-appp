@@ -131,10 +131,14 @@ class ShopDetailScreen extends ConsumerWidget {
                                       style: const TextStyle(color: AppColors.muted)),
                                 ]),
                               ),
-                              Text('${amount(s.available)} ${unitWord(l, s.rationType)}',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: s.low ? AppColors.danger : AppColors.ink)),
                               const SizedBox(width: 8),
-                              StatusPill(text: s.low ? l.stockLow : l.stockOk, tone: s.low ? PillTone.bad : PillTone.good),
+                              // Quantity above its label, so the row fits small phones with large text.
+                              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                                Text('${amount(s.available)} ${unitWord(l, s.rationType)}',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: s.low ? AppColors.danger : AppColors.ink)),
+                                const SizedBox(height: 4),
+                                StatusPill(text: s.low ? l.stockLow : l.stockOk, tone: s.low ? PillTone.bad : PillTone.good),
+                              ]),
                             ]),
                           ),
                       ]),

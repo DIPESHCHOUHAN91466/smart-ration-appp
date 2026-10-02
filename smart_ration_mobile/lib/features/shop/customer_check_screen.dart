@@ -153,9 +153,14 @@ class _CustomerCard extends StatelessWidget {
     return SectionCard(
       title: l.customer,
       icon: Icons.person_outline,
-      trailing: StatusPill(text: check.method == CheckMethod.otp ? l.identifiedByOtp : l.identifiedByQr, tone: PillTone.neutral),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text(check.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 6),
+        // On its own line: beside the heading it doesn't fit small phones with large text.
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: StatusPill(text: check.method == CheckMethod.otp ? l.identifiedByOtp : l.identifiedByQr, tone: PillTone.neutral),
+        ),
         const SizedBox(height: 8),
         InfoRow(label: l.beneficiaryId, value: valueText(check.beneficiaryCode)),
         InfoRow(label: l.registeredMobile, value: valueText(check.mobileMasked)),
