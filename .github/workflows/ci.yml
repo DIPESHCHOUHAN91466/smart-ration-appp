@@ -188,7 +188,8 @@ jobs:
         run: |
           docker run -d --name api -p 8000:8000 \
             -e DATABASE_URL=sqlite:////tmp/ci.db -e JWT_SECRET_KEY=ci-only-signing-key-not-a-secret-0123456789abcdef \
-            -e QR_SECRET=ci-only-qr-secret-not-a-secret-0123456789abcdef \n            -e LEGACY_API_URL= -e AI_SERVICE_URL= smartration-api:ci
+            -e QR_SECRET=ci-only-qr-secret-not-a-secret-0123456789abcdef \
+            -e LEGACY_API_URL= -e AI_SERVICE_URL= smartration-api:ci
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/health/live && break; sleep 1; done
           curl -fsS http://127.0.0.1:8000/health/live || { docker logs api; exit 1; }
           curl -fsS http://127.0.0.1:8000/rural/dashboard | grep -q '<div id="root">' || { docker logs api; exit 1; }
