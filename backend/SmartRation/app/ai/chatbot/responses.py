@@ -24,6 +24,15 @@ class Reply:
     confidence: float = 0.0
 
 
+def reply_dto(reply: Reply) -> dict:
+    """The JSON shape every chat answer is sent in (help chat and assistant)."""
+    return {
+        "kind": reply.kind, "language": reply.language, "text": reply.text, "articleId": reply.article_id,
+        "title": reply.title, "links": reply.links, "suggestions": reply.suggestions, "related": reply.related,
+        "requiresLogin": reply.requires_login, "confidence": reply.confidence,
+    }
+
+
 # ------------------------------------------------------------------ signed-in replies
 
 _YOUR_BOOKINGS = {"en": "Your upcoming bookings:", "hi": "आपकी आने वाली बुकिंग:", "mr": "तुमची आगामी बुकिंग:"}

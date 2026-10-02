@@ -20,7 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.ai.chatbot.knowledge_base import get_knowledge_base
 from app.ai.chatbot.providers import get_provider
-from app.api.routes import ai, auth, counter, government, grievances, health, legacy_proxy, people, public_help, ration
+from app.api.routes import ai, assistant, auth, counter, government, grievances, health, legacy_proxy, people, public_help, ration
 from app.api.routes.frontend import mount_frontend
 from app.config.settings import Settings, get_settings
 from app.core.errors import install_exception_handlers
@@ -143,6 +143,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     app.include_router(ai.router)  # AI analytics / alerts / OCR (optional AI service, rule-based fallback)
     app.include_router(government.router)  # admin dashboard, statistics, reports, users, map, database viewer
     app.include_router(grievances.router)  # citizens' complaints with reference numbers; officials' review
+    app.include_router(assistant.router)  # the app's AI button: understand -> one checked action
 
     # ---- Fallback proxy: MUST stay last ----
     if legacy_client is not None:

@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import logging
 import time
-from dataclasses import asdict
 
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.concurrency import run_in_threadpool
@@ -23,7 +22,7 @@ from sqlalchemy.orm import Session
 
 from app.ai.chatbot.knowledge_base import LANGUAGES, get_knowledge_base
 from app.ai.chatbot.providers import get_provider
-from app.ai.chatbot.responses import Reply
+from app.ai.chatbot.responses import reply_dto
 from app.ai.chatbot.text import MAX_MESSAGE_LENGTH
 from app.api.dependencies.auth import optional_current_user
 from app.core.errors import NotFound, ok
@@ -46,13 +45,7 @@ def _lang(value: str | None) -> str:
     return value if value in LANGUAGES else "en"
 
 
-def _reply_dto(reply: Reply) -> dict:
-    d = asdict(reply)
-    return {
-        "kind": d["kind"], "language": d["language"], "text": d["text"], "articleId": d["article_id"],
-        "title": d["title"], "links": d["links"], "suggestions": d["suggestions"], "related": d["related"],
-        "requiresLogin": d["requires_login"], "confidence": d["confidence"],
-    }
+_reply_dto = reply_dto
 
 
 @router.get("/api/public-help/categories", summary="Public Help sections and their articles", dependencies=[help_limit])
