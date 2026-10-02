@@ -27,3 +27,4 @@ class DatabaseHealthResponse(BaseModel):
     status: str = Field(description="healthy | unhealthy")
     latencyMs: float | None = Field(description="round trip of a trivial query; null when unreachable")
     migrations: str = Field(description="ok | behind | unknown — schema at the Alembic head this code expects")
+    encryption: str = Field(description="the database connection's TLS version (e.g. TLSv1.3), none, n/a (SQLite) or unknown")

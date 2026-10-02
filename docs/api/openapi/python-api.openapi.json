@@ -150,6 +150,11 @@
       },
       "DatabaseHealthResponse": {
         "properties": {
+          "encryption": {
+            "description": "the database connection's TLS version (e.g. TLSv1.3), none, n/a (SQLite) or unknown",
+            "title": "Encryption",
+            "type": "string"
+          },
           "latencyMs": {
             "anyOf": [
               {
@@ -176,7 +181,8 @@
         "required": [
           "status",
           "latencyMs",
-          "migrations"
+          "migrations",
+          "encryption"
         ],
         "title": "DatabaseHealthResponse",
         "type": "object"

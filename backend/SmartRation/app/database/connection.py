@@ -56,6 +56,20 @@ def get_db() -> Iterator[Session]:
         session.close()
 
 
+def database_encryption() -> str:
+    """How this app's connection to the database is protected: the TLS version (e.g. "TLSv1.3"), "none", "n/a" for an
+    embedded SQLite file, or "unknown" when it can't be read. No host, user or certificate details."""
+    engine = get_engine()
+    if engine.dialect.name != "mysql":
+        return "n/a"
+    try:
+        with engine.connect() as conn:
+            row = conn.execute(text("SHOW SESSION STATUS LIKE 'Ssl_version'")).first()
+    except SQLAlchemyError:
+        return "unknown"
+    return (row[1] if row else "") or "none"
+
+
 def database_is_reachable() -> bool:
     try:
         with get_engine().connect() as conn:

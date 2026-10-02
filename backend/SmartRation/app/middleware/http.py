@@ -22,7 +22,11 @@ SECURITY_HEADERS = {
 }
 
 
-def install_middleware(app: FastAPI, max_request_bytes: int) -> None:
+# Production is served over HTTPS only (Render terminates TLS): browsers must never fall back to plain HTTP.
+HSTS = "max-age=31536000"
+
+
+def install_middleware(app: FastAPI, max_request_bytes: int, *, https_only: bool = False) -> None:
     @app.middleware("http")
     async def request_context(request: Request, call_next):
         # Accept a caller's id only if it looks like one; otherwise make our own.
@@ -45,6 +49,8 @@ def install_middleware(app: FastAPI, max_request_bytes: int) -> None:
             response.headers["Server-Timing"] = f"app;dur={(time.perf_counter() - started) * 1000:.1f}"
             for name, value in SECURITY_HEADERS.items():
                 response.headers.setdefault(name, value)
+            if https_only:
+                response.headers.setdefault("Strict-Transport-Security", HSTS)
             log.info(
                 "request",
                 extra={"fields": {

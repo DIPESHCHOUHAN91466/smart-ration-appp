@@ -25,7 +25,7 @@ from fastapi.responses import JSONResponse
 
 from app.ai.chatbot.knowledge_base import get_knowledge_base
 from app.ai.chatbot.providers import get_provider
-from app.database.connection import database_is_reachable
+from app.database.connection import database_encryption, database_is_reachable
 from app.database.migrations import alembic_head, current_revision
 from app.schemas.health import DatabaseHealthResponse, HealthResponse, ReadyResponse
 
@@ -94,7 +94,9 @@ async def database_health():
     latency = round((time.perf_counter() - started) * 1000, 1) if reachable else None
     current = await asyncio.to_thread(current_revision) if reachable else None
     migrations = "unknown" if not reachable else "ok" if current == alembic_head() else "behind"
-    body = DatabaseHealthResponse(status="healthy" if reachable else "unhealthy", latencyMs=latency, migrations=migrations)
+    encryption = await asyncio.to_thread(database_encryption) if reachable else "unknown"
+    body = DatabaseHealthResponse(status="healthy" if reachable else "unhealthy", latencyMs=latency, migrations=migrations,
+                                  encryption=encryption)
     return JSONResponse(status_code=200 if reachable else 503, content=body.model_dump())
 
 

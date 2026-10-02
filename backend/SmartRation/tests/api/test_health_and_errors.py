@@ -38,14 +38,16 @@ def test_database_health_reports_latency_without_connection_details(make_client)
     body = r.json()
     assert r.status_code == 200 and body["status"] == "healthy"
     assert isinstance(body["latencyMs"], float) and body["migrations"] in ("ok", "behind")
-    assert set(body) == {"status", "latencyMs", "migrations"}       # no URL, host, user or password
+    assert set(body) == {"status", "latencyMs", "migrations", "encryption"}   # no URL, host, user or password
+    assert body["encryption"] == "n/a"                                         # SQLite: no network connection
     assert "sqlite" not in r.text.lower()
 
 
 def test_database_health_503_when_database_down(make_client, tmp_path):
     bad = f"sqlite:///{(tmp_path / 'missing' / 'x.db').as_posix()}"
     r = make_client(healthy_legacy, database_url=bad).get("/health/db")
-    assert r.status_code == 503 and r.json() == {"status": "unhealthy", "latencyMs": None, "migrations": "unknown"}
+    assert r.status_code == 503 and r.json() == {"status": "unhealthy", "latencyMs": None, "migrations": "unknown",
+                                                 "encryption": "unknown"}
 
 
 def test_docs_and_openapi_available(make_client):
@@ -126,3 +128,12 @@ def test_not_ready_when_legacy_down(make_client, tmp_path):
 
     r = make_client(down).get("/ready")
     assert r.status_code == 503 and r.json()["checks"]["legacyApi"] == "failing"
+
+
+def test_hsts_only_in_production(make_client):
+    production = make_client(healthy_legacy, environment="production", demo_otp_enabled=False,
+                             sms_allow_mock_outside_development=True).get("/health/live")
+    assert production.headers["Strict-Transport-Security"] == "max-age=31536000"
+    assert production.headers["X-Content-Type-Options"] == "nosniff" and production.headers["X-Frame-Options"] == "DENY"
+    development = make_client(healthy_legacy).get("/health/live")
+    assert "Strict-Transport-Security" not in development.headers   # local http would otherwise be pinned to https

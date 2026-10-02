@@ -122,7 +122,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     app.state.rate_limiter = FixedWindowLimiter()
 
     install_exception_handlers(app)
-    install_middleware(app, settings.max_request_bytes)
+    install_middleware(app, settings.max_request_bytes, https_only=settings.is_production)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
