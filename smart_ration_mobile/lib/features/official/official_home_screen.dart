@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../auth/auth_controller.dart';
 import '../auth/session.dart';
 import '../citizen/citizen_widgets.dart';
+import '../notifications/notifications_screen.dart';
 import 'official_data.dart';
 
 /// The government official's (and admin's) dashboard: today's totals across every shop, the last
@@ -36,6 +37,7 @@ class OfficialHomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l.appTitle),
         actions: [
+          const NotificationsBell(),
           IconButton(
             icon: const Icon(Icons.help_outline),
             tooltip: l.helpButton,

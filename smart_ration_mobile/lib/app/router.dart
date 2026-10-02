@@ -13,6 +13,7 @@ import '../features/citizen/family_screen.dart';
 import '../features/citizen/ration_card_screen.dart';
 import '../features/help/help_chat_screen.dart';
 import '../features/language/language_screen.dart';
+import '../features/notifications/notifications_screen.dart';
 import '../features/official/alerts_screen.dart';
 import '../features/official/official_home_screen.dart';
 import '../features/official/shops_screen.dart';
@@ -49,6 +50,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.serverStatus, builder: (context, state) => const ServerStatusScreen()),
       GoRoute(path: Routes.login, builder: (context, state) => const LoginScreen()),
       GoRoute(path: Routes.help, builder: (context, state) => const HelpChatScreen()),
+      GoRoute(path: Routes.notifications, builder: (context, state) => const NotificationsScreen()),
       GoRoute(path: Routes.citizenHome, builder: (context, state) => const CitizenHomeScreen()),
       GoRoute(path: Routes.citizenFamily, builder: (context, state) => const FamilyScreen()),
       GoRoute(path: Routes.citizenCard, builder: (context, state) => const RationCardScreen()),

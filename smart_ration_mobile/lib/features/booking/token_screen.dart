@@ -7,6 +7,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
+import '../../core/network/network_status.dart';
 import '../../l10n/app_localizations.dart';
 import '../citizen/citizen_data.dart';
 import '../citizen/citizen_widgets.dart';
@@ -163,6 +164,15 @@ class _QrCard extends ConsumerWidget {
               ),
             ),
           ),
+          // Without internet this is the copy saved on the phone; the shop's phone checks it, so it still works.
+          if (!ref.watch(networkOnlineProvider) && payload.hasValue) ...[
+            const SizedBox(height: 10),
+            Row(children: [
+              const Icon(Icons.offline_pin_outlined, color: AppColors.success),
+              const SizedBox(width: 8),
+              Expanded(child: Text(l.offlineQrNote, style: const TextStyle(fontWeight: FontWeight.w600))),
+            ]),
+          ],
           const SizedBox(height: 12),
           Text(l.qrManualCode, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.muted)),
           const SizedBox(height: 4),

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/providers.dart';
+import '../../core/storage/offline_store.dart';
+import '../auth/auth_controller.dart';
 
 /// Booking a 5-minute slot, the resulting token and its QR, on the existing backend routes:
 ///   GET    /api/slots?shopId=&date=          a shop's slots for one day
@@ -162,9 +164,13 @@ List<T> _list<T>(Object? data, T? Function(Object?) parse) =>
     data is List ? [for (final e in data) ?parse(e)] : (throw const ApiException(ApiErrorKind.unknown));
 
 class BookingRepository {
-  const BookingRepository(this._api);
+  const BookingRepository(this._api, {this._offline, this._userId});
 
   final ApiClient _api;
+
+  /// Where the citizen's tokens and QR codes are saved for use without internet (see [_withSavedCopy]).
+  final OfflineStore? _offline;
+  final int? _userId;
 
   Future<List<Slot>> slots(int shopId, DateTime day) async =>
       _list(await _api.get<Object?>('/api/slots', query: {'shopId': shopId, 'date': ymd(day)}), Slot.tryParse);
@@ -184,20 +190,64 @@ class BookingRepository {
     return RationToken.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
   }
 
-  Future<List<RationToken>> myTokens() async => _list(await _api.get<Object?>('/api/ration/bookings'), RationToken.tryParse);
+  /// My tokens. Without internet: the copy saved last time. Each fresh list also saves the QR codes
+  /// of the next few upcoming tokens, so they can be shown at the shop even with no signal.
+  Future<List<RationToken>> myTokens() async {
+    final tokens = _list(await _withSavedCopy('tokens', () => _api.get<Object?>('/api/ration/bookings')), RationToken.tryParse);
+    if (_offline != null) {
+      for (final t in tokens.where((t) => t.stateOn(DateTime.now()) == TokenState.booked).take(3)) {
+        qrPayload(t.id).ignore(); // best effort, in the background
+      }
+    }
+    return tokens;
+  }
 
-  Future<RationToken> token(int id) async =>
-      RationToken.tryParse(await _api.get<Object?>('/api/tokens/$id')) ?? (throw const ApiException(ApiErrorKind.unknown));
+  Future<RationToken> token(int id) async {
+    try {
+      final data = await _withSavedCopy('token.$id', () => _api.get<Object?>('/api/tokens/$id'));
+      return RationToken.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
+    } on ApiException catch (e) {
+      // Offline and never opened before: it may still be in the saved list.
+      if (!e.isOffline) rethrow;
+      final saved = SavedCopy.decode(await _offline?.read(_key('tokens')));
+      final list = saved?.data;
+      final match = list is List ? list.map(RationToken.tryParse).nonNulls.where((t) => t.id == id).firstOrNull : null;
+      return match ?? (throw e);
+    }
+  }
 
   Future<void> cancel(int id) => _api.delete('/api/ration/bookings/$id');
 
   Future<String> qrPayload(int id) async {
-    final data = await _api.get<Object?>('/api/qr/payload/$id');
+    final data = await _withSavedCopy('qr.$id', () => _api.get<Object?>('/api/qr/payload/$id'));
     return data is String && data.isNotEmpty ? data : (throw const ApiException(ApiErrorKind.unknown));
+  }
+
+  String _key(String name) => 'u$_userId.$name';
+
+  /// Fetches with [call] and saves the answer; when the backend can't be reached, returns the answer
+  /// saved last time instead (or rethrows when there is none). Other errors are never hidden.
+  Future<Object?> _withSavedCopy(String name, Future<Object?> Function() call) async {
+    final store = _offline;
+    if (store == null || _userId == null) return call();
+    try {
+      final data = await call();
+      await store.write(_key(name), SavedCopy(data, DateTime.now()).encode());
+      return data;
+    } on ApiException catch (e) {
+      if (!e.isOffline) rethrow;
+      final saved = SavedCopy.decode(await store.read(_key(name)));
+      if (saved == null) rethrow;
+      return saved.data;
+    }
   }
 }
 
-final bookingRepositoryProvider = Provider<BookingRepository>((ref) => BookingRepository(ref.watch(apiClientProvider)));
+final bookingRepositoryProvider = Provider<BookingRepository>((ref) => BookingRepository(
+      ref.watch(apiClientProvider),
+      offline: ref.watch(offlineStoreProvider),
+      userId: ref.watch(authControllerProvider)?.id,
+    ));
 
 /// All my tokens, newest first (as the backend sends them).
 final myTokensProvider = FutureProvider.autoDispose<List<RationToken>>((ref) => ref.watch(bookingRepositoryProvider).myTokens());

@@ -320,5 +320,20 @@
   "voiceMissing": "या फोनमध्ये या भाषेचा आवाज नाही. फोनच्या टेक्स्ट-टू-स्पीच सेटिंगमध्ये जोडू शकता.",
   "relatedTitle": "संबंधित",
   "thinking": "रेशन मित्र लिहित आहे…",
-  "noSpeechHeard": "काहीच ऐकू आले नाही. माइक दाबून पुन्हा बोला."
+  "noSpeechHeard": "काहीच ऐकू आले नाही. माइक दाबून पुन्हा बोला.",
+  "offlineBanner": "इंटरनेट नाही. या फोनवर जतन केलेली माहिती दिसत आहे; ती जुनी असू शकते. ताजी करण्यासाठी खाली ओढा.",
+  "offlineQrNote": "हे या फोनवर जतन आहे. तुमच्या इंटरनेटशिवायही दुकान हा QR स्कॅन करू शकते.",
+  "notificationsTitle": "सूचना",
+  "notificationsTooltip": "{count, plural, =0{सूचना} other{सूचना, {count} नवीन}}",
+  "noNotifications": "अजून कोणतीही सूचना नाही.",
+  "newLabel": "नवीन",
+  "nBookingConfirmed": "बुकिंग निश्चित झाली",
+  "nTokenGenerated": "टोकन तयार",
+  "nSlotReminder": "आठवण: तुमची रेशन घेण्याची वेळ",
+  "nCollectionCompleted": "रेशन मिळाले",
+  "nBookingCancelled": "बुकिंग रद्द",
+  "nLowInventory": "कमी साठा",
+  "nVerificationResult": "पडताळणी निकाल",
+  "nAlert": "सूचना",
+  "nAnnouncement": "घोषणा"
 }

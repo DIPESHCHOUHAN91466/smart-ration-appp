@@ -1079,4 +1079,60 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noSpeechHeard =>
       'I didn\'t hear anything. Tap the mic and try again.';
+
+  @override
+  String get offlineBanner =>
+      'No internet. Showing what was saved on this phone; it may be out of date. Pull down to refresh.';
+
+  @override
+  String get offlineQrNote =>
+      'Saved on this phone. The shop can still scan this QR without your internet.';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String notificationsTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Notifications, $count new',
+      one: 'Notifications, 1 new',
+      zero: 'Notifications',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noNotifications => 'No notifications yet.';
+
+  @override
+  String get newLabel => 'New';
+
+  @override
+  String get nBookingConfirmed => 'Booking confirmed';
+
+  @override
+  String get nTokenGenerated => 'Token ready';
+
+  @override
+  String get nSlotReminder => 'Reminder: your collection time';
+
+  @override
+  String get nCollectionCompleted => 'Ration collected';
+
+  @override
+  String get nBookingCancelled => 'Booking cancelled';
+
+  @override
+  String get nLowInventory => 'Low stock';
+
+  @override
+  String get nVerificationResult => 'Verification result';
+
+  @override
+  String get nAlert => 'Alert';
+
+  @override
+  String get nAnnouncement => 'Announcement';
 }

@@ -320,5 +320,20 @@
   "voiceMissing": "इस फ़ोन में इस भाषा की आवाज़ नहीं है। फ़ोन की टेक्स्ट-टू-स्पीच सेटिंग में जोड़ सकते हैं।",
   "relatedTitle": "संबंधित",
   "thinking": "राशन मित्र लिख रहा है…",
-  "noSpeechHeard": "कुछ सुनाई नहीं दिया। माइक दबाकर फिर से बोलें।"
+  "noSpeechHeard": "कुछ सुनाई नहीं दिया। माइक दबाकर फिर से बोलें।",
+  "offlineBanner": "इंटरनेट नहीं है। इस फ़ोन पर सेव जानकारी दिख रही है; यह पुरानी हो सकती है। ताज़ा करने के लिए नीचे खींचें।",
+  "offlineQrNote": "यह इस फ़ोन पर सेव है। आपके इंटरनेट के बिना भी दुकान यह QR स्कैन कर सकती है।",
+  "notificationsTitle": "सूचनाएँ",
+  "notificationsTooltip": "{count, plural, =0{सूचनाएँ} other{सूचनाएँ, {count} नई}}",
+  "noNotifications": "अभी कोई सूचना नहीं।",
+  "newLabel": "नई",
+  "nBookingConfirmed": "बुकिंग पक्की हुई",
+  "nTokenGenerated": "टोकन तैयार",
+  "nSlotReminder": "याद दिलाना: आपका राशन लेने का समय",
+  "nCollectionCompleted": "राशन मिल गया",
+  "nBookingCancelled": "बुकिंग रद्द",
+  "nLowInventory": "कम स्टॉक",
+  "nVerificationResult": "सत्यापन परिणाम",
+  "nAlert": "अलर्ट",
+  "nAnnouncement": "घोषणा"
 }

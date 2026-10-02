@@ -560,5 +560,28 @@
   "voiceMissing": "This phone has no voice for this language. You can add one in the phone's text-to-speech settings.",
   "relatedTitle": "Related",
   "thinking": "Ration Mitra is typing…",
-  "noSpeechHeard": "I didn't hear anything. Tap the mic and try again."
+  "noSpeechHeard": "I didn't hear anything. Tap the mic and try again.",
+  "offlineBanner": "No internet. Showing what was saved on this phone; it may be out of date. Pull down to refresh.",
+  "offlineQrNote": "Saved on this phone. The shop can still scan this QR without your internet.",
+  "notificationsTitle": "Notifications",
+  "notificationsTooltip": "{count, plural, =0{Notifications} =1{Notifications, 1 new} other{Notifications, {count} new}}",
+  "@notificationsTooltip": {
+    "description": "Tooltip / screen-reader label of the bell.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNotifications": "No notifications yet.",
+  "newLabel": "New",
+  "nBookingConfirmed": "Booking confirmed",
+  "nTokenGenerated": "Token ready",
+  "nSlotReminder": "Reminder: your collection time",
+  "nCollectionCompleted": "Ration collected",
+  "nBookingCancelled": "Booking cancelled",
+  "nLowInventory": "Low stock",
+  "nVerificationResult": "Verification result",
+  "nAlert": "Alert",
+  "nAnnouncement": "Announcement"
 }

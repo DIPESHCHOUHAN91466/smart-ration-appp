@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_ration_mobile/app/app.dart';
 import 'package:smart_ration_mobile/app/env.dart';
 import 'package:smart_ration_mobile/core/providers.dart';
+import 'package:smart_ration_mobile/core/storage/offline_store.dart';
 import 'package:smart_ration_mobile/core/storage/token_storage.dart';
 import 'package:smart_ration_mobile/features/auth/auth_controller.dart';
 import 'package:smart_ration_mobile/features/auth/session.dart';
@@ -18,16 +19,20 @@ import 'fake_backend.dart';
 ///  * [signedInAs]: a session saved on the phone from a previous launch (null = signed out);
 ///  * [overrides]: anything else to replace, e.g. the camera.
 class TestApp {
-  TestApp._(this.widget, this.preferences, this.tokens);
+  TestApp._(this.widget, this.preferences, this.tokens, this.offline);
 
   final Widget widget;
   final SharedPreferences preferences;
   final MemoryTokenStorage tokens;
 
+  /// The saved copies for offline use (tokens and QR codes).
+  final MemoryOfflineStore offline;
+
   static Future<TestApp> build(FakeBackend backend, {String? savedLanguage, SessionUser? signedInAs, List<Override> overrides = const []}) async {
     SharedPreferences.setMockInitialValues({LanguageController.storageKey: ?savedLanguage});
     final preferences = await SharedPreferences.getInstance();
     final tokens = MemoryTokenStorage();
+    final offline = MemoryOfflineStore();
     if (signedInAs != null) {
       await AuthResult(accessToken: 'saved-access', refreshToken: 'saved-refresh', user: signedInAs).saveTo(tokens);
     }
@@ -39,12 +44,13 @@ class TestApp {
         splashDurationProvider.overrideWithValue(Duration.zero),
         httpAdapterProvider.overrideWithValue(backend),
         tokenStorageProvider.overrideWithValue(tokens),
+        offlineStoreProvider.overrideWithValue(offline),
         restoredSessionProvider.overrideWithValue(signedInAs),
         ...overrides,
       ],
       child: const SmartRationApp(),
     );
-    return TestApp._(widget, preferences, tokens);
+    return TestApp._(widget, preferences, tokens, offline);
   }
 }
 

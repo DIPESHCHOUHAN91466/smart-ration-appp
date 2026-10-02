@@ -168,16 +168,22 @@ class DemoDataBanner extends StatelessWidget {
 /// Loads the citizen's data and shows loading / error (with Try again) / the content.
 /// Pull down to reload.
 class CitizenDataView extends ConsumerWidget {
-  const CitizenDataView({super.key, required this.builder});
+  const CitizenDataView({super.key, required this.builder, this.alsoRefresh});
 
   final List<Widget> Function(BuildContext context, CitizenOverview data) builder;
+
+  /// Anything else the screen shows that a pull should reload too (e.g. the dashboard's tokens).
+  final void Function(WidgetRef ref)? alsoRefresh;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final data = ref.watch(citizenOverviewProvider);
     return RefreshIndicator(
-      onRefresh: () => ref.refresh(citizenOverviewProvider.future),
+      onRefresh: () {
+        alsoRefresh?.call(ref);
+        return ref.refresh(citizenOverviewProvider.future);
+      },
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: data.when(

@@ -8,6 +8,8 @@ import '../../l10n/app_localizations.dart';
 import '../auth/auth_controller.dart';
 import '../booking/booking_data.dart';
 import '../booking/booking_widgets.dart';
+import '../notifications/notifications_data.dart';
+import '../notifications/notifications_screen.dart';
 import 'citizen_data.dart';
 import 'citizen_widgets.dart';
 
@@ -27,6 +29,7 @@ class CitizenHomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l.appTitle),
         actions: [
+          const NotificationsBell(),
           IconButton(
             icon: const Icon(Icons.help_outline),
             tooltip: l.helpButton,
@@ -48,6 +51,10 @@ class CitizenHomeScreen extends ConsumerWidget {
         ],
       ),
       body: CitizenDataView(
+        alsoRefresh: (ref) {
+          ref.invalidate(myTokensProvider);
+          ref.invalidate(notificationsProvider);
+        },
         builder: (context, data) => [
           Text(l.greeting(user.fullName), style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),

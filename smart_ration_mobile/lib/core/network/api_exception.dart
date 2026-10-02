@@ -33,6 +33,9 @@ class ApiException implements Exception {
   final String? errorCode;
   final int? statusCode;
 
+  /// The backend could not be reached at all (as opposed to answering with an error).
+  bool get isOffline => kind == ApiErrorKind.noConnection || kind == ApiErrorKind.timeout;
+
   /// The sentence to show, in the user's language.
   ///
   /// When the backend explained a refusal (e.g. "This time slot is full.") that explanation is shown,

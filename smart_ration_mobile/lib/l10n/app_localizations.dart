@@ -2025,6 +2025,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I didn\'t hear anything. Tap the mic and try again.'**
   String get noSpeechHeard;
+
+  /// No description provided for @offlineBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet. Showing what was saved on this phone; it may be out of date. Pull down to refresh.'**
+  String get offlineBanner;
+
+  /// No description provided for @offlineQrNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone. The shop can still scan this QR without your internet.'**
+  String get offlineQrNote;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// Tooltip / screen-reader label of the bell.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Notifications} =1{Notifications, 1 new} other{Notifications, {count} new}}'**
+  String notificationsTooltip(int count);
+
+  /// No description provided for @noNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet.'**
+  String get noNotifications;
+
+  /// No description provided for @newLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newLabel;
+
+  /// No description provided for @nBookingConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed'**
+  String get nBookingConfirmed;
+
+  /// No description provided for @nTokenGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Token ready'**
+  String get nTokenGenerated;
+
+  /// No description provided for @nSlotReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder: your collection time'**
+  String get nSlotReminder;
+
+  /// No description provided for @nCollectionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration collected'**
+  String get nCollectionCompleted;
+
+  /// No description provided for @nBookingCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking cancelled'**
+  String get nBookingCancelled;
+
+  /// No description provided for @nLowInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock'**
+  String get nLowInventory;
+
+  /// No description provided for @nVerificationResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification result'**
+  String get nVerificationResult;
+
+  /// No description provided for @nAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert'**
+  String get nAlert;
+
+  /// No description provided for @nAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement'**
+  String get nAnnouncement;
 }
 
 class _AppLocalizationsDelegate

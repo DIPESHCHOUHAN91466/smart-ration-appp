@@ -7,6 +7,7 @@ import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_controller.dart';
+import '../notifications/notifications_screen.dart';
 import 'shop_data.dart';
 
 /// The shop owner's dashboard: today's counts, and the two ways to serve a customer.
@@ -31,6 +32,7 @@ class ShopHomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l.appTitle),
         actions: [
+          const NotificationsBell(),
           IconButton(
             icon: const Icon(Icons.help_outline),
             tooltip: l.helpButton,

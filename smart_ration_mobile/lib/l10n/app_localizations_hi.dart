@@ -1067,4 +1067,59 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get noSpeechHeard => 'कुछ सुनाई नहीं दिया। माइक दबाकर फिर से बोलें।';
+
+  @override
+  String get offlineBanner =>
+      'इंटरनेट नहीं है। इस फ़ोन पर सेव जानकारी दिख रही है; यह पुरानी हो सकती है। ताज़ा करने के लिए नीचे खींचें।';
+
+  @override
+  String get offlineQrNote =>
+      'यह इस फ़ोन पर सेव है। आपके इंटरनेट के बिना भी दुकान यह QR स्कैन कर सकती है।';
+
+  @override
+  String get notificationsTitle => 'सूचनाएँ';
+
+  @override
+  String notificationsTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'सूचनाएँ, $count नई',
+      zero: 'सूचनाएँ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noNotifications => 'अभी कोई सूचना नहीं।';
+
+  @override
+  String get newLabel => 'नई';
+
+  @override
+  String get nBookingConfirmed => 'बुकिंग पक्की हुई';
+
+  @override
+  String get nTokenGenerated => 'टोकन तैयार';
+
+  @override
+  String get nSlotReminder => 'याद दिलाना: आपका राशन लेने का समय';
+
+  @override
+  String get nCollectionCompleted => 'राशन मिल गया';
+
+  @override
+  String get nBookingCancelled => 'बुकिंग रद्द';
+
+  @override
+  String get nLowInventory => 'कम स्टॉक';
+
+  @override
+  String get nVerificationResult => 'सत्यापन परिणाम';
+
+  @override
+  String get nAlert => 'अलर्ट';
+
+  @override
+  String get nAnnouncement => 'घोषणा';
 }

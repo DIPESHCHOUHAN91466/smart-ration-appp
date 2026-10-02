@@ -21,8 +21,23 @@ class ApiClient {
     Future<String?> Function()? refreshAccessToken,
     bool logRequests = false,
     HttpClientAdapter? adapter,
+    void Function(bool online)? onReachability,
   }) {
     final dio = createDio(baseUrl, adapter: adapter);
+    // First, so it sees every outcome: any answer from the backend means online; no connection or
+    // a timeout means offline.
+    if (onReachability != null) {
+      dio.interceptors.add(InterceptorsWrapper(
+        onResponse: (response, handler) {
+          onReachability(true);
+          handler.next(response);
+        },
+        onError: (error, handler) {
+          onReachability(!ApiException.fromDio(error).isOffline);
+          handler.next(error);
+        },
+      ));
+    }
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await tokens.readAccessToken();

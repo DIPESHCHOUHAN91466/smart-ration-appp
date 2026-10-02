@@ -14,9 +14,17 @@ void main() {
     };
   }
 
-  Set<String> placeholders(String text) => RegExp(r'\{(\w+)\}').allMatches(text).map((m) => m.group(1)!).toSet();
-
   final english = load('en');
+  final englishMeta = jsonDecode(File('lib/l10n/app_en.arb').readAsStringSync()) as Map<String, dynamic>;
+
+  /// The placeholders used in [text]. When English declares them (needed for plurals, where
+  /// `=1{one item}` is wording, not a placeholder), only the declared names count, written as
+  /// `{name}` or `{name, plural, ...}`; otherwise every `{word}`.
+  Set<String> placeholders(String key, String text) {
+    final declared = ((englishMeta['@$key'] as Map?)?['placeholders'] as Map?)?.keys.cast<String>();
+    if (declared != null) return {for (final n in declared) if (RegExp('\\{$n[},]').hasMatch(text)) n};
+    return RegExp(r'\{(\w+)\}').allMatches(text).map((m) => m.group(1)!).toSet();
+  }
 
   for (final code in ['hi', 'mr']) {
     group('$code translations', () {
@@ -39,7 +47,7 @@ void main() {
 
       test('keep the same {placeholders}', () {
         for (final key in english.keys) {
-          expect(placeholders(other[key]!), placeholders(english[key]!), reason: key);
+          expect(placeholders(key, other[key]!), placeholders(key, english[key]!), reason: key);
         }
       });
     });

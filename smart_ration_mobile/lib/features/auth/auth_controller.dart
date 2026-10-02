@@ -100,6 +100,7 @@ class AuthController extends Notifier<SessionUser?> {
   Future<void> signOut() async {
     final refreshToken = await _storage.readRefreshToken();
     await _storage.clear();
+    await ref.read(offlineStoreProvider).clearAll(); // saved tokens and QR codes go too
     state = null;
     if (refreshToken != null) {
       try {
@@ -113,6 +114,7 @@ class AuthController extends Notifier<SessionUser?> {
   /// Called when the backend rejects the refresh token (expired after 7 days, or revoked).
   void sessionExpired() {
     if (state == null) return;
+    ref.read(offlineStoreProvider).clearAll().ignore(); // saved tokens and QR codes go too
     ref.read(sessionExpiredNoticeProvider.notifier).set(true);
     state = null;
   }

@@ -5,6 +5,8 @@ import '../app/env.dart';
 import '../features/auth/auth_controller.dart';
 import '../features/auth/token_refresher.dart';
 import 'network/api_client.dart';
+import 'network/network_status.dart';
+import 'storage/offline_store.dart';
 import 'storage/token_storage.dart';
 
 /// Shared building blocks. A "provider" hands the same object to every screen that asks for it,
@@ -38,5 +40,10 @@ final apiClientProvider = Provider<ApiClient>((ref) {
     refreshAccessToken: ref.watch(tokenRefresherProvider).refresh,
     logRequests: env.isDevelopment,
     adapter: ref.watch(httpAdapterProvider),
+    // Read only when it happens, so a change of status doesn't rebuild the client.
+    onReachability: (online) => ref.read(networkOnlineProvider.notifier).reached(online),
   );
 });
+
+/// Saved copies for offline use (the citizen's tokens and QR codes). Tests use MemoryOfflineStore.
+final offlineStoreProvider = Provider<OfflineStore>((ref) => SecureOfflineStore());
