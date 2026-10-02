@@ -60,10 +60,26 @@ def js_strings(source: str, const: str) -> dict[str, str]:
 PY_ENUMS = [cls for cls in vars(py_enums).values() if isinstance(cls, type) and issubclass(cls, IntEnum) and cls is not IntEnum]
 
 
-@pytest.mark.parametrize("enum", PY_ENUMS, ids=lambda e: e.__name__)
+# Added in the Python backend after the C# API stopped serving traffic (it is legacy and kept only for reference).
+# Listed by name so nothing is added silently: whole enums the C# API never had, and members added to shared ones.
+PYTHON_ONLY_ENUMS = {"GrievanceCategory", "GrievanceStatus"}
+PYTHON_ONLY_MEMBERS = {"NotificationType": {"GrievanceUpdate"}}
+
+
+@pytest.mark.parametrize("enum", [e for e in PY_ENUMS if e.__name__ not in PYTHON_ONLY_ENUMS], ids=lambda e: e.__name__)
 def test_gateway_enums_match_the_csharp_enums(enum):
-    """Both backends read and write the same integer columns."""
-    assert {m.name: m.value for m in enum} == cs_enum(enum.__name__)
+    """Both backends read and write the same integer columns: every C# value is unchanged in Python."""
+    extra = PYTHON_ONLY_MEMBERS.get(enum.__name__, set())
+    assert {m.name: m.value for m in enum if m.name not in extra} == cs_enum(enum.__name__)
+    assert not {m.value for m in enum if m.name in extra} & set(cs_enum(enum.__name__).values())   # no reused numbers
+
+
+def test_python_only_enums_are_really_python_only():
+    names = {e.__name__ for e in PY_ENUMS}
+    assert PYTHON_ONLY_ENUMS <= names
+    for name in PYTHON_ONLY_ENUMS:
+        with pytest.raises(AssertionError, match="not found"):
+            cs_enum(name)
 
 
 @pytest.mark.parametrize(("ai_class", "cs_name"), [
