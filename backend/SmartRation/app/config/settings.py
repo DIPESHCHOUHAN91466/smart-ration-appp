@@ -5,6 +5,7 @@ Nothing secret has a default. See .env.example for every variable.
 
 from __future__ import annotations
 
+import hashlib
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated
@@ -16,6 +17,12 @@ ROOT = Path(__file__).resolve().parents[2]  # backend/SmartRation — .env is fo
 
 QR_SECRET_PLACEHOLDER = "replace_with_a_secure_random_secret"   # the .env.example value; refused at start-up
 WEAK_QR_SECRETS = {"secret", "qrcode", "qr_secret", "changeme", "change_me", "password", "123456", "smartration"}
+# SHA-256 fingerprints of signing secrets that were once committed to this public repository (commit 972d853,
+# backend/SmartRation.Api/appsettings.Development.json): treat them as public. Only the fingerprints are kept here.
+LEAKED_SECRET_SHA256 = {
+    "ee2c9c4eeec7af8cec37892a82fed0b1465636feb4bdecf8723dc00f25df95db",   # a QR signing secret
+    "b1e35612229a56051a2eb20c52d9357ca992f7a6dfad9180eb7695f205cd838b",   # a JWT signing key
+}
 
 
 class Settings(BaseSettings):
@@ -164,6 +171,9 @@ class Settings(BaseSettings):
         problems = []
         if self.demo_otp_enabled:
             problems.append("DEMO_OTP_ENABLED must be false outside development.")
+        for name, value in (("QR_SECRET", self.qr_secret), ("JWT_SECRET_KEY", self.jwt_secret_key)):
+            if hashlib.sha256(value.strip().encode()).hexdigest() in LEAKED_SECRET_SHA256:
+                problems.append(f"{name} is a value that was published in this repository's history; generate a new one.")
         if self.sms_provider.lower() != "http" and not self.uses_synthetic_demo_sms:
             problems.append("SMS_PROVIDER must be 'http' (a real gateway) outside development. A synthetic-data demo may set "
                             "SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true instead; that is never allowed with DATA_MODE=real.")
