@@ -247,3 +247,41 @@ def test_decode_rejects_tampering_wrong_key_and_alg_none():
     for bad in (good[:-2] + ("AA" if good[-2:] != "AA" else "BB"), create_access_token(TokenUser(1, "a", "A", "RuralUser", None), other)[0], none_alg):
         with pytest.raises(InvalidToken):
             decode_access_token(bad, s)
+
+
+# ---------------------------------------------------------------- per-account brute-force lockout
+
+
+def test_five_failed_sign_ins_lock_the_account_even_for_the_right_password(api):
+    def login(email, password):
+        return api.post("/api/auth/login", json={"email": email, "password": password})
+
+    assert [login("rural@example.com", f"wrong-{i}").status_code for i in range(5)] == [401] * 5
+    locked = login("rural@example.com", "demo123")                        # the right password, but locked
+    assert locked.status_code == 429 and locked.json()["errorCode"] == "ACCOUNT_TEMPORARILY_LOCKED"
+    assert login("shop@example.com", "demo123").status_code == 200        # other accounts are unaffected
+    with session() as db:
+        assert db.scalar(select(AuditLog.Action).where(AuditLog.Action == "LOGIN_LOCKED")) == "LOGIN_LOCKED"
+
+
+def test_a_successful_sign_in_resets_the_failure_count(api):
+    def login(password):
+        return api.post("/api/auth/login", json={"email": "rural@example.com", "password": password}).status_code
+
+    assert [login("wrong") for _ in range(4)] == [401] * 4
+    assert login("demo123") == 200                                       # resets the count
+    assert [login("wrong") for _ in range(4)] == [401] * 4
+    assert login("demo123") == 200                                       # 4 since the last success: not locked
+
+
+def test_the_lock_ends_with_the_15_minute_window(api):
+    def login(password):
+        return api.post("/api/auth/login", json={"email": "rural@example.com", "password": password})
+
+    assert [login("wrong").status_code for _ in range(5)] == [401] * 5
+    assert login("demo123").json()["errorCode"] == "ACCOUNT_TEMPORARILY_LOCKED"
+    with session() as db:                                                # age the failures past the window
+        for row in db.scalars(select(AuditLog).where(AuditLog.Action == "LOGIN_FAILED")):
+            row.CreatedAt = utc_now() - timedelta(minutes=16)
+        db.commit()
+    assert login("demo123").status_code == 200

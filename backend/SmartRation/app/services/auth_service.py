@@ -13,16 +13,19 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from datetime import timedelta
 
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config.settings import Settings
 from app.core.errors import Conflict, Forbidden, Unauthorized
 from app.database.enums import UserRole
-from app.database.models import User
+from app.database.models import AuditLog, User
 from app.repositories import refresh_tokens, users
 from app.security.passwords import PasswordCheck, hash_password, verify_password
+from app.security.rate_limit import TooManyRequests
 from app.security.tokens import TokenUser, create_access_token, generate_refresh_token, hash_token
 from app.services import audit_service
 from app.services.data_provider import get_data_provider
@@ -93,9 +96,30 @@ def register(db: Session, settings: Settings, ctx: RequestContext, full_name: st
     return response
 
 
+LOCKOUT_FAILURES = 5                    # failed sign-ins on one account ...
+LOCKOUT_WINDOW = timedelta(minutes=15)  # ... within this time lock that account for the rest of the window
+
+
+def _recent_failures(db: Session, user_id: int) -> int:
+    """Failed sign-ins on this account in the window, counted from its last successful sign-in (audit log)."""
+    since = utc_now() - LOCKOUT_WINDOW
+    last_success = db.scalar(select(func.max(AuditLog.CreatedAt)).where(
+        AuditLog.UserId == user_id, AuditLog.Action == "LOGIN", AuditLog.CreatedAt >= since))
+    start = max(since, last_success) if last_success else since
+    return db.scalar(select(func.count()).select_from(AuditLog).where(
+        AuditLog.UserId == user_id, AuditLog.Action == "LOGIN_FAILED", AuditLog.CreatedAt >= start)) or 0
+
+
 def login(db: Session, settings: Settings, ctx: RequestContext, email: str, password: str) -> dict:
     email = email.strip().lower()
     user = users.by_email(db, email)
+    # Brute-force protection per account (the per-address rate limit doesn't stop guesses spread over many addresses).
+    # The lock holds even for the right password, so it can't be used to test guesses; it ends after the window.
+    if user is not None and _recent_failures(db, user.Id) >= LOCKOUT_FAILURES:
+        audit_service.record(db, user.Id, "LOGIN_LOCKED", "User", str(user.Id), result="BLOCKED", ip_address=ctx.ip_address)
+        db.commit()
+        raise TooManyRequests("Too many failed sign-in attempts for this account. Please wait 15 minutes and try again.",
+                              "ACCOUNT_TEMPORARILY_LOCKED")
     check = verify_password(password, user.PasswordHash) if user else PasswordCheck(valid=False, needs_upgrade=False)
 
     if user is None or not check.valid:

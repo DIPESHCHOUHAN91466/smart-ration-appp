@@ -475,3 +475,9 @@ CREATE INDEX `IX_Grievances_Status_CreatedAt` ON `Grievances` (`Status`, `Create
 CREATE INDEX `IX_Grievances_RationShopId_Status` ON `Grievances` (`RationShopId`, `Status`);
 
 UPDATE alembic_version SET version_num='0004_grievances' WHERE alembic_version.version_num = '0003_stock_movement_keys';
+
+-- Running upgrade 0004_grievances -> 0005_audit_user_time_index
+
+CREATE INDEX `IX_AuditLogs_UserId_CreatedAt` ON `AuditLogs` (`UserId`, `CreatedAt`);
+
+UPDATE alembic_version SET version_num='0005_audit_user_time_index' WHERE alembic_version.version_num = '0004_grievances';

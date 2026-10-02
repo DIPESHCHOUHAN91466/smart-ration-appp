@@ -70,6 +70,11 @@ class AuditLog(Base):
     Result: Mapped[str | None] = mapped_column(String(16), nullable=True)
     CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
 
+    __table_args__ = (
+        # A person's recent actions (sign-in lockout, audit pages) without scanning the whole, ever-growing log.
+        Index("IX_AuditLogs_UserId_CreatedAt", "UserId", "CreatedAt"),
+    )
+
 
 class Notification(Base):
     __tablename__ = "Notifications"
