@@ -109,7 +109,10 @@ Open the **smart-ration-hsd2c** service in Render; its URL at the top is **your 
 | `https://<your-link>/` | the Ration Mitra landing page |
 | `https://<your-link>/ready` | `{"ready":true, ... "legacyApi":"disabled"}` |
 | `https://<your-link>/health` | `"status":"healthy"` (`aiService` and `legacyApi`: `disabled`) |
+| `https://<your-link>/health/db` | `"status":"healthy"`, `"migrations":"ok"`, `"encryption":"TLSv1.3"` (or `TLSv1.2`); `none` means the database link is NOT encrypted: check `DATABASE_URL` ends with `ssl_ca=/tmp/mysql-ca.pem` and `MYSQL_SSL_CA` is set |
+| Response headers of any page | `Strict-Transport-Security: max-age=31536000` (production only), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` |
 | Smoke tests from this PC | `SMOKE_BASE_URL=https://<your-link> python -m pytest tests/smoke` all pass |
+| Full live check from this PC | `SMOKE_DEMO_PASSWORD` in `backend/SmartRation/.env` (git-ignored), then `python tests/live/live_check.py --base-url https://<your-link>`: every check PASS (transport, TLS to the database, three roles, booking → QR → collection, complaints, isolation, sign-out). Leave a minute between runs (sign-in rate limit) |
 | Sign in as `rural@example.com` with your demo password | the citizen dashboard with a ration card |
 
 Demo accounts (synthetic): `rural@example.com`, `shop@example.com`, `officer@example.com`, all with
