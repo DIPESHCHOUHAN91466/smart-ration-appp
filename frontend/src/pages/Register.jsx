@@ -131,7 +131,7 @@ export default function Register() {
           </button>
 
           <p className="muted" style={{ marginTop: 14 }}>
-            {t("already_registered")} <Link to="/login">{t("sign_in")}</Link>
+            {t("already_registered")} <Link to="/login" style={{ textDecoration: "underline" }}>{t("sign_in")}</Link>
           </p>
 
           <div className="login-trust">

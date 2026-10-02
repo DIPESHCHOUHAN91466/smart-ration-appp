@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../i18n/useTranslation";
 import { Store, TrendingUp } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyState";
@@ -11,6 +12,7 @@ function daysAgo(n) {
 }
 
 export default function Statistics() {
+  const { t } = useTranslation();
   const [fromDate, setFromDate] = useState(daysAgo(29));
   const [toDate, setToDate] = useState(daysAgo(0));
   const [stats, setStats] = useState(null);
@@ -33,8 +35,8 @@ export default function Statistics() {
         subtitle="Aggregated distribution intelligence across the jurisdiction."
         action={
           <div style={{ display: "flex", gap: 10 }}>
-            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} max={toDate} />
-            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate} max={daysAgo(0)} />
+            <input type="date" aria-label={t("a11y_from_date")} value={fromDate} onChange={(e) => setFromDate(e.target.value)} max={toDate} />
+            <input type="date" aria-label={t("a11y_to_date")} value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate} max={daysAgo(0)} />
           </div>
         }
       />

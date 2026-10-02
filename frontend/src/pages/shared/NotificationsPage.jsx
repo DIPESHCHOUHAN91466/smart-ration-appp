@@ -66,7 +66,8 @@ export default function NotificationsPage() {
         {!error &&
           notifications?.length > 0 &&
           notifications.map((n) => (
-            <div className="complaint" key={n.id} style={{ opacity: n.isRead ? 0.6 : 1 }}>
+            // Unread items are tinted; read ones stay at full contrast (fading them made the text unreadable, WCAG 1.4.3).
+            <div className="complaint" key={n.id} style={n.isRead ? undefined : { background: "#eef5ff", borderRadius: 10, paddingInline: 10 }}>
               <Bell size={18} />
               <div>
                 <b>{n.title}</b>

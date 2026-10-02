@@ -252,14 +252,14 @@ export default function DashboardLayout() {
               </button>
             )}
             {showNotifications && (
-              <button className="icon-btn" onClick={() => navigate(`${basePathForRole(user?.role)}/notifications`)}>
+              <button className="icon-btn" aria-label={t("notifications")} onClick={() => navigate(`${basePathForRole(user?.role)}/notifications`)}>
                 <Bell size={19} />
                 {unreadCount > 0 && <i></i>}
               </button>
             )}
             <div className="language">
               <Globe2 size={16} />
-              <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+              <select aria-label={t("language_label")} value={language} onChange={(e) => setLanguage(e.target.value)}>
                 {LANGUAGE_OPTIONS.map((opt) => (
                   <option key={opt.code} value={opt.code}>
                     {opt.label}

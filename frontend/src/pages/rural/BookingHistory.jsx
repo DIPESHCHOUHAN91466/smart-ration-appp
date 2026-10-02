@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../i18n/useTranslation";
 import { Link } from "react-router-dom";
 import { ArrowRight, XCircle } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
@@ -8,6 +9,7 @@ import { getBookings, cancelBooking } from "../../services/rationService";
 import { useToast } from "../../state/toast";
 
 export default function BookingHistory() {
+  const { t } = useTranslation();
   const [bookings, setBookings] = useState(null);
   const [error, setError] = useState("");
   const notify = useToast();
@@ -69,7 +71,7 @@ export default function BookingHistory() {
                       <StatusBadge status={b.status} />
                     </td>
                     <td style={{ display: "flex", gap: 6 }}>
-                      <Link className="icon-btn" to={`/rural/token/${b.id}`}>
+                      <Link className="icon-btn" to={`/rural/token/${b.id}`} aria-label={`${t("a11y_open_token")} ${b.tokenNumber ?? ""}`.trim()}>
                         <ArrowRight size={16} />
                       </Link>
                       {(b.status === "Pending" || b.status === "Confirmed") && (

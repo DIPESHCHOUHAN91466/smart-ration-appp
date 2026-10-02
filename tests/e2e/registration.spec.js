@@ -3,6 +3,7 @@
 import { expect, test } from "@playwright/test";
 
 test("registration needs the privacy consent; with it the citizen is registered and signed in", async ({ page }) => {
+  test.setTimeout(60_000);   // password hashing for a new account is deliberately slow
   const stamp = Date.now();
   await page.addInitScript(() => window.localStorage.setItem("smart-ration-language", JSON.stringify({ state: { language: "en" }, version: 0 })));
   await page.goto("/register");

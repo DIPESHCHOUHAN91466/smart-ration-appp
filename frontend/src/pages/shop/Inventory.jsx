@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../i18n/useTranslation";
 import { Check, Package, Pencil, X } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyState";
@@ -6,6 +7,7 @@ import { getInventory, updateInventory } from "../../services/inventoryService";
 import { useToast } from "../../state/toast";
 
 export default function ShopInventory() {
+  const { t } = useTranslation();
   const [items, setItems] = useState(null);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -125,15 +127,15 @@ export default function ShopInventory() {
                         <td>
                           {editing ? (
                             <div style={{ display: "flex", gap: 6 }}>
-                              <button className="icon-btn" onClick={() => save(item.id)} disabled={saving}>
+                              <button className="icon-btn" aria-label={t("a11y_save_stock")} onClick={() => save(item.id)} disabled={saving}>
                                 <Check size={15} />
                               </button>
-                              <button className="icon-btn" onClick={() => setEditingId(null)}>
+                              <button className="icon-btn" aria-label={t("a11y_cancel_edit")} onClick={() => setEditingId(null)}>
                                 <X size={15} />
                               </button>
                             </div>
                           ) : (
-                            <button className="icon-btn" onClick={() => startEdit(item)}>
+                            <button className="icon-btn" aria-label={t("a11y_edit_stock")} onClick={() => startEdit(item)}>
                               <Pencil size={15} />
                             </button>
                           )}

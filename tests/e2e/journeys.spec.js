@@ -30,7 +30,7 @@ const ROLES = [
   },
 ];
 
-test.describe.configure({ mode: "serial" });
+test.describe.configure({ mode: "serial", timeout: 120_000 });   // each test signs in and walks a whole area
 
 for (const { role, email, home, pages } of ROLES) {
   test(`${role}: signs in and every page of the area works`, async ({ page }, testInfo) => {

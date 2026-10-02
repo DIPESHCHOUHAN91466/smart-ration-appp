@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../i18n/useTranslation";
 import PageHeader from "../../components/PageHeader";
 import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyState";
 import { getVerificationAudit } from "../../services/auditService";
@@ -6,6 +7,7 @@ import { getVerificationAudit } from "../../services/auditService";
 const STATUS_TONE = { SUCCESS: "success", BLOCKED: "warning", FAILED: "danger" };
 
 export default function Audit() {
+  const { t } = useTranslation();
   const [logs, setLogs] = useState(null);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -26,7 +28,7 @@ export default function Audit() {
         title="Verification Audit Trail"
         subtitle="Every QR scan, OTP request and collection decision across all shops."
         action={
-          <select className="small-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <select className="small-select" aria-label={t("a11y_filter_status")} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="">All statuses</option>
             <option value="SUCCESS">Success</option>
             <option value="BLOCKED">Blocked</option>

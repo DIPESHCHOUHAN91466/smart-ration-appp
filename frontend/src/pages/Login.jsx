@@ -149,7 +149,7 @@ export default function Login() {
       <div className="login-card-wrap">
         <div className="language login-lang">
           <Globe2 size={15} />
-          <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+          <select aria-label={t("language_label")} value={language} onChange={(e) => setLanguage(e.target.value)}>
             {LANGUAGE_OPTIONS.map((opt) => (
               <option key={opt.code} value={opt.code}>{opt.label}</option>
             ))}
