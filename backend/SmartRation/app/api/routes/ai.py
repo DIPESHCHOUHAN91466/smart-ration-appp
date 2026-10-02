@@ -31,6 +31,8 @@ officials = actor(*OFFICIALS)
 
 OCR_MAX_BYTES = 5 * 1024 * 1024
 OCR_TYPES = ("image/png", "image/jpeg")
+# The declared type comes from the client; the first bytes must also really be a PNG or a JPEG.
+OCR_SIGNATURES = (b"\x89PNG\r\n\x1a\n", b"\xff\xd8\xff")
 
 
 def _client(request: Request) -> AiClient:
@@ -180,7 +182,8 @@ def alerts_sync(request: Request, who: Actor = Depends(officials), db: Session =
 @router.post("/ocr/extract", summary="Suggest fields from a ration-card photo (PNG/JPEG, 5 MB; nothing stored)")
 def ocr_extract(request: Request, file: UploadFile | None = File(default=None), who: Actor = Depends(staff), db: Session = Depends(get_db)):
     data = file.file.read(OCR_MAX_BYTES + 1) if file is not None else b""
-    if file is None or not data or len(data) > OCR_MAX_BYTES or file.content_type not in OCR_TYPES:
+    if (file is None or not data or len(data) > OCR_MAX_BYTES or file.content_type not in OCR_TYPES
+            or not data.startswith(OCR_SIGNATURES)):
         raise BadRequest("Upload a PNG or JPEG image up to 5 MB.", "INVALID_IMAGE")
     result = _client(request).post("/v1/ocr/extract", {"image_base64": base64.b64encode(data).decode("ascii")})
     audit_service.record(db, who.user_id, "OCR_EXTRACT", "Document", details=f"bytes={len(data)}",

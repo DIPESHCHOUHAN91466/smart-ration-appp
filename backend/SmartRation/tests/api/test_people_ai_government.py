@@ -256,6 +256,10 @@ def test_live_ai_analytics_alert_sync_and_ocr(env):
     r = c.post("/api/ocr/extract", headers=env["shop"], files={"file": ("card.png", png, "image/png")})
     assert r.status_code == 200 and r.json()["data"]["data"] == {"fields": {"name": "A"}}
     assert c.post("/api/ocr/extract", headers=env["shop"], files={"file": ("a.gif", b"GIF89a", "image/gif")}).json()["errorCode"] == "INVALID_IMAGE"
+    disguised = b"<html><script>alert(1)</script></html>"          # declared as PNG, but isn't one
+    assert c.post("/api/ocr/extract", headers=env["shop"], files={"file": ("card.png", disguised, "image/png")}).json()["errorCode"] == "INVALID_IMAGE"
+    jpeg = b"\xff\xd8\xff\xe0" + b"0" * 32
+    assert c.post("/api/ocr/extract", headers=env["shop"], files={"file": ("card.jpg", jpeg, "image/jpeg")}).status_code == 200
     assert c.post("/api/ocr/extract", headers=env["citizen"], files={"file": ("card.png", png, "image/png")}).status_code == 403
 
 
