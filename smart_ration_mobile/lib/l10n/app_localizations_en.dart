@@ -1296,5 +1296,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nComplaint => 'Complaint';
 
   @override
+  String get aiButton => 'Ask AI';
+
+  @override
+  String get aiHowCanIHelp => 'How can I help you?';
+
+  @override
+  String get aiTypeHint => 'Say or type what you need';
+
+  @override
+  String get aiExample =>
+      'For example: “When will I get my ration?” or “I got less wheat, I want to complain.”';
+
+  @override
+  String get aiReadScreen => 'Read this screen';
+
+  @override
+  String get aiNothingToRead => 'There is nothing to read on this screen yet.';
+
+  @override
+  String get aiLanguageChanged => 'Language changed.';
+
+  @override
+  String aiHomeSummary(
+    String token,
+    String day,
+    String start,
+    String end,
+    String shop,
+  ) {
+    return 'Your next ration collection: token $token, $day, $start to $end, at $shop.';
+  }
+
+  @override
+  String get aiHomeNoBooking =>
+      'You have no ration collection booked. Say “book ration” to book one.';
+
+  @override
+  String get aiSignInHelp => 'Need help signing in? Ask AI';
+
+  @override
   String get nAnnouncement => 'Announcement';
 }

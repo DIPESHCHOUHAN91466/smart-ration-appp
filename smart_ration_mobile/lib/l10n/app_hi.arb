@@ -385,5 +385,15 @@
   "complaintOfficeReply": "कार्यालय का उत्तर",
   "doneButton": "हो गया",
   "nComplaint": "शिकायत",
+  "aiButton": "AI से पूछें",
+  "aiHowCanIHelp": "मैं आपकी कैसे मदद करूं?",
+  "aiTypeHint": "बोलें या लिखें, आपको क्या चाहिए",
+  "aiExample": "उदाहरण: “मेरा राशन कब मिलेगा?” या “मुझे गेहूं कम मिला, शिकायत करनी है।”",
+  "aiReadScreen": "यह स्क्रीन पढ़ें",
+  "aiNothingToRead": "इस स्क्रीन पर अभी पढ़ने के लिए कुछ नहीं है।",
+  "aiLanguageChanged": "भाषा बदल दी गई।",
+  "aiHomeSummary": "आपका अगला राशन: टोकन {token}, {day}, {start} से {end} तक, {shop} पर।",
+  "aiHomeNoBooking": "आपकी कोई राशन बुकिंग नहीं है। बुक करने के लिए “राशन बुक करो” बोलें।",
+  "aiSignInHelp": "साइन इन में मदद चाहिए? AI से पूछें",
   "nAnnouncement": "घोषणा"
 }

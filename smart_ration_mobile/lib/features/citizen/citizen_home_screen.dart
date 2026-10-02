@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../assistant/assistant_sheet.dart';
 import '../auth/auth_controller.dart';
 import '../booking/booking_data.dart';
 import '../booking/booking_widgets.dart';
@@ -26,6 +27,7 @@ class CitizenHomeScreen extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
+      floatingActionButton: const AiButton(screen: 'home', summary: citizenHomeSummary),
       appBar: AppBar(
         title: Text(l.appTitle),
         actions: [
@@ -119,10 +121,22 @@ class CitizenHomeScreen extends ConsumerWidget {
             label: Text(l.checkServer),
             onPressed: () => context.push(Routes.serverStatus),
           ),
+          const SizedBox(height: 88),
         ],
       ),
     );
   }
+}
+
+/// "Read this screen" on the citizen's home: the next collection (token, day, time, shop), from the same data
+/// the screen shows; null while it is loading.
+String? citizenHomeSummary(BuildContext context, WidgetRef ref) {
+  final l = AppLocalizations.of(context);
+  final tokens = ref.read(myTokensProvider).value;
+  if (tokens == null) return null;
+  final next = nextToken(tokens, DateTime.now());
+  if (next == null) return l.aiHomeNoBooking;
+  return l.aiHomeSummary(next.number, dayLabel(context, next.date), timeLabel(context, next.start), timeLabel(context, next.end), next.shopName);
 }
 
 /// The token to bring to the shop next, or a big "Book ration" button when nothing is booked.

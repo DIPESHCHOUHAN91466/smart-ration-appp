@@ -1280,5 +1280,45 @@ class AppLocalizationsMr extends AppLocalizations {
   String get nComplaint => 'तक्रार';
 
   @override
+  String get aiButton => 'AI ला विचारा';
+
+  @override
+  String get aiHowCanIHelp => 'मी तुमची कशी मदत करू?';
+
+  @override
+  String get aiTypeHint => 'तुम्हाला काय हवे ते बोला किंवा लिहा';
+
+  @override
+  String get aiExample =>
+      'उदाहरण: “माझं रेशन कधी मिळेल?” किंवा “मला गहू कमी मिळाला, तक्रार करायची आहे.”';
+
+  @override
+  String get aiReadScreen => 'ही स्क्रीन वाचा';
+
+  @override
+  String get aiNothingToRead => 'या स्क्रीनवर अजून वाचण्यासारखे काही नाही.';
+
+  @override
+  String get aiLanguageChanged => 'भाषा बदलली.';
+
+  @override
+  String aiHomeSummary(
+    String token,
+    String day,
+    String start,
+    String end,
+    String shop,
+  ) {
+    return 'तुमचे पुढील रेशन: टोकन $token, $day, $start ते $end, $shop येथे.';
+  }
+
+  @override
+  String get aiHomeNoBooking =>
+      'तुमची कोणतीही रेशन बुकिंग नाही. बुक करण्यासाठी “रेशन बुक करा” म्हणा.';
+
+  @override
+  String get aiSignInHelp => 'साइन इन करण्यासाठी मदत हवी? AI ला विचारा';
+
+  @override
   String get nAnnouncement => 'घोषणा';
 }

@@ -2410,6 +2410,72 @@ abstract class AppLocalizations {
   /// **'Complaint'**
   String get nComplaint;
 
+  /// No description provided for @aiButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get aiButton;
+
+  /// No description provided for @aiHowCanIHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How can I help you?'**
+  String get aiHowCanIHelp;
+
+  /// No description provided for @aiTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say or type what you need'**
+  String get aiTypeHint;
+
+  /// No description provided for @aiExample.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: “When will I get my ration?” or “I got less wheat, I want to complain.”'**
+  String get aiExample;
+
+  /// No description provided for @aiReadScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Read this screen'**
+  String get aiReadScreen;
+
+  /// No description provided for @aiNothingToRead.
+  ///
+  /// In en, this message translates to:
+  /// **'There is nothing to read on this screen yet.'**
+  String get aiNothingToRead;
+
+  /// No description provided for @aiLanguageChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed.'**
+  String get aiLanguageChanged;
+
+  /// No description provided for @aiHomeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your next ration collection: token {token}, {day}, {start} to {end}, at {shop}.'**
+  String aiHomeSummary(
+    String token,
+    String day,
+    String start,
+    String end,
+    String shop,
+  );
+
+  /// No description provided for @aiHomeNoBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no ration collection booked. Say “book ration” to book one.'**
+  String get aiHomeNoBooking;
+
+  /// No description provided for @aiSignInHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Need help signing in? Ask AI'**
+  String get aiSignInHelp;
+
   /// No description provided for @nAnnouncement.
   ///
   /// In en, this message translates to:

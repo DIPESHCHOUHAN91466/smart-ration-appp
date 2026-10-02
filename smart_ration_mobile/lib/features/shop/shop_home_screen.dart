@@ -6,6 +6,7 @@ import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
 import '../../l10n/app_localizations.dart';
+import '../assistant/assistant_sheet.dart';
 import '../auth/auth_controller.dart';
 import '../notifications/notifications_screen.dart';
 import 'shop_data.dart';
@@ -29,6 +30,7 @@ class ShopHomeScreen extends ConsumerWidget {
     }
 
     return Scaffold(
+      floatingActionButton: const AiButton(screen: 'shop_home'),
       appBar: AppBar(
         title: Text(l.appTitle),
         actions: [
@@ -137,6 +139,7 @@ class ShopHomeScreen extends ConsumerWidget {
               label: Text(l.checkServer),
               onPressed: () => context.push(Routes.serverStatus),
             ),
+            const SizedBox(height: 88),
           ],
         ),
       ),

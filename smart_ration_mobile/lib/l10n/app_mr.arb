@@ -385,5 +385,15 @@
   "complaintOfficeReply": "कार्यालयाचे उत्तर",
   "doneButton": "झाले",
   "nComplaint": "तक्रार",
+  "aiButton": "AI ला विचारा",
+  "aiHowCanIHelp": "मी तुमची कशी मदत करू?",
+  "aiTypeHint": "तुम्हाला काय हवे ते बोला किंवा लिहा",
+  "aiExample": "उदाहरण: “माझं रेशन कधी मिळेल?” किंवा “मला गहू कमी मिळाला, तक्रार करायची आहे.”",
+  "aiReadScreen": "ही स्क्रीन वाचा",
+  "aiNothingToRead": "या स्क्रीनवर अजून वाचण्यासारखे काही नाही.",
+  "aiLanguageChanged": "भाषा बदलली.",
+  "aiHomeSummary": "तुमचे पुढील रेशन: टोकन {token}, {day}, {start} ते {end}, {shop} येथे.",
+  "aiHomeNoBooking": "तुमची कोणतीही रेशन बुकिंग नाही. बुक करण्यासाठी “रेशन बुक करा” म्हणा.",
+  "aiSignInHelp": "साइन इन करण्यासाठी मदत हवी? AI ला विचारा",
   "nAnnouncement": "घोषणा"
 }

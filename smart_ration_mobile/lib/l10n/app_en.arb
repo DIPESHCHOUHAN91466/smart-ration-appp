@@ -634,5 +634,16 @@
   "complaintOfficeReply": "Reply from the office",
   "doneButton": "Done",
   "nComplaint": "Complaint",
+  "aiButton": "Ask AI",
+  "aiHowCanIHelp": "How can I help you?",
+  "aiTypeHint": "Say or type what you need",
+  "aiExample": "For example: “When will I get my ration?” or “I got less wheat, I want to complain.”",
+  "aiReadScreen": "Read this screen",
+  "aiNothingToRead": "There is nothing to read on this screen yet.",
+  "aiLanguageChanged": "Language changed.",
+  "aiHomeSummary": "Your next ration collection: token {token}, {day}, {start} to {end}, at {shop}.",
+  "@aiHomeSummary": {"placeholders": {"token": {"type": "String"}, "day": {"type": "String"}, "start": {"type": "String"}, "end": {"type": "String"}, "shop": {"type": "String"}}},
+  "aiHomeNoBooking": "You have no ration collection booked. Say “book ration” to book one.",
+  "aiSignInHelp": "Need help signing in? Ask AI",
   "nAnnouncement": "Announcement"
 }

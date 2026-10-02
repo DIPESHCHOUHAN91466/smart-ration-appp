@@ -112,6 +112,28 @@ void main() {
       });
     }
 
+    for (final (who, user) in [('citizen', citizen), ('shop', shopOwner), ('official', official)]) {
+      testWidgets('$language · $who · the AI assistant fits a small phone with large text', (tester) async {
+        tester.view.physicalSize = const Size(720, 1280);
+        tester.view.devicePixelRatio = 2.0;
+        tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+        addTearDown(tester.view.reset);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+        final app = await TestApp.build(FakeBackend(everything), savedLanguage: language, signedInAs: user(), overrides: [
+          voiceInputProvider.overrideWithValue(_SilentVoice()),
+          speakerProvider.overrideWithValue(_SilentSpeaker()),
+        ]);
+        await tester.pumpWidget(app.widget);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byIcon(Icons.auto_awesome));
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull, reason: '$language $who assistant');
+        expect(find.byIcon(Icons.mic), findsOneWidget);
+      });
+    }
+
     testWidgets('$language · official · the alert update form fits a small phone with large text', (tester) async {
       tester.view.physicalSize = const Size(720, 1280);
       tester.view.devicePixelRatio = 2.0;

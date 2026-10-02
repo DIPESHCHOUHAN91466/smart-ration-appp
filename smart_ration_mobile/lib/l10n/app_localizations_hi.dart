@@ -1279,5 +1279,45 @@ class AppLocalizationsHi extends AppLocalizations {
   String get nComplaint => 'शिकायत';
 
   @override
+  String get aiButton => 'AI से पूछें';
+
+  @override
+  String get aiHowCanIHelp => 'मैं आपकी कैसे मदद करूं?';
+
+  @override
+  String get aiTypeHint => 'बोलें या लिखें, आपको क्या चाहिए';
+
+  @override
+  String get aiExample =>
+      'उदाहरण: “मेरा राशन कब मिलेगा?” या “मुझे गेहूं कम मिला, शिकायत करनी है।”';
+
+  @override
+  String get aiReadScreen => 'यह स्क्रीन पढ़ें';
+
+  @override
+  String get aiNothingToRead => 'इस स्क्रीन पर अभी पढ़ने के लिए कुछ नहीं है।';
+
+  @override
+  String get aiLanguageChanged => 'भाषा बदल दी गई।';
+
+  @override
+  String aiHomeSummary(
+    String token,
+    String day,
+    String start,
+    String end,
+    String shop,
+  ) {
+    return 'आपका अगला राशन: टोकन $token, $day, $start से $end तक, $shop पर।';
+  }
+
+  @override
+  String get aiHomeNoBooking =>
+      'आपकी कोई राशन बुकिंग नहीं है। बुक करने के लिए “राशन बुक करो” बोलें।';
+
+  @override
+  String get aiSignInHelp => 'साइन इन में मदद चाहिए? AI से पूछें';
+
+  @override
   String get nAnnouncement => 'घोषणा';
 }

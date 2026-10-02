@@ -89,6 +89,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             if (expired) Notice(text: l.errorSessionEnded, warning: true),
             if (_method == _Method.mobile) const _OtpForm() else const _PasswordForm(),
             const SizedBox(height: 20),
+            // The public help assistant explains signing in, by typing or by voice.
+            Center(
+              child: TextButton.icon(
+                icon: const Icon(Icons.auto_awesome),
+                label: Text(l.aiSignInHelp),
+                onPressed: () => context.push(Routes.help),
+              ),
+            ),
             Center(
               child: TextButton.icon(
                 icon: const Icon(Icons.dns_outlined),
