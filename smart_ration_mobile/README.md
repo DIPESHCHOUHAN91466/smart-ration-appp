@@ -7,7 +7,8 @@ The Flutter Android app for the Smart Ration system. It is a client of the exist
   token with a signed QR (also shown without internet), notifications.
 - **Shop owners:** today's counts, scan a customer's QR (or verify by mobile code), check every
   rule, hand over and get a receipt, today's queue, stock deliveries and write-offs.
-- **Government officials / admins:** totals across shops, last 30 days, shops and their stock, alerts.
+- **Government officials / admins:** totals across shops, last 30 days, shops and their stock, alerts
+  (mark them under review, resolved or not a problem).
 - **Everyone:** the help assistant "Ration Mitra" by typing or voice, answers read aloud;
   English, हिंदी and मराठी throughout.
 

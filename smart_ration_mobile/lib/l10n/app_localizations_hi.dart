@@ -1011,6 +1011,40 @@ class AppLocalizationsHi extends AppLocalizations {
   String get alertDetailsInEnglish => 'सिस्टम का विवरण (अंग्रेज़ी में):';
 
   @override
+  String get alertUpdateButton => 'अपडेट करें';
+
+  @override
+  String get alertUpdateTitle => 'इस अलर्ट को अपडेट करें';
+
+  @override
+  String get alertStatusUnderReview => 'जाँच जारी';
+
+  @override
+  String get alertChooseReviewHint =>
+      'आप इसकी जाँच कर रहे हैं। यह सूची में रहेगा।';
+
+  @override
+  String get alertChooseResolved => 'सुलझ गया';
+
+  @override
+  String get alertChooseResolvedHint => 'समस्या थी और उसे सुलझा दिया गया है।';
+
+  @override
+  String get alertChooseDismissed => 'कोई समस्या नहीं';
+
+  @override
+  String get alertChooseDismissedHint => 'जाँच की: कुछ भी गलत नहीं था।';
+
+  @override
+  String get alertNoteHint => 'आधार नंबर, OTP या पासवर्ड न लिखें।';
+
+  @override
+  String get alertReviewNote => 'अधिकारी की टिप्पणी';
+
+  @override
+  String get alertUpdated => 'अलर्ट अपडेट हो गया';
+
+  @override
   String get helpTitle => 'सहायता — राशन मित्र';
 
   @override

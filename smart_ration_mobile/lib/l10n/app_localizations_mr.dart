@@ -1012,6 +1012,39 @@ class AppLocalizationsMr extends AppLocalizations {
   String get alertDetailsInEnglish => 'प्रणालीकडील तपशील (इंग्रजीत):';
 
   @override
+  String get alertUpdateButton => 'अद्ययावत करा';
+
+  @override
+  String get alertUpdateTitle => 'ही सूचना अद्ययावत करा';
+
+  @override
+  String get alertStatusUnderReview => 'तपासणी सुरू';
+
+  @override
+  String get alertChooseReviewHint => 'तुम्ही ती तपासत आहात. ती यादीत राहील.';
+
+  @override
+  String get alertChooseResolved => 'सोडवली';
+
+  @override
+  String get alertChooseResolvedHint => 'समस्या होती आणि ती सोडवली आहे.';
+
+  @override
+  String get alertChooseDismissed => 'समस्या नाही';
+
+  @override
+  String get alertChooseDismissedHint => 'तपासले: काहीही चुकीचे नव्हते.';
+
+  @override
+  String get alertNoteHint => 'आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका.';
+
+  @override
+  String get alertReviewNote => 'अधिकाऱ्याची टीप';
+
+  @override
+  String get alertUpdated => 'सूचना अद्ययावत झाली';
+
+  @override
   String get helpTitle => 'मदत — रेशन मित्र';
 
   @override

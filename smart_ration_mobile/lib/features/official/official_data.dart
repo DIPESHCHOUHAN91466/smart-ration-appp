@@ -11,6 +11,7 @@ import '../shop/shop_data.dart';
 ///   GET /api/shops/map              every shop with today's activity and stock status
 ///   GET /api/shops/{id}/location    one shop: owner, place and stock lines
 ///   GET /api/ai/alerts/active       open rule-based warnings (decision support, not proof of fraud)
+///   POST /api/ai/alerts/{id}/resolve  mark one under review, resolved or dismissed (officials only)
 
 class OfficialOverview {
   const OfficialOverview({
@@ -141,6 +142,8 @@ class AlertItem {
     required this.shopName,
     required this.description,
     required this.detectedAt,
+    this.underReview = false,
+    this.note = '',
   });
 
   final int id;
@@ -158,6 +161,12 @@ class AlertItem {
   /// UTC, as the backend stores it.
   final DateTime? detectedAt;
 
+  /// An official has started checking it (otherwise it is still Open).
+  final bool underReview;
+
+  /// What the official wrote when updating it.
+  final String note;
+
   static AlertItem? tryParse(Object? j) {
     if (j is! Map || j['id'] is! int) return null;
     final at = j['detectedAt'];
@@ -168,9 +177,27 @@ class AlertItem {
       shopName: _text(j['shopName']),
       description: _text(j['description']),
       detectedAt: at is String ? DateTime.tryParse(at.endsWith('Z') ? at : '${at}Z') : null,
+      underReview: j['status'] == 'UnderReview',
+      note: _text(j['resolutionNote']),
     );
   }
 }
+
+/// What an official decides about an alert. Resolved and dismissed alerts leave the open list.
+enum AlertDecision {
+  underReview('UnderReview'),
+  resolved('Resolved'),
+  dismissed('Dismissed');
+
+  const AlertDecision(this.wire);
+
+  /// The backend's name for it.
+  final String wire;
+}
+
+/// Twelve digits, with or without spaces or dashes: looks like an Aadhaar number, which must never
+/// be written in a note.
+final aadhaarLikePattern = RegExp(r'(?<!\d)\d{4}[\s-]?\d{4}[\s-]?\d{4}(?!\d)');
 
 class OfficialRepository {
   const OfficialRepository(this._api);
@@ -197,6 +224,15 @@ class OfficialRepository {
     const rank = {'HIGH': 0, 'MEDIUM': 1, 'LOW': 2};
     return [for (final e in items) ?AlertItem.tryParse(e)]
       ..sort((a, b) => (rank[a.severity] ?? 3).compareTo(rank[b.severity] ?? 3));
+  }
+
+  /// Records the official's decision. The backend checks the caller really is an official, and
+  /// saying the same thing twice (e.g. a retry) changes nothing further.
+  Future<void> updateAlert(int id, AlertDecision decision, {String note = ''}) async {
+    await _api.post<Object?>('/api/ai/alerts/$id/resolve', body: {
+      'Status': decision.wire,
+      if (note.trim().isNotEmpty) 'Note': note.trim(),
+    });
   }
 }
 

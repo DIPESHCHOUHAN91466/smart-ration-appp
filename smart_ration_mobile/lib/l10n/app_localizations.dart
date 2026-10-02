@@ -1918,6 +1918,72 @@ abstract class AppLocalizations {
   /// **'Details from the system (English):'**
   String get alertDetailsInEnglish;
 
+  /// No description provided for @alertUpdateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get alertUpdateButton;
+
+  /// No description provided for @alertUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update this alert'**
+  String get alertUpdateTitle;
+
+  /// No description provided for @alertStatusUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get alertStatusUnderReview;
+
+  /// No description provided for @alertChooseReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You are checking it. It stays on the list.'**
+  String get alertChooseReviewHint;
+
+  /// No description provided for @alertChooseResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get alertChooseResolved;
+
+  /// No description provided for @alertChooseResolvedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'There was a problem and it has been dealt with.'**
+  String get alertChooseResolvedHint;
+
+  /// No description provided for @alertChooseDismissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a problem'**
+  String get alertChooseDismissed;
+
+  /// No description provided for @alertChooseDismissedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked: nothing was wrong.'**
+  String get alertChooseDismissedHint;
+
+  /// No description provided for @alertNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not write Aadhaar numbers, OTPs or passwords.'**
+  String get alertNoteHint;
+
+  /// No description provided for @alertReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Official\'s note'**
+  String get alertReviewNote;
+
+  /// No description provided for @alertUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert updated'**
+  String get alertUpdated;
+
   /// No description provided for @helpTitle.
   ///
   /// In en, this message translates to:

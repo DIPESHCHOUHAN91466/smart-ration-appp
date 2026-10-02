@@ -101,5 +101,26 @@ void main() {
         expect(find.byType(Scaffold), findsWidgets);
       });
     }
+
+    testWidgets('$language · official · the alert update form fits a small phone with large text', (tester) async {
+      tester.view.physicalSize = const Size(720, 1280);
+      tester.view.devicePixelRatio = 2.0;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      final app = await TestApp.build(FakeBackend(everything), savedLanguage: language, signedInAs: official());
+      await tester.pumpWidget(app.widget);
+      await tester.pumpAndSettle();
+      containerOf(tester.element(find.byType(Scaffold).first)).read(routerProvider).push(Routes.officialAlerts);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byIcon(Icons.edit_note).first); // below the fold on a small phone
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.edit_note).first);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull, reason: '$language alert update form');
+      expect(find.byType(TextField), findsOneWidget); // the form is open
+    });
   }
 }

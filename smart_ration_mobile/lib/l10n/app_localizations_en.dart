@@ -1022,6 +1022,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alertDetailsInEnglish => 'Details from the system (English):';
 
   @override
+  String get alertUpdateButton => 'Update';
+
+  @override
+  String get alertUpdateTitle => 'Update this alert';
+
+  @override
+  String get alertStatusUnderReview => 'Under review';
+
+  @override
+  String get alertChooseReviewHint =>
+      'You are checking it. It stays on the list.';
+
+  @override
+  String get alertChooseResolved => 'Resolved';
+
+  @override
+  String get alertChooseResolvedHint =>
+      'There was a problem and it has been dealt with.';
+
+  @override
+  String get alertChooseDismissed => 'Not a problem';
+
+  @override
+  String get alertChooseDismissedHint => 'Checked: nothing was wrong.';
+
+  @override
+  String get alertNoteHint =>
+      'Do not write Aadhaar numbers, OTPs or passwords.';
+
+  @override
+  String get alertReviewNote => 'Official\'s note';
+
+  @override
+  String get alertUpdated => 'Alert updated';
+
+  @override
   String get helpTitle => 'Help — Ration Mitra';
 
   @override

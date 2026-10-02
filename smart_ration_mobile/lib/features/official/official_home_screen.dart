@@ -13,7 +13,7 @@ import '../notifications/notifications_screen.dart';
 import 'official_data.dart';
 
 /// The government official's (and admin's) dashboard: today's totals across every shop, the last
-/// 30 days, and the way into the shops and the open alerts. Everything here is read-only.
+/// 30 days, and the way into the shops and the open alerts. Only alerts can be changed (on the alerts screen).
 class OfficialHomeScreen extends ConsumerWidget {
   const OfficialHomeScreen({super.key});
 

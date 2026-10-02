@@ -110,7 +110,6 @@ Some things cannot be tested on the emulator. Before release, on at least one lo
 
 - **No push notifications** when the app is closed; notifications appear in the in-app inbox.
   Push needs Google Firebase (a project, a config file, backend changes).
-- **Officials can view but not resolve alerts** in the app.
 - The backend's own messages (refusal reasons, alert texts, notification texts) are in English; the
   app translates the ones it knows and labels the rest as English.
 - The backend checks booking dates but not times of day, so the app hides slots that already started.

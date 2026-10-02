@@ -1,8 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_ration_mobile/app/router.dart';
 import 'package:smart_ration_mobile/app/routes.dart';
 import 'package:smart_ration_mobile/features/auth/session.dart';
+import 'package:smart_ration_mobile/features/official/official_data.dart';
 import 'package:smart_ration_mobile/features/official/official_home_screen.dart';
 
 import '../support/fake_backend.dart';
@@ -11,11 +13,12 @@ import '../support/test_app.dart';
 SessionUser official() =>
     SessionUser.tryParse(userJson(id: 4, fullName: 'District Government Officer', role: 'GovernmentOfficial'))!;
 
-Future<FakeBackend> openOfficial(WidgetTester tester, {String? path, String language = 'en'}) async {
+Future<FakeBackend> openOfficial(WidgetTester tester,
+    {String? path, String language = 'en', FakeReply Function(RequestOptions)? server}) async {
   tester.view.physicalSize = const Size(1080, 3600);
   tester.view.devicePixelRatio = 2.0;
   addTearDown(tester.view.reset);
-  final backend = FakeBackend(officialServer);
+  final backend = FakeBackend(server ?? officialServer);
   final app = await TestApp.build(backend, savedLanguage: language, signedInAs: official());
   await tester.pumpWidget(app.widget);
   await tester.pumpAndSettle();
@@ -74,6 +77,111 @@ void main() {
     expect(find.text('High'), findsOneWidget);
     expect(find.text('Rule text 40 from the backend.'), findsOneWidget);
     expect(find.text('Details from the system (English):'), findsNothing);
+  });
+
+  group('updating an alert', () {
+    /// The official views plus a working update route: resolved or dismissed alerts leave the open
+    /// list, an alert under review stays with its note.
+    FakeReply Function(RequestOptions) liveAlerts({FakeReply? updateReply}) {
+      final status = <int, String>{40: 'Open', 47: 'UnderReview'};
+      final notes = <int, String>{47: 'Called the shop owner.'};
+      return (r) {
+        final m = RegExp(r'^/api/ai/alerts/(\d+)/resolve$').firstMatch(r.path);
+        if (m != null && r.method == 'POST') {
+          if (updateReply != null) return updateReply;
+          final id = int.parse(m.group(1)!);
+          final body = r.data as Map;
+          status[id] = body['Status'] as String;
+          notes[id] = (body['Note'] as String?) ?? '';
+          return FakeReply.ok({'id': id, 'status': status[id]});
+        }
+        if (r.path == '/api/ai/alerts/active') {
+          return FakeReply.ok({
+            'sync': {'available': false},
+            'items': [
+              for (final (id, type, severity) in [(47, 'RepeatedQrScan', 'MEDIUM'), (40, 'DuplicateCollectionAttempt', 'HIGH')])
+                if (status[id] == 'Open' || status[id] == 'UnderReview')
+                  {...alertJson(id, type, severity), 'status': status[id], 'resolutionNote': notes[id]},
+            ],
+          });
+        }
+        return officialServer(r);
+      };
+    }
+
+    Finder updateButtonOf(String alertTitle) =>
+        find.descendant(of: find.ancestor(of: find.text(alertTitle), matching: find.byType(Card)), matching: find.text('Update'));
+
+    List<RequestOptions> updates(FakeBackend b) => b.requests.where((r) => r.path.endsWith('/resolve')).toList();
+
+    testWidgets('resolving an alert sends the decision and note, and it leaves the list', (tester) async {
+      final backend = await openOfficial(tester, path: Routes.officialAlerts, server: liveAlerts());
+
+      await tester.tap(updateButtonOf('Repeated collection attempts'));
+      await tester.pumpAndSettle();
+      expect(find.text('Update this alert'), findsOneWidget);
+      expect(find.text('Do not write Aadhaar numbers, OTPs or passwords.'), findsOneWidget);
+
+      await tester.tap(find.text('Resolved'));
+      await tester.enterText(find.widgetWithText(TextField, 'Note (optional)'), '  Visited the shop; extra bag returned.  ');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      final sent = updates(backend).single;
+      expect(sent.path, '/api/ai/alerts/40/resolve');
+      expect(sent.data, {'Status': 'Resolved', 'Note': 'Visited the shop; extra bag returned.'});
+      expect(find.text('Alert updated'), findsOneWidget);
+      expect(find.text('Repeated collection attempts'), findsNothing);
+      expect(find.text('Same QR scanned many times'), findsOneWidget);
+    });
+
+    testWidgets('an alert under review shows that and its note; the form starts at "Resolved" with the note kept', (tester) async {
+      final backend = await openOfficial(tester, path: Routes.officialAlerts, server: liveAlerts());
+
+      expect(find.text('Under review'), findsOneWidget);
+      expect(find.text("Official's note"), findsOneWidget);
+      expect(find.text('Called the shop owner.'), findsOneWidget);
+
+      await tester.tap(updateButtonOf('Same QR scanned many times'));
+      await tester.pumpAndSettle();
+      final selected = tester.widget<RadioGroup<AlertDecision>>(find.byType(RadioGroup<AlertDecision>));
+      expect(selected.groupValue, AlertDecision.resolved);
+
+      await tester.tap(find.text('Not a problem'));
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+      expect(updates(backend).single.data, {'Status': 'Dismissed', 'Note': 'Called the shop owner.'});
+      expect(find.text('Same QR scanned many times'), findsNothing);
+    });
+
+    testWidgets('a note that looks like an Aadhaar number is not sent', (tester) async {
+      final backend = await openOfficial(tester, path: Routes.officialAlerts, server: liveAlerts());
+
+      await tester.tap(updateButtonOf('Repeated collection attempts'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, 'Note (optional)'), 'Card holder 1234 5678 9012');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(updates(backend), isEmpty);
+      expect(find.text('Update this alert'), findsOneWidget); // still open, showing the warning as an error
+      expect(find.text('Do not write Aadhaar numbers, OTPs or passwords.'), findsOneWidget);
+    });
+
+    testWidgets("the backend's refusal is shown and the form stays open", (tester) async {
+      await openOfficial(tester,
+          path: Routes.officialAlerts,
+          server: liveAlerts(updateReply: FakeReply.fail(403, 'Only government officials can resolve alerts.')));
+
+      await tester.tap(updateButtonOf('Repeated collection attempts'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Only government officials can resolve alerts.'), findsOneWidget);
+      expect(find.text('Update this alert'), findsOneWidget);
+      expect(find.text('Alert updated'), findsNothing);
+    });
   });
 
   testWidgets('in Marathi the alert kinds are translated and the English rule text is labelled', (tester) async {
