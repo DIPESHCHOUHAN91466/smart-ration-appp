@@ -184,6 +184,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: python
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci-root-only    # throwaway CI container, not a real secret
+          MYSQL_DATABASE: smartration
+          MYSQL_USER: smartration_app
+          MYSQL_PASSWORD: ci-app-only
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=10s --health-timeout=5s --health-retries=12
     steps:
       - uses: actions/checkout@v5
       - name: Build
@@ -191,24 +203,44 @@ jobs:
       - name: Image contains no secrets or env files
         run: |
           docker run --rm --entrypoint sh smartration-api:ci -c 'test ! -e /app/.env && test ! -d /app/tests && test ! -d /app/.venv && test -f /app/ai/chatbot/knowledge/faq.json && test -f /app/database/seeds/synthetic/shops.json && test -f /app/database/queries/01_overbooked_time_slots.sql && test -f /app/migrations/env.py && test -f /app/frontend-dist/index.html'
-      - name: Container starts, is live and serves the website
+      # The first deploy on Render, reproduced: the same image, the entrypoint creating the schema and the demo data on
+      # an empty MySQL 8, and the same non-secret settings as render.yaml (tests/regression/test_deploy_config.py keeps
+      # them in step). Secret values here are CI-only dummies. Not reproduced: TLS to the database (MYSQL_SSL_CA).
+      - name: First boot like Render (MySQL, migrations + seed), then live, ready, website and the demo citizen
         run: |
-          docker run -d --name api -p 8000:8000 \
-            -e DATABASE_URL=sqlite:////tmp/ci.db -e JWT_SECRET_KEY=ci-only-signing-key-not-a-secret-0123456789abcdef \
+          docker run -d --name api --network host \
+            -e ENVIRONMENT=production -e DATA_MODE=synthetic \
+            -e "DATABASE_URL=mysql+pymysql://smartration_app:ci-app-only@127.0.0.1:3306/smartration?charset=utf8mb4" \
+            -e JWT_SECRET_KEY=ci-only-signing-key-not-a-secret-0123456789abcdef \
             -e QR_SECRET=ci-only-qr-secret-not-a-secret-0123456789abcdef \
             -e DEMO_OTP_ENABLED=false -e SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true \
-            -e LEGACY_API_URL= -e AI_SERVICE_URL= smartration-api:ci
-          # On failure: the container's last log lines as a public annotation (logs hold no secrets; the
-          # QR/JWT values here are CI-only dummies), so the cause is visible without opening the raw log.
+            -e LEGACY_API_URL= -e AI_SERVICE_URL= \
+            -e RUN_DB_SETUP=true -e RUN_DB_SEED=true -e SEED_DEMO_PASSWORD=ci-demo-password \
+            smartration-api:ci
+          # On failure: the container's last log lines as a public annotation (the app never logs secret values and
+          # prints database URLs with the password hidden), so the cause is visible without opening the raw log.
           fail() {
             docker logs api > container.log 2>&1 || true
             echo "::error title=$1::$(tail -n 40 container.log | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
             exit 1
           }
-          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8000/health/live && break; sleep 1; done
-          curl -fsS http://127.0.0.1:8000/health/live || fail "container not live after 60 s"
+          live() { for i in $(seq 1 120); do curl -fsS http://127.0.0.1:8000/health/live > /dev/null && return 0; sleep 1; done; return 1; }
+          live || fail "first boot: not live after 120 s"
+          curl -s http://127.0.0.1:8000/ready | grep -q '"ready":true' || fail "first boot: /ready is not ready"
+          curl -s http://127.0.0.1:8000/ready | grep -q '"legacyApi":"disabled"' || fail "first boot: the legacy API is not disabled"
           status=$(curl -s -o page.html -w "%{http_code}" http://127.0.0.1:8000/rural/dashboard)
           grep -q '<div id="root">' page.html || fail "website not served (HTTP $status)"
+          token=$(curl -s -X POST -H "Content-Type: application/json" \
+            -d '{"email":"rural@example.com","password":"ci-demo-password"}' http://127.0.0.1:8000/api/auth/login \
+            | python3 -c "import sys, json; print(json.load(sys.stdin)['data']['accessToken'])") || fail "demo citizen cannot sign in"
+          echo "::add-mask::$token"
+          code=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" http://127.0.0.1:8000/api/beneficiaries/me)
+          [ "$code" = "200" ] || fail "demo citizen has no ration card (HTTP $code)"
+          # A redeploy restarts the same container on the same database: setup must change nothing and start again.
+          docker restart api > /dev/null
+          live || fail "restart: not live after 120 s"
+          curl -s http://127.0.0.1:8000/ready | grep -q '"ready":true' || fail "restart: /ready is not ready"
+          docker logs api 2>&1 | grep -q "Nothing to seed" || fail "restart: the seed ran again"
       - name: Build the C# API image
         run: docker build -f backend/SmartRation.Api/Dockerfile -t smartration-csharp-api:ci .
       - name: C# image has no local database, dev settings or env files; runs as non-root
