@@ -125,6 +125,29 @@ jobs:
         run: npm test
       - run: npm run build
 
+  android:
+    name: Android app (Flutter analyze + tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: smart_ration_mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.5"
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Translations are generated from the .arb files and complete
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n
+      - name: Analyze
+        run: flutter analyze
+      - name: Tests (every screen in en/hi/mr on a small phone with large text; fake backend, camera, mic, speaker)
+        run: flutter test
+
   security:
     name: Dependency vulnerabilities
     runs-on: ubuntu-latest
