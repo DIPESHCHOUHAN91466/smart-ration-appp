@@ -16,7 +16,8 @@ TEMPLATES = {
     "staging": REPO_ROOT / "deployment" / "staging" / "staging.env.example",
     "production": REPO_ROOT / "deployment" / "production" / "production.env.example",
 }
-SECRETS = {"DATABASE_URL", "MYSQL_SSL_CA", "JWT_SECRET_KEY", "SEED_DEMO_PASSWORD", "Qr__Secret", "Sms__ApiKey", "AiService__ApiKey"}
+SECRETS = {"DATABASE_URL", "MYSQL_SSL_CA", "JWT_SECRET_KEY", "SEED_DEMO_PASSWORD", "Qr__Secret", "Sms__ApiKey", "AiService__ApiKey",
+           "QR_SECRET", "SMS_API_KEY", "AI_SERVICE_API_KEY", "CHATBOT_API_KEY"}
 
 
 def parse(path: Path) -> dict[str, str]:
@@ -74,3 +75,6 @@ def test_production_has_no_synthetic_shortcuts():
     assert values["RUN_DB_SEED"] == "false" and values["VITE_DEMO_MODE"] == "false"
     assert values["Sms__Provider"] == "Http" and values["Sms__AllowMockOutsideDevelopment"] == "false"
     assert all(values[k] == "false" for k in values if k.startswith("Demo__"))
+    # the Python backend's own names (the C# API is retired)
+    assert values["DEMO_OTP_ENABLED"] == "false" and values["SMS_PROVIDER"] == "http"
+    assert values["SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT"] == "false" and "QR_SECRET" in values
