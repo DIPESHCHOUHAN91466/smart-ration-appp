@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { LoadingState } from "../components/EmptyState";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Bell, Globe2, Home, LogOut, Menu, Package, QrCode, Search, ClipboardList,
@@ -299,7 +300,10 @@ export default function DashboardLayout() {
         </header>
 
         <div className="page-content">
-          <Outlet />
+          {/* Pages load on demand: one loading state for all of them. */}
+          <Suspense fallback={<LoadingState text="" />}>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
 

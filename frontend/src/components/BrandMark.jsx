@@ -14,7 +14,8 @@ export const RATION_MITRA_LOGO_ALT = "Ration Mitra — AI Powered, For Every Fam
 export default function BrandMark({ variant = "header" }) {
   return (
     <span className={`rm-logo rm-logo--${variant}`}>
-      <img src={rationMitraLogo} alt={RATION_MITRA_LOGO_ALT} width={800} height={600} decoding="async" />
+      {/* Usually the largest thing on screen when a page first paints: fetch it first. */}
+      <img src={rationMitraLogo} alt={RATION_MITRA_LOGO_ALT} width={800} height={600} decoding="async" fetchpriority="high" />
     </span>
   );
 }

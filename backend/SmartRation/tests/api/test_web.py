@@ -30,7 +30,8 @@ def test_pages_carry_a_strict_content_security_policy_and_allow_the_voice_and_ca
     assert csp["script-src"] == "'self'"                         # no inline or third-party script
     assert csp["object-src"] == "'none'" and csp["frame-ancestors"] == "'none'" and csp["base-uri"] == "'self'"
     assert csp["connect-src"] == "'self'"                        # API calls only to this site
-    assert "https://fonts.googleapis.com" in csp["style-src"] and "https://*.tile.openstreetmap.org" in csp["img-src"]
+    assert csp["font-src"] == "'self' data:" and "googleapis" not in headers["content-security-policy"]   # fonts self-hosted
+    assert "https://*.tile.openstreetmap.org" in csp["img-src"]
     permissions = headers["permissions-policy"]
     assert "camera=(self)" in permissions and "microphone=(self)" in permissions   # QR scanner and chatbot voice input
     assert "content-security-policy" not in site.get("/docs").headers               # Swagger's CDN assets keep working
@@ -69,3 +70,23 @@ def test_bare_host_names_get_https(tmp_path):
     assert settings.legacy_api_url == "https://smart-ration-core.onrender.com"
     assert settings.ai_service_url == ""
     assert make_settings(tmp_path, legacy_api_url="http://localhost:5188").legacy_api_url == "http://localhost:5188"
+
+
+def test_website_files_are_compressed_but_api_responses_are_not(tmp_path, make_client):
+    dist = tmp_path / "dist"
+    (dist / "assets").mkdir(parents=True)
+    (dist / "index.html").write_text("<!doctype html><title>Ration Mitra</title>" + "<p>x</p>" * 300, encoding="utf-8")
+    (dist / "assets" / "app-9.js").write_text("console.log('ration');" * 200, encoding="utf-8")
+    (dist / "assets" / "tiny-1.js").write_text("1", encoding="utf-8")
+    site = make_client(frontend_dist_dir=str(dist))
+    gz = {"Accept-Encoding": "gzip, br"}
+
+    r = site.get("/assets/app-9.js", headers=gz)
+    assert r.headers["content-encoding"] == "gzip" and "Accept-Encoding" in r.headers["vary"]
+    assert r.text == "console.log('ration');" * 200                      # the client decompresses it correctly
+    assert "immutable" in r.headers["cache-control"]
+    page = site.get("/rural/dashboard", headers=gz)
+    assert page.headers["content-encoding"] == "gzip" and "content-security-policy" in page.headers
+    assert "content-encoding" not in site.get("/assets/tiny-1.js", headers=gz).headers          # too small to bother
+    assert "content-encoding" not in site.get("/assets/app-9.js", headers={"Accept-Encoding": "identity"}).headers
+    assert "content-encoding" not in site.get("/health", headers=gz).headers                    # API: never (BREACH)
