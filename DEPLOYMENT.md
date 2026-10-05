@@ -1,5 +1,8 @@
 # Deployment
 
+> **New to deploying this system?** Follow [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md): step-by-step hosting in India
+> (MeitY-empanelled cloud), database, secrets, Docker, domain and HTTPS, mobile release, checks, backups, updates and rollback.
+
 **Status:** no public deployment exists yet. Everything needed is in the repository and has been built and
 checked locally and in CI; creating the hosted database and service needs the owner's accounts —
 **NOT VERIFIED — REQUIRES ENVIRONMENT/EXTERNAL SERVICE**.
