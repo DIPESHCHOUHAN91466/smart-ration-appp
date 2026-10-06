@@ -9,7 +9,8 @@ import '../citizen/citizen_widgets.dart';
 import 'shop_data.dart';
 
 /// My shop's stock. Deliveries and damaged stock are recorded as movements in the backend's stock
-/// ledger (never by overwriting the balance), so every change can be traced later.
+/// ledger, so every change can be traced later. "Correct count" (the website's inventory edit) sets the
+/// balance directly for counting mistakes; the backend records that as a manual correction in the same ledger.
 class StockScreen extends ConsumerWidget {
   const StockScreen({super.key});
 
@@ -88,6 +89,11 @@ class _StockCard extends ConsumerWidget {
               label: Text(l.writeOffStock),
               onPressed: line.available > 0 ? () => _open(context, ref, _Movement.writeOff) : null,
             ),
+            TextButton.icon(
+              icon: const Icon(Icons.edit_outlined),
+              label: Text(l.correctStock),
+              onPressed: () => _correct(context, ref),
+            ),
           ]),
         ]),
       ),
@@ -107,6 +113,141 @@ class _StockCard extends ConsumerWidget {
     ref.invalidate(shopStockProvider);
     ref.invalidate(shopDashboardProvider);
     messenger.showSnackBar(SnackBar(content: Text(kind == _Movement.receive ? l.stockReceived : l.stockWrittenOff)));
+  }
+
+  Future<void> _correct(BuildContext context, WidgetRef ref) async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final saved = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => _CorrectForm(line: line),
+    );
+    if (saved != true) return;
+    ref.invalidate(shopStockProvider);
+    ref.invalidate(shopDashboardProvider);
+    messenger.showSnackBar(SnackBar(content: Text(l.stockCorrected)));
+  }
+}
+
+/// Fixes a counting mistake: the balance and the minimum level, both filled in with today's values.
+class _CorrectForm extends ConsumerStatefulWidget {
+  const _CorrectForm({required this.line});
+
+  final StockLine line;
+
+  @override
+  ConsumerState<_CorrectForm> createState() => _CorrectFormState();
+}
+
+class _CorrectFormState extends ConsumerState<_CorrectForm> {
+  late final _available = TextEditingController(text: amount(widget.line.available));
+  late final _minimum = TextEditingController(text: amount(widget.line.minimum));
+  String? _availableError;
+  String? _minimumError;
+  String? _error;
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _available.dispose();
+    _minimum.dispose();
+    super.dispose();
+  }
+
+  /// 0 or more (unlike a delivery, a count may be zero); null after saying why not.
+  double? _parse(AppLocalizations l, TextEditingController field, void Function(String?) showError) {
+    final v = double.tryParse(field.text.trim().replaceAll(',', '.'));
+    final problem = v == null || v < 0 ? l.amountInvalid : (v > 1000000 ? l.quantityTooLarge : null);
+    showError(problem);
+    return problem == null ? v : null;
+  }
+
+  Future<void> _save() async {
+    final l = AppLocalizations.of(context);
+    String? availableProblem;
+    String? minimumProblem;
+    final available = _parse(l, _available, (p) => availableProblem = p);
+    final minimum = _parse(l, _minimum, (p) => minimumProblem = p);
+    setState(() {
+      _availableError = availableProblem;
+      _minimumError = minimumProblem;
+      _error = null;
+    });
+    if (available == null || minimum == null) return;
+    final line = widget.line;
+    if (available == line.available && minimum == line.minimum) {
+      setState(() => _error = l.correctNoChange);
+      return;
+    }
+    if (available != line.available) {
+      final unit = unitWord(l, line.rationType);
+      final yes = await showDialog<bool>(
+        context: context,
+        builder: (dialog) => AlertDialog(
+          title: Text(l.correctConfirmTitle(itemWord(l, line.rationType), '${amount(line.available)} $unit', '${amount(available)} $unit')),
+          content: Text(l.correctConfirmBody),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l.cancelButton)),
+            FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(l.saveButton)),
+          ],
+        ),
+      );
+      if (yes != true || !mounted) return;
+    }
+    setState(() => _saving = true);
+    try {
+      await ref.read(shopRepositoryProvider).correct(line.id, available: available, minimum: minimum);
+      if (mounted) Navigator.pop(context, true);
+    } on ApiException catch (e) {
+      if (mounted) setState(() => _error = e.messageIn(l));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final unit = unitWord(l, widget.line.rationType);
+    final number = [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))];
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.viewInsetsOf(context).bottom),
+      child: SingleChildScrollView(
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text('${l.correctStock}: ${itemWord(l, widget.line.rationType)}',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          Text(l.correctStockHint, style: const TextStyle(color: AppColors.muted)),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _available,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: number,
+            decoration: InputDecoration(labelText: l.correctInStock(unit), errorText: _availableError),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _minimum,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: number,
+            decoration: InputDecoration(labelText: l.correctMinimum(unit), errorText: _minimumError),
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: 8),
+            Semantics(liveRegion: true, child: Text(_error!, style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.w600))),
+          ],
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: _saving ? null : _save,
+            child: _saving
+                ? const SizedBox.square(dimension: 22, child: CircularProgressIndicator(strokeWidth: 3))
+                : Text(l.saveButton),
+          ),
+        ]),
+      ),
+    );
   }
 }
 

@@ -484,5 +484,14 @@
   "aiNoRecentUse": "हाल में कोई खपत नहीं",
   "aiQueueTitle": "आज अनुमानित प्रतीक्षा",
   "aiQueueLine": "{count} प्रतीक्षा में",
-  "aiNoQueue": "किसी दुकान पर कोई प्रतीक्षा नहीं कर रहा।"
+  "aiNoQueue": "किसी दुकान पर कोई प्रतीक्षा नहीं कर रहा।",
+  "correctStock": "गिनती सुधारें",
+  "correctStockHint": "केवल गिनती की गलती ठीक करने के लिए। आपूर्ति और खराब स्टॉक के लिए अलग बटन हैं। हर सुधार दर्ज किया जाता है।",
+  "correctInStock": "अभी स्टॉक में ({unit})",
+  "correctMinimum": "न्यूनतम स्तर ({unit})",
+  "correctConfirmTitle": "{item} का स्टॉक {from} से {to} करें?",
+  "correctConfirmBody": "यह आपके नाम से हाथ से किए गए सुधार के रूप में दर्ज होगा। अधिकारी इसे देख सकते हैं।",
+  "correctNoChange": "कुछ नहीं बदला गया।",
+  "stockCorrected": "स्टॉक सुधारा गया।",
+  "amountInvalid": "0 या उससे अधिक संख्या लिखें।"
 }

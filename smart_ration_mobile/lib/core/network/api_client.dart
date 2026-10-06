@@ -89,6 +89,8 @@ class ApiClient {
   Future<T?> post<T>(String path, {Object? body, Map<String, String>? headers}) =>
       _envelope<T>(() => _dio.post<Object?>(path, data: body, options: headers == null ? null : Options(headers: headers)));
 
+  Future<T?> put<T>(String path, {Object? body}) => _envelope<T>(() => _dio.put<Object?>(path, data: body));
+
   Future<T?> delete<T>(String path) => _envelope<T>(() => _dio.delete<Object?>(path));
 
   /// For the few backend routes that answer without the envelope, such as `/health`.

@@ -64,6 +64,80 @@ void main() {
     expect(find.text('Delivery recorded.'), findsOneWidget);
   });
 
+  group('correcting a count', () {
+    /// The shop backend plus PUT /api/inventory/{id}, answering with the corrected line like the real one.
+    FakeReply correctingServer(RequestOptions r) {
+      if (r.method == 'PUT' && r.path == '/api/inventory/11') {
+        final body = r.data as Map;
+        return FakeReply.ok({...stockJson().first, 'availableQuantity': body['availableQuantity'], 'minimumStockLevel': body['minimumStockLevel']});
+      }
+      return shopServer(r);
+    }
+
+    List<RequestOptions> puts(FakeBackend b) => b.requests.where((r) => r.method == 'PUT').toList();
+
+    testWidgets('a new balance is confirmed (from and to) before it is sent', (tester) async {
+      final backend = await openShop(tester, path: Routes.shopStock, handler: correctingServer);
+      await tester.tap(find.text('Correct count').last); // rice
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Only to fix a counting mistake.'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '480'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '100'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField).at(0), '470.5');
+      await tapText(tester, 'Save');
+      expect(find.text('Change Rice in stock from 480 kg to 470.5 kg?'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(puts(backend), isEmpty);
+
+      await tapText(tester, 'Save');
+      await tester.tap(find.widgetWithText(FilledButton, 'Save').last);
+      await tester.pumpAndSettle();
+      expect(puts(backend).single.data, {'availableQuantity': 470.5, 'minimumStockLevel': 100.0});
+      expect(find.text('Stock corrected.'), findsOneWidget);
+    });
+
+    testWidgets('only the minimum level changed: no confirmation needed', (tester) async {
+      final backend = await openShop(tester, path: Routes.shopStock, handler: correctingServer);
+      await tester.tap(find.text('Correct count').last);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField).at(1), '150');
+      await tapText(tester, 'Save');
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(puts(backend).single.data, {'availableQuantity': 480.0, 'minimumStockLevel': 150.0});
+    });
+
+    testWidgets('nothing changed, or numbers that cannot be used: nothing is sent', (tester) async {
+      final backend = await openShop(tester, path: Routes.shopStock, handler: correctingServer);
+      await tester.tap(find.text('Correct count').last);
+      await tester.pumpAndSettle();
+
+      await tapText(tester, 'Save');
+      expect(find.text('Nothing was changed.'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField).at(0), '');
+      await tester.enterText(find.byType(TextField).at(1), '2000000');
+      await tapText(tester, 'Save');
+      expect(find.text('Enter a number, 0 or more.'), findsOneWidget);
+      expect(find.text('Enter a quantity up to 1,000,000.'), findsOneWidget);
+      expect(puts(backend), isEmpty);
+    });
+
+    testWidgets('a count of zero is allowed', (tester) async {
+      final backend = await openShop(tester, path: Routes.shopStock, handler: correctingServer);
+      await tester.tap(find.text('Correct count').last);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).at(0), '0');
+      await tapText(tester, 'Save');
+      await tester.tap(find.widgetWithText(FilledButton, 'Save').last);
+      await tester.pumpAndSettle();
+      expect(puts(backend).single.data, {'availableQuantity': 0.0, 'minimumStockLevel': 100.0});
+    });
+  });
+
   testWidgets('writing off damaged stock: never more than is in stock, and only after confirming', (tester) async {
     final backend = await openShop(tester, path: Routes.shopStock);
     Iterable<Object?> writeOffs() => backend.requests.where((r) => r.path == '/api/inventory/12/damage').map((r) => r.data);

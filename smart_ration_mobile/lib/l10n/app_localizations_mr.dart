@@ -1614,4 +1614,39 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get aiNoQueue => 'कोणत्याही दुकानात कोणी प्रतीक्षेत नाही.';
+
+  @override
+  String get correctStock => 'मोजणी दुरुस्त करा';
+
+  @override
+  String get correctStockHint =>
+      'फक्त मोजणीतील चूक दुरुस्त करण्यासाठी. पुरवठा आणि खराब साठ्यासाठी वेगळी बटणे आहेत. प्रत्येक दुरुस्ती नोंदवली जाते.';
+
+  @override
+  String correctInStock(String unit) {
+    return 'आता साठ्यात ($unit)';
+  }
+
+  @override
+  String correctMinimum(String unit) {
+    return 'किमान पातळी ($unit)';
+  }
+
+  @override
+  String correctConfirmTitle(String item, String from, String to) {
+    return '$item चा साठा $from वरून $to करायचा?';
+  }
+
+  @override
+  String get correctConfirmBody =>
+      'हे तुमच्या नावाने हाताने केलेली दुरुस्ती म्हणून नोंदवले जाईल. अधिकारी ते पाहू शकतात.';
+
+  @override
+  String get correctNoChange => 'काहीही बदलले नाही.';
+
+  @override
+  String get stockCorrected => 'साठा दुरुस्त केला.';
+
+  @override
+  String get amountInvalid => '0 किंवा त्याहून जास्त संख्या लिहा.';
 }

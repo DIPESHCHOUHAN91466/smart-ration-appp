@@ -740,5 +740,17 @@
   "aiQueueTitle": "Expected wait today",
   "aiQueueLine": "{count} waiting",
   "@aiQueueLine": {"placeholders": {"count": {"type": "int"}}},
-  "aiNoQueue": "No one is waiting at any shop."
+  "aiNoQueue": "No one is waiting at any shop.",
+  "correctStock": "Correct count",
+  "correctStockHint": "Only to fix a counting mistake. Deliveries and damaged stock have their own buttons. Every correction is recorded.",
+  "correctInStock": "In stock now ({unit})",
+  "@correctInStock": {"placeholders": {"unit": {"type": "String"}}},
+  "correctMinimum": "Minimum level ({unit})",
+  "@correctMinimum": {"placeholders": {"unit": {"type": "String"}}},
+  "correctConfirmTitle": "Change {item} in stock from {from} to {to}?",
+  "@correctConfirmTitle": {"placeholders": {"item": {"type": "String"}, "from": {"type": "String"}, "to": {"type": "String"}}},
+  "correctConfirmBody": "This is recorded as a manual correction with your name. Officials can see it.",
+  "correctNoChange": "Nothing was changed.",
+  "stockCorrected": "Stock corrected.",
+  "amountInvalid": "Enter a number, 0 or more."
 }

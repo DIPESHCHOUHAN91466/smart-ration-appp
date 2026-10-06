@@ -174,6 +174,28 @@ void main() {
       expect(find.byType(TextField), findsOneWidget); // the form is open
     });
 
+    testWidgets('$language · shop · the stock correction form fits a small phone with large text', (tester) async {
+      tester.view.physicalSize = const Size(720, 1280);
+      tester.view.devicePixelRatio = 2.0;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      final app = await TestApp.build(FakeBackend(everything), savedLanguage: language, signedInAs: shopOwner(),
+          overrides: [cameraViewProvider.overrideWithValue((context, onCode) => const ColoredBox(color: Colors.black))]);
+      await tester.pumpWidget(app.widget);
+      await tester.pumpAndSettle();
+      containerOf(tester.element(find.byType(Scaffold).first)).read(routerProvider).push(Routes.shopStock);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byIcon(Icons.edit_outlined).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.edit_outlined).first);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull, reason: '$language stock correction form');
+      expect(find.byType(TextField), findsNWidgets(2));
+    });
+
     testWidgets('$language · official · the complaint update form fits a small phone with large text', (tester) async {
       tester.view.physicalSize = const Size(720, 1280);
       tester.view.devicePixelRatio = 2.0;

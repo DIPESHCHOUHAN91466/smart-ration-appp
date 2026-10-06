@@ -3015,6 +3015,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No one is waiting at any shop.'**
   String get aiNoQueue;
+
+  /// No description provided for @correctStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct count'**
+  String get correctStock;
+
+  /// No description provided for @correctStockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only to fix a counting mistake. Deliveries and damaged stock have their own buttons. Every correction is recorded.'**
+  String get correctStockHint;
+
+  /// No description provided for @correctInStock.
+  ///
+  /// In en, this message translates to:
+  /// **'In stock now ({unit})'**
+  String correctInStock(String unit);
+
+  /// No description provided for @correctMinimum.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum level ({unit})'**
+  String correctMinimum(String unit);
+
+  /// No description provided for @correctConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change {item} in stock from {from} to {to}?'**
+  String correctConfirmTitle(String item, String from, String to);
+
+  /// No description provided for @correctConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is recorded as a manual correction with your name. Officials can see it.'**
+  String get correctConfirmBody;
+
+  /// No description provided for @correctNoChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was changed.'**
+  String get correctNoChange;
+
+  /// No description provided for @stockCorrected.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock corrected.'**
+  String get stockCorrected;
+
+  /// No description provided for @amountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number, 0 or more.'**
+  String get amountInvalid;
 }
 
 class _AppLocalizationsDelegate

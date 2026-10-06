@@ -301,6 +301,14 @@ class ShopRepository {
   Future<StockLine> writeOff(int id, double quantity, {required String requestKey, String? reference, String? note}) =>
       _movement('/api/inventory/$id/damage', quantity, requestKey, reference, note);
 
+  /// Corrects a counting mistake: sets the balance and the minimum level directly (the website's inventory edit).
+  /// The backend records any change of balance in the stock ledger as a manual correction by this user.
+  /// Sending the same values again changes nothing further, so a retry is safe.
+  Future<StockLine> correct(int id, {required double available, required double minimum}) async {
+    final data = await _api.put<Object?>('/api/inventory/$id', body: {'availableQuantity': available, 'minimumStockLevel': minimum});
+    return StockLine.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
+  }
+
   Future<StockLine> _movement(String path, double quantity, String requestKey, String? reference, String? note) async {
     final data = await _api.post<Object?>(path, body: {
       'quantity': quantity,

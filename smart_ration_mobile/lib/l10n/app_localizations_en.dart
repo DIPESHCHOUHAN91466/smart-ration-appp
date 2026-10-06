@@ -1630,4 +1630,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiNoQueue => 'No one is waiting at any shop.';
+
+  @override
+  String get correctStock => 'Correct count';
+
+  @override
+  String get correctStockHint =>
+      'Only to fix a counting mistake. Deliveries and damaged stock have their own buttons. Every correction is recorded.';
+
+  @override
+  String correctInStock(String unit) {
+    return 'In stock now ($unit)';
+  }
+
+  @override
+  String correctMinimum(String unit) {
+    return 'Minimum level ($unit)';
+  }
+
+  @override
+  String correctConfirmTitle(String item, String from, String to) {
+    return 'Change $item in stock from $from to $to?';
+  }
+
+  @override
+  String get correctConfirmBody =>
+      'This is recorded as a manual correction with your name. Officials can see it.';
+
+  @override
+  String get correctNoChange => 'Nothing was changed.';
+
+  @override
+  String get stockCorrected => 'Stock corrected.';
+
+  @override
+  String get amountInvalid => 'Enter a number, 0 or more.';
 }
