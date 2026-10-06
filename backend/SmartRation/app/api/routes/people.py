@@ -38,12 +38,14 @@ def my_profile(who: Actor = Depends(any_user), db: Session = Depends(get_db)):
     return ok(profile_service.own_profile(db, who))
 
 
-@router.put("/users/profile", summary="Update my name / mobile number")
+@router.put("/users/profile", summary="Update my name / mobile number (a new number needs currentPassword)",
+            dependencies=[Depends(rate_limit("profile-update", lambda s: 10))])
 def update_my_profile(body: Body = Depends(json_body), who: Actor = Depends(any_user), db: Session = Depends(get_db)):
     name = body.string("FullName", required=True, max_length=150, min_length=2)
     mobile = body.string("MobileNumber", required=True, max_length=20, is_phone=True)
+    password = body.string("CurrentPassword", max_length=100)
     body.raise_if_invalid()
-    return ok(profile_service.update_own_profile(db, who, name, mobile), "Profile updated")
+    return ok(profile_service.update_own_profile(db, who, name, mobile, password), "Profile updated")
 
 
 @router.get("/beneficiaries/me", summary="My beneficiary verification profile")

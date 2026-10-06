@@ -8,6 +8,7 @@ import '../../core/network/api_exception.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_controller.dart';
 import '../auth/login_screen.dart' show Notice;
+import '../auth/session.dart';
 import '../citizen/citizen_widgets.dart' show DemoDataBanner, PillTone, StatusPill;
 import 'account_data.dart';
 
@@ -40,13 +41,14 @@ class AccountCard extends StatelessWidget {
 String formProblem(AppLocalizations l, ApiException e) {
   if (e.errors.isEmpty) return e.messageIn(l);
   return e.errors.map((x) {
-    if (x.startsWith('Password:')) return l.mfaWrongPassword;
+    if (x.startsWith('Password:') || x == 'CurrentPassword: The password is incorrect.') return l.mfaWrongPassword;
     if (x.startsWith('Code:')) return l.mfaWrongCode;
     return x.replaceFirst(RegExp(r'^[A-Za-z$.]+:\s*'), '');
   }).join('\n');
 }
 
 /// Name and mobile number (PUT /api/users/profile). The email is the sign-in name and is shown read-only.
+/// A new mobile number needs the current password: sign-in codes and password resets go to that number.
 class ProfileCard extends ConsumerStatefulWidget {
   const ProfileCard({super.key});
 
@@ -58,26 +60,43 @@ class _ProfileCardState extends ConsumerState<ProfileCard> {
   final _form = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _mobile = TextEditingController();
+  final _password = TextEditingController();
   bool _busy = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _mobile.addListener(() => setState(() {}));   // the password field appears as soon as the number differs
+  }
 
   @override
   void dispose() {
     _name.dispose();
     _mobile.dispose();
+    _password.dispose();
     super.dispose();
   }
 
-  Future<void> _save() async {
+  /// The number as typed differs from the saved one (spaces and +91 are not a change).
+  bool _mobileChanged(SessionUser user) => (normalizeMobile(_mobile.text) ?? _mobile.text.trim()) != user.mobileNumber.trim();
+
+  Future<void> _save(SessionUser user) async {
     final l = AppLocalizations.of(context);
     FocusScope.of(context).unfocus();
     if (!_form.currentState!.validate()) return;
+    final changed = _mobileChanged(user);
     setState(() {
       _busy = true;
       _error = null;
     });
     try {
-      final saved = await ref.read(accountRepositoryProvider).saveProfile(_name.text.trim(), normalizeMobile(_mobile.text)!);
+      final saved = await ref.read(accountRepositoryProvider).saveProfile(
+            _name.text.trim(),
+            changed ? normalizeMobile(_mobile.text)! : user.mobileNumber,
+            currentPassword: changed ? _password.text : null,
+          );
+      _password.clear();
       await ref.read(authControllerProvider.notifier).profileUpdated(saved);
       ref.invalidate(profileProvider);
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.profileSaved)));
@@ -107,6 +126,7 @@ class _ProfileCardState extends ConsumerState<ProfileCard> {
           OutlinedButton(onPressed: () => ref.invalidate(profileProvider), child: Text(l.tryAgain)),
         ],
         data: (user) {
+          final mobileChanged = _mobileChanged(user);
           return [
             Form(
               key: _form,
@@ -133,10 +153,22 @@ class _ProfileCardState extends ConsumerState<ProfileCard> {
                   keyboardType: TextInputType.phone,
                   autofillHints: const [AutofillHints.telephoneNumber],
                   decoration: InputDecoration(labelText: l.mobileLabel),
-                  validator: (v) => normalizeMobile(v ?? '') == null ? l.mobileInvalid : null,
+                  validator: (v) => mobileChanged && normalizeMobile(v ?? '') == null ? l.mobileInvalid : null,
                 ),
+                if (mobileChanged) ...[
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _password,
+                    enabled: !_busy,
+                    obscureText: true,
+                    autofillHints: const [AutofillHints.password],
+                    decoration: InputDecoration(
+                        labelText: l.currentPasswordLabel, helperText: l.profileMobilePasswordNote, helperMaxLines: 3),
+                    validator: (v) => (v ?? '').isEmpty ? l.passwordRequired : null,
+                  ),
+                ],
                 const SizedBox(height: 16),
-                FilledButton(onPressed: _busy ? null : _save, child: Text(l.profileSave)),
+                FilledButton(onPressed: _busy ? null : () => _save(user), child: Text(l.profileSave)),
               ]),
             ),
           ];

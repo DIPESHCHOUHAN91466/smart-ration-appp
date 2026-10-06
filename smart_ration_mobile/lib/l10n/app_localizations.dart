@@ -3411,6 +3411,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome! Your account is ready.'**
   String get registered;
+
+  /// No description provided for @profileMobilePasswordNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in codes and password resets go to this number, so changing it needs your password.'**
+  String get profileMobilePasswordNote;
 }
 
 class _AppLocalizationsDelegate

@@ -16,8 +16,13 @@ class AccountRepository {
 
   Future<SessionUser> profile() async => _user(await _api.get<Object?>('/api/users/profile'));
 
-  Future<SessionUser> saveProfile(String fullName, String mobileNumber) async =>
-      _user(await _api.put<Object?>('/api/users/profile', body: {'fullName': fullName, 'mobileNumber': mobileNumber}));
+  /// [currentPassword] is needed (and only sent) when the mobile number changes.
+  Future<SessionUser> saveProfile(String fullName, String mobileNumber, {String? currentPassword}) async =>
+      _user(await _api.put<Object?>('/api/users/profile', body: {
+        'fullName': fullName,
+        'mobileNumber': mobileNumber,
+        'currentPassword': ?currentPassword,
+      }));
 
   Future<Verification> verification() async {
     final data = await _api.get<Object?>('/api/beneficiaries/me');

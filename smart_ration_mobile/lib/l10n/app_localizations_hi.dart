@@ -1841,4 +1841,8 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get registered => 'स्वागत है! आपका खाता तैयार है।';
+
+  @override
+  String get profileMobilePasswordNote =>
+      'साइन-इन कोड और पासवर्ड रीसेट इसी नंबर पर आते हैं, इसलिए इसे बदलने के लिए पासवर्ड चाहिए।';
 }

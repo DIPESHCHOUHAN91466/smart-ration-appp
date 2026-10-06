@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies.auth import Actor
 from app.core.errors import BadRequest, Conflict, Forbidden, NotFound
+from app.core.validation import ValidationFailed
 from app.database.enums import EligibilityStatus, Gender, TokenStatus, UserRole, VerificationAction, parse_enum
 from app.database.models import (
     Beneficiary,
@@ -28,7 +29,9 @@ from app.database.models import (
     User,
     VerificationAuditLog,
 )
-from app.services import ai_rules_service, entitlement_service, verification_audit_service
+from app.security.passwords import verify_password
+from app.security.rate_limit import TooManyRequests
+from app.services import ai_rules_service, audit_service, auth_service, entitlement_service, verification_audit_service
 from app.services._db import require
 from app.services.mappers import (
     aadhaar_dto,
@@ -55,11 +58,33 @@ def own_profile(db: Session, actor: Actor) -> dict:
     return user_summary(require(db, User, actor.user_id, "User profile not found."))
 
 
-def update_own_profile(db: Session, actor: Actor, full_name: str, mobile: str) -> dict:
+PASSWORD_FOR_MOBILE = "CurrentPassword: Enter your password to change the mobile number."
+WRONG_PASSWORD = "CurrentPassword: The password is incorrect."
+
+
+def update_own_profile(db: Session, actor: Actor, full_name: str, mobile: str, current_password: str | None = None) -> dict:
+    """Name changes need nothing more. A NEW mobile number needs the current password: sign-in codes and password
+    resets go to that number, so without it a stolen session could take over the account. Wrong passwords count
+    towards the account lockout like any failed sign-in."""
     user = require(db, User, actor.user_id, "User profile not found.")
     mobile = mobile.strip()   # check the value that will be SAVED, so a padded duplicate is a 409, not a 500
+    mobile_changed = mobile != (user.MobileNumber or "").strip()
+    if mobile_changed:
+        if auth_service.is_locked(db, user.Id):
+            raise TooManyRequests("Too many failed sign-in attempts for this account. Please wait 15 minutes and try again.",
+                                  "ACCOUNT_TEMPORARILY_LOCKED")
+        if not current_password:
+            raise ValidationFailed([PASSWORD_FOR_MOBILE])
+        if not verify_password(current_password, user.PasswordHash).valid:
+            audit_service.record(db, user.Id, "LOGIN_FAILED", "User", str(user.Id), "method=mobile-change", result="FAILED",
+                                 ip_address=actor.ip_address)
+            db.commit()
+            raise ValidationFailed([WRONG_PASSWORD])
     if db.scalar(select(User.Id).where(User.MobileNumber == mobile, User.Id != user.Id).limit(1)):
         raise Conflict("Another account already uses this mobile number.")
+    if mobile_changed:
+        audit_service.record(db, user.Id, "MOBILE_CHANGED", "User", str(user.Id),
+                             f"from={mask_mobile(user.MobileNumber or '')} to={mask_mobile(mobile)}", ip_address=actor.ip_address)
     user.FullName = full_name.strip()
     user.MobileNumber = mobile
     db.commit()

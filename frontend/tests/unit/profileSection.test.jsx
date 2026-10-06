@@ -47,6 +47,23 @@ describe("My profile", () => {
     expect(useAuthStore.getState().user.fullName).toBe("New Name");
   });
 
+  it("asks for the password only when the mobile number changes, and sends it", async () => {
+    vi.spyOn(usersService, "getProfile").mockResolvedValue(PROFILE);
+    const update = vi.spyOn(usersService, "updateProfile").mockImplementation(async ({ fullName, mobileNumber }) => ({ ...PROFILE, fullName, mobileNumber }));
+    renderSection();
+
+    const mobile = await screen.findByDisplayValue("9098000001");
+    expect(screen.queryByLabelText(/Current password/)).not.toBeInTheDocument();
+    await userEvent.clear(mobile);
+    await userEvent.type(mobile, "9098000002");
+    await userEvent.type(screen.getByLabelText(/Current password/), "my-password");
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(update).toHaveBeenCalledWith({ fullName: "Test Citizen", mobileNumber: "9098000002", currentPassword: "my-password" });
+    expect(await screen.findByText("Profile saved")).toBeInTheDocument();
+    expect(screen.queryByLabelText(/Current password/)).not.toBeInTheDocument();   // saved: the field goes away
+  });
+
   it("shows the server's message when the mobile number is taken", async () => {
     vi.spyOn(usersService, "getProfile").mockResolvedValue(PROFILE);
     vi.spyOn(usersService, "updateProfile").mockRejectedValue(Object.assign(new Error("Another account already uses this mobile number."), { errors: [] }));
@@ -55,6 +72,7 @@ describe("My profile", () => {
     const mobile = await screen.findByDisplayValue("9098000001");
     await userEvent.clear(mobile);
     await userEvent.type(mobile, "9098000002");
+    await userEvent.type(screen.getByLabelText(/Current password/), "my-password");
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     expect((await screen.findAllByText("Another account already uses this mobile number.")).length).toBeGreaterThan(0);

@@ -11,7 +11,7 @@ import json
 import httpx
 import pytest
 from ration_world import TEST_PASSWORD, book, qr_payload, session
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.database.enums import AIAlertStatus
 from app.database.models import AIAlert, AIInsight, AuditLog, Beneficiary
@@ -40,12 +40,49 @@ def collect(env) -> dict:
 def test_profile_read_and_update(env):
     c = env["client"]
     assert c.get("/api/users/profile", headers=env["citizen"]).json()["data"]["email"] == "asha@example.com"
-    r = c.put("/api/users/profile", headers=env["citizen"], json={"fullName": "  Asha P  ", "mobileNumber": " 9000000009 "})
+    r = c.put("/api/users/profile", headers=env["citizen"],
+              json={"fullName": "  Asha P  ", "mobileNumber": " 9000000009 ", "currentPassword": TEST_PASSWORD})
     assert r.status_code == 200 and r.json()["data"]["fullName"] == "Asha P" and r.json()["data"]["mobileNumber"] == "9000000009"
-    r = c.put("/api/users/profile", headers=env["citizen"], json={"fullName": "Asha", "mobileNumber": "9000000051"})
+    r = c.put("/api/users/profile", headers=env["citizen"],
+              json={"fullName": "Asha", "mobileNumber": "9000000051", "currentPassword": TEST_PASSWORD})
     assert r.status_code == 409   # the shop owner's number
     r = c.put("/api/users/profile", headers=env["citizen"], json={"fullName": "A", "mobileNumber": "9000000009"})
     assert r.status_code == 400 and r.json()["errors"][0].startswith("FullName:")
+
+
+def test_a_new_mobile_number_needs_the_password_but_a_new_name_does_not(env):
+    """Sign-in codes and password resets go to the mobile number: a stolen session must not be able to swap it."""
+    c = env["client"]
+    r = c.put("/api/users/profile", headers=env["citizen"], json={"fullName": "Asha Devi", "mobileNumber": "9000000001"})
+    assert r.status_code == 200 and r.json()["data"]["fullName"] == "Asha Devi"   # same number: no password needed
+
+    r = c.put("/api/users/profile", headers=env["citizen"], json={"fullName": "Asha Devi", "mobileNumber": "9000000077"})
+    assert r.status_code == 400 and r.json()["errors"] == ["CurrentPassword: Enter your password to change the mobile number."]
+    r = c.put("/api/users/profile", headers=env["citizen"],
+              json={"fullName": "Asha Devi", "mobileNumber": "9000000077", "currentPassword": "not-the-password"})
+    assert r.status_code == 400 and r.json()["errors"] == ["CurrentPassword: The password is incorrect."]
+    assert c.get("/api/users/profile", headers=env["citizen"]).json()["data"]["mobileNumber"] == "9000000001"
+    with session() as db:   # a wrong password counts towards the account lockout like any failed sign-in
+        assert db.scalar(select(func.count()).select_from(AuditLog).where(
+            AuditLog.Action == "LOGIN_FAILED", AuditLog.Details == "method=mobile-change")) == 1
+
+    r = c.put("/api/users/profile", headers=env["citizen"],
+              json={"fullName": "Asha Devi", "mobileNumber": "9000000077", "currentPassword": TEST_PASSWORD})
+    assert r.status_code == 200 and r.json()["data"]["mobileNumber"] == "9000000077"
+    with session() as db:
+        details = db.scalar(select(AuditLog.Details).where(AuditLog.Action == "MOBILE_CHANGED"))
+    assert details is not None and "9000000077" not in details and "9000000001" not in details   # masked in the log
+
+
+def test_a_locked_account_cannot_change_its_mobile_number(env):
+    c = env["client"]
+    for _ in range(5):
+        r = c.put("/api/users/profile", headers=env["citizen"],
+                  json={"fullName": "Asha", "mobileNumber": "9000000078", "currentPassword": "wrong-password"})
+        assert r.status_code == 400
+    r = c.put("/api/users/profile", headers=env["citizen"],
+              json={"fullName": "Asha", "mobileNumber": "9000000078", "currentPassword": TEST_PASSWORD})
+    assert r.status_code == 429 and r.json()["errorCode"] == "ACCOUNT_TEMPORARILY_LOCKED"
 
 
 # ---------------------------------------------------------------- beneficiary records and access

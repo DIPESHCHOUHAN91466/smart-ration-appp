@@ -4827,7 +4827,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Update my name / mobile number",
+        "summary": "Update my name / mobile number (a new number needs currentPassword)",
         "tags": [
           "people"
         ]

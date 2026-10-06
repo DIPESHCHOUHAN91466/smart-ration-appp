@@ -1859,4 +1859,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registered => 'Welcome! Your account is ready.';
+
+  @override
+  String get profileMobilePasswordNote =>
+      'Sign-in codes and password resets go to this number, so changing it needs your password.';
 }

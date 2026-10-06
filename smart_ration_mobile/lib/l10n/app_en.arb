@@ -811,5 +811,6 @@
   "registerButton": "Create account",
   "registerFailed": "The account could not be created. Please try again.",
   "registerAlreadyExists": "An account with this email or mobile number already exists. Sign in instead, or reset your password.",
-  "registered": "Welcome! Your account is ready."
+  "registered": "Welcome! Your account is ready.",
+  "profileMobilePasswordNote": "Sign-in codes and password resets go to this number, so changing it needs your password."
 }

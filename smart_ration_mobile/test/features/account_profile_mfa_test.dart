@@ -55,11 +55,21 @@ void main() {
     final app = await openAccount(tester, backend, FakeSaver());
 
     expect(find.text('asha@example.com'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, 'Current password'), findsNothing);
     await fill(tester, 'Full name', '  Asha Devi Patil ');
     await fill(tester, 'Mobile number', '+91 98111 11111');
+    await tester.pumpAndSettle();
+    // A new number needs the password: sign-in codes and password resets go to it.
+    await tapButton(tester, 'Save');
+    expect(find.text('Please enter your password.'), findsOneWidget);
+    expect(backend.requests.where((r) => r.method == 'PUT'), isEmpty);
+
+    await fill(tester, 'Current password', 'my-password');
     await tapButton(tester, 'Save');
 
-    expect(backend.requests.singleWhere((r) => r.method == 'PUT').data, {'fullName': 'Asha Devi Patil', 'mobileNumber': '9811111111'});
+    expect(backend.requests.singleWhere((r) => r.method == 'PUT').data,
+        {'fullName': 'Asha Devi Patil', 'mobileNumber': '9811111111', 'currentPassword': 'my-password'});
+    expect(find.widgetWithText(TextFormField, 'Current password'), findsNothing);   // saved: the field goes away
     expect(find.text('Profile saved'), findsOneWidget);
     // The phone's saved session shows the new name too, so the next launch greets the person correctly.
     final savedUser = jsonDecode((await app.tokens.readUserJson())!) as Map;
@@ -85,9 +95,33 @@ void main() {
 
     await fill(tester, 'Full name', 'Asha Devi');
     await fill(tester, 'Mobile number', '9822222222');
+    await tester.pumpAndSettle();
+    await fill(tester, 'Current password', 'my-password');
     await tapButton(tester, 'Save');
     expect(find.text('Another account already uses this mobile number.'), findsOneWidget);
     expect(find.text('Profile saved'), findsNothing);
+  });
+
+  testWidgets('a name change alone sends no password; a wrong password is explained in Hindi', (tester) async {
+    final backend = FakeBackend((r) => switch ((r.method, r.path)) {
+          ('GET', '/api/users/profile') => FakeReply.ok(profileJson()),
+          ('PUT', '/api/users/profile') when (r.data as Map).containsKey('currentPassword') => const FakeReply(400, {
+              'success': false, 'message': 'One or more validation errors occurred.', 'data': null,
+              'errors': ['CurrentPassword: The password is incorrect.']}),
+          ('PUT', '/api/users/profile') => FakeReply.ok(profileJson(fullName: 'आशा देवी')),
+          _ => demoServer(r),
+        });
+    await openAccount(tester, backend, FakeSaver(), language: 'hi');
+
+    await fill(tester, 'पूरा नाम', 'आशा देवी');
+    await tapButton(tester, 'सहेजें');
+    expect(backend.requests.singleWhere((r) => r.method == 'PUT').data, {'fullName': 'आशा देवी', 'mobileNumber': '9800000007'});
+
+    await fill(tester, 'मोबाइल नंबर', '9822222222');
+    await tester.pumpAndSettle();
+    await fill(tester, 'वर्तमान पासवर्ड', 'wrong');
+    await tapButton(tester, 'सहेजें');
+    expect(find.text('पासवर्ड गलत है।'), findsOneWidget);
   });
 
   testWidgets('a citizen sees whether Aadhaar, ration card and mobile are verified; no two-factor card', (tester) async {

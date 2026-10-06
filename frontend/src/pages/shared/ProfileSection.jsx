@@ -35,13 +35,15 @@ export default function ProfileSection() {
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
   const payload = { fullName: form.fullName.trim(), mobileNumber: form.mobileNumber.trim() };
   const unchanged = profile && payload.fullName === profile.fullName && payload.mobileNumber === profile.mobileNumber;
+  // Sign-in codes and password resets go to the mobile number, so a new number needs the password (the API asks too).
+  const mobileChanged = profile && payload.mobileNumber !== profile.mobileNumber;
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setErrors([]);
     setSaving(true);
     try {
-      const saved = await updateProfile(payload);
+      const saved = await updateProfile(mobileChanged ? { ...payload, currentPassword: form.currentPassword || "" } : payload);
       setProfile(saved);
       setForm({ fullName: saved.fullName, mobileNumber: saved.mobileNumber });
       // Keep the header's name and avatar in step with what was saved.
@@ -82,6 +84,14 @@ export default function ProfileSection() {
             {t("mobile_number")}
             <input required type="tel" inputMode="tel" maxLength={20} autoComplete="tel" value={form.mobileNumber} onChange={update("mobileNumber")} />
           </label>
+          {mobileChanged && (
+            <label style={FULL_ROW}>
+              {t("current_password")}
+              <input type="password" required maxLength={100} autoComplete="current-password" value={form.currentPassword || ""}
+                onChange={update("currentPassword")} aria-describedby="profile-password-note" />
+              <small id="profile-password-note" className="muted" style={{ fontWeight: 400 }}>{t("profile_mobile_password_note")}</small>
+            </label>
+          )}
           {errors.length > 0 && (
             <ul className="muted" role="alert" style={{ ...FULL_ROW, color: "var(--red)", paddingLeft: 18, margin: 0 }}>
               {errors.map((message) => (
