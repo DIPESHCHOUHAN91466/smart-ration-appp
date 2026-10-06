@@ -142,17 +142,42 @@ def login(db: Session, settings: Settings, ctx: RequestContext, email: str, pass
     return response
 
 
-def refresh(db: Session, settings: Settings, raw_refresh_token: str) -> dict:
+# A rotated refresh token presented again after this long is treated as stolen (see refresh). Within it, the
+# same token arriving twice is a client retry or two tabs refreshing at once, and is only refused.
+REUSE_GRACE = timedelta(seconds=30)
+REFRESH_INVALID = "Refresh token is invalid or has expired. Please log in again."
+
+
+def refresh(db: Session, settings: Settings, raw_refresh_token: str, ctx: RequestContext | None = None) -> dict:
     token = refresh_tokens.by_hash(db, hash_token(raw_refresh_token), for_update=True)
     now = utc_now()
-    if token is None or token.RevokedAt is not None or token.ExpiresAt <= now:
+    ip = ctx.ip_address if ctx else None
+    if token is None or token.ExpiresAt <= now:
         db.rollback()
-        raise Unauthorized("Refresh token is invalid or has expired. Please log in again.")
+        raise Unauthorized(REFRESH_INVALID)
+    if token.RevokedAt is not None:
+        # Rotated earlier and presented again: either the user or a thief holds a copy. Ending every session of the
+        # account stops the thief (the user signs in again); a token revoked by sign-out is simply refused.
+        if token.ReplacedByTokenHash and now - token.RevokedAt > REUSE_GRACE:
+            revoked = refresh_tokens.revoke_all_for_user(db, token.UserId, now)
+            audit_service.record(db, token.UserId, "REFRESH_TOKEN_REUSED", "User", str(token.UserId),
+                                 f"all sessions ended ({revoked})", result="BLOCKED", ip_address=ip)
+            db.commit()
+            log.warning("refresh token reuse: all sessions ended", extra={"fields": {"user_id": token.UserId}})
+        else:
+            db.rollback()
+        raise Unauthorized(REFRESH_INVALID)
 
     user = users.by_id(db, token.UserId)
     if user is None:  # unreachable while the FK holds; never issue a token for a missing user
         db.rollback()
-        raise Unauthorized("Refresh token is invalid or has expired. Please log in again.")
+        raise Unauthorized(REFRESH_INVALID)
+    if not user.IsActive:
+        # Deactivated after signing in: no new access tokens, and no session left to try again with.
+        refresh_tokens.revoke_all_for_user(db, user.Id, now)
+        audit_service.record(db, user.Id, "REFRESH_DENIED_INACTIVE", "User", str(user.Id), result="BLOCKED", ip_address=ip)
+        db.commit()
+        raise Unauthorized(REFRESH_INVALID)
     raw_new, new_hash, new_expires = generate_refresh_token(settings)
     token.RevokedAt = now
     token.ReplacedByTokenHash = new_hash

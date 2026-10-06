@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from app.database.models import RefreshToken
@@ -18,6 +18,13 @@ def by_hash(db: Session, token_hash: str, *, for_update: bool = False) -> Refres
     """for_update=True locks the row (SELECT ... FOR UPDATE) so two concurrent refreshes can't both rotate it."""
     query = select(RefreshToken).where(RefreshToken.TokenHash == token_hash)
     return db.scalar(query.with_for_update() if for_update else query)
+
+
+def revoke_all_for_user(db: Session, user_id: int, now: datetime) -> int:
+    """Revokes every still-active refresh token of the user (all devices); returns how many."""
+    result = db.execute(update(RefreshToken).where(RefreshToken.UserId == user_id, RefreshToken.RevokedAt.is_(None))
+                        .values(RevokedAt=now))
+    return int(getattr(result, "rowcount", 0) or 0)
 
 
 def delete_expired_before(db: Session, cutoff: datetime) -> int:

@@ -204,6 +204,59 @@ def test_refresh_rotates_and_old_token_stops_working(api):
     assert reused.json()["message"] == "Refresh token is invalid or has expired. Please log in again."
 
 
+def _age_revocation(raw_refresh: str, seconds: int) -> None:
+    with session() as db:
+        row = db.scalar(select(RefreshToken).where(RefreshToken.TokenHash == hash_token(raw_refresh)))
+        row.RevokedAt = utc_now() - timedelta(seconds=seconds)
+        db.commit()
+
+
+def test_a_rotated_token_used_again_later_ends_every_session_of_the_account(api):
+    stolen = login_tokens(api)
+    other_device = login_tokens(api)
+    rotated = api.post("/api/auth/refresh", json={"refreshToken": stolen["refreshToken"]}).json()["data"]
+    _age_revocation(stolen["refreshToken"], 31)                          # replayed after the grace window
+
+    assert api.post("/api/auth/refresh", json={"refreshToken": stolen["refreshToken"]}).status_code == 401
+    for survivor in (rotated, other_device):                             # the thief's and the user's copies both end
+        assert api.post("/api/auth/refresh", json={"refreshToken": survivor["refreshToken"]}).status_code == 401
+    with session() as db:
+        row = db.scalar(select(AuditLog).where(AuditLog.Action == "REFRESH_TOKEN_REUSED"))
+        assert row.UserId == 1 and row.Result == "BLOCKED"
+    assert api.post("/api/auth/login", json={"email": "rural@example.com", "password": "demo123"}).status_code == 200
+
+
+def test_a_quick_repeat_of_a_rotated_token_is_refused_without_ending_other_sessions(api):
+    first = login_tokens(api)
+    second = api.post("/api/auth/refresh", json={"refreshToken": first["refreshToken"]}).json()["data"]
+    assert api.post("/api/auth/refresh", json={"refreshToken": first["refreshToken"]}).status_code == 401   # a retry
+    assert api.post("/api/auth/refresh", json={"refreshToken": second["refreshToken"]}).status_code == 200
+    with session() as db:
+        assert db.scalar(select(func.count()).select_from(AuditLog).where(AuditLog.Action == "REFRESH_TOKEN_REUSED")) == 0
+
+
+def test_a_signed_out_token_used_again_is_refused_but_not_treated_as_theft(api):
+    signed_out, other = login_tokens(api), login_tokens(api)
+    api.post("/api/auth/logout", json={"refreshToken": signed_out["refreshToken"]})
+    _age_revocation(signed_out["refreshToken"], 3600)
+    assert api.post("/api/auth/refresh", json={"refreshToken": signed_out["refreshToken"]}).status_code == 401
+    assert api.post("/api/auth/refresh", json={"refreshToken": other["refreshToken"]}).status_code == 200
+
+
+def test_a_deactivated_account_cannot_refresh_and_loses_all_sessions(api):
+    a, b = login_tokens(api), login_tokens(api)
+    with session() as db:
+        db.get(User, 1).IsActive = False
+        db.commit()
+    r = api.post("/api/auth/refresh", json={"refreshToken": a["refreshToken"]})
+    assert r.status_code == 401 and r.json()["message"] == "Refresh token is invalid or has expired. Please log in again."
+    with session() as db:
+        assert db.scalar(select(func.count()).select_from(RefreshToken)
+                         .where(RefreshToken.UserId == 1, RefreshToken.RevokedAt.is_(None))) == 0
+        assert db.scalar(select(AuditLog.Action).where(AuditLog.Action == "REFRESH_DENIED_INACTIVE")) is not None
+    assert api.post("/api/auth/refresh", json={"refreshToken": b["refreshToken"]}).status_code == 401
+
+
 def test_expired_refresh_token_is_rejected(api):
     tokens = login_tokens(api)
     with session() as db:

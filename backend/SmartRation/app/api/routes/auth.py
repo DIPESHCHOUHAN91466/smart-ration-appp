@@ -82,7 +82,8 @@ async def login(request: Request, db: Session = Depends(get_db)):
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": RefreshRequest.model_json_schema()}}, "required": True}})
 async def refresh(request: Request, db: Session = Depends(get_db)):
     v = validate(await _json(request), REFRESH_RULES)
-    return ok(await run_in_threadpool(auth_service.refresh, db, request.app.state.settings, v["RefreshToken"]), "Token refreshed")
+    return ok(await run_in_threadpool(auth_service.refresh, db, request.app.state.settings, v["RefreshToken"], _ctx(request)),
+              "Token refreshed")
 
 
 @router.post("/otp/request", summary="Send a sign-in code to a citizen's registered mobile", response_model=OtpSentEnvelope,
