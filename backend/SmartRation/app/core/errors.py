@@ -75,9 +75,26 @@ def unexpected_error_response(request: Request, exc: BaseException) -> JSONRespo
     return JSONResponse(status_code=500, content=fail_body("An unexpected error occurred. Please try again later.", error_code="INTERNAL_ERROR"))
 
 
+security_log = logging.getLogger("smartration.security")
+SECURITY_EVENTS = {403: "permission_denied", 413: "payload_too_large", 429: "rate_limited"}
+
+
+def log_security_event(request: Request, status: int, error_code: str | None) -> None:
+    """Refusals worth watching for abuse (probing other people's records, brute force, floods), as structured log
+    lines with the request id. Logged, not written to the audit table, so a flood can't fill the database.
+    Never the body, query string or token — only who, where and what was refused."""
+    user = getattr(request.state, "current_user", None)
+    security_log.warning("security event", extra={"fields": {
+        "event": SECURITY_EVENTS[status], "status": status, "error_code": error_code, "method": request.method,
+        "path": request.url.path, "client_ip": request.client.host if request.client else None,
+        "user_id": getattr(user, "user_id", None), "role": getattr(getattr(user, "role", None), "name", None)}})
+
+
 def install_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
-    async def handle_api_error(_: Request, exc: ApiError):
+    async def handle_api_error(request: Request, exc: ApiError):
+        if exc.status_code in SECURITY_EVENTS:
+            log_security_event(request, exc.status_code, exc.error_code)
         errors = getattr(exc, "errors", None)  # ValidationFailed carries the "Field: message" list
         return JSONResponse(status_code=exc.status_code, content=fail_body(exc.message, errors, exc.error_code))
 

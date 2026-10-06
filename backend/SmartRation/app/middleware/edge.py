@@ -19,10 +19,11 @@ BodySizeLimitMiddleware (security N5)
 
 from __future__ import annotations
 
+from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from app.core.errors import fail_body
+from app.core.errors import fail_body, log_security_event
 
 
 def _header(scope: Scope, name: bytes) -> str | None:
@@ -58,6 +59,7 @@ class BodySizeLimitMiddleware:
         self.max_bytes = max_bytes
 
     async def _too_large(self, scope: Scope, receive: Receive, send: Send) -> None:
+        log_security_event(Request(scope), 413, "PAYLOAD_TOO_LARGE")
         response = JSONResponse(status_code=413, content=fail_body("Request body is too large.", error_code="PAYLOAD_TOO_LARGE"))
         await response(scope, receive, send)
 
