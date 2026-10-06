@@ -78,17 +78,27 @@ def list_users(db: Session, role: str | None) -> list[dict]:
 
 # ---------------------------------------------------------------- access rule
 
-def _can_see(actor: Actor, owner_user_ids: list[int]) -> bool:
+def _can_see(db: Session, actor: Actor, owner_user_ids: list[int], family_id: int | None) -> bool:
+    """Citizens: only themselves. Officials and admins: everyone. Shop owners: the families registered at their shop,
+    and anyone who has booked at their shop (ration portability: a citizen may collect at any shop). Ids are
+    sequential, so without this rule one shop account could read every citizen's record (security N2)."""
     if actor.role == UserRole.RuralUser:
         return actor.user_id in owner_user_ids
-    return actor.role in (UserRole.ShopOwner, UserRole.GovernmentOfficial, UserRole.Admin)
+    if actor.role in (UserRole.GovernmentOfficial, UserRole.Admin):
+        return True
+    if actor.role != UserRole.ShopOwner or actor.ration_shop_id is None:
+        return False   # an unknown role, or a shop account without a shop, sees nobody
+    if family_id is not None and db.scalar(select(Family.RationShopId).where(Family.Id == family_id)) == actor.ration_shop_id:
+        return True
+    return bool(owner_user_ids) and db.scalar(select(Token.Id).where(
+        Token.UserId.in_(owner_user_ids), Token.RationShopId == actor.ration_shop_id).limit(1)) is not None
 
 
 def _load(db: Session, actor: Actor, beneficiary_id: int) -> tuple[Beneficiary, User]:
     beneficiary = db.get(Beneficiary, beneficiary_id)
     if beneficiary is None:
         raise NotFound("Beneficiary not found.")
-    if not _can_see(actor, [beneficiary.UserId]):
+    if not _can_see(db, actor, [beneficiary.UserId], beneficiary.FamilyId):
         raise Forbidden("You do not have access to this beneficiary.")
     return beneficiary, require(db, User, beneficiary.UserId, "Beneficiary not found.")
 
@@ -220,7 +230,7 @@ def _visible_family(db: Session, actor: Actor, family_id: int) -> Family:
     if fam is None:
         raise NotFound("Family not found.")
     owners = list(db.scalars(select(Beneficiary.UserId).where(Beneficiary.FamilyId == family_id)))
-    if not _can_see(actor, owners):
+    if not _can_see(db, actor, owners, family_id):
         raise Forbidden("You do not have access to this family.")
     return fam
 
