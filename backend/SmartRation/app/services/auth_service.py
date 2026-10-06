@@ -21,9 +21,11 @@ from sqlalchemy.orm import Session
 
 from app.config.settings import Settings
 from app.core.errors import Conflict, Forbidden, Unauthorized
+from app.core.validation import ValidationFailed
 from app.database.enums import UserRole
 from app.database.models import AuditLog, User
 from app.repositories import refresh_tokens, users
+from app.security import password_policy
 from app.security.passwords import PasswordCheck, hash_password, verify_password
 from app.security.rate_limit import TooManyRequests
 from app.security.tokens import TokenUser, create_access_token, generate_refresh_token, hash_token
@@ -71,6 +73,10 @@ def issue_session(db: Session, user: User, settings: Settings) -> dict:
 def register(db: Session, settings: Settings, ctx: RequestContext, full_name: str, email: str, mobile: str, password: str,
              consent_to_privacy_policy: bool = False) -> dict:
     email = email.strip().lower()
+    # Checked before the duplicate checks, so a weak password never tells anyone whether an email is registered.
+    weak = password_policy.problems(password, email=email, mobile=mobile, full_name=full_name)
+    if weak:
+        raise ValidationFailed(weak)
     if users.email_taken(db, email):
         raise Conflict("An account with this email already exists.")
     if users.mobile_taken(db, mobile):

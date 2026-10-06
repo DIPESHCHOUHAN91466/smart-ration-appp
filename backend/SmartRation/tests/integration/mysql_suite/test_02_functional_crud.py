@@ -69,10 +69,10 @@ def test_register_100_people_through_the_api(api, db):
     ("email", "not-an-email", "The Email field is not a valid e-mail address."),
     ("email", long_email(201), "The field Email must be a string with a maximum length of 200."),
     ("mobileNumber", "abc", "The MobileNumber field is not a valid phone number."),
-    ("password", "short", "The field Password must be a string with a minimum length of 8 and a maximum length of 100."),
+    ("password", "short", "The field Password must be a string with a minimum length of 12 and a maximum length of 100."),
 ])
 def test_api_rejects_invalid_input_without_touching_the_database(api, db, field, value, message):
-    body = {"fullName": "Valid Name", "email": "valid@example.test", "mobileNumber": "7999999999", "password": "Valid-Pass-1"}
+    body = {"fullName": "Valid Name", "email": "valid@example.test", "mobileNumber": "7999999999", "password": "Kite-River-Lamp-42"}
     body[field] = value
     r = api.post("/api/auth/register", json=body)
     assert r.status_code == 400
@@ -81,14 +81,14 @@ def test_api_rejects_invalid_input_without_touching_the_database(api, db, field,
 
 
 def test_api_accepts_exact_maximum_lengths(api, db):
-    r = api.post("/api/auth/register", json={"fullName": "अ" * 150, "email": long_email(200), "mobileNumber": "7" * 20, "password": "P" * 100})
+    r = api.post("/api/auth/register", json={"fullName": "अ" * 150, "email": long_email(200), "mobileNumber": "7" * 20, "password": ("Kite-River-Lamp-42 " * 6)[:100]})
     assert r.status_code == 200, r.json()
     u = db.scalar(select(User))
     assert (len(u.FullName), len(u.Email), len(u.MobileNumber)) == (150, 200, 20)
 
 
 def test_duplicate_email_and_mobile_are_rejected(api, db):
-    body = {"fullName": "First", "email": "dup@example.test", "mobileNumber": "7000000001", "password": "Valid-Pass-1"}
+    body = {"fullName": "First", "email": "dup@example.test", "mobileNumber": "7000000001", "password": "Kite-River-Lamp-42"}
     assert api.post("/api/auth/register", json=body).status_code == 200
     assert api.post("/api/auth/register", json={**body, "mobileNumber": "7000000002"}).status_code == 409
     assert api.post("/api/auth/register", json={**body, "email": "DUP@example.test", "mobileNumber": "7000000003"}).status_code == 409  # case-insensitive

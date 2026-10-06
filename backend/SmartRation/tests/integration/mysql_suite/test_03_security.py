@@ -49,7 +49,7 @@ def test_login_injection_is_rejected(api, victims, payload):
 def test_payload_is_stored_as_plain_text(api, victims, payload):
     """Registering with a payload as the name stores exactly those characters, nothing more."""
     r = api.post("/api/auth/register", json={"fullName": f"N {payload}"[:150], "email": "inj@example.test",
-                                             "mobileNumber": "7100000099", "password": "Valid-Pass-1"})
+                                             "mobileNumber": "7100000099", "password": "Kite-River-Lamp-42"})
     assert r.status_code == 200, r.json()
     victims.expire_all()
     assert victims.scalar(select(User.FullName).where(User.Email == "inj@example.test")) == f"N {payload}"[:150].strip()

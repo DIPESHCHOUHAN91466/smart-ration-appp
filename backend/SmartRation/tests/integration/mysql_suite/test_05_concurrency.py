@@ -118,7 +118,7 @@ def test_100_concurrent_registrations(db, settings):
 def test_same_person_registering_twice_at_once(db, settings):
     def register(_):
         with new_session() as s:
-            auth_service.register(s, settings, _ctx(), "Twin", "twin@example.test", "7300000000", "Valid-Pass-1")
+            auth_service.register(s, settings, _ctx(), "Twin", "twin@example.test", "7300000000", "Kite-River-Lamp-42")
         return True
 
     results = run_parallel(register, 10)

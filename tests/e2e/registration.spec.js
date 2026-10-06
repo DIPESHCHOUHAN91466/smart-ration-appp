@@ -12,7 +12,7 @@ test("registration needs the privacy consent; with it the citizen is registered 
   await page.getByLabel("Full name", { exact: true }).fill(`E2E Consent ${stamp}`);
   await page.getByLabel("Email", { exact: true }).fill(`e2e-consent-${stamp}@example.com`);
   await page.getByLabel("Mobile number", { exact: true }).fill(`8${String(stamp).slice(-9)}`);
-  const password = `E2e-${stamp}-pass`;
+  const password = "Kite-River-Lamp-42";   // meets the new-password policy (12+, not built from the name or number)
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByLabel("Confirm password", { exact: true }).fill(password);
 

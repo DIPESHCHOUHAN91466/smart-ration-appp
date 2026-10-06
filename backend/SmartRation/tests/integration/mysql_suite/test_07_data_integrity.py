@@ -105,7 +105,7 @@ def test_foreign_keys_are_enforced(db, make_user):
 
 def test_cascade_and_set_null_rules(api, db):
     r = api.post("/api/auth/register", json={"fullName": "Cascade Case", "email": "cascade@example.test",
-                                             "mobileNumber": "7500000002", "password": "Valid-Pass-1"})
+                                             "mobileNumber": "7500000002", "password": "Kite-River-Lamp-42"})
     assert r.status_code == 200
     user_id = db.scalar(select(User.Id).where(User.Email == "cascade@example.test"))
     assert db.scalar(select(func.count()).select_from(RefreshToken).where(RefreshToken.UserId == user_id)) == 1

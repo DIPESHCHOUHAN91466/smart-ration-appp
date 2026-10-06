@@ -91,18 +91,22 @@ export default function Register() {
             <input
               type="password"
               required
-              minLength={8}
+              minLength={12}
+              maxLength={100}
               value={form.password}
               onChange={update("password")}
               autoComplete="new-password"
+              aria-describedby="register-password-help"
             />
           </label>
+          <p id="register-password-help" className="muted" style={{ marginTop: -6 }}>{t("password_rules")}</p>
           <label>
             {t("confirm_password")}
             <input
               type="password"
               required
-              minLength={8}
+              minLength={12}
+              maxLength={100}
               value={form.confirmPassword}
               onChange={update("confirmPassword")}
               autoComplete="new-password"

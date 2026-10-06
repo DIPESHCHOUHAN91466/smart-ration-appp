@@ -9,6 +9,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from app.core.validation import email_address, phone, required, string_length
+from app.security.password_policy import MAX_LENGTH, MIN_LENGTH
 
 LOGIN_RULES = {"Email": [required, email_address], "Password": [required]}
 
@@ -16,7 +17,7 @@ REGISTER_RULES = {
     "FullName": [required, string_length(150, 2)],
     "Email": [required, email_address, string_length(200)],
     "MobileNumber": [required, phone, string_length(20)],
-    "Password": [required, string_length(100, 8)],
+    "Password": [required, string_length(MAX_LENGTH, MIN_LENGTH)],   # + app.security.password_policy
 }
 
 REFRESH_RULES = {"RefreshToken": [required]}
@@ -36,7 +37,8 @@ class RegisterRequest(BaseModel):
     fullName: str = Field(min_length=2, max_length=150)
     email: str = Field(max_length=200)
     mobileNumber: str = Field(max_length=20)
-    password: str = Field(min_length=8, max_length=100)
+    password: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH,
+                          description="At least 12 characters; not a common password; not built from the email, mobile or name")
     consentToPrivacyPolicy: bool = Field(False, description="the person agreed to the privacy policy (recorded in the audit log)")
 
 

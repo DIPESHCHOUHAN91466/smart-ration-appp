@@ -63,7 +63,7 @@ def test_health_reports_database_down_without_details(test_url, restore_engine):
 def test_query_error_returns_clean_500_and_rolls_back(api, db, test_url):
     """A real database error mid-request (table missing) → generic 500, no SQL in the response,
     nothing half-written, and the API works again once the table is back."""
-    body = {"fullName": "Err Case", "email": "err@example.test", "mobileNumber": "7400000001", "password": "Valid-Pass-1"}
+    body = {"fullName": "Err Case", "email": "err@example.test", "mobileNumber": "7400000001", "password": "Kite-River-Lamp-42"}
     with database.get_engine().begin() as conn:
         conn.execute(text("RENAME TABLE RefreshTokens TO RefreshTokens_hidden"))
     try:
@@ -85,7 +85,7 @@ def test_registration_aborts_cleanly_when_setup_is_missing(api, db):
     with database.get_engine().begin() as conn:
         conn.execute(text("UPDATE RationShops SET IsActive = 0"))
     r = api.post("/api/auth/register", json={"fullName": "No Shop", "email": "noshop@example.test",
-                                             "mobileNumber": "7400000002", "password": "Valid-Pass-1"})
+                                             "mobileNumber": "7400000002", "password": "Kite-River-Lamp-42"})
     assert r.status_code == 400
     assert r.json()["message"] == "No active ration shop is configured to assign this beneficiary to."
     assert db.scalar(select(func.count()).select_from(User)) == 0  # the flushed user did not survive

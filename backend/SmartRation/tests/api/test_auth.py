@@ -130,7 +130,7 @@ def test_login_rate_limit_is_10_per_minute(api):
 
 
 def test_register_creates_rural_user_and_synthetic_beneficiary(api):
-    r = api.post("/api/auth/register", json={"fullName": " Sunita More ", "email": "Sunita@Example.com", "mobileNumber": "9123456780", "password": "strongpass1"})
+    r = api.post("/api/auth/register", json={"fullName": " Sunita More ", "email": "Sunita@Example.com", "mobileNumber": "9123456780", "password": "Kite-River-Lamp-42"})
     assert r.status_code == 200 and r.json()["message"] == "Registration successful"
     user = r.json()["data"]["user"]
     assert user["role"] == "RuralUser" and user["email"] == "sunita@example.com" and user["fullName"] == "Sunita More"
@@ -150,9 +150,9 @@ def test_register_creates_rural_user_and_synthetic_beneficiary(api):
 def test_register_records_privacy_consent_when_given(api):
     """DPDP Act 2023: the consent the website requires is provable later (audit log row with its time)."""
     agreed = api.post("/api/auth/register", json={"fullName": "Asha Consent", "email": "consent@example.com", "mobileNumber": "9123400001",
-                                                  "password": "strongpass1", "consentToPrivacyPolicy": True})
+                                                  "password": "Kite-River-Lamp-42", "consentToPrivacyPolicy": True})
     silent = api.post("/api/auth/register", json={"fullName": "Old Client", "email": "old-client@example.com", "mobileNumber": "9123400002",
-                                                  "password": "strongpass1"})   # older clients still register
+                                                  "password": "Kite-River-Lamp-42"})   # older clients still register
     assert agreed.status_code == silent.status_code == 200
     with session() as db:
         def actions(user):
@@ -162,12 +162,12 @@ def test_register_records_privacy_consent_when_given(api):
 
 
 def test_register_ignores_client_supplied_role(api):
-    r = api.post("/api/auth/register", json={"fullName": "Eve", "email": "eve@example.com", "mobileNumber": "9000000009", "password": "strongpass1", "role": "Admin"})
+    r = api.post("/api/auth/register", json={"fullName": "Eve", "email": "eve@example.com", "mobileNumber": "9000000009", "password": "Kite-River-Lamp-42", "role": "Admin"})
     assert r.json()["data"]["user"]["role"] == "RuralUser"
 
 
 def test_register_duplicates_are_409(api):
-    base = {"fullName": "Dup", "mobileNumber": "9111111111", "password": "strongpass1"}
+    base = {"fullName": "Dup", "mobileNumber": "9111111111", "password": "Kite-River-Lamp-42"}
     assert api.post("/api/auth/register", json={**base, "email": "rural@example.com"}).json()["message"] == "An account with this email already exists."
     r = api.post("/api/auth/register", json={**base, "email": "new@example.com", "mobileNumber": "9000000001"})
     assert r.status_code == 409 and r.json()["message"] == "An account with this mobile number already exists."
@@ -179,7 +179,7 @@ def test_register_validation_messages_match_csharp(api):
     assert sorted(r.json()["errors"]) == sorted([
         "Email: The Email field is not a valid e-mail address.",
         "FullName: The field FullName must be a string with a minimum length of 2 and a maximum length of 150.",
-        "Password: The field Password must be a string with a minimum length of 8 and a maximum length of 100.",
+        "Password: The field Password must be a string with a minimum length of 12 and a maximum length of 100.",
         "MobileNumber: The MobileNumber field is not a valid phone number.",
     ])
 
