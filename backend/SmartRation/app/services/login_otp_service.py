@@ -19,7 +19,7 @@ import re
 import secrets
 from datetime import timedelta
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.config.settings import Settings
@@ -89,6 +89,12 @@ def request_code(db: Session, settings: Settings, ctx: RequestContext, raw_mobil
         db.commit()
         return answer
     user, beneficiary = found
+    if auth_service.is_locked(db, user.Id) or _sent_today(db, user, beneficiary) >= settings.otp_daily_send_limit:
+        # Locked out, or this number already got today's codes: send nothing (no SMS bill, no new guesses), same answer.
+        audit_service.record(db, user.Id, "LOGIN_OTP_REQUESTED", "User", str(user.Id), details=f"mobile={mask_mobile(mobile)}",
+                             result="BLOCKED", ip_address=ctx.ip_address)
+        db.commit()
+        return answer
 
     now = utc_now()
     pending = _pending_codes(db, user, beneficiary)
@@ -130,6 +136,13 @@ def verify_code(db: Session, settings: Settings, ctx: RequestContext, raw_mobile
         _failed(db, ctx, None, mobile)
         raise Unauthorized(INVALID_CODE, "OTP_INVALID")
     user, _ = found
+    if auth_service.is_locked(db, user.Id):
+        # The sign-in lock (5 failures of either kind in 15 minutes) holds here too. The answer is the usual one,
+        # so a lock never reveals that a number is registered.
+        audit_service.record(db, user.Id, "LOGIN_LOCKED", "User", str(user.Id), details="method=otp", result="BLOCKED",
+                             ip_address=ctx.ip_address)
+        db.commit()
+        raise Unauthorized(INVALID_CODE, "OTP_INVALID")
 
     if utc_now() > record.ExpiresAt:
         record.Status = int(OtpStatus.Expired)
@@ -152,6 +165,14 @@ def verify_code(db: Session, settings: Settings, ctx: RequestContext, raw_mobile
     db.commit()
     log.info("user logged in", extra={"fields": {"user_id": user.Id, "role": UserRole.RuralUser.name, "method": "otp"}})
     return response
+
+
+def _sent_today(db: Session, user: User, beneficiary: Beneficiary) -> int:
+    """Sign-in codes created for this citizen in the last 24 hours (any status)."""
+    since = utc_now() - timedelta(days=1)
+    return db.scalar(select(func.count()).select_from(OtpVerification).where(
+        OtpVerification.BeneficiaryId == beneficiary.Id, OtpVerification.RequestedByUserId == user.Id,
+        OtpVerification.CreatedAt >= since)) or 0
 
 
 def _failed(db: Session, ctx: RequestContext, user_id: int | None, mobile: str) -> None:

@@ -110,17 +110,37 @@ def _recent_failures(db: Session, user_id: int) -> int:
         AuditLog.UserId == user_id, AuditLog.Action == "LOGIN_FAILED", AuditLog.CreatedAt >= start)) or 0
 
 
+def is_locked(db: Session, user_id: int) -> bool:
+    """True while the account has LOCKOUT_FAILURES failed sign-ins (password or OTP) in the window."""
+    return _recent_failures(db, user_id) >= LOCKOUT_FAILURES
+
+
+_DUMMY_HASH: str | None = None
+
+
+def _dummy_hash() -> str:
+    global _DUMMY_HASH
+    if _DUMMY_HASH is None:
+        _DUMMY_HASH = hash_password("timing-equaliser-not-a-password")
+    return _DUMMY_HASH
+
+
 def login(db: Session, settings: Settings, ctx: RequestContext, email: str, password: str) -> dict:
     email = email.strip().lower()
     user = users.by_email(db, email)
     # Brute-force protection per account (the per-address rate limit doesn't stop guesses spread over many addresses).
     # The lock holds even for the right password, so it can't be used to test guesses; it ends after the window.
-    if user is not None and _recent_failures(db, user.Id) >= LOCKOUT_FAILURES:
+    if user is not None and is_locked(db, user.Id):
         audit_service.record(db, user.Id, "LOGIN_LOCKED", "User", str(user.Id), result="BLOCKED", ip_address=ctx.ip_address)
         db.commit()
         raise TooManyRequests("Too many failed sign-in attempts for this account. Please wait 15 minutes and try again.",
                               "ACCOUNT_TEMPORARILY_LOCKED")
-    check = verify_password(password, user.PasswordHash) if user else PasswordCheck(valid=False, needs_upgrade=False)
+    if user is None:
+        # Spend the same Argon2 time as a real check, so response time doesn't reveal which emails have accounts.
+        verify_password(password, _dummy_hash())
+        check = PasswordCheck(valid=False, needs_upgrade=False)
+    else:
+        check = verify_password(password, user.PasswordHash)
 
     if user is None or not check.valid:
         audit_service.record(db, user.Id if user else None, "LOGIN_FAILED", "User",

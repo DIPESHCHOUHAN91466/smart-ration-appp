@@ -8,8 +8,9 @@ from sqlalchemy import select
 
 from app.database.connection import get_session_factory
 from app.database.enums import OtpStatus
-from app.database.models import AuditLog, OtpVerification, User
+from app.database.models import AuditLog, Beneficiary, OtpVerification, User
 from app.services import login_otp_service
+from app.utils.time import utc_now
 
 CITIZEN = "9000000001"  # registered Rural User in the shared ration world (tests/ration_world.py)
 
@@ -161,3 +162,55 @@ def test_requests_are_rate_limited(env):
     c = env["client"]
     codes = [request_code(c, "9876543210").status_code for _ in range(8)]
     assert 429 in codes
+
+
+# ---------------------------------------------------------------- lockout and SMS cap (N6)
+
+
+def _citizen_id() -> int:
+    with session() as db:
+        return db.scalar(select(User.Id).where(User.MobileNumber == CITIZEN))
+
+
+def _add_failures(n: int) -> None:
+    with session() as db:
+        for _ in range(n):
+            db.add(AuditLog(UserId=_citizen_id(), Action="LOGIN_FAILED", EntityName="User", Result="FAILED", CreatedAt=utc_now()))
+        db.commit()
+
+
+def test_a_locked_account_gets_no_code_and_even_the_right_code_is_refused_without_saying_why(env):
+    c = env["client"]
+    request_code(c)                                       # a valid code exists ...
+    _add_failures(5)                                      # ... then five failed sign-ins (password or OTP) lock the account
+    r = verify(c)
+    assert r.status_code == 401 and r.json()["errorCode"] == "OTP_INVALID"     # same answer as a wrong code
+    assert r.json()["message"] == login_otp_service.INVALID_CODE
+    with session() as db:
+        code = db.scalar(select(OtpVerification))
+        code.CreatedAt -= timedelta(minutes=1)            # past the resend wait
+        db.commit()
+    assert request_code(c).status_code == 200             # same answer as always ...
+    assert len(login_codes()) == 1                        # ... but no new code and no SMS
+    with session() as db:
+        results = {(a.Action, a.Result) for a in db.scalars(select(AuditLog))}
+    assert ("LOGIN_LOCKED", "BLOCKED") in results and ("LOGIN_OTP_REQUESTED", "BLOCKED") in results
+
+
+def test_at_most_ten_sign_in_codes_per_number_per_day(env):
+    c = env["client"]
+    with session() as db:
+        user = db.scalar(select(User).where(User.MobileNumber == CITIZEN))
+        ben = db.scalar(select(Beneficiary).where(Beneficiary.UserId == user.Id))
+        for i in range(10):                               # ten codes earlier today, all used up
+            t = utc_now() - timedelta(hours=1, minutes=i)
+            db.add(OtpVerification(BeneficiaryId=ben.Id, RequestedByUserId=user.Id, OtpHash="0" * 64, AttemptCount=0,
+                                   MaxAttempts=3, Status=int(OtpStatus.Verified), CreatedAt=t, ExpiresAt=t + timedelta(minutes=5)))
+        db.commit()
+    assert request_code(c).status_code == 200 and len(login_codes()) == 10     # the 11th is not created or sent
+    with session() as db:                                 # a day later the number can get codes again
+        for code in db.scalars(select(OtpVerification)):
+            code.CreatedAt -= timedelta(days=1)
+        db.commit()
+    request_code(c)
+    assert len(login_codes()) == 11

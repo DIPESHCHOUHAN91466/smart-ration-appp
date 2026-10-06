@@ -27,6 +27,7 @@ from app.database.models import (
     User,
 )
 from app.security.tokens import NAME_CLAIM, ROLE_CLAIM, TokenUser, create_access_token, hash_token
+from app.services import auth_service
 from app.utils.time import utc_now
 
 KEY = "unit-test-signing-key-0123456789abcdef-0123456789"
@@ -338,3 +339,11 @@ def test_the_lock_ends_with_the_15_minute_window(api):
             row.CreatedAt = utc_now() - timedelta(minutes=16)
         db.commit()
     assert login("demo123").status_code == 200
+
+
+def test_an_unknown_email_costs_the_same_password_check_as_a_known_one(api, monkeypatch):
+    checked = []
+    real = auth_service.verify_password
+    monkeypatch.setattr(auth_service, "verify_password", lambda pw, h: checked.append(h[:9]) or real(pw, h))
+    assert api.post("/api/auth/login", json={"email": "nobody@example.com", "password": "x"}).status_code == 401
+    assert checked == ["$argon2id"]                       # a real Argon2id verification ran for the unknown account
