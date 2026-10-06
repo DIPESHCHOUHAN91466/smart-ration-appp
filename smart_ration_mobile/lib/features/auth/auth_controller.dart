@@ -133,6 +133,15 @@ class AuthController extends Notifier<SessionUser?> {
   Future<void> signInWithOtp(String mobile, String code) async =>
       _start(await ref.read(authRepositoryProvider).verifyOtp(mobile, code));
 
+  /// The person changed their name or mobile number: the saved session shows the new details too.
+  Future<void> profileUpdated(SessionUser user) async {
+    final access = await _storage.readAccessToken();
+    final refresh = await _storage.readRefreshToken();
+    if (state == null || user.id != state!.id || access == null || refresh == null) return;
+    await AuthResult(accessToken: access, refreshToken: refresh, user: user).saveTo(_storage);
+    state = user;
+  }
+
   Future<void> _start(AuthResult result) async {
     await result.saveTo(_storage);
     ref.read(sessionExpiredNoticeProvider.notifier).set(false);

@@ -1672,4 +1672,102 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get exportFailed =>
       'आपला डेटा तयार करता आला नाही. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get profileTitle => 'माझी प्रोफाइल';
+
+  @override
+  String get profileEmailNote =>
+      'ईमेल हे तुमचे लॉगिन नाव आहे आणि ते येथून बदलता येत नाही.';
+
+  @override
+  String get profileNameLabel => 'पूर्ण नाव';
+
+  @override
+  String get profileNameInvalid => 'कृपया आपले पूर्ण नाव लिहा.';
+
+  @override
+  String get profileSave => 'जतन करा';
+
+  @override
+  String get profileSaved => 'प्रोफाइल जतन केली';
+
+  @override
+  String get verificationTitle => 'माझे सत्यापन';
+
+  @override
+  String get verificationAadhaar => 'आधार';
+
+  @override
+  String get verificationRationCard => 'रेशन कार्ड';
+
+  @override
+  String get verificationMobile => 'मोबाइल नंबर';
+
+  @override
+  String get verificationVerified => 'सत्यापित';
+
+  @override
+  String get verificationPending => 'प्रलंबित';
+
+  @override
+  String get verificationNotVerified => 'सत्यापित नाही';
+
+  @override
+  String get verificationFailed => 'अयशस्वी';
+
+  @override
+  String get verificationExpired => 'मुदत संपली';
+
+  @override
+  String get verificationHelp =>
+      'येथे काही चुकीचे असल्यास, आपली कागदपत्रे घेऊन रेशन कार्यालयात जा.';
+
+  @override
+  String get mfaTitle => 'दोन-टप्पी साइन इन';
+
+  @override
+  String get mfaIntro =>
+      'हे कर्मचारी खाते दुसऱ्या टप्प्याने सुरक्षित करा: पासवर्डनंतर ऑथेंटिकेटर अॅपमधील (Google Authenticator, Microsoft Authenticator इ.) 6 अंकी कोड टाका.';
+
+  @override
+  String get mfaStart => 'दोन-टप्पी साइन इन सेट करा';
+
+  @override
+  String get mfaScan =>
+      'हा QR कोड आपल्या ऑथेंटिकेटर अॅपने स्कॅन करा, नंतर त्यात दिसणारा 6 अंकी कोड टाका.';
+
+  @override
+  String get mfaQrLabel => 'ऑथेंटिकेटर अॅपसाठी QR कोड';
+
+  @override
+  String get mfaManualKey => 'किंवा ही की टाइप करा';
+
+  @override
+  String get mfaCopyKey => 'की कॉपी करा';
+
+  @override
+  String get mfaTurnOn => 'चालू करा';
+
+  @override
+  String get mfaIsOn => 'दोन-टप्पी साइन इन चालू आहे.';
+
+  @override
+  String get mfaOffHint => 'बंद करण्यासाठी आपला पासवर्ड आणि सध्याचा कोड टाका.';
+
+  @override
+  String get mfaTurnOff => 'दोन-टप्पी साइन इन बंद करा';
+
+  @override
+  String get mfaTurnedOn => 'दोन-टप्पी साइन इन चालू आहे.';
+
+  @override
+  String get mfaTurnedOff => 'दोन-टप्पी साइन इन बंद आहे.';
+
+  @override
+  String get mfaWrongPassword => 'पासवर्ड चुकीचा आहे.';
+
+  @override
+  String get mfaWrongCode =>
+      'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. आपल्या ऑथेंटिकेटर अॅपमधील सध्याचा कोड टाका.';
 }

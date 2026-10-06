@@ -11,13 +11,18 @@ import '../../core/file_saver.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../auth/auth_controller.dart';
 import '../auth/login_screen.dart' show Notice;
+import '../auth/session.dart';
+import 'account_data.dart';
+import 'account_sections.dart';
 
 /// File name for the export, e.g. smart-ration-my-data-2026-10-06.json (same as the website).
 String exportFileName(DateTime now) =>
     'smart-ration-my-data-${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}.json';
 
-/// My account (any signed-in role): change the password, and "Download my data" (DPDP Act 2023) — everything the
+/// My account (any signed-in role): my profile (name, mobile), citizens' verification status, staff two-factor sign-in,
+/// change the password, and "Download my data" (DPDP Act 2023) — everything the
 /// service holds about the person as one JSON file (GET /api/users/me/export). The file is made in memory and goes
 /// straight to where the person chooses; the app keeps no copy.
 class AccountScreen extends ConsumerStatefulWidget {
@@ -56,10 +61,17 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final heading = Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700);
+    final isCitizen = ref.watch(authControllerProvider)?.role == AppRole.ruralUser;
+    // Two-factor sign-in is for staff; it is shown when the server offers it, or when it is already on.
+    final mfa = isCitizen ? null : ref.watch(mfaStatusProvider).value;
     return Scaffold(
       appBar: AppBar(title: Text(l.accountTitle)),
       body: SafeArea(
         child: ListView(padding: const EdgeInsets.all(20), children: [
+          const ProfileCard(),
+          const SizedBox(height: 16),
+          if (isCitizen) ...[const VerificationCard(), const SizedBox(height: 16)],
+          if (mfa != null && (mfa.available || mfa.enabled)) ...[MfaCard(status: mfa), const SizedBox(height: 16)],
           Card(
             child: ListTile(
               leading: const Icon(Icons.password),

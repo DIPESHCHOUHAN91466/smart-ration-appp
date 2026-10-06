@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_ration_mobile/core/file_saver.dart';
 import 'package:smart_ration_mobile/features/account/account_screen.dart';
+import 'package:smart_ration_mobile/features/auth/session.dart';
 
 import '../support/fake_backend.dart';
 import '../support/test_app.dart';
@@ -31,16 +32,24 @@ const exportData = {
   'bookings': [],
 };
 
-Future<void> openAccount(WidgetTester tester, FakeBackend backend, FakeSaver saver, {String language = 'en'}) async {
-  final app = await TestApp.build(backend, savedLanguage: language, signedInAs: citizen(), overrides: [fileSaverProvider.overrideWithValue(saver)]);
+Future<TestApp> openAccount(WidgetTester tester, FakeBackend backend, FakeSaver saver, {String language = 'en', SessionUser? user}) async {
+  final app = await TestApp.build(backend,
+      savedLanguage: language, signedInAs: user ?? citizen(), overrides: [fileSaverProvider.overrideWithValue(saver)]);
   await tester.pumpWidget(app.widget);
   await tester.pumpAndSettle();
   await tester.tap(find.byIcon(Icons.manage_accounts));
   await tester.pumpAndSettle();
+  return app;
+}
+
+/// The export card is last on My account, below the screen's edge: scroll the page (the first Scrollable) to it.
+Future<void> scrollTo(WidgetTester tester, Finder target) async {
+  await tester.scrollUntilVisible(target, 200, scrollable: find.byType(Scrollable).first);
+  await tester.pumpAndSettle();
 }
 
 Future<void> tapDownload(WidgetTester tester, String label) async {
-  await tester.ensureVisible(find.text(label));
+  await scrollTo(tester, find.text(label));
   await tester.tap(find.text(label));
   await tester.pumpAndSettle();
 }
@@ -102,6 +111,7 @@ void main() {
   testWidgets('My account is translated', (tester) async {
     await openAccount(tester, FakeBackend(demoServer), FakeSaver(), language: 'hi');
     expect(find.text('मेरा खाता'), findsOneWidget);
+    await scrollTo(tester, find.text('मेरा डेटा डाउनलोड करें (JSON)'));
     expect(find.text('मेरा डेटा डाउनलोड करें (JSON)'), findsOneWidget);
   });
 }

@@ -61,6 +61,8 @@ FakeReply everything(RequestOptions r) {
     return shopServer(r);
   }
   if (p.startsWith('/api/admin') || p.startsWith('/api/shops') || p.startsWith('/api/ai')) return officialServer(r);
+  if (p == '/api/users/profile') return FakeReply.ok(userJson());
+  if (p == '/api/auth/mfa/status') return FakeReply.ok({'enabled': false, 'available': true});
   return demoServer(r);
 }
 

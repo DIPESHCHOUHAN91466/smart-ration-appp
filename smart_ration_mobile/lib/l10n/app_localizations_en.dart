@@ -1687,4 +1687,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportFailed => 'Could not prepare your data. Please try again.';
+
+  @override
+  String get profileTitle => 'My profile';
+
+  @override
+  String get profileEmailNote =>
+      'Your email is your sign-in name and cannot be changed here.';
+
+  @override
+  String get profileNameLabel => 'Full name';
+
+  @override
+  String get profileNameInvalid => 'Please enter your full name.';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileSaved => 'Profile saved';
+
+  @override
+  String get verificationTitle => 'My verification';
+
+  @override
+  String get verificationAadhaar => 'Aadhaar';
+
+  @override
+  String get verificationRationCard => 'Ration card';
+
+  @override
+  String get verificationMobile => 'Mobile number';
+
+  @override
+  String get verificationVerified => 'Verified';
+
+  @override
+  String get verificationPending => 'Pending';
+
+  @override
+  String get verificationNotVerified => 'Not verified';
+
+  @override
+  String get verificationFailed => 'Failed';
+
+  @override
+  String get verificationExpired => 'Expired';
+
+  @override
+  String get verificationHelp =>
+      'If something here is wrong, visit your ration office with your documents.';
+
+  @override
+  String get mfaTitle => 'Two-factor sign-in';
+
+  @override
+  String get mfaIntro =>
+      'Protect this staff account with a second step: after your password, enter the 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator or similar).';
+
+  @override
+  String get mfaStart => 'Set up two-factor sign-in';
+
+  @override
+  String get mfaScan =>
+      'Scan this QR code with your authenticator app, then enter the 6-digit code it shows.';
+
+  @override
+  String get mfaQrLabel => 'QR code for the authenticator app';
+
+  @override
+  String get mfaManualKey => 'Or type this key';
+
+  @override
+  String get mfaCopyKey => 'Copy key';
+
+  @override
+  String get mfaTurnOn => 'Turn on';
+
+  @override
+  String get mfaIsOn => 'Two-factor sign-in is on.';
+
+  @override
+  String get mfaOffHint =>
+      'To turn it off, enter your password and a current code.';
+
+  @override
+  String get mfaTurnOff => 'Turn off two-factor sign-in';
+
+  @override
+  String get mfaTurnedOn => 'Two-factor sign-in is on.';
+
+  @override
+  String get mfaTurnedOff => 'Two-factor sign-in is off.';
+
+  @override
+  String get mfaWrongPassword => 'The password is incorrect.';
+
+  @override
+  String get mfaWrongCode =>
+      'The code is wrong or has expired. Use the current code from your authenticator app.';
 }

@@ -3111,6 +3111,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not prepare your data. Please try again.'**
   String get exportFailed;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileEmailNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email is your sign-in name and cannot be changed here.'**
+  String get profileEmailNote;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileNameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your full name.'**
+  String get profileNameInvalid;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSave;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile saved'**
+  String get profileSaved;
+
+  /// No description provided for @verificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My verification'**
+  String get verificationTitle;
+
+  /// No description provided for @verificationAadhaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar'**
+  String get verificationAadhaar;
+
+  /// No description provided for @verificationRationCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration card'**
+  String get verificationRationCard;
+
+  /// No description provided for @verificationMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number'**
+  String get verificationMobile;
+
+  /// No description provided for @verificationVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get verificationVerified;
+
+  /// No description provided for @verificationPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get verificationPending;
+
+  /// No description provided for @verificationNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified'**
+  String get verificationNotVerified;
+
+  /// No description provided for @verificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get verificationFailed;
+
+  /// No description provided for @verificationExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get verificationExpired;
+
+  /// No description provided for @verificationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'If something here is wrong, visit your ration office with your documents.'**
+  String get verificationHelp;
+
+  /// No description provided for @mfaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor sign-in'**
+  String get mfaTitle;
+
+  /// No description provided for @mfaIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect this staff account with a second step: after your password, enter the 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator or similar).'**
+  String get mfaIntro;
+
+  /// No description provided for @mfaStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up two-factor sign-in'**
+  String get mfaStart;
+
+  /// No description provided for @mfaScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this QR code with your authenticator app, then enter the 6-digit code it shows.'**
+  String get mfaScan;
+
+  /// No description provided for @mfaQrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code for the authenticator app'**
+  String get mfaQrLabel;
+
+  /// No description provided for @mfaManualKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Or type this key'**
+  String get mfaManualKey;
+
+  /// No description provided for @mfaCopyKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy key'**
+  String get mfaCopyKey;
+
+  /// No description provided for @mfaTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get mfaTurnOn;
+
+  /// No description provided for @mfaIsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor sign-in is on.'**
+  String get mfaIsOn;
+
+  /// No description provided for @mfaOffHint.
+  ///
+  /// In en, this message translates to:
+  /// **'To turn it off, enter your password and a current code.'**
+  String get mfaOffHint;
+
+  /// No description provided for @mfaTurnOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off two-factor sign-in'**
+  String get mfaTurnOff;
+
+  /// No description provided for @mfaTurnedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor sign-in is on.'**
+  String get mfaTurnedOn;
+
+  /// No description provided for @mfaTurnedOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor sign-in is off.'**
+  String get mfaTurnedOff;
+
+  /// No description provided for @mfaWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The password is incorrect.'**
+  String get mfaWrongPassword;
+
+  /// No description provided for @mfaWrongCode.
+  ///
+  /// In en, this message translates to:
+  /// **'The code is wrong or has expired. Use the current code from your authenticator app.'**
+  String get mfaWrongCode;
 }
 
 class _AppLocalizationsDelegate
