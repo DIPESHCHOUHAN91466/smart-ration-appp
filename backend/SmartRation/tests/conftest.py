@@ -8,8 +8,16 @@ from fastapi.testclient import TestClient
 from py_testkit import LEGACY, live_database_url, make_settings  # noqa: F401  (shared with test modules)
 
 from app.main import create_app
+from app.security import rate_limit
 
 pytest_plugins = ["ration_world"]  # the shared synthetic ration world (`env` fixture) for migrated-route tests
+
+
+@pytest.fixture(autouse=True)
+def _fixed_rate_limit_window(monkeypatch):
+    # The limiter counts per wall-clock minute: a burst of test requests crossing a minute boundary would start a
+    # new window and flake. Every test runs inside one fixed window instead.
+    monkeypatch.setattr(rate_limit, "clock", lambda: 1_800_000_000.0)
 
 
 @pytest.fixture

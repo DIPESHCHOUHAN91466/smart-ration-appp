@@ -18,6 +18,7 @@ from app.config.settings import Settings
 from app.core.errors import ApiError
 
 WINDOW_SECONDS = 60
+clock = time.time   # replaceable in tests, so a burst of requests can't straddle a window boundary
 
 
 class TooManyRequests(ApiError):
@@ -30,7 +31,7 @@ class FixedWindowLimiter:
         self._windows: dict[tuple[str, str], tuple[int, int]] = {}  # (policy, ip) -> (window, count)
 
     def allow(self, policy: str, key: str, limit: int) -> bool:
-        window = int(time.time() // WINDOW_SECONDS)
+        window = int(clock() // WINDOW_SECONDS)
         with self._lock:
             start, count = self._windows.get((policy, key), (window, 0))
             if start != window:
