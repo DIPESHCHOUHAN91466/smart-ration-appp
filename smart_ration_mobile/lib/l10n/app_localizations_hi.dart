@@ -1798,4 +1798,47 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get mfaWrongCode =>
       'कोड गलत है या उसकी अवधि समाप्त हो गई है। अपने ऑथेंटिकेटर ऐप का वर्तमान कोड डालें।';
+
+  @override
+  String get registerTitle => 'खाता बनाएँ';
+
+  @override
+  String get registerLink => 'नए हैं? खाता बनाएँ';
+
+  @override
+  String get registerIntro =>
+      'राशन कार्ड धारकों के लिए। दुकान मालिकों और अधिकारियों के खाते कार्यालय से बनते हैं।';
+
+  @override
+  String get fullNameLabel => 'पूरा नाम';
+
+  @override
+  String get nameTooShort => 'कृपया अपना पूरा नाम लिखें।';
+
+  @override
+  String get confirmPasswordPlain => 'पासवर्ड की पुष्टि करें';
+
+  @override
+  String get consentText =>
+      'मैंने गोपनीयता नीति पढ़ ली है और सहमत हूँ कि मेरे विवरण उसमें बताए अनुसार मेरा राशन देने के लिए उपयोग किए जाएँ।';
+
+  @override
+  String get consentRequired =>
+      'आगे बढ़ने के लिए गोपनीयता नीति पढ़ें और बॉक्स पर निशान लगाएँ।';
+
+  @override
+  String get readPrivacyPolicy => 'गोपनीयता नीति पढ़ें';
+
+  @override
+  String get registerButton => 'खाता बनाएँ';
+
+  @override
+  String get registerFailed => 'खाता नहीं बन सका। कृपया फिर से प्रयास करें।';
+
+  @override
+  String get registerAlreadyExists =>
+      'इस ईमेल या मोबाइल नंबर से खाता पहले से है। साइन इन करें या पासवर्ड रीसेट करें।';
+
+  @override
+  String get registered => 'स्वागत है! आपका खाता तैयार है।';
 }

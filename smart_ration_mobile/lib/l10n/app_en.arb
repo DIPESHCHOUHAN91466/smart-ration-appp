@@ -798,5 +798,18 @@
   "mfaTurnedOn": "Two-factor sign-in is on.",
   "mfaTurnedOff": "Two-factor sign-in is off.",
   "mfaWrongPassword": "The password is incorrect.",
-  "mfaWrongCode": "The code is wrong or has expired. Use the current code from your authenticator app."
+  "mfaWrongCode": "The code is wrong or has expired. Use the current code from your authenticator app.",
+  "registerTitle": "Create an account",
+  "registerLink": "New here? Create an account",
+  "registerIntro": "For ration card holders. Shop owners and officials get their accounts from the office.",
+  "fullNameLabel": "Full name",
+  "nameTooShort": "Please enter your full name.",
+  "confirmPasswordPlain": "Confirm password",
+  "consentText": "I have read the privacy policy and agree that my details are used to provide my ration, as it describes.",
+  "consentRequired": "Please read the privacy policy and tick the box to continue.",
+  "readPrivacyPolicy": "Read the privacy policy",
+  "registerButton": "Create account",
+  "registerFailed": "The account could not be created. Please try again.",
+  "registerAlreadyExists": "An account with this email or mobile number already exists. Sign in instead, or reset your password.",
+  "registered": "Welcome! Your account is ready."
 }

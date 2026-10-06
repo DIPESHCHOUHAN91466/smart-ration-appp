@@ -1815,4 +1815,48 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mfaWrongCode =>
       'The code is wrong or has expired. Use the current code from your authenticator app.';
+
+  @override
+  String get registerTitle => 'Create an account';
+
+  @override
+  String get registerLink => 'New here? Create an account';
+
+  @override
+  String get registerIntro =>
+      'For ration card holders. Shop owners and officials get their accounts from the office.';
+
+  @override
+  String get fullNameLabel => 'Full name';
+
+  @override
+  String get nameTooShort => 'Please enter your full name.';
+
+  @override
+  String get confirmPasswordPlain => 'Confirm password';
+
+  @override
+  String get consentText =>
+      'I have read the privacy policy and agree that my details are used to provide my ration, as it describes.';
+
+  @override
+  String get consentRequired =>
+      'Please read the privacy policy and tick the box to continue.';
+
+  @override
+  String get readPrivacyPolicy => 'Read the privacy policy';
+
+  @override
+  String get registerButton => 'Create account';
+
+  @override
+  String get registerFailed =>
+      'The account could not be created. Please try again.';
+
+  @override
+  String get registerAlreadyExists =>
+      'An account with this email or mobile number already exists. Sign in instead, or reset your password.';
+
+  @override
+  String get registered => 'Welcome! Your account is ready.';
 }

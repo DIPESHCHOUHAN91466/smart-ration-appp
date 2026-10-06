@@ -3333,6 +3333,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The code is wrong or has expired. Use the current code from your authenticator app.'**
   String get mfaWrongCode;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account'**
+  String get registerTitle;
+
+  /// No description provided for @registerLink.
+  ///
+  /// In en, this message translates to:
+  /// **'New here? Create an account'**
+  String get registerLink;
+
+  /// No description provided for @registerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'For ration card holders. Shop owners and officials get their accounts from the office.'**
+  String get registerIntro;
+
+  /// No description provided for @fullNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get fullNameLabel;
+
+  /// No description provided for @nameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your full name.'**
+  String get nameTooShort;
+
+  /// No description provided for @confirmPasswordPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPasswordPlain;
+
+  /// No description provided for @consentText.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read the privacy policy and agree that my details are used to provide my ration, as it describes.'**
+  String get consentText;
+
+  /// No description provided for @consentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please read the privacy policy and tick the box to continue.'**
+  String get consentRequired;
+
+  /// No description provided for @readPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the privacy policy'**
+  String get readPrivacyPolicy;
+
+  /// No description provided for @registerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get registerButton;
+
+  /// No description provided for @registerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The account could not be created. Please try again.'**
+  String get registerFailed;
+
+  /// No description provided for @registerAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email or mobile number already exists. Sign in instead, or reset your password.'**
+  String get registerAlreadyExists;
+
+  /// No description provided for @registered.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome! Your account is ready.'**
+  String get registered;
 }
 
 class _AppLocalizationsDelegate

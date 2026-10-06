@@ -76,6 +76,8 @@ final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('signed out', () => null, Routes.helpTopics, () => null),
   ('signed out', () => null, Routes.helpArticle('how-to-book'), () => null),
   ('signed out', () => null, Routes.forgotPassword, () => null),
+  ('signed out', () => null, Routes.register, () => null),
+  ('signed out', () => null, Routes.privacy, () => null),
   ('citizen', citizen, Routes.changePassword, () => null),
   ('official', official, Routes.changePassword, () => null),
   ('citizen', citizen, Routes.account, () => null),

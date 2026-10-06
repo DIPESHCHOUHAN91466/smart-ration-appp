@@ -6,6 +6,7 @@ import '../features/auth/auth_controller.dart';
 import '../features/auth/login_screen.dart';
 import '../features/account/account_screen.dart';
 import '../features/auth/password_screens.dart';
+import '../features/auth/register_screen.dart';
 import '../features/auth/session.dart';
 import '../features/booking/book_ration_screen.dart';
 import '../features/booking/token_screen.dart';
@@ -19,6 +20,7 @@ import '../features/grievance/my_complaints_screen.dart';
 import '../features/help/help_chat_screen.dart';
 import '../features/help/help_topics_screen.dart';
 import '../features/language/language_screen.dart';
+import '../features/legal/privacy_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/official/alerts_screen.dart';
 import '../features/official/complaints_screen.dart';
@@ -59,6 +61,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.serverStatus, builder: (context, state) => const ServerStatusScreen()),
       GoRoute(path: Routes.login, builder: (context, state) => const LoginScreen()),
       GoRoute(path: Routes.forgotPassword, builder: (context, state) => const ForgotPasswordScreen()),
+      GoRoute(path: Routes.register, builder: (context, state) => const RegisterScreen()),
+      GoRoute(path: Routes.privacy, builder: (context, state) => const PrivacyScreen()),
       GoRoute(path: Routes.account, builder: (context, state) => const AccountScreen()),
       GoRoute(path: Routes.changePassword, builder: (context, state) => const ChangePasswordScreen()),
       GoRoute(path: Routes.help, builder: (context, state) => const HelpChatScreen()),
@@ -137,7 +141,8 @@ String _child(String path) => path.substring(path.lastIndexOf('/') + 1);
 String? redirectFor(SessionUser? user, String location) {
   if (user == null) return Routes.isPublic(location) ? null : Routes.login;
   final home = Routes.homeFor(user.role);
-  if (location == Routes.login) return home;
+  // Signed in (e.g. just registered): sign-in and registration lead home.
+  if (location == Routes.login || location == Routes.register) return home;
   final area = Routes.areaOf(location);
   if (area != null && area != home) return home;
   return null;

@@ -11,6 +11,10 @@ abstract final class Routes {
   /// Forgotten password (public): a code to the registered mobile, then a new password.
   static const forgotPassword = '/login/forgot';
 
+  /// Create a citizen account (public), and the privacy policy it asks consent to (public).
+  static const register = '/register';
+  static const privacy = '/privacy';
+
   /// My account (any signed-in role): change password, download my data.
   static const account = '/account';
 
@@ -63,7 +67,7 @@ abstract final class Routes {
   static const officialInsights = '/official/insights';
 
   /// Screens anyone may open without signing in.
-  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, forgotPassword, help, helpTopics};
+  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, forgotPassword, register, privacy, help, helpTopics};
 
   /// [public], plus every help article.
   static bool isPublic(String location) => public.contains(location) || location.startsWith('$helpTopics/');

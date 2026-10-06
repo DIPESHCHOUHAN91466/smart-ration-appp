@@ -20,6 +20,24 @@ class AuthRepository {
     return AuthResult.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
   }
 
+  /// Creates a citizen (Rural User) account and signs it in. The backend never lets the app choose the role,
+  /// checks the password rules, and records the privacy-policy consent in its audit log (DPDP Act 2023).
+  Future<AuthResult> register({
+    required String fullName,
+    required String email,
+    required String mobile,
+    required String password,
+  }) async {
+    final data = await _api.post<Object?>('/api/auth/register', body: {
+      'fullName': fullName.trim(),
+      'email': email.trim(),
+      'mobileNumber': mobile,
+      'password': password,
+      'consentToPrivacyPolicy': true,
+    });
+    return AuthResult.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
+  }
+
   /// Second sign-in step for two-factor accounts: the pending sign-in (5 minutes) and the app's 6-digit code.
   Future<AuthResult> verifyMfa(String mfaToken, String code) async {
     final data = await _api.post<Object?>('/api/auth/mfa/verify', body: {'mfaToken': mfaToken, 'code': code});
@@ -132,6 +150,10 @@ class AuthController extends Notifier<SessionUser?> {
   /// Sign-in with the code texted to a citizen's mobile. Throws [ApiException] like [signIn].
   Future<void> signInWithOtp(String mobile, String code) async =>
       _start(await ref.read(authRepositoryProvider).verifyOtp(mobile, code));
+
+  /// A new citizen account, signed in straight away. Only call once the person has agreed to the privacy policy.
+  Future<void> register({required String fullName, required String email, required String mobile, required String password}) async =>
+      _start(await ref.read(authRepositoryProvider).register(fullName: fullName, email: email, mobile: mobile, password: password));
 
   /// The person changed their name or mobile number: the saved session shows the new details too.
   Future<void> profileUpdated(SessionUser user) async {

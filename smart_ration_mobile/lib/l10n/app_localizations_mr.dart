@@ -1799,4 +1799,48 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get mfaWrongCode =>
       'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. आपल्या ऑथेंटिकेटर अॅपमधील सध्याचा कोड टाका.';
+
+  @override
+  String get registerTitle => 'खाते तयार करा';
+
+  @override
+  String get registerLink => 'नवीन आहात? खाते तयार करा';
+
+  @override
+  String get registerIntro =>
+      'रेशन कार्डधारकांसाठी. दुकानदार आणि अधिकाऱ्यांची खाती कार्यालयाकडून तयार होतात.';
+
+  @override
+  String get fullNameLabel => 'पूर्ण नाव';
+
+  @override
+  String get nameTooShort => 'कृपया तुमचे पूर्ण नाव लिहा.';
+
+  @override
+  String get confirmPasswordPlain => 'पासवर्डची पुष्टी करा';
+
+  @override
+  String get consentText =>
+      'मी गोपनीयता धोरण वाचले आहे आणि त्यात सांगितल्याप्रमाणे माझे रेशन देण्यासाठी माझे तपशील वापरण्यास संमती देतो/देते.';
+
+  @override
+  String get consentRequired =>
+      'पुढे जाण्यासाठी गोपनीयता धोरण वाचा आणि चौकटीत खूण करा.';
+
+  @override
+  String get readPrivacyPolicy => 'गोपनीयता धोरण वाचा';
+
+  @override
+  String get registerButton => 'खाते तयार करा';
+
+  @override
+  String get registerFailed =>
+      'खाते तयार करता आले नाही. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get registerAlreadyExists =>
+      'या ईमेल किंवा मोबाइल क्रमांकाचे खाते आधीच आहे. साइन इन करा किंवा पासवर्ड रीसेट करा.';
+
+  @override
+  String get registered => 'स्वागत आहे! तुमचे खाते तयार आहे.';
 }

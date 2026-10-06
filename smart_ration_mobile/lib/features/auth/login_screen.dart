@@ -88,7 +88,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: 20),
             if (expired) Notice(text: l.errorSessionEnded, warning: true),
             if (_method == _Method.mobile) const _OtpForm() else const _PasswordForm(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
+            Center(
+              child: TextButton.icon(
+                icon: const Icon(Icons.person_add_alt_1_outlined),
+                label: Text(l.registerLink),
+                onPressed: () => context.push(Routes.register),
+              ),
+            ),
+            const SizedBox(height: 8),
             // The public help assistant explains signing in, by typing or by voice.
             Center(
               child: TextButton.icon(
