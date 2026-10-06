@@ -5,7 +5,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    host: 'localhost'
+    host: 'localhost',
+    // Same-origin API in development, as in production: the HttpOnly session cookie (SameSite=Strict) is only
+    // sent to the site that set it. 127.0.0.1, not localhost: the API binds IPv4 only.
+    proxy: {
+      '/api': 'http://127.0.0.1:8000',
+      '/health': 'http://127.0.0.1:8000',
+      '/ready': 'http://127.0.0.1:8000',
+    },
   },
   // Pre-bundled at dev-server start (it's only imported by the lazily loaded QR scanner and its
   // worker, so Vite would otherwise discover it mid-session and serve "504 Outdated Optimize Dep").

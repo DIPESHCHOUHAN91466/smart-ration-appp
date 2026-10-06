@@ -6,5 +6,5 @@ scanner from anywhere), `chatbotStore` (open the assistant with a question), `to
 `ToastProvider.jsx` (renders the notifications). **Doesn't:** server data caches or business logic.
 **Run/test:** reset between tests in `frontend/tests/setup.js`.
 **Connects:** read by components/hooks; `authStore` is used by `api/client.js` for the JWT.
-Security note: `authStore` persists tokens in `localStorage` — moving the refresh token to an HttpOnly
-cookie is an open item (docs/security).
+Security note: `authStore` never persists a token. The refresh token is an HttpOnly cookie set by the API
+(cookie mode, `X-Auth-Mode: cookie` from `api/client.js`); the access token is in memory only. See docs/security.

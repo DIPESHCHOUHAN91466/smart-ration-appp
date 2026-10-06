@@ -15,7 +15,7 @@ knowledge (`ai/chatbot/knowledge`), secrets (the `.env` holds only the public AP
 **How do I run it?**
 ```
 npm install
-copy .env.example .env          # VITE_API_BASE_URL=http://127.0.0.1:8000/api/v1
+copy .env.example .env          # VITE_API_BASE_URL empty: same origin, Vite proxies /api to 127.0.0.1:8000
 npm run dev                     # http://localhost:5173
 npm test                        # Vitest
 npm run build                   # production build → dist/

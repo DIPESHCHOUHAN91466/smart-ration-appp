@@ -129,7 +129,7 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "X-Request-ID"],
+        allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "X-Request-ID", "X-Auth-Mode"],
         expose_headers=["X-Request-ID", "Server-Timing"],
     )
     # Outermost: /api/v1/* is rewritten to /api/* before anything else sees the request.

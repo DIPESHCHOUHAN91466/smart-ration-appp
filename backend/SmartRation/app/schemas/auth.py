@@ -51,7 +51,7 @@ class RegisterRequest(BaseModel):
 
 
 class RefreshRequest(BaseModel):
-    refreshToken: str
+    refreshToken: str = Field(description="Body mode only; in cookie mode (X-Auth-Mode: cookie) send {} and the cookie is used")
 
 
 class OtpLoginRequest(BaseModel):
@@ -104,7 +104,8 @@ class UserSummary(BaseModel):
 
 class AuthData(BaseModel):
     accessToken: str = Field(description="JWT (HS256), valid 15 minutes")
-    refreshToken: str = Field(description="Opaque; single use (rotated on refresh), valid 7 days")
+    refreshToken: str | None = Field(description="Opaque; single use (rotated on refresh), valid 7 days. null in cookie mode "
+                                            "(header X-Auth-Mode: cookie): it is then only in the HttpOnly cookie sr_refresh")
     accessTokenExpiresAt: str = Field(description="UTC, e.g. 2026-09-24T04:43:04.4875895Z")
     user: UserSummary
 

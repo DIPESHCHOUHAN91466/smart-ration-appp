@@ -14,8 +14,8 @@ privacy rules, and the known open items — is documented in [docs/security/SECU
 
 ## Known open items (summary)
 
-- Access and refresh tokens are kept in browser `localStorage`; moving the refresh token to an
-  HttpOnly cookie is planned.
+- Website sessions: the refresh token is an HttpOnly, SameSite=Strict cookie (`sr_refresh`, path `/api`) and is
+  never in a response body or in `localStorage`; the access token is kept in memory only (security S7, 2026-10-06).
 - The JWT signing key existed in git history before commit `4c983e2`; rotate it before any public
   deployment. The QR secret was intentionally kept (rotating it invalidates issued QR codes).
 - This installation uses synthetic data only and is not connected to any government system.

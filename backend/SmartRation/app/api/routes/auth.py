@@ -1,15 +1,25 @@
-"""/api/auth — migrated from the C# AuthController (same routes, bodies, statuses)."""
+"""/api/auth — migrated from the C# AuthController (same routes, bodies, statuses).
+
+Two ways to hold the refresh token:
+  * body mode (the Android app, API clients): it is returned in the JSON and sent back in the JSON, as before;
+  * cookie mode (the website): requests carry `X-Auth-Mode: cookie`. The refresh token then lives only in an
+    HttpOnly, SameSite=Strict cookie scoped to /api, and every response says `refreshToken: null`, so script on the
+    page (an XSS bug) can never read it. The custom header is also the CSRF guard: a cross-site form can't send it,
+    and the CORS allow-list stops other origins from sending it with fetch. The website and API share one origin
+    (the API serves the website in production; Vite proxies /api in development).
+"""
 
 from __future__ import annotations
 
 import json
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response
 from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.auth import CurrentUser, get_current_user
-from app.core.errors import ok
+from app.core.errors import Unauthorized, fail_body, ok
 from app.core.validation import ValidationFailed, validate
 from app.database.connection import get_db
 from app.schemas.auth import (
@@ -61,10 +71,40 @@ def _ctx(request: Request) -> RequestContext:
     return RequestContext(ip_address=request.client.host if request.client else None)
 
 
+REFRESH_COOKIE = "sr_refresh"
+COOKIE_PATH = "/api"   # both /api/auth/* and /api/v1/auth/* (the browser sees the versioned path)
+
+
+def _cookie_mode(request: Request) -> bool:
+    return request.headers.get("x-auth-mode", "").strip().lower() == "cookie"
+
+
+def _session(request: Request, response: Response, data: dict) -> dict:
+    """In cookie mode, move the refresh token from the JSON body into the HttpOnly cookie."""
+    if _cookie_mode(request) and data.get("refreshToken"):
+        settings = request.app.state.settings
+        response.set_cookie(REFRESH_COOKIE, data["refreshToken"], max_age=settings.refresh_token_expire_days * 86400,
+                            path=COOKIE_PATH, httponly=True, samesite="strict",
+                            secure=settings.is_production or request.url.scheme == "https")
+        data = {**data, "refreshToken": None}
+    return data
+
+
+def _clear_cookie(response: Response) -> None:
+    response.delete_cookie(REFRESH_COOKIE, path=COOKIE_PATH, httponly=True, samesite="strict")
+
+
+async def _refresh_token_from(request: Request) -> str:
+    """The cookie in cookie mode, else the JSON body's RefreshToken (validated as before)."""
+    if _cookie_mode(request):
+        return request.cookies.get(REFRESH_COOKIE, "")
+    return validate(await _json(request), REFRESH_RULES)["RefreshToken"]
+
+
 @router.post("/register", summary="Register a Rural User account", response_model=AuthEnvelope,
              dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 409, 429)},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": RegisterRequest.model_json_schema()}}, "required": True}})
-async def register(request: Request, db: Session = Depends(get_db)):
+async def register(request: Request, response: Response, db: Session = Depends(get_db)):
     body = await _json(request)
     v = validate(body, REGISTER_RULES)
     # Optional, so older clients keep working; the website requires it (DPDP: consent is recorded in the audit log).
@@ -72,25 +112,34 @@ async def register(request: Request, db: Session = Depends(get_db)):
     # Blocking DB work and Argon2 hashing run off the event loop.
     data = await run_in_threadpool(auth_service.register, db, request.app.state.settings, _ctx(request),
                                    v["FullName"], v["Email"], v["MobileNumber"], v["Password"], consent)
-    return ok(data, "Registration successful")
+    return ok(_session(request, response, data), "Registration successful")
 
 
 @router.post("/login", summary="Log in with email and password", response_model=AuthEnvelope,
              dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": LoginRequest.model_json_schema()}}, "required": True}})
-async def login(request: Request, db: Session = Depends(get_db)):
+async def login(request: Request, response: Response, db: Session = Depends(get_db)):
     v = validate(await _json(request), LOGIN_RULES)
     data = await run_in_threadpool(auth_service.login, db, request.app.state.settings, _ctx(request), v["Email"], v["Password"])
-    return ok(data, "Login successful")
+    return ok(_session(request, response, data), "Login successful")
 
 
 @router.post("/refresh", summary="Exchange a refresh token for new tokens (rotates it)", response_model=AuthEnvelope,
              responses={k: ERRORS[k] for k in (400, 401)},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": RefreshRequest.model_json_schema()}}, "required": True}})
-async def refresh(request: Request, db: Session = Depends(get_db)):
-    v = validate(await _json(request), REFRESH_RULES)
-    return ok(await run_in_threadpool(auth_service.refresh, db, request.app.state.settings, v["RefreshToken"], _ctx(request)),
-              "Token refreshed")
+async def refresh(request: Request, response: Response, db: Session = Depends(get_db)):
+    raw = await _refresh_token_from(request)
+    try:
+        if not raw:
+            raise Unauthorized(auth_service.REFRESH_INVALID)
+        data = await run_in_threadpool(auth_service.refresh, db, request.app.state.settings, raw, _ctx(request))
+    except Unauthorized as exc:
+        if not _cookie_mode(request):
+            raise
+        failed = JSONResponse(status_code=401, content=fail_body(exc.message, None, exc.error_code))
+        _clear_cookie(failed)   # a dead cookie is not sent again
+        return failed
+    return ok(_session(request, response, data), "Token refreshed")
 
 
 @router.post("/otp/request", summary="Send a sign-in code to a citizen's registered mobile", response_model=OtpSentEnvelope,
@@ -107,29 +156,33 @@ async def otp_request(request: Request, db: Session = Depends(get_db)):
 @router.post("/otp/verify", summary="Sign in with the code (Rural Users)", response_model=AuthEnvelope,
              dependencies=[auth_limit, otp_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": OtpLoginVerify.model_json_schema()}}, "required": True}})
-async def otp_verify(request: Request, db: Session = Depends(get_db)):
+async def otp_verify(request: Request, response: Response, db: Session = Depends(get_db)):
     v = validate(await _json(request), OTP_VERIFY_RULES)
     data = await run_in_threadpool(login_otp_service.verify_code, db, request.app.state.settings, _ctx(request),
                                    v["MobileNumber"], v["Otp"])
-    return ok(data, "Login successful")
+    return ok(_session(request, response, data), "Login successful")
 
 
 @router.post("/logout", summary="Revoke a refresh token", response_model=EmptyEnvelope, responses={400: ERRORS[400]},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": RefreshRequest.model_json_schema()}}, "required": True}})
-async def logout(request: Request, db: Session = Depends(get_db)):
-    v = validate(await _json(request), REFRESH_RULES)
-    await run_in_threadpool(auth_service.logout, db, _ctx(request), v["RefreshToken"])
+async def logout(request: Request, response: Response, db: Session = Depends(get_db)):
+    raw = await _refresh_token_from(request)
+    if raw:
+        await run_in_threadpool(auth_service.logout, db, _ctx(request), raw)
+    if _cookie_mode(request):
+        _clear_cookie(response)
     return ok(None, "Logged out")
 
 
 @router.post("/password/change", summary="Change your password (signs out every other device)", response_model=AuthEnvelope,
              dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": PasswordChangeRequest.model_json_schema()}}, "required": True}})
-async def change_password(request: Request, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+async def change_password(request: Request, response: Response, user: CurrentUser = Depends(get_current_user),
+                          db: Session = Depends(get_db)):
     v = validate(await _json(request), PASSWORD_CHANGE_RULES)
     data = await run_in_threadpool(password_service.change, db, request.app.state.settings, _ctx(request), user.user_id,
                                    v["CurrentPassword"], v["NewPassword"])
-    return ok(data, "Password changed")
+    return ok(_session(request, response, data), "Password changed")
 
 
 @router.post("/password/reset/request", summary="Send a password-reset code to the account's registered mobile",

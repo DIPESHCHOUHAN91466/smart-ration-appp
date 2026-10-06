@@ -6,7 +6,8 @@ import { API_BASE_URL } from "../config/env";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  // Cookie mode: the API keeps the refresh token in an HttpOnly cookie and never puts it in a response body.
+  headers: { "Content-Type": "application/json", "X-Auth-Mode": "cookie" },
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -24,7 +25,9 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
-    const isAuthRoute = originalRequest?.url?.includes("/auth/");
+    // Sign-in, refresh and sign-out answer 401 for their own reasons; any other route (password change too)
+    // may just need a fresh access token.
+    const isAuthRoute = /\/auth\/(login|register|refresh|logout|otp|password\/reset)/.test(originalRequest?.url || "");
 
     if (status === 401 && originalRequest && !originalRequest._retry && !isAuthRoute) {
       originalRequest._retry = true;

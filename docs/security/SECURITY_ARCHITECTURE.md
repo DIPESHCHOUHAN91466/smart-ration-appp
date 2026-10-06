@@ -33,9 +33,12 @@ accepts the old secret for verification during a transition window.
   proxies only (`UseForwardedHeaders`, fixed 2026-09-25), so its per-IP limits (QR scan, OTP) see the
   real client. The Python limiter keys on the socket address: run uvicorn with `--proxy-headers`
   behind a reverse proxy.
-- Token storage: the frontend keeps the access and refresh tokens in `localStorage` (zustand persist).
-  Any XSS bug could read them; React escaping and the absence of `dangerouslySetInnerHTML` reduce the
-  risk, but moving the refresh token to an HttpOnly, SameSite cookie is the planned fix (HIGH).
+- Token storage (website): requests carry `X-Auth-Mode: cookie`, so the API keeps the refresh token in an HttpOnly,
+  SameSite=Strict cookie (`sr_refresh`, path `/api`, Secure in production) and answers `refreshToken: null`. The
+  access token lives in memory only; after a reload the first 401 refreshes from the cookie. `localStorage` holds
+  only the user summary. The custom header is the CSRF guard (CORS allows it only for listed origins, without
+  credentials). Website and API share one origin (the API serves the website; Vite proxies `/api` in development).
+  The Android app keeps body mode (tokens in the JSON, stored in the OS keystore).
 - Roles: `RuralUser`, `ShopOwner`, `GovernmentOfficial`, `Admin`, enforced per route with
   `require_roles(...)`, and ownership checks inside services (a user sees only their own data).
 

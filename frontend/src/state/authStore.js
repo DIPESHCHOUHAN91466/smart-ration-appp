@@ -2,26 +2,23 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import apiClient from "../api/client";
 
+// Sessions (security S7): the refresh token is an HttpOnly cookie the page can never read (the API client sends
+// X-Auth-Mode: cookie on every request). The access token lives in memory only: after a reload the first API call
+// gets 401 and the client refreshes from the cookie. Only the user summary is saved in localStorage, for the UI.
 export const useAuthStore = create(
   persist(
     (set, get) => ({
       user: null,
       accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
 
       /** @param {import("../types/api").AuthResponse} authResponse */
       setSession: (authResponse) => {
-        set({
-          user: authResponse.user,
-          accessToken: authResponse.accessToken,
-          refreshToken: authResponse.refreshToken,
-          isAuthenticated: true,
-        });
+        set({ user: authResponse.user, accessToken: authResponse.accessToken, isAuthenticated: true });
       },
 
       clearSession: () => {
-        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+        set({ user: null, accessToken: null, isAuthenticated: false });
       },
 
       login: async (email, password) => {
@@ -44,26 +41,17 @@ export const useAuthStore = create(
       },
 
       refreshAccessToken: async () => {
-        const currentRefreshToken = get().refreshToken;
-        if (!currentRefreshToken) {
-          throw new Error("No refresh token available.");
-        }
-
-        const response = await apiClient.post("/auth/refresh", { refreshToken: currentRefreshToken });
+        const response = await apiClient.post("/auth/refresh", {});   // the cookie carries the refresh token
         get().setSession(response.data.data);
         return response.data.data.accessToken;
       },
 
       logout: async () => {
-        const refreshToken = get().refreshToken;
         get().clearSession();
-
-        if (refreshToken) {
-          try {
-            await apiClient.post("/auth/logout", { refreshToken });
-          } catch {
-            // Best-effort — the local session is already cleared either way.
-          }
+        try {
+          await apiClient.post("/auth/logout", {});   // revokes the session and removes the cookie
+        } catch {
+          // Best-effort — the local session is already cleared either way.
         }
       },
 
@@ -71,12 +59,10 @@ export const useAuthStore = create(
     }),
     {
       name: "smart-ration-auth",
-      partialize: (state) => ({
-        user: state.user,
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
-        isAuthenticated: state.isAuthenticated,
-      }),
+      version: 1,
+      // Tokens are never written to storage. Version 0 kept both tokens here: drop them (one sign-in again).
+      migrate: () => ({ user: null, isAuthenticated: false }),
+      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
     },
   ),
 );

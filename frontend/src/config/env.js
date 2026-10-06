@@ -5,11 +5,10 @@ import { withApiVersion } from "../api/baseUrl";
 
 export const IS_DEV = import.meta.env.DEV;
 
-// The Python API (see api/baseUrl.js for the rules). The ternary is kept literal on purpose: with DEV
-// inlined as false, the localhost branch is removed from production bundles.
+// The Python API (see api/baseUrl.js for the rules): same origin unless VITE_API_BASE_URL says otherwise.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? withApiVersion(import.meta.env.VITE_API_BASE_URL)
-  : import.meta.env.DEV ? withApiVersion("http://127.0.0.1:8000/api") : "/api/v1";
+  : "/api/v1";   // Vite proxies /api in development (vite.config.js)
 
 // The login page offers the synthetic demo accounts unless the build sets VITE_DEMO_MODE=false.
 export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE !== "false";

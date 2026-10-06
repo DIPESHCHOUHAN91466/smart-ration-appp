@@ -14,9 +14,16 @@
             "type": "string"
           },
           "refreshToken": {
-            "description": "Opaque; single use (rotated on refresh), valid 7 days",
-            "title": "Refreshtoken",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Opaque; single use (rotated on refresh), valid 7 days. null in cookie mode (header X-Auth-Mode: cookie): it is then only in the HttpOnly cookie sr_refresh",
+            "title": "Refreshtoken"
           },
           "user": {
             "$ref": "#/components/schemas/UserSummary"
@@ -1980,6 +1987,7 @@
               "schema": {
                 "properties": {
                   "refreshToken": {
+                    "description": "Body mode only; in cookie mode (X-Auth-Mode: cookie) send {} and the cookie is used",
                     "title": "Refreshtoken",
                     "type": "string"
                   }
@@ -2320,6 +2328,7 @@
               "schema": {
                 "properties": {
                   "refreshToken": {
+                    "description": "Body mode only; in cookie mode (X-Auth-Mode: cookie) send {} and the cookie is used",
                     "title": "Refreshtoken",
                     "type": "string"
                   }
