@@ -86,13 +86,13 @@ Elevation of privilege: deactivated staff keeping sessions (N3), over-privileged
 
 | ID | Severity | OWASP | Location | Finding | Status |
 |---|---|---|---|---|---|
-| N1 | High | A07, A09 | `backend/SmartRation/Dockerfile:50` | `--forwarded-allow-ips "*"`: uvicorn takes the left-most, client-controlled `X-Forwarded-For` entry, so every per-IP rate limit can be bypassed and audit IPs forged | Open (Phase 5) |
-| N2 | High | A01 | `app/services/profile_service.py:81` | Any shop owner can read any beneficiary's profile, family, entitlement and collections by sequential id (search is shop-scoped; direct ids are not) | Needs owner decision (portability rule) |
+| N1 | High | A07, A09 | `backend/SmartRation/Dockerfile:50` | `--forwarded-allow-ips "*"`: uvicorn takes the left-most, client-controlled `X-Forwarded-For` entry, so every per-IP rate limit can be bypassed and audit IPs forged | **Fixed** (446a202) |
+| N2 | High | A01 | `app/services/profile_service.py:81` | Any shop owner can read any beneficiary's profile, family, entitlement and collections by sequential id (search is shop-scoped; direct ids are not) | **Fixed** (accee55) |
 | N3 | High | A07 | `app/services/auth_service.py:144` | Token refresh never checks `IsActive`: a deactivated account keeps its session | **Fixed** (dc382d6) |
 | N4 | Medium | A07 | `app/services/auth_service.py:144` | Reuse of a rotated refresh token is refused but not treated as theft (session family not revoked) | **Fixed** (dc382d6) |
-| N5 | Medium | A04 | `app/middleware/http.py:38` | Size limit reads only `Content-Length`; a 10 MB chunked body was read in full (verified) | Open (Phase 5) |
+| N5 | Medium | A04 | `app/middleware/http.py:38` | Size limit reads only `Content-Length`; a 10 MB chunked body was read in full (verified) | **Fixed** (446a202) |
 | N6 | Medium | A07 | `app/services/login_otp_service.py` | OTP sign-in: no per-account lockout, no per-number SMS cap | **Fixed** (ce04d25) |
-| N7 | Medium | A01 | `app/api/routes/people.py:88` | Public badge: no login, no rate limit, sequential codes → enumerable scheme / district / shop | Open (Phase 5) |
+| N7 | Medium | A01 | `app/api/routes/people.py:88` | Public badge: no login, no rate limit, sequential codes → enumerable scheme / district / shop | **Mitigated** (446a202: 30/min per client); non-guessable codes would need a data change |
 | N8 | Medium | A05 | `database/schema/mysql-setup.sql:13` | Runtime database account has `ALL PRIVILEGES` (can drop tables) | Needs owner decision |
 | N9 | Medium | A07 | `app/schemas/auth.py:39` | Password minimum 8, no common-password check | **Fixed** (135714f) |
 | N10 | Medium | A06 | `frontend/package.json` | `vitest` critical advisories (dev-only); fix is a major upgrade | Open (Phase 9) |
@@ -156,3 +156,33 @@ and `smartration_20261006_131602.sql.gz`.
 - Access tokens stay valid for up to 15 minutes after deactivation or a password change (not checked per request).
 - N1 (spoofable client IP) still weakens every per-IP limit until Phase 5; the per-account limits added here do not depend on it.
 - Losing `MFA_ENCRYPTION_KEY` makes enrolled staff unable to sign in until an administrator clears `TotpEnabledAt` in the database.
+
+## Phase 3 — authorization (2026-10-06)
+
+| Commit | Change | Why it matters |
+|---|---|---|
+| accee55 | N2: shop owners see a beneficiary or family by id only if the family is registered at their shop or the person has booked there (owner's choice, keeps ration portability). Officials/admins unchanged; citizens only themselves; a shop account without a shop sees nobody | One shop account could read every citizen's record by counting ids |
+| accee55 | Deny-by-default test: every route needs sign-in unless it is on a reviewed list of 20 public routes (health, sign-in steps, public help, badge) | A new route that forgets its auth dependency fails the build |
+
+Reviewed, no change needed: mass assignment (routes read named fields only; the role is never client-set; shop ids
+in inventory and slot bodies are checked against the caller's shop); admin functions are officials/admin-only.
+Tests: `test_shop_scope.py` (12: home shop and official allowed, another shop refused on 9 routes and allowed after a
+booking there, a citizen refused another citizen's record on 9 routes), `test_route_access.py`.
+
+## Phases 4–5 — input, API and transport (2026-10-06)
+
+| Commit | Change | Why it matters |
+|---|---|---|
+| 446a202 | N1: the client address is counted `TRUSTED_PROXY_HOPS` from the right of `X-Forwarded-For` (0 socket address, 1 nginx, 2 Render); `X-Forwarded-Proto` only behind trusted proxies; uvicorn runs with `--no-proxy-headers` | Per-IP limits and audit IPs can no longer be faked by rotating the header |
+| 446a202 | N5: every request body is limited while it is read (chunked too) | A few large chunked uploads could exhaust memory; live check: 10 MB chunked now 413 |
+| 446a202 | N7: public badge limited to 30 per minute per client | Slows enumeration of the sequential beneficiary codes |
+
+Already in place and re-checked: parameterised queries only (no string-built SQL with input), no eval/shell/unsafe
+deserialisation, uploads by magic bytes with a 5 MB cap (S4), no user-supplied URLs fetched (no SSRF surface), built-file
+path traversal refused (test_web.py), security headers + CSP + HSTS, CORS allow-list without credentials, CSRF guard on
+cookie sessions (custom header), generic 500s, page sizes capped (100–500), no webhooks.
+Tests: `test_edge.py` (13). Backend 648 passed incl. MySQL; regression 34; browser 9.
+
+**To verify after the first Render deploy:** `TRUSTED_PROXY_HOPS=2` follows Render's community-reported behaviour (its
+proxy appends to `X-Forwarded-For` and never replaces it), not an official specification. Check that the audit log shows
+visitors' addresses rather than one Render address; if every request shows the same address, set 1.
