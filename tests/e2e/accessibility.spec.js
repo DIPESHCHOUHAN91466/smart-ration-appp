@@ -12,7 +12,7 @@ const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 // Each test scans several pages with a full axe analysis: give it room (the default is 30 s for one action-sized test).
 test.describe.configure({ timeout: 120_000 });
 
-const PUBLIC = ["/", "/help", "/login", "/register", "/privacy", "/terms", "/accessibility"];
+const PUBLIC = ["/", "/help", "/login", "/register", "/forgot-password", "/privacy", "/terms", "/accessibility"];
 const SIGNED_IN = [
   { email: process.env.E2E_CITIZEN_EMAIL || "rural@example.com",
     pages: ["/rural/dashboard", "/rural/book", "/rural/history", "/rural/verification", "/rural/complaints", "/rural/notifications", "/settings"] },

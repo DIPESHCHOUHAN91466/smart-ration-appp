@@ -185,6 +185,10 @@ export default function Login() {
             </div>
           </label>
 
+          <p className="muted" style={{ margin: "-4px 0 4px", textAlign: "right" }}>
+            <Link to="/forgot-password" style={{ textDecoration: "underline" }}>{t("forgot_password")}</Link>
+          </p>
+
           {error && <p className="muted" role="alert" style={{ color: "var(--red)" }}>{error}</p>}
 
           <button className="primary-btn" type="submit" disabled={submitting}>

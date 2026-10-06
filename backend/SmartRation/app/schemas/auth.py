@@ -26,6 +26,14 @@ OTP_REQUEST_RULES = {"MobileNumber": [required, string_length(20)]}
 
 OTP_VERIFY_RULES = {"MobileNumber": [required, string_length(20)], "Otp": [required, string_length(6, 6)]}
 
+PASSWORD_CHANGE_RULES = {"CurrentPassword": [required, string_length(MAX_LENGTH)],
+                         "NewPassword": [required, string_length(MAX_LENGTH, MIN_LENGTH)]}
+
+PASSWORD_RESET_REQUEST_RULES = OTP_REQUEST_RULES
+
+PASSWORD_RESET_CONFIRM_RULES = {"MobileNumber": [required, string_length(20)], "Otp": [required, string_length(6, 6)],
+                                "NewPassword": [required, string_length(MAX_LENGTH, MIN_LENGTH)]}
+
 
 class LoginRequest(BaseModel):
     email: str = Field(examples=["rural@example.com"])
@@ -53,6 +61,22 @@ class OtpLoginRequest(BaseModel):
 class OtpLoginVerify(BaseModel):
     mobileNumber: str = Field(examples=["9000000001"])
     otp: str = Field(min_length=6, max_length=6, examples=["123456"])
+
+
+class PasswordChangeRequest(BaseModel):
+    currentPassword: str
+    newPassword: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH,
+                             description="At least 12 characters; not common; not built from the email, mobile or name")
+
+
+class PasswordResetRequest(BaseModel):
+    mobileNumber: str = Field(examples=["9000000001"], description="The account's registered mobile number")
+
+
+class PasswordResetConfirm(BaseModel):
+    mobileNumber: str = Field(examples=["9000000001"])
+    otp: str = Field(min_length=6, max_length=6)
+    newPassword: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH)
 
 
 class OtpSent(BaseModel):

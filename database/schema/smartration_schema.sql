@@ -481,3 +481,23 @@ UPDATE alembic_version SET version_num='0004_grievances' WHERE alembic_version.v
 CREATE INDEX `IX_AuditLogs_UserId_CreatedAt` ON `AuditLogs` (`UserId`, `CreatedAt`);
 
 UPDATE alembic_version SET version_num='0005_audit_user_time_index' WHERE alembic_version.version_num = '0004_grievances';
+
+-- Running upgrade 0005_audit_user_time_index -> 0006_password_reset_codes
+
+CREATE TABLE `PasswordResetCodes` (
+    `Id` INTEGER NOT NULL AUTO_INCREMENT,
+    `UserId` INTEGER NOT NULL,
+    `CodeHash` VARCHAR(64) NOT NULL,
+    `AttemptCount` INTEGER NOT NULL,
+    `MaxAttempts` INTEGER NOT NULL,
+    `Status` INTEGER NOT NULL,
+    `CreatedAt` DATETIME(6) NOT NULL,
+    `ExpiresAt` DATETIME(6) NOT NULL,
+    `UsedAt` DATETIME(6),
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_PasswordResetCodes_Users_UserId` FOREIGN KEY(`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
+);
+
+CREATE INDEX `IX_PasswordResetCodes_UserId_CreatedAt` ON `PasswordResetCodes` (`UserId`, `CreatedAt`);
+
+UPDATE alembic_version SET version_num='0006_password_reset_codes' WHERE alembic_version.version_num = '0005_audit_user_time_index';

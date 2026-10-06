@@ -494,3 +494,21 @@ class AIInsight(Base):
     Explanation: Mapped[str] = mapped_column(LongText, nullable=False)
     Recommendation: Mapped[str] = mapped_column(LongText, nullable=False)
     CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+
+
+class PasswordResetCode(Base):
+    """A one-time code sent to the registered mobile to set a new password (any role). Only its SHA-256 is stored."""
+    __tablename__ = "PasswordResetCodes"
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    UserId: Mapped[int] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
+    CodeHash: Mapped[str] = mapped_column(String(64), nullable=False)
+    AttemptCount: Mapped[int] = mapped_column(Integer, nullable=False)
+    MaxAttempts: Mapped[int] = mapped_column(Integer, nullable=False)
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)      # OtpStatus
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    ExpiresAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    UsedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+
+    __table_args__ = (
+        Index("IX_PasswordResetCodes_UserId_CreatedAt", "UserId", "CreatedAt"),
+    )

@@ -9,6 +9,7 @@ import { useLanguageStore } from "../../i18n/useTranslation";
 import { usePreferencesStore } from "../../state/preferencesStore";
 import { useToast } from "../../state/toast";
 import ProfileSection from "./ProfileSection";
+import PasswordSection from "./PasswordSection";
 
 const ROLE_LABEL_KEY = {
   RuralUser: "role_rural_user",
@@ -110,6 +111,7 @@ export default function Settings() {
 
       <div className="settings-grid">
         <ProfileSection />
+        <PasswordSection />
 
         {/* Language */}
         <section className="panel">

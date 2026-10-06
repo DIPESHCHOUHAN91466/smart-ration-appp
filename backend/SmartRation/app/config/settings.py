@@ -116,6 +116,7 @@ class Settings(BaseSettings):
     otp_resend_cooldown_seconds: int = 30
     otp_rate_limit_per_minute: int = 6
     otp_daily_send_limit: int = Field(default=10, ge=1)   # sign-in codes per citizen per 24 h (SMS cost, guessing)
+    password_reset_daily_limit: int = Field(default=5, ge=1)   # password-reset codes per account per 24 h
 
     # ---- SMS delivery of OTP codes ----
     # "mock" sends nothing (development); "http" posts to a DLT-registered gateway (SMS_BASE_URL + SMS_API_KEY).

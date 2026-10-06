@@ -36,6 +36,13 @@ export const useAuthStore = create(
         return response.data.data;
       },
 
+      // Every other device is signed out by the backend; this one continues with the tokens it returns.
+      changePassword: async (currentPassword, newPassword) => {
+        const response = await apiClient.post("/auth/password/change", { currentPassword, newPassword });
+        get().setSession(response.data.data);
+        return response.data.data;
+      },
+
       refreshAccessToken: async () => {
         const currentRefreshToken = get().refreshToken;
         if (!currentRefreshToken) {

@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 const NotificationsPage = lazy(() => import("./pages/shared/NotificationsPage"));
 const BeneficiaryProfile = lazy(() => import("./pages/shared/BeneficiaryProfile"));
 const Settings = lazy(() => import("./pages/shared/Settings"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 
 const RuralDashboard = lazy(() => import("./pages/rural/RuralDashboard"));
@@ -82,6 +83,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/profile/:publicReference" element={<PublicProfile />} />
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Suspense fallback={publicFallback}><Home /></Suspense>} />

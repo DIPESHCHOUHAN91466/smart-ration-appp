@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session
 
+from app.api.dependencies.auth import CurrentUser, get_current_user
 from app.core.errors import ok
 from app.core.validation import ValidationFailed, validate
 from app.database.connection import get_db
@@ -15,6 +16,9 @@ from app.schemas.auth import (
     LOGIN_RULES,
     OTP_REQUEST_RULES,
     OTP_VERIFY_RULES,
+    PASSWORD_CHANGE_RULES,
+    PASSWORD_RESET_CONFIRM_RULES,
+    PASSWORD_RESET_REQUEST_RULES,
     REFRESH_RULES,
     REGISTER_RULES,
     AuthEnvelope,
@@ -23,11 +27,14 @@ from app.schemas.auth import (
     OtpLoginRequest,
     OtpLoginVerify,
     OtpSentEnvelope,
+    PasswordChangeRequest,
+    PasswordResetConfirm,
+    PasswordResetRequest,
     RefreshRequest,
     RegisterRequest,
 )
 from app.security.rate_limit import rate_limit
-from app.services import auth_service, login_otp_service
+from app.services import auth_service, login_otp_service, password_service
 from app.services.auth_service import RequestContext
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -114,3 +121,32 @@ async def logout(request: Request, db: Session = Depends(get_db)):
     await run_in_threadpool(auth_service.logout, db, _ctx(request), v["RefreshToken"])
     return ok(None, "Logged out")
 
+
+@router.post("/password/change", summary="Change your password (signs out every other device)", response_model=AuthEnvelope,
+             dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
+             openapi_extra={"requestBody": {"content": {"application/json": {"schema": PasswordChangeRequest.model_json_schema()}}, "required": True}})
+async def change_password(request: Request, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+    v = validate(await _json(request), PASSWORD_CHANGE_RULES)
+    data = await run_in_threadpool(password_service.change, db, request.app.state.settings, _ctx(request), user.user_id,
+                                   v["CurrentPassword"], v["NewPassword"])
+    return ok(data, "Password changed")
+
+
+@router.post("/password/reset/request", summary="Send a password-reset code to the account's registered mobile",
+             response_model=OtpSentEnvelope, dependencies=[otp_limit],
+             responses={400: ERRORS[400], 429: ERRORS[429], 503: {"description": "The SMS could not be sent"}},
+             openapi_extra={"requestBody": {"content": {"application/json": {"schema": PasswordResetRequest.model_json_schema()}}, "required": True}})
+async def password_reset_request(request: Request, db: Session = Depends(get_db)):
+    v = validate(await _json(request), PASSWORD_RESET_REQUEST_RULES)
+    data = await run_in_threadpool(password_service.request_reset, db, request.app.state.settings, _ctx(request), v["MobileNumber"])
+    # The same answer whether or not the number is registered (no account probing).
+    return ok(data, "If this number is registered, a code has been sent.")
+
+
+@router.post("/password/reset/confirm", summary="Set a new password with the code (signs out every device)",
+             response_model=EmptyEnvelope, dependencies=[auth_limit, otp_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
+             openapi_extra={"requestBody": {"content": {"application/json": {"schema": PasswordResetConfirm.model_json_schema()}}, "required": True}})
+async def password_reset_confirm(request: Request, db: Session = Depends(get_db)):
+    v = validate(await _json(request), PASSWORD_RESET_CONFIRM_RULES)
+    await run_in_threadpool(password_service.confirm_reset, db, _ctx(request), v["MobileNumber"], v["Otp"], v["NewPassword"])
+    return ok(None, "Password changed. Please sign in with the new password.")

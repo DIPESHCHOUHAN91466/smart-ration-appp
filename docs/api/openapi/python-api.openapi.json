@@ -2132,6 +2132,185 @@
         ]
       }
     },
+    "/api/auth/password/change": {
+      "post": {
+        "operationId": "change_password_api_auth_password_change_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "currentPassword": {
+                    "title": "Currentpassword",
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "description": "At least 12 characters; not common; not built from the email, mobile or name",
+                    "maxLength": 100,
+                    "minLength": 12,
+                    "title": "Newpassword",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ],
+                "title": "PasswordChangeRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "401": {
+            "description": "Invalid credentials / refresh token"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          }
+        },
+        "summary": "Change your password (signs out every other device)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/password/reset/confirm": {
+      "post": {
+        "operationId": "password_reset_confirm_api_auth_password_reset_confirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "mobileNumber": {
+                    "examples": [
+                      "9000000001"
+                    ],
+                    "title": "Mobilenumber",
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "maxLength": 100,
+                    "minLength": 12,
+                    "title": "Newpassword",
+                    "type": "string"
+                  },
+                  "otp": {
+                    "maxLength": 6,
+                    "minLength": 6,
+                    "title": "Otp",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mobileNumber",
+                  "otp",
+                  "newPassword"
+                ],
+                "title": "PasswordResetConfirm",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "401": {
+            "description": "Invalid credentials / refresh token"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          }
+        },
+        "summary": "Set a new password with the code (signs out every device)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/password/reset/request": {
+      "post": {
+        "operationId": "password_reset_request_api_auth_password_reset_request_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "mobileNumber": {
+                    "description": "The account's registered mobile number",
+                    "examples": [
+                      "9000000001"
+                    ],
+                    "title": "Mobilenumber",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mobileNumber"
+                ],
+                "title": "PasswordResetRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpSentEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          },
+          "503": {
+            "description": "The SMS could not be sent"
+          }
+        },
+        "summary": "Send a password-reset code to the account's registered mobile",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/api/auth/refresh": {
       "post": {
         "operationId": "refresh_api_auth_refresh_post",
