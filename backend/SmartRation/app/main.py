@@ -112,8 +112,10 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
         version="0.1.0",
         description=API_DESCRIPTION,
         lifespan=lifespan,
-        docs_url="/docs",
-        redoc_url="/redoc",
+        # Off outside development unless API_DOCS_ENABLED=true (no live API explorer on a public server).
+        docs_url="/docs" if settings.docs_enabled else None,
+        redoc_url="/redoc" if settings.docs_enabled else None,
+        openapi_url="/openapi.json" if settings.docs_enabled else None,
     )
     app.state.settings = settings
     app.state.legacy_client = legacy_client

@@ -41,6 +41,17 @@ Thumbs.db
 # Local-only SQL containing real credentials
 *.local.sql
 
+# Keys, certificates and credential files (anywhere in the tree)
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+key.properties
+*service-account*.json
+*credentials*.json
+
 # Python
 __pycache__/
 .pytest_cache/

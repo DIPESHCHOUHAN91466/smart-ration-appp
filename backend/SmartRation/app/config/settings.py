@@ -15,6 +15,7 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 ROOT = Path(__file__).resolve().parents[2]  # backend/SmartRation — .env is found from any working directory
 
+ENVIRONMENTS = ("development", "staging", "production")
 QR_SECRET_PLACEHOLDER = "replace_with_a_secure_random_secret"   # the .env.example value; refused at start-up
 WEAK_QR_SECRETS = {"secret", "qrcode", "qr_secret", "changeme", "change_me", "password", "123456", "smartration"}
 # SHA-256 fingerprints of signing secrets that were once committed to this public repository (commit 972d853,
@@ -28,7 +29,7 @@ LEAKED_SECRET_SHA256 = {
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT / ".env", env_file_encoding="utf-8", extra="ignore")
 
-    environment: str = Field(default="development", description="development | production")
+    environment: str = Field(default="development", description="development | staging | production")
 
     # synthetic (demo data, the default) | real (refused until real integrations exist).
     # See app/services/data_provider.py and database/seeds/REAL_DATA.md.
@@ -38,7 +39,8 @@ class Settings(BaseSettings):
     database_url: str = Field(description="mysql+pymysql://USER:PASSWORD@localhost:3306/smartration?charset=utf8mb4")
 
     # Side-by-side migration: routes not yet migrated are forwarded here.
-    legacy_api_url: str = Field(default="http://localhost:5188", description="C# API base URL; empty disables the fallback proxy")
+    # Empty by default: the C# API is retired, and a stray default would forward unknown /api/* requests to a local port.
+    legacy_api_url: str = Field(default="", description="C# API base URL; empty disables the fallback proxy")
     legacy_api_timeout_seconds: float = 30.0
     # Connections to the C# API: several small pools used in turn. httpcore's pool scans every waiting
     # request against every connection, so one large pool gets slower as it grows (docs/testing/LOAD_TESTING.md).
@@ -58,6 +60,10 @@ class Settings(BaseSettings):
     max_request_bytes: int = 6 * 1024 * 1024
 
     log_level: str = "INFO"
+
+    # Swagger UI, ReDoc and /openapi.json. Unset: on in development, off elsewhere (the published
+    # docs/api/openapi file documents the API without exposing a live explorer on the public server).
+    api_docs_enabled: bool | None = None
 
     # ---- Authentication (must match the C# API so tokens work on both) ----
     # Same value as the C# user-secret Jwt:Key. Required; no default.
@@ -142,6 +148,15 @@ class Settings(BaseSettings):
         value = value.strip()
         return f"https://{value}" if value and "://" not in value else value
 
+    @field_validator("environment")
+    @classmethod
+    def known_environment(cls, value: str) -> str:
+        # A typo ("prod", "live") must not silently run with neither the development nor the production behaviour.
+        value = value.strip().lower()
+        if value not in ENVIRONMENTS:
+            raise ValueError(f"ENVIRONMENT must be one of: {', '.join(ENVIRONMENTS)}")
+        return value
+
     @field_validator("jwt_secret_key")
     @classmethod
     def strong_key(cls, value: str) -> str:
@@ -156,6 +171,10 @@ class Settings(BaseSettings):
     @property
     def is_development(self) -> bool:
         return self.environment.lower() == "development"
+
+    @property
+    def docs_enabled(self) -> bool:
+        return self.is_development if self.api_docs_enabled is None else self.api_docs_enabled
 
     @property
     def uses_synthetic_demo_sms(self) -> bool:
@@ -174,6 +193,10 @@ class Settings(BaseSettings):
         for name, value in (("QR_SECRET", self.qr_secret), ("JWT_SECRET_KEY", self.jwt_secret_key)):
             if hashlib.sha256(value.strip().encode()).hexdigest() in LEAKED_SECRET_SHA256:
                 problems.append(f"{name} is a value that was published in this repository's history; generate a new one.")
+        if self.qr_secret.strip() and self.qr_secret.strip() == self.jwt_secret_key.strip():
+            problems.append("QR_SECRET must differ from JWT_SECRET_KEY (a leak of one must not expose the other).")
+        if "*" in self.cors_origins:
+            problems.append("CORS_ORIGINS must list the website's origins explicitly, not '*', outside development.")
         if self.sms_provider.lower() != "http" and not self.uses_synthetic_demo_sms:
             problems.append("SMS_PROVIDER must be 'http' (a real gateway) outside development. A synthetic-data demo may set "
                             "SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true instead; that is never allowed with DATA_MODE=real.")
