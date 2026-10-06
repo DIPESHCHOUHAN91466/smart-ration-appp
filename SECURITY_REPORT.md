@@ -97,7 +97,7 @@ Elevation of privilege: deactivated staff keeping sessions (N3), over-privileged
 | N9 | Medium | A07 | `app/schemas/auth.py:39` | Password minimum 8, no common-password check | **Fixed** (135714f) |
 | N10 | Medium | A06 | `frontend/package.json` | `vitest` critical advisories (dev-only); fix is a major upgrade | **Fixed** (4b68a06) |
 | N11 | Low | A07 | `app/services/auth_service.py:122` | Login answers faster for unknown emails (account enumeration) | **Fixed** (ce04d25) |
-| N12 | Low | A07 | — | No password change, no password reset, no MFA for officials | **Fixed** (8f5e8fa, bb00fcf); Android app code step open |
+| N12 | Low | A07 | — | No password change, no password reset, no MFA for officials | **Fixed** (8f5e8fa, bb00fcf; Android app 15b9108) |
 | N13 | Low | A08 | `.github/workflows/ci.yml`, Dockerfile | Actions and base images pinned by tag; no Dependabot | **Fixed** (1e8b893) |
 | N14 | Low | A05 | `app/main.py` | Swagger UI / OpenAPI served in production | **Fixed** (Phase 1) |
 | N15 | Low | A05 | `app/config/settings.py` | Unknown `ENVIRONMENT` values accepted silently; legacy C# proxy on by default (`localhost:5188`) | **Fixed** (Phase 1) |
@@ -298,3 +298,11 @@ value any more (fingerprint scan). The values stay public in git history; server
 | 8043d96 | N17: "Download my data" (`GET /api/users/me/export`, Settings card in en/hi/mr): the person's own records as JSON, column allow-lists with a test that forces a decision for every new column, no credentials or other people's identities, `no-store`, 5/min, audited. Erasure waits for the retention decision |
 
 Results: backend 681 passed, 5 skipped (the least-privilege tests); regression 34; browser `export.spec.js` passed.
+
+## Android app (2026-10-06)
+
+15b9108 closes the app gaps from Phase 2: the two-factor code step at sign-in (the pending token is never stored),
+"Forgot password?" (code to the registered mobile) and "Change password" (new session saved; other devices signed
+out), with the 12-character check on the phone and the backend's specific refusal reason shown. en/hi/mr; both
+screens pass the small-phone / large-text check. App tests 267 passed, `flutter analyze` clean; not yet run on a
+device or emulator.

@@ -44,7 +44,6 @@ service abuse):
 
 - The JWT and QR signing secrets in git history (commit 972d853) are public forever: servers refuse them outside
   development, every deployment generates its own, and the local values were rotated on 2026-10-06.
-- The Android app has no two-factor code step and no password change/reset screens yet.
 - Citizens can download their data (Settings → Download my data) but not yet ask for deletion: retention rules for
   public-distribution records must be decided by the operator first.
 - Least-privilege database accounts are supported (`database/schema/mysql-least-privilege.sql`) but must be applied by
