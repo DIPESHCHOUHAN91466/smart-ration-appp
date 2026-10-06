@@ -205,8 +205,8 @@ status only); TLS to MySQL reported by `/health/db`; backups script with SHA-256
 
 | ID | Severity | Finding | Status |
 |---|---|---|---|
-| N8 | Medium | Runtime database account has `ALL PRIVILEGES` (can drop tables) | **Needs owner decision** (separate migration and runtime accounts) |
-| N17 | Medium | No self-service export or deletion of a citizen's data (DPDP Act 2023 rights) | **Needs owner decision**: retention duties for public-distribution records must be settled first |
+| N8 | Medium | Runtime database account has `ALL PRIVILEGES` (can drop tables) | **Fixed in code** (601126c); applying it to a database needs its root account (owner) |
+| N17 | Medium | No self-service export or deletion of a citizen's data (DPDP Act 2023 rights) | **Export fixed** (8043d96); deletion waits for the owner's retention decision |
 
 ## Phase 8 — AI / LLM (2026-10-06)
 
@@ -265,8 +265,8 @@ accessibility pages need `E2E_DEMO_PASSWORD`); `mfa.spec.js` passed with a throw
 ## Actions only the owner can take
 
 1. ~~**S1:** rotate the local secrets~~ — **done 2026-10-06** (see "S1 rotation" below).
-2. **N8:** decide on separate database accounts (migrations vs. the running app), then apply them in each environment.
-3. **N17:** decide data retention and the citizen export/deletion process (DPDP).
+2. **N8:** run `database/schema/mysql-least-privilege.sql` as root (after a backup) and add `MIGRATION_DATABASE_URL` — locally and on each hosted database.
+3. **N17:** decide how long ration records are kept; then the deletion/erasure request can be built (export exists).
 4. Fill in `[SECURITY CONTACT EMAIL]` in SECURITY.md (and the placeholders in the app's privacy policy).
 5. After the first Render deploy: confirm the audit log shows visitors' addresses (`TRUSTED_PROXY_HOPS=2`); push the
    branch so CI runs the new `code-scan` job; enable Dependabot alerts and secret scanning in the GitHub repository settings.
@@ -289,3 +289,12 @@ reopening the booking shows a valid one.
 Verified on the running API: an admin token forged with the leaked JWT key → 401; a QR signed with the leaked QR
 secret → `INVALID_SIGNATURE`; sign-in and a freshly issued QR (signature accepted) work. No local file holds a leaked
 value any more (fingerprint scan). The values stay public in git history; servers keep refusing them.
+
+## N8 and N17 (2026-10-06)
+
+| Commit | Change |
+|---|---|
+| 601126c | N8: optional `MIGRATION_DATABASE_URL` for migrations and setup scripts only; `mysql-setup.sql` gives the API account SELECT/INSERT/UPDATE/DELETE only; `mysql-least-privilege.sql` converts an existing installation (with check and undo steps). MySQL test `test_09_least_privilege` proves the API works as a rows-only account and that DROP/CREATE/ALTER/TRUNCATE are denied — it runs in CI (root available) and is skipped locally. Not applied to the local database: needs the MySQL root password |
+| 8043d96 | N17: "Download my data" (`GET /api/users/me/export`, Settings card in en/hi/mr): the person's own records as JSON, column allow-lists with a test that forces a decision for every new column, no credentials or other people's identities, `no-store`, 5/min, audited. Erasure waits for the retention decision |
+
+Results: backend 681 passed, 5 skipped (the least-privilege tests); regression 34; browser `export.spec.js` passed.
