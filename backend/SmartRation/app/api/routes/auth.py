@@ -24,6 +24,10 @@ from app.core.validation import ValidationFailed, validate
 from app.database.connection import get_db
 from app.schemas.auth import (
     LOGIN_RULES,
+    MFA_CODE_RULES,
+    MFA_DISABLE_RULES,
+    MFA_SETUP_RULES,
+    MFA_VERIFY_RULES,
     OTP_REQUEST_RULES,
     OTP_VERIFY_RULES,
     PASSWORD_CHANGE_RULES,
@@ -33,7 +37,14 @@ from app.schemas.auth import (
     REGISTER_RULES,
     AuthEnvelope,
     EmptyEnvelope,
+    LoginEnvelope,
     LoginRequest,
+    MfaCodeRequest,
+    MfaDisableRequest,
+    MfaSetupEnvelope,
+    MfaSetupRequest,
+    MfaStatusEnvelope,
+    MfaVerifyRequest,
     OtpLoginRequest,
     OtpLoginVerify,
     OtpSentEnvelope,
@@ -44,7 +55,7 @@ from app.schemas.auth import (
     RegisterRequest,
 )
 from app.security.rate_limit import rate_limit
-from app.services import auth_service, login_otp_service, password_service
+from app.services import auth_service, login_otp_service, mfa_service, password_service
 from app.services.auth_service import RequestContext
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -115,7 +126,8 @@ async def register(request: Request, response: Response, db: Session = Depends(g
     return ok(_session(request, response, data), "Registration successful")
 
 
-@router.post("/login", summary="Log in with email and password", response_model=AuthEnvelope,
+@router.post("/login", summary="Log in with email and password (staff with two-factor sign-in get a challenge)",
+             response_model=LoginEnvelope,
              dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
              openapi_extra={"requestBody": {"content": {"application/json": {"schema": LoginRequest.model_json_schema()}}, "required": True}})
 async def login(request: Request, response: Response, db: Session = Depends(get_db)):
@@ -203,3 +215,53 @@ async def password_reset_confirm(request: Request, db: Session = Depends(get_db)
     v = validate(await _json(request), PASSWORD_RESET_CONFIRM_RULES)
     await run_in_threadpool(password_service.confirm_reset, db, _ctx(request), v["MobileNumber"], v["Otp"], v["NewPassword"])
     return ok(None, "Password changed. Please sign in with the new password.")
+
+
+# ---------------------------------------------------------------- two-factor sign-in (staff)
+
+def _mfa_body(rules):
+    async def read(request: Request) -> dict[str, str]:
+        return validate(await _json(request), rules)
+    return read
+
+
+@router.get("/mfa/status", summary="Is two-factor sign-in on for me / available to me", response_model=MfaStatusEnvelope)
+async def mfa_status(request: Request, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+    return ok(await run_in_threadpool(mfa_service.status, db, request.app.state.settings, user.user_id))
+
+
+@router.post("/mfa/setup", summary="Start two-factor set-up (password again): a secret for the authenticator app",
+             response_model=MfaSetupEnvelope, dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
+             openapi_extra={"requestBody": {"content": {"application/json": {"schema": MfaSetupRequest.model_json_schema()}}, "required": True}})
+async def mfa_setup(request: Request, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+    v = await _mfa_body(MFA_SETUP_RULES)(request)
+    data = await run_in_threadpool(mfa_service.setup, db, request.app.state.settings, _ctx(request), user.user_id, v["Password"])
+    return ok(data, "Scan the QR code with your authenticator app, then enter a code to finish.")
+
+
+@router.post("/mfa/enable", summary="Finish set-up with a code: two-factor sign-in is on", response_model=MfaStatusEnvelope,
+             dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
+             openapi_extra={"requestBody": {"content": {"application/json": {"schema": MfaCodeRequest.model_json_schema()}}, "required": True}})
+async def mfa_enable(request: Request, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+    v = await _mfa_body(MFA_CODE_RULES)(request)
+    data = await run_in_threadpool(mfa_service.enable, db, request.app.state.settings, _ctx(request), user.user_id, v["Code"])
+    return ok(data, "Two-factor sign-in is on.")
+
+
+@router.post("/mfa/disable", summary="Turn two-factor sign-in off (password and a code)", response_model=MfaStatusEnvelope,
+             dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
+             openapi_extra={"requestBody": {"content": {"application/json": {"schema": MfaDisableRequest.model_json_schema()}}, "required": True}})
+async def mfa_disable(request: Request, user: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
+    v = await _mfa_body(MFA_DISABLE_RULES)(request)
+    data = await run_in_threadpool(mfa_service.disable, db, request.app.state.settings, _ctx(request), user.user_id,
+                                   v["Password"], v["Code"])
+    return ok(data, "Two-factor sign-in is off.")
+
+
+@router.post("/mfa/verify", summary="Second sign-in step: the code from the authenticator app", response_model=AuthEnvelope,
+             dependencies=[auth_limit], responses={k: ERRORS[k] for k in (400, 401, 429)},
+             openapi_extra={"requestBody": {"content": {"application/json": {"schema": MfaVerifyRequest.model_json_schema()}}, "required": True}})
+async def mfa_verify(request: Request, response: Response, db: Session = Depends(get_db)):
+    v = await _mfa_body(MFA_VERIFY_RULES)(request)
+    data = await run_in_threadpool(mfa_service.verify, db, request.app.state.settings, _ctx(request), v["MfaToken"], v["Code"])
+    return ok(_session(request, response, data), "Login successful")

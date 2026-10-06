@@ -110,11 +110,12 @@ git. Templates listing every setting are in the repository; an automated test ke
    sudo nano /etc/smartration/app.env          # paste the staging (or production) template
    sudo chmod 600 /etc/smartration/app.env
    ```
-2. Generate the two signing keys **on the VM**. Each command prints a new random value. Paste it into the
+2. Generate the three keys **on the VM**. Each command prints a new random value. Paste it into the
    file and do not save it anywhere else:
    ```bash
    python3 -c "import secrets; print(secrets.token_urlsafe(64))"   # -> JWT_SECRET_KEY
    python3 -c "import secrets; print(secrets.token_urlsafe(64))"   # -> QR_SECRET (a DIFFERENT value)
+   python3 -c "import secrets; print(secrets.token_urlsafe(64))"   # -> MFA_ENCRYPTION_KEY (a third, different value)
    ```
 3. Fill in the file:
 
@@ -126,6 +127,7 @@ git. Templates listing every setting are in the repository; an automated test ke
 | `MYSQL_SSL_CA` | the whole text of the provider's CA `.pem` file, on one line or several | no (public), but keep it with the URL |
 | `JWT_SECRET_KEY` | the first random value from step 2 | **yes** |
 | `QR_SECRET` | the second random value. **Never change it after the first booking:** a new value invalidates every QR code already issued | **yes** |
+| `MFA_ENCRYPTION_KEY` | the third random value: encrypts staff two-factor secrets. **Never change it once staff use two-factor sign-in** (their codes would stop working) | **yes** |
 | `CORS_ORIGINS` | leave empty (the website and API share one address) | no |
 | `RUN_DB_SETUP` | `true` for the first start (creates the tables). **[production]** `false`, and run migrations by hand after a backup (Step 9) | no |
 | `RUN_DB_SEED` | `true` for the synthetic demo (fills empty tables only). **[production]** always `false` | no |

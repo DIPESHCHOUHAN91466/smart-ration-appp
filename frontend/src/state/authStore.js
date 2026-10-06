@@ -21,8 +21,16 @@ export const useAuthStore = create(
         set({ user: null, accessToken: null, isAuthenticated: false });
       },
 
+      // Staff with two-factor sign-in get { mfaRequired, mfaToken } instead of a session: then call verifyMfa.
       login: async (email, password) => {
         const response = await apiClient.post("/auth/login", { email, password });
+        const data = response.data.data;
+        if (!data.mfaRequired) get().setSession(data);
+        return data;
+      },
+
+      verifyMfa: async (mfaToken, code) => {
+        const response = await apiClient.post("/auth/mfa/verify", { mfaToken, code });
         get().setSession(response.data.data);
         return response.data.data;
       },

@@ -501,3 +501,13 @@ CREATE TABLE `PasswordResetCodes` (
 CREATE INDEX `IX_PasswordResetCodes_UserId_CreatedAt` ON `PasswordResetCodes` (`UserId`, `CreatedAt`);
 
 UPDATE alembic_version SET version_num='0006_password_reset_codes' WHERE alembic_version.version_num = '0005_audit_user_time_index';
+
+-- Running upgrade 0006_password_reset_codes -> 0007_user_totp
+
+ALTER TABLE `Users` ADD COLUMN `TotpSecret` VARCHAR(255);
+
+ALTER TABLE `Users` ADD COLUMN `TotpEnabledAt` DATETIME(6);
+
+ALTER TABLE `Users` ADD COLUMN `TotpLastStep` BIGINT;
+
+UPDATE alembic_version SET version_num='0007_user_totp' WHERE alembic_version.version_num = '0006_password_reset_codes';

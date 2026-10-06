@@ -31,6 +31,11 @@ PASSWORD_CHANGE_RULES = {"CurrentPassword": [required, string_length(MAX_LENGTH)
 
 PASSWORD_RESET_REQUEST_RULES = OTP_REQUEST_RULES
 
+MFA_SETUP_RULES = {"Password": [required, string_length(MAX_LENGTH)]}
+MFA_CODE_RULES = {"Code": [required, string_length(6, 6)]}
+MFA_DISABLE_RULES = {"Password": [required, string_length(MAX_LENGTH)], "Code": [required, string_length(6, 6)]}
+MFA_VERIFY_RULES = {"MfaToken": [required, string_length(2000)], "Code": [required, string_length(6, 6)]}
+
 PASSWORD_RESET_CONFIRM_RULES = {"MobileNumber": [required, string_length(20)], "Otp": [required, string_length(6, 6)],
                                 "NewPassword": [required, string_length(MAX_LENGTH, MIN_LENGTH)]}
 
@@ -114,6 +119,63 @@ class AuthEnvelope(BaseModel):
     success: bool
     message: str
     data: AuthData | None
+    errors: list[str] | None
+
+
+class MfaChallenge(BaseModel):
+    """The password was right; the account uses two-factor sign-in: POST /api/auth/mfa/verify with the code."""
+    mfaRequired: bool = True
+    mfaToken: str = Field(description="Pending sign-in (5 minutes); not an access token")
+    mfaExpiresInSeconds: int
+
+
+class LoginEnvelope(BaseModel):
+    success: bool
+    message: str
+    data: AuthData | MfaChallenge | None
+    errors: list[str] | None
+
+
+class MfaSetupRequest(BaseModel):
+    password: str
+
+
+class MfaCodeRequest(BaseModel):
+    code: str = Field(min_length=6, max_length=6)
+
+
+class MfaDisableRequest(BaseModel):
+    password: str
+    code: str = Field(min_length=6, max_length=6)
+
+
+class MfaVerifyRequest(BaseModel):
+    mfaToken: str
+    code: str = Field(min_length=6, max_length=6)
+
+
+class MfaSetup(BaseModel):
+    secret: str = Field(description="Base32, for typing into the authenticator app")
+    otpauthUri: str = Field(description="otpauth:// URI, shown as a QR code")
+    issuer: str
+
+
+class MfaStatus(BaseModel):
+    enabled: bool
+    available: bool = Field(description="This account can use it and the server is configured")
+
+
+class MfaSetupEnvelope(BaseModel):
+    success: bool
+    message: str
+    data: MfaSetup | None
+    errors: list[str] | None
+
+
+class MfaStatusEnvelope(BaseModel):
+    success: bool
+    message: str
+    data: MfaStatus | None
     errors: list[str] | None
 
 

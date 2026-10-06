@@ -27,7 +27,7 @@ apiClient.interceptors.response.use(
     const status = error.response?.status;
     // Sign-in, refresh and sign-out answer 401 for their own reasons; any other route (password change too)
     // may just need a fresh access token.
-    const isAuthRoute = /\/auth\/(login|register|refresh|logout|otp|password\/reset)/.test(originalRequest?.url || "");
+    const isAuthRoute = /\/auth\/(login|register|refresh|logout|otp|password\/reset|mfa\/verify)/.test(originalRequest?.url || "");
 
     if (status === 401 && originalRequest && !originalRequest._retry && !isAuthRoute) {
       originalRequest._retry = true;
@@ -62,6 +62,7 @@ function normalizeError(error) {
   const normalized = new Error(message);
   normalized.status = error.response?.status;
   normalized.errors = data?.errors ?? null;
+  normalized.errorCode = data?.errorCode ?? null;
   return normalized;
 }
 

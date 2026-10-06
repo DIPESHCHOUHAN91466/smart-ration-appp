@@ -25,7 +25,7 @@ from app.core.validation import ValidationFailed
 from app.database.enums import UserRole
 from app.database.models import AuditLog, User
 from app.repositories import refresh_tokens, users
-from app.security import password_policy
+from app.security import mfa, password_policy
 from app.security.passwords import PasswordCheck, hash_password, verify_password
 from app.security.rate_limit import TooManyRequests
 from app.security.tokens import TokenUser, create_access_token, generate_refresh_token, hash_token
@@ -161,6 +161,13 @@ def login(db: Session, settings: Settings, ctx: RequestContext, email: str, pass
         user.PasswordHash = hash_password(password)  # BCrypt -> Argon2id, transparent to the user
 
     role = UserRole(user.Role).name
+    if user.TotpEnabledAt is not None:
+        # Two-factor sign-in: the password was right, but no session until the code (mfa_service.verify).
+        # Not a LOGIN yet, so earlier failures still count towards the lock.
+        audit_service.record(db, user.Id, "LOGIN_MFA_REQUIRED", "User", str(user.Id), role=role, ip_address=ctx.ip_address)
+        db.commit()
+        return {"mfaRequired": True, "mfaToken": mfa.create_pending_token(user.Id, settings),
+                "mfaExpiresInSeconds": mfa.PENDING_MINUTES * 60}
     audit_service.record(db, user.Id, "LOGIN", "User", str(user.Id), role=role, ip_address=ctx.ip_address)
     response = _issue_tokens(db, user, settings)
     db.commit()

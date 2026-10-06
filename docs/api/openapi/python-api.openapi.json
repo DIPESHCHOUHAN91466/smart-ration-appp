@@ -293,6 +293,211 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "LoginEnvelope": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthData"
+              },
+              {
+                "$ref": "#/components/schemas/MfaChallenge"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "data",
+          "errors"
+        ],
+        "title": "LoginEnvelope",
+        "type": "object"
+      },
+      "MfaChallenge": {
+        "description": "The password was right; the account uses two-factor sign-in: POST /api/auth/mfa/verify with the code.",
+        "properties": {
+          "mfaExpiresInSeconds": {
+            "title": "Mfaexpiresinseconds",
+            "type": "integer"
+          },
+          "mfaRequired": {
+            "default": true,
+            "title": "Mfarequired",
+            "type": "boolean"
+          },
+          "mfaToken": {
+            "description": "Pending sign-in (5 minutes); not an access token",
+            "title": "Mfatoken",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mfaToken",
+          "mfaExpiresInSeconds"
+        ],
+        "title": "MfaChallenge",
+        "type": "object"
+      },
+      "MfaSetup": {
+        "properties": {
+          "issuer": {
+            "title": "Issuer",
+            "type": "string"
+          },
+          "otpauthUri": {
+            "description": "otpauth:// URI, shown as a QR code",
+            "title": "Otpauthuri",
+            "type": "string"
+          },
+          "secret": {
+            "description": "Base32, for typing into the authenticator app",
+            "title": "Secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "secret",
+          "otpauthUri",
+          "issuer"
+        ],
+        "title": "MfaSetup",
+        "type": "object"
+      },
+      "MfaSetupEnvelope": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MfaSetup"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "data",
+          "errors"
+        ],
+        "title": "MfaSetupEnvelope",
+        "type": "object"
+      },
+      "MfaStatus": {
+        "properties": {
+          "available": {
+            "description": "This account can use it and the server is configured",
+            "title": "Available",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled",
+          "available"
+        ],
+        "title": "MfaStatus",
+        "type": "object"
+      },
+      "MfaStatusEnvelope": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MfaStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "data",
+          "errors"
+        ],
+        "title": "MfaStatusEnvelope",
+        "type": "object"
+      },
       "OtpSent": {
         "properties": {
           "demoOtpValue": {
@@ -1956,7 +2161,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthEnvelope"
+                  "$ref": "#/components/schemas/LoginEnvelope"
                 }
               }
             },
@@ -1972,7 +2177,7 @@
             "description": "Too many attempts from this address (10/min)"
           }
         },
-        "summary": "Log in with email and password",
+        "summary": "Log in with email and password (staff with two-factor sign-in get a challenge)",
         "tags": [
           "auth"
         ]
@@ -2018,6 +2223,243 @@
           }
         },
         "summary": "Revoke a refresh token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/mfa/disable": {
+      "post": {
+        "operationId": "mfa_disable_api_auth_mfa_disable_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "maxLength": 6,
+                    "minLength": 6,
+                    "title": "Code",
+                    "type": "string"
+                  },
+                  "password": {
+                    "title": "Password",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "password",
+                  "code"
+                ],
+                "title": "MfaDisableRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaStatusEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "401": {
+            "description": "Invalid credentials / refresh token"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          }
+        },
+        "summary": "Turn two-factor sign-in off (password and a code)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/mfa/enable": {
+      "post": {
+        "operationId": "mfa_enable_api_auth_mfa_enable_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "maxLength": 6,
+                    "minLength": 6,
+                    "title": "Code",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code"
+                ],
+                "title": "MfaCodeRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaStatusEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "401": {
+            "description": "Invalid credentials / refresh token"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          }
+        },
+        "summary": "Finish set-up with a code: two-factor sign-in is on",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/mfa/setup": {
+      "post": {
+        "operationId": "mfa_setup_api_auth_mfa_setup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "password": {
+                    "title": "Password",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "password"
+                ],
+                "title": "MfaSetupRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaSetupEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "401": {
+            "description": "Invalid credentials / refresh token"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          }
+        },
+        "summary": "Start two-factor set-up (password again): a secret for the authenticator app",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/mfa/status": {
+      "get": {
+        "operationId": "mfa_status_api_auth_mfa_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaStatusEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Is two-factor sign-in on for me / available to me",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/mfa/verify": {
+      "post": {
+        "operationId": "mfa_verify_api_auth_mfa_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "maxLength": 6,
+                    "minLength": 6,
+                    "title": "Code",
+                    "type": "string"
+                  },
+                  "mfaToken": {
+                    "title": "Mfatoken",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mfaToken",
+                  "code"
+                ],
+                "title": "MfaVerifyRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthEnvelope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation failed: `errors` lists \"Field: message\" items"
+          },
+          "401": {
+            "description": "Invalid credentials / refresh token"
+          },
+          "429": {
+            "description": "Too many attempts from this address (10/min)"
+          }
+        },
+        "summary": "Second sign-in step: the code from the authenticator app",
         "tags": [
           "auth"
         ]

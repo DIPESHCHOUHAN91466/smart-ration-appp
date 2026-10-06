@@ -107,6 +107,11 @@ class Settings(BaseSettings):
             return "QR_SECRET is too short (at least 32 characters). " + how
         return None
 
+    # ---- Two-factor sign-in (TOTP) for staff ----
+    # Encrypts the stored TOTP secrets (any random string of 32+ characters). Empty: two-factor sign-in can't be
+    # set up. Never change it while accounts use two-factor sign-in: their codes would stop working.
+    mfa_encryption_key: str = Field(default="", repr=False)
+
     # ---- OTP fallback (when a QR code can't be scanned) ----
     # DEMO ONLY: always issue this fixed code and show it on screen. Refused outside development.
     demo_otp_enabled: bool = True
@@ -197,6 +202,10 @@ class Settings(BaseSettings):
                 problems.append(f"{name} is a value that was published in this repository's history; generate a new one.")
         if self.qr_secret.strip() and self.qr_secret.strip() == self.jwt_secret_key.strip():
             problems.append("QR_SECRET must differ from JWT_SECRET_KEY (a leak of one must not expose the other).")
+        if self.mfa_encryption_key.strip() and len(self.mfa_encryption_key.strip()) < 32:
+            problems.append("MFA_ENCRYPTION_KEY is too short (at least 32 characters).")
+        if self.mfa_encryption_key.strip() and self.mfa_encryption_key.strip() in (self.jwt_secret_key.strip(), self.qr_secret.strip()):
+            problems.append("MFA_ENCRYPTION_KEY must differ from JWT_SECRET_KEY and QR_SECRET.")
         if "*" in self.cors_origins:
             problems.append("CORS_ORIGINS must list the website's origins explicitly, not '*', outside development.")
         if self.sms_provider.lower() != "http" and not self.uses_synthetic_demo_sms:

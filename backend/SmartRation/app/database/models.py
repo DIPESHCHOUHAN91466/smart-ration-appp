@@ -33,6 +33,10 @@ class User(Base):
     IsActive: Mapped[bool] = mapped_column(Boolean, nullable=False)
     CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
     RationShopId: Mapped[int | None] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="SET NULL"), nullable=True)
+    # Two-factor sign-in (staff, opt-in): the TOTP secret, encrypted (app.security.mfa); enabled once a code confirmed it.
+    TotpSecret: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    TotpEnabledAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+    TotpLastStep: Mapped[int | None] = mapped_column(BigId, nullable=True)   # last accepted 30-s step: no code twice
 
     __table_args__ = (
         Index("IX_Users_Email", "Email", unique=True),

@@ -10,6 +10,7 @@ import { usePreferencesStore } from "../../state/preferencesStore";
 import { useToast } from "../../state/toast";
 import ProfileSection from "./ProfileSection";
 import PasswordSection from "./PasswordSection";
+import MfaSection from "./MfaSection";
 
 const ROLE_LABEL_KEY = {
   RuralUser: "role_rural_user",
@@ -112,6 +113,7 @@ export default function Settings() {
       <div className="settings-grid">
         <ProfileSection />
         <PasswordSection />
+        {user && user.role !== "RuralUser" && <MfaSection />}
 
         {/* Language */}
         <section className="panel">

@@ -29,6 +29,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const login = useAuthStore((state) => state.login);
+  const verifyMfa = useAuthStore((state) => state.verifyMfa);
   const notify = useToast();
   const { t, language, setLanguage } = useTranslation();
 
@@ -36,6 +37,9 @@ export default function Login() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // Two-factor sign-in: after the right password, the pending sign-in waits for the authenticator code.
+  const [mfaToken, setMfaToken] = useState(null);
+  const [code, setCode] = useState("");
 
   const fillDemo = (email) => setForm({ email, password: "demo123" });
 
@@ -44,11 +48,20 @@ export default function Login() {
     setError("");
     setSubmitting(true);
     try {
-      const result = await login(form.email.trim(), form.password);
+      const result = mfaToken ? await verifyMfa(mfaToken, code.trim()) : await login(form.email.trim(), form.password);
+      if (result.mfaRequired) {
+        setMfaToken(result.mfaToken);
+        setCode("");
+        return;
+      }
       notify(t("secure_login_successful"));
       const redirectTo = location.state?.from?.pathname || homePathForRole(result.user.role);
       navigate(redirectTo, { replace: true });
     } catch (err) {
+      if (err.errorCode === "MFA_PENDING_INVALID") {   // the 5 minutes ran out: start again with the password
+        setMfaToken(null);
+        setForm({ ...form, password: "" });
+      }
       setError(err.message || t("invalid_credentials"));
       notify(err.message || t("invalid_credentials"), "error");
     } finally {
@@ -160,34 +173,52 @@ export default function Login() {
           <h2>{t("login_title")}</h2>
           <p>{t("login_subtitle")}</p>
 
-          <label>
-            {t("email")}
-            <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="username" />
-          </label>
-          <label>
-            {t("password")}
-            <div className="password-field">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                aria-label={showPassword ? t("hide_password") : t("show_password")}
-                onClick={() => setShowPassword((v) => !v)}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </label>
+          {mfaToken ? (
+            <>
+              <p role="status">{t("mfa_login_prompt")}</p>
+              <label>
+                {t("mfa_code")}
+                <input required autoFocus inputMode="numeric" pattern="[0-9]{6}" minLength={6} maxLength={6}
+                  autoComplete="one-time-code" value={code} onChange={(e) => setCode(e.target.value)} />
+              </label>
+              <p className="muted" style={{ margin: "-4px 0 4px", textAlign: "right" }}>
+                <button type="button" className="link-btn" onClick={() => { setMfaToken(null); setError(""); }}>
+                  {t("mfa_start_again")}
+                </button>
+              </p>
+            </>
+          ) : (
+            <>
+              <label>
+                {t("email")}
+                <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="username" />
+              </label>
+              <label>
+                {t("password")}
+                <div className="password-field">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    aria-label={showPassword ? t("hide_password") : t("show_password")}
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </label>
 
-          <p className="muted" style={{ margin: "-4px 0 4px", textAlign: "right" }}>
-            <Link to="/forgot-password" style={{ textDecoration: "underline" }}>{t("forgot_password")}</Link>
-          </p>
+              <p className="muted" style={{ margin: "-4px 0 4px", textAlign: "right" }}>
+                <Link to="/forgot-password" style={{ textDecoration: "underline" }}>{t("forgot_password")}</Link>
+              </p>
+            </>
+          )}
 
           {error && <p className="muted" role="alert" style={{ color: "var(--red)" }}>{error}</p>}
 

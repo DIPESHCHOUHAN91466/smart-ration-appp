@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import apiClient from "../../src/api/client";
 import { useAuthStore } from "../../src/state/authStore";
 
@@ -15,6 +15,21 @@ describe("auth session storage", () => {
     expect(saved).not.toContain("header.payload.signature");
     expect(JSON.parse(saved).state).toEqual({ user: { id: 1, fullName: "Rahul", role: "RuralUser" }, isAuthenticated: true });
     expect(useAuthStore.getState().accessToken).toBe("header.payload.signature");   // in memory only
+    useAuthStore.getState().clearSession();
+  });
+
+  it("starts no session when the password step asks for a two-factor code", async () => {
+    useAuthStore.getState().clearSession();
+    const post = vi.spyOn(apiClient, "post").mockResolvedValueOnce({
+      data: { data: { mfaRequired: true, mfaToken: "pending", mfaExpiresInSeconds: 300 } },
+    });
+    const result = await useAuthStore.getState().login("officer@example.com", "pw");
+    expect(result.mfaRequired).toBe(true);
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
+    post.mockResolvedValueOnce({ data: { data: { user: { id: 3, role: "GovernmentOfficial" }, accessToken: "a", refreshToken: null } } });
+    await useAuthStore.getState().verifyMfa("pending", "123456");
+    expect(post).toHaveBeenLastCalledWith("/auth/mfa/verify", { mfaToken: "pending", code: "123456" });
+    expect(useAuthStore.getState().isAuthenticated).toBe(true);
     useAuthStore.getState().clearSession();
   });
 
