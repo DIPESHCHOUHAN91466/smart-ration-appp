@@ -13,6 +13,7 @@ import '../support/fake_backend.dart';
 import '../support/fake_help.dart';
 import '../support/fake_grievance.dart';
 import '../support/test_app.dart';
+import '../features/official_records_test.dart' show recordsServer;
 
 /// Release check: every main screen, in every language, on a small low-cost phone (360 x 640) with
 /// large text (130 %), must lay out without overflowing (Flutter reports overflow as an error).
@@ -41,6 +42,10 @@ FakeReply everything(RequestOptions r) {
   if (p == '/api/grievances/mine') {
     return FakeReply.ok([complaintJson(1, 'LessRation', 'This month I got 2 kg less wheat.', rationType: 'Wheat', status: 'UnderReview',
         reply: 'The shop owner has been asked to explain.')]);
+  }
+  // (bookings and stock are answered by the citizen and shop fakes below, which have the same shapes)
+  if (const {'/api/admin/reports', '/api/audit/verification', '/api/admin/users'}.contains(p)) {
+    return recordsServer(r);
   }
   if (p == '/api/grievances' && r.method == 'GET') {
     return FakeReply.ok([complaintJson(2, 'StaffBehaviour', 'The shop keeper shouted at my mother and sent her home.',
@@ -93,6 +98,11 @@ final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('official', official, Routes.officialShop(1), () => null),
   ('official', official, Routes.officialAlerts, () => null),
   ('official', official, Routes.officialComplaints, () => null),
+  ('official', official, Routes.officialBookings, () => null),
+  ('official', official, Routes.officialStock, () => null),
+  ('official', official, Routes.officialReports, () => null),
+  ('official', official, Routes.officialAudit, () => null),
+  ('official', official, Routes.officialUsers, () => null),
 ];
 
 void main() {

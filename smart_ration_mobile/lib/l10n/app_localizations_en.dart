@@ -1450,4 +1450,118 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get complaintUpdated => 'Complaint updated';
+
+  @override
+  String get recordsTitle => 'Records';
+
+  @override
+  String get allBookingsTitle => 'All bookings';
+
+  @override
+  String get stockAllShopsTitle => 'Stock in all shops';
+
+  @override
+  String get reportsTitle => 'Reports';
+
+  @override
+  String get auditTitle => 'Verification record';
+
+  @override
+  String get usersTitle => 'People and staff';
+
+  @override
+  String get bookingsSearchHint => 'Search token, name or shop';
+
+  @override
+  String bookingsCount(int count) {
+    return '$count bookings';
+  }
+
+  @override
+  String get noBookingsHere => 'No bookings here.';
+
+  @override
+  String get lowStockOnly => 'Low stock only';
+
+  @override
+  String get noLowStock => 'No shop is low on stock.';
+
+  @override
+  String get reportsChangeDates => 'Change dates';
+
+  @override
+  String get reportsInPeriod => 'in this period';
+
+  @override
+  String get reportCollections => 'Collections completed';
+
+  @override
+  String get reportTokens => 'Tokens booked';
+
+  @override
+  String get reportCounterChecks => 'Collections confirmed at the counter';
+
+  @override
+  String get reportCancelled => 'Bookings cancelled';
+
+  @override
+  String get reportsNoDownload => 'File download is not available yet.';
+
+  @override
+  String get auditSuccess => 'Success';
+
+  @override
+  String get auditBlocked => 'Blocked';
+
+  @override
+  String get auditFailed => 'Failed';
+
+  @override
+  String get auditQrScanned => 'QR scanned';
+
+  @override
+  String get auditBeneficiaryVerified => 'Beneficiary checked';
+
+  @override
+  String get auditAadhaarChecked => 'Aadhaar status checked';
+
+  @override
+  String get auditPassbookChecked => 'Passbook status checked';
+
+  @override
+  String get auditOtpRequested => 'OTP sent';
+
+  @override
+  String get auditOtpVerified => 'OTP correct';
+
+  @override
+  String get auditOtpFailed => 'OTP wrong';
+
+  @override
+  String get auditCollectionConfirmed => 'Ration handed over';
+
+  @override
+  String get auditCollectionRejected => 'Collection refused';
+
+  @override
+  String get auditTokenUsed => 'Token already used';
+
+  @override
+  String get auditMethod => 'Method';
+
+  @override
+  String get auditBeneficiary => 'Beneficiary no.';
+
+  @override
+  String get noEntriesHere => 'No entries here.';
+
+  @override
+  String get usersSearchHint => 'Search by name';
+
+  @override
+  String get usersContactHidden =>
+      'Contact details are partly hidden on the phone. See the website for full details.';
+
+  @override
+  String get noUsersHere => 'No one here.';
 }

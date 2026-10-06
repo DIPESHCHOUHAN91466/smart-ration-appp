@@ -7,6 +7,7 @@ import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
 import '../../l10n/app_localizations.dart';
 import '../citizen/citizen_widgets.dart';
+import '../shop/shop_data.dart';
 import 'official_data.dart';
 import 'official_words.dart';
 
@@ -119,34 +120,47 @@ class ShopDetailScreen extends ConsumerWidget {
                     ? Text(l.noStockLines)
                     : Column(children: [
                         for (final s in [...d.stock.where((s) => s.low), ...d.stock.where((s) => !s.low)])
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            child: Row(children: [
-                              Icon(itemIcon(s.rationType), color: AppColors.muted, size: 24),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  Text(itemWord(l, s.rationType), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                  Text('${l.stockMinimum}: ${amount(s.minimum)} ${unitWord(l, s.rationType)}',
-                                      style: const TextStyle(color: AppColors.muted)),
-                                ]),
-                              ),
-                              const SizedBox(width: 8),
-                              // Quantity above its label, so the row fits small phones with large text.
-                              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                                Text('${amount(s.available)} ${unitWord(l, s.rationType)}',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: s.low ? AppColors.danger : AppColors.ink)),
-                                const SizedBox(height: 4),
-                                StatusPill(text: s.low ? l.stockLow : l.stockOk, tone: s.low ? PillTone.bad : PillTone.good),
-                              ]),
-                            ]),
-                          ),
+                          StockLineRow(line: s),
                       ]),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// One item's stock: item, minimum level, quantity in stock and a Low/OK mark.
+class StockLineRow extends StatelessWidget {
+  const StockLineRow({super.key, required this.line});
+
+  final StockLine line;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final s = line;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(children: [
+        Icon(itemIcon(s.rationType), color: AppColors.muted, size: 24),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(itemWord(l, s.rationType), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            Text('${l.stockMinimum}: ${amount(s.minimum)} ${unitWord(l, s.rationType)}', style: const TextStyle(color: AppColors.muted)),
+          ]),
+        ),
+        const SizedBox(width: 8),
+        // Quantity above its label, so the row fits small phones with large text.
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text('${amount(s.available)} ${unitWord(l, s.rationType)}',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: s.low ? AppColors.danger : AppColors.ink)),
+          const SizedBox(height: 4),
+          StatusPill(text: s.low ? l.stockLow : l.stockOk, tone: s.low ? PillTone.bad : PillTone.good),
+        ]),
+      ]),
     );
   }
 }

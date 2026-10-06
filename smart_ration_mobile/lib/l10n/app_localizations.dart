@@ -2679,6 +2679,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complaint updated'**
   String get complaintUpdated;
+
+  /// No description provided for @recordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get recordsTitle;
+
+  /// No description provided for @allBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All bookings'**
+  String get allBookingsTitle;
+
+  /// No description provided for @stockAllShopsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock in all shops'**
+  String get stockAllShopsTitle;
+
+  /// No description provided for @reportsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reportsTitle;
+
+  /// No description provided for @auditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification record'**
+  String get auditTitle;
+
+  /// No description provided for @usersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'People and staff'**
+  String get usersTitle;
+
+  /// No description provided for @bookingsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search token, name or shop'**
+  String get bookingsSearchHint;
+
+  /// No description provided for @bookingsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bookings'**
+  String bookingsCount(int count);
+
+  /// No description provided for @noBookingsHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings here.'**
+  String get noBookingsHere;
+
+  /// No description provided for @lowStockOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock only'**
+  String get lowStockOnly;
+
+  /// No description provided for @noLowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'No shop is low on stock.'**
+  String get noLowStock;
+
+  /// No description provided for @reportsChangeDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Change dates'**
+  String get reportsChangeDates;
+
+  /// No description provided for @reportsInPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'in this period'**
+  String get reportsInPeriod;
+
+  /// No description provided for @reportCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections completed'**
+  String get reportCollections;
+
+  /// No description provided for @reportTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokens booked'**
+  String get reportTokens;
+
+  /// No description provided for @reportCounterChecks.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections confirmed at the counter'**
+  String get reportCounterChecks;
+
+  /// No description provided for @reportCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings cancelled'**
+  String get reportCancelled;
+
+  /// No description provided for @reportsNoDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'File download is not available yet.'**
+  String get reportsNoDownload;
+
+  /// No description provided for @auditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get auditSuccess;
+
+  /// No description provided for @auditBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get auditBlocked;
+
+  /// No description provided for @auditFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get auditFailed;
+
+  /// No description provided for @auditQrScanned.
+  ///
+  /// In en, this message translates to:
+  /// **'QR scanned'**
+  String get auditQrScanned;
+
+  /// No description provided for @auditBeneficiaryVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Beneficiary checked'**
+  String get auditBeneficiaryVerified;
+
+  /// No description provided for @auditAadhaarChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar status checked'**
+  String get auditAadhaarChecked;
+
+  /// No description provided for @auditPassbookChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Passbook status checked'**
+  String get auditPassbookChecked;
+
+  /// No description provided for @auditOtpRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP sent'**
+  String get auditOtpRequested;
+
+  /// No description provided for @auditOtpVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP correct'**
+  String get auditOtpVerified;
+
+  /// No description provided for @auditOtpFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP wrong'**
+  String get auditOtpFailed;
+
+  /// No description provided for @auditCollectionConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration handed over'**
+  String get auditCollectionConfirmed;
+
+  /// No description provided for @auditCollectionRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection refused'**
+  String get auditCollectionRejected;
+
+  /// No description provided for @auditTokenUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Token already used'**
+  String get auditTokenUsed;
+
+  /// No description provided for @auditMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Method'**
+  String get auditMethod;
+
+  /// No description provided for @auditBeneficiary.
+  ///
+  /// In en, this message translates to:
+  /// **'Beneficiary no.'**
+  String get auditBeneficiary;
+
+  /// No description provided for @noEntriesHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries here.'**
+  String get noEntriesHere;
+
+  /// No description provided for @usersSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get usersSearchHint;
+
+  /// No description provided for @usersContactHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact details are partly hidden on the phone. See the website for full details.'**
+  String get usersContactHidden;
+
+  /// No description provided for @noUsersHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No one here.'**
+  String get noUsersHere;
 }
 
 class _AppLocalizationsDelegate

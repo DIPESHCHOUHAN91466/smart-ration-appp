@@ -47,6 +47,11 @@ abstract final class Routes {
   static String officialShop(int id) => '/official/shops/$id';
   static const officialAlerts = '/official/alerts';
   static const officialComplaints = '/official/complaints';
+  static const officialBookings = '/official/bookings';
+  static const officialStock = '/official/stock';
+  static const officialReports = '/official/reports';
+  static const officialAudit = '/official/audit';
+  static const officialUsers = '/official/users';
 
   /// Screens anyone may open without signing in.
   static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, forgotPassword, help};

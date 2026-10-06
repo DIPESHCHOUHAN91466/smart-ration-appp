@@ -14,8 +14,8 @@ import '../notifications/notifications_screen.dart';
 import 'official_data.dart';
 
 /// The government official's (and admin's) dashboard: today's totals across every shop, the last
-/// 30 days, and the way into the shops, the open alerts and citizens' complaints (alerts and complaints
-/// can be updated on their own screens).
+/// 30 days, and the way into the shops, the open alerts, citizens' complaints (alerts and complaints
+/// can be updated on their own screens) and the read-only records (bookings, stock, reports, audit, users).
 class OfficialHomeScreen extends ConsumerWidget {
   const OfficialHomeScreen({super.key});
 
@@ -154,6 +154,27 @@ class OfficialHomeScreen extends ConsumerWidget {
               icon: const Icon(Icons.report_problem_outlined),
               label: Text(l.officialComplaintsTitle),
               onPressed: () => context.push(Routes.officialComplaints),
+            ),
+            const SizedBox(height: 12),
+            _Panel(
+              title: l.recordsTitle,
+              child: Column(children: [
+                for (final (icon, label, route) in [
+                  (Icons.confirmation_number_outlined, l.allBookingsTitle, Routes.officialBookings),
+                  (Icons.inventory_2_outlined, l.stockAllShopsTitle, Routes.officialStock),
+                  (Icons.description_outlined, l.reportsTitle, Routes.officialReports),
+                  (Icons.fact_check_outlined, l.auditTitle, Routes.officialAudit),
+                  (Icons.people_outline, l.usersTitle, Routes.officialUsers),
+                ])
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    minTileHeight: 56,
+                    leading: Icon(icon, color: AppColors.blue, size: 28),
+                    title: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push(route),
+                  ),
+              ]),
             ),
             const SizedBox(height: 24),
             OutlinedButton.icon(

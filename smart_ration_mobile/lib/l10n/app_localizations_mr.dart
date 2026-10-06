@@ -1433,4 +1433,118 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get complaintUpdated => 'तक्रार अपडेट झाली';
+
+  @override
+  String get recordsTitle => 'नोंदी';
+
+  @override
+  String get allBookingsTitle => 'सर्व बुकिंग';
+
+  @override
+  String get stockAllShopsTitle => 'सर्व दुकानांतील साठा';
+
+  @override
+  String get reportsTitle => 'अहवाल';
+
+  @override
+  String get auditTitle => 'पडताळणी नोंद';
+
+  @override
+  String get usersTitle => 'लोक आणि कर्मचारी';
+
+  @override
+  String get bookingsSearchHint => 'टोकन, नाव किंवा दुकान शोधा';
+
+  @override
+  String bookingsCount(int count) {
+    return '$count बुकिंग';
+  }
+
+  @override
+  String get noBookingsHere => 'येथे कोणतीही बुकिंग नाही.';
+
+  @override
+  String get lowStockOnly => 'फक्त कमी साठा';
+
+  @override
+  String get noLowStock => 'कोणत्याही दुकानात साठा कमी नाही.';
+
+  @override
+  String get reportsChangeDates => 'तारखा बदला';
+
+  @override
+  String get reportsInPeriod => 'या कालावधीत';
+
+  @override
+  String get reportCollections => 'पूर्ण झालेले वितरण';
+
+  @override
+  String get reportTokens => 'बुक केलेले टोकन';
+
+  @override
+  String get reportCounterChecks => 'काउंटरवर पुष्टी केलेले वितरण';
+
+  @override
+  String get reportCancelled => 'रद्द केलेल्या बुकिंग';
+
+  @override
+  String get reportsNoDownload => 'फाइल डाउनलोड अद्याप उपलब्ध नाही.';
+
+  @override
+  String get auditSuccess => 'यशस्वी';
+
+  @override
+  String get auditBlocked => 'रोखले';
+
+  @override
+  String get auditFailed => 'अयशस्वी';
+
+  @override
+  String get auditQrScanned => 'QR स्कॅन झाला';
+
+  @override
+  String get auditBeneficiaryVerified => 'लाभार्थी तपासला';
+
+  @override
+  String get auditAadhaarChecked => 'आधार स्थिती तपासली';
+
+  @override
+  String get auditPassbookChecked => 'पासबुक स्थिती तपासली';
+
+  @override
+  String get auditOtpRequested => 'OTP पाठवला';
+
+  @override
+  String get auditOtpVerified => 'OTP बरोबर';
+
+  @override
+  String get auditOtpFailed => 'OTP चुकीचा';
+
+  @override
+  String get auditCollectionConfirmed => 'रेशन दिले';
+
+  @override
+  String get auditCollectionRejected => 'वितरण नाकारले';
+
+  @override
+  String get auditTokenUsed => 'टोकन आधीच वापरला';
+
+  @override
+  String get auditMethod => 'पद्धत';
+
+  @override
+  String get auditBeneficiary => 'लाभार्थी क्रमांक';
+
+  @override
+  String get noEntriesHere => 'येथे कोणतीही नोंद नाही.';
+
+  @override
+  String get usersSearchHint => 'नावाने शोधा';
+
+  @override
+  String get usersContactHidden =>
+      'फोनवर संपर्क तपशील अंशतः लपवले आहेत. पूर्ण तपशील वेबसाइटवर पाहा.';
+
+  @override
+  String get noUsersHere => 'येथे कोणी नाही.';
 }

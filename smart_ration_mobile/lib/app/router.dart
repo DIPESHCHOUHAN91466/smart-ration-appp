@@ -21,6 +21,7 @@ import '../features/notifications/notifications_screen.dart';
 import '../features/official/alerts_screen.dart';
 import '../features/official/complaints_screen.dart';
 import '../features/official/official_home_screen.dart';
+import '../features/official/records_screens.dart';
 import '../features/official/shops_screen.dart';
 import '../features/server_status/server_status_screen.dart';
 import '../features/shop/customer_check_screen.dart';
@@ -108,6 +109,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(path: _child(Routes.officialAlerts), builder: (context, state) => const AlertsScreen()),
           GoRoute(path: _child(Routes.officialComplaints), builder: (context, state) => const OfficialComplaintsScreen()),
+          GoRoute(path: _child(Routes.officialBookings), builder: (context, state) => const AllBookingsScreen()),
+          GoRoute(path: _child(Routes.officialStock), builder: (context, state) => const StockOverviewScreen()),
+          GoRoute(path: _child(Routes.officialReports), builder: (context, state) => const ReportsScreen()),
+          GoRoute(path: _child(Routes.officialAudit), builder: (context, state) => const AuditScreen()),
+          GoRoute(path: _child(Routes.officialUsers), builder: (context, state) => const UsersScreen()),
         ],
       ),
     ],
