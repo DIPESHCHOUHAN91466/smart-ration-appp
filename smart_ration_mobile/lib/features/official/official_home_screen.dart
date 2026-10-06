@@ -151,6 +151,12 @@ class OfficialHomeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
+              icon: const Icon(Icons.insights),
+              label: Text(l.aiCenterTitle),
+              onPressed: () => context.push(Routes.officialInsights),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
               icon: const Icon(Icons.report_problem_outlined),
               label: Text(l.officialComplaintsTitle),
               onPressed: () => context.push(Routes.officialComplaints),

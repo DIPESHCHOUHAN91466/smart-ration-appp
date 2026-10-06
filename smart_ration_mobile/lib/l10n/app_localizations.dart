@@ -2901,6 +2901,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No one here.'**
   String get noUsersHere;
+
+  /// No description provided for @aiCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI insights'**
+  String get aiCenterTitle;
+
+  /// No description provided for @aiCenterNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision support only. Nothing here refuses ration, cancels a card or proves fraud. A person must check before acting.'**
+  String get aiCenterNotice;
+
+  /// No description provided for @aiDemoData.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculated from demo data.'**
+  String get aiDemoData;
+
+  /// No description provided for @aiShopsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Shops needing stock'**
+  String get aiShopsAttention;
+
+  /// No description provided for @aiAverageWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Average wait'**
+  String get aiAverageWait;
+
+  /// No description provided for @aiAlertsToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts to review'**
+  String get aiAlertsToReview;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String minutesShort(String minutes);
+
+  /// No description provided for @aiDemandTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Demand: next 30 days'**
+  String get aiDemandTitle;
+
+  /// No description provided for @aiDemandLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days {last} · before that {previous}'**
+  String aiDemandLine(String last, String previous);
+
+  /// No description provided for @aiDemandExpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected'**
+  String get aiDemandExpected;
+
+  /// No description provided for @aiNoDemand.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough collections yet to estimate demand.'**
+  String get aiNoDemand;
+
+  /// No description provided for @aiStockRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock running out'**
+  String get aiStockRiskTitle;
+
+  /// No description provided for @aiShowAllStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all items'**
+  String get aiShowAllStock;
+
+  /// No description provided for @aiDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder in about {days} days'**
+  String aiDaysLeft(int days);
+
+  /// No description provided for @aiReorderNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder now'**
+  String get aiReorderNow;
+
+  /// No description provided for @aiNoRecentUse.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent use'**
+  String get aiNoRecentUse;
+
+  /// No description provided for @aiQueueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected wait today'**
+  String get aiQueueTitle;
+
+  /// No description provided for @aiQueueLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} waiting'**
+  String aiQueueLine(int count);
+
+  /// No description provided for @aiNoQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'No one is waiting at any shop.'**
+  String get aiNoQueue;
 }
 
 class _AppLocalizationsDelegate

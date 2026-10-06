@@ -20,6 +20,7 @@ import '../features/language/language_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/official/alerts_screen.dart';
 import '../features/official/complaints_screen.dart';
+import '../features/official/insights_screen.dart';
 import '../features/official/official_home_screen.dart';
 import '../features/official/records_screens.dart';
 import '../features/official/shops_screen.dart';
@@ -114,6 +115,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: _child(Routes.officialReports), builder: (context, state) => const ReportsScreen()),
           GoRoute(path: _child(Routes.officialAudit), builder: (context, state) => const AuditScreen()),
           GoRoute(path: _child(Routes.officialUsers), builder: (context, state) => const UsersScreen()),
+          GoRoute(path: _child(Routes.officialInsights), builder: (context, state) => const InsightsScreen()),
         ],
       ),
     ],

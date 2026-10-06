@@ -48,8 +48,35 @@ FakeReply recordsServer(RequestOptions r) => switch (r.path) {
           {'id': 7, 'fullName': 'Asha Devi', 'email': 'asha@example.com', 'mobileNumber': '9876543210', 'role': 'RuralUser'},
           {'id': 3, 'fullName': 'Satnavari Shop Owner', 'email': 'shop@example.com', 'mobileNumber': '9123456789', 'role': 'ShopOwner'},
         ]),
+      '/api/ai/intelligence-center' => FakeReply.ok(insightsJson),
       _ => officialServer(r),
     };
+
+/// Shaped like the real GET /api/ai/intelligence-center answer.
+const insightsJson = {
+  'demandForecast': [
+    {'rationType': 'Rice', 'last30DaysKg': 300, 'previous30DaysKg': 250, 'growthPercent': 20.0, 'predictedNext30DaysKg': 360},
+    {'rationType': 'Wheat', 'last30DaysKg': 200, 'previous30DaysKg': 250, 'growthPercent': -20.0, 'predictedNext30DaysKg': 160},
+    {'rationType': 'Salt', 'last30DaysKg': 0, 'previous30DaysKg': 0, 'growthPercent': 0.0, 'predictedNext30DaysKg': 0},
+  ],
+  'inventoryRisks': [
+    {'shopId': 2, 'shopName': 'Hingna Ration Shop', 'rationType': 'Rice', 'currentStatus': 'NORMAL', 'availableQuantity': 400,
+        'averageDailyConsumption': 2.0, 'predictedDaysUntilReorder': 150.0, 'explanation': 'Consuming ~2 kg/day.'},
+    {'shopId': 1, 'shopName': 'Satnavari Ration Shop', 'rationType': 'Sugar', 'currentStatus': 'CRITICAL', 'availableQuantity': 5,
+        'averageDailyConsumption': 1.0, 'predictedDaysUntilReorder': -15.0, 'explanation': 'Consuming ~1 kg/day.'},
+    {'shopId': 1, 'shopName': 'Satnavari Ration Shop', 'rationType': 'Wheat', 'currentStatus': 'LOW', 'availableQuantity': 90,
+        'averageDailyConsumption': 0, 'predictedDaysUntilReorder': null, 'explanation': 'No recent consumption recorded.'},
+  ],
+  'queuePredictions': [
+    {'shopId': 2, 'shopName': 'Hingna Ration Shop', 'pendingInQueue': 0, 'predictedWaitMinutes': 0, 'explanation': ''},
+    {'shopId': 1, 'shopName': 'Satnavari Ration Shop', 'pendingInQueue': 6, 'predictedWaitMinutes': 30, 'explanation': ''},
+  ],
+  'recentAnomalies': [],
+  'shopsRequiringAttention': 1,
+  'averageQueueWaitMinutes': 15.0,
+  'anomaliesRequiringReview': 2,
+  'isSyntheticData': true,
+};
 
 List<RequestOptions> calls(FakeBackend b, String path) => b.requests.where((r) => r.path == path).toList();
 
@@ -153,6 +180,38 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Asha Devi'), findsOneWidget);
     expect(find.text('Satnavari Shop Owner'), findsNothing);
+  });
+
+  testWidgets("AI insights: headline numbers, demand trend, what runs out first, today's waits", (tester) async {
+    await openOfficial(tester, server: recordsServer);
+    await tester.tap(find.text('AI insights'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Nothing here refuses ration'), findsOneWidget);
+    expect(find.text('Calculated from demo data.'), findsOneWidget);
+    expect(find.text('15 min'), findsOneWidget);
+    expect(find.text('Alerts (2)'), findsOneWidget);
+
+    // Demand: growing items first; items with no history left out.
+    expect(find.text('360 kg'), findsOneWidget);
+    expect(find.text('+20%'), findsOneWidget);
+    expect(find.text('−20%'), findsOneWidget);
+    expect(find.text('Salt'), findsNothing);
+
+    // Stock: critical, then low; normal hidden until asked for.
+    double y(Finder f) => tester.getTopLeft(f).dy;
+    expect(y(find.text('Sugar · Satnavari Ration Shop')), lessThan(y(find.text('Wheat · Satnavari Ration Shop'))));
+    expect(find.text('Reorder now'), findsOneWidget);
+    expect(find.text('No recent use'), findsOneWidget);
+    expect(find.text('Rice · Hingna Ration Shop'), findsNothing);
+    await tester.tap(find.text('Show all items'));
+    await tester.pumpAndSettle();
+    expect(find.text('Rice · Hingna Ration Shop'), findsOneWidget);
+    expect(find.text('Reorder in about 150 days'), findsOneWidget);
+
+    // Queue: only shops with someone waiting.
+    expect(find.text('6 waiting'), findsOneWidget);
+    expect(find.text('30 min'), findsOneWidget);
   });
 
   test('masking keeps only the last four characters', () {

@@ -44,7 +44,7 @@ FakeReply everything(RequestOptions r) {
         reply: 'The shop owner has been asked to explain.')]);
   }
   // (bookings and stock are answered by the citizen and shop fakes below, which have the same shapes)
-  if (const {'/api/admin/reports', '/api/audit/verification', '/api/admin/users'}.contains(p)) {
+  if (const {'/api/admin/reports', '/api/audit/verification', '/api/admin/users', '/api/ai/intelligence-center'}.contains(p)) {
     return recordsServer(r);
   }
   if (p == '/api/grievances' && r.method == 'GET') {
@@ -103,6 +103,7 @@ final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('official', official, Routes.officialReports, () => null),
   ('official', official, Routes.officialAudit, () => null),
   ('official', official, Routes.officialUsers, () => null),
+  ('official', official, Routes.officialInsights, () => null),
 ];
 
 void main() {

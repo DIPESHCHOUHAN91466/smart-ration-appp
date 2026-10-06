@@ -52,6 +52,7 @@ abstract final class Routes {
   static const officialReports = '/official/reports';
   static const officialAudit = '/official/audit';
   static const officialUsers = '/official/users';
+  static const officialInsights = '/official/insights';
 
   /// Screens anyone may open without signing in.
   static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, forgotPassword, help};

@@ -1564,4 +1564,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noUsersHere => 'No one here.';
+
+  @override
+  String get aiCenterTitle => 'AI insights';
+
+  @override
+  String get aiCenterNotice =>
+      'Decision support only. Nothing here refuses ration, cancels a card or proves fraud. A person must check before acting.';
+
+  @override
+  String get aiDemoData => 'Calculated from demo data.';
+
+  @override
+  String get aiShopsAttention => 'Shops needing stock';
+
+  @override
+  String get aiAverageWait => 'Average wait';
+
+  @override
+  String get aiAlertsToReview => 'Alerts to review';
+
+  @override
+  String minutesShort(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get aiDemandTitle => 'Demand: next 30 days';
+
+  @override
+  String aiDemandLine(String last, String previous) {
+    return 'Last 30 days $last · before that $previous';
+  }
+
+  @override
+  String get aiDemandExpected => 'Expected';
+
+  @override
+  String get aiNoDemand => 'Not enough collections yet to estimate demand.';
+
+  @override
+  String get aiStockRiskTitle => 'Stock running out';
+
+  @override
+  String get aiShowAllStock => 'Show all items';
+
+  @override
+  String aiDaysLeft(int days) {
+    return 'Reorder in about $days days';
+  }
+
+  @override
+  String get aiReorderNow => 'Reorder now';
+
+  @override
+  String get aiNoRecentUse => 'No recent use';
+
+  @override
+  String get aiQueueTitle => 'Expected wait today';
+
+  @override
+  String aiQueueLine(int count) {
+    return '$count waiting';
+  }
+
+  @override
+  String get aiNoQueue => 'No one is waiting at any shop.';
 }

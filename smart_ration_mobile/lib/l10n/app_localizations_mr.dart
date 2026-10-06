@@ -1547,4 +1547,71 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get noUsersHere => 'येथे कोणी नाही.';
+
+  @override
+  String get aiCenterTitle => 'AI माहिती';
+
+  @override
+  String get aiCenterNotice =>
+      'फक्त निर्णयासाठी मदत. येथील काहीही रेशन नाकारत नाही, कार्ड रद्द करत नाही किंवा फसवणूक सिद्ध करत नाही. कारवाईपूर्वी एखाद्या व्यक्तीने तपासणी केली पाहिजे.';
+
+  @override
+  String get aiDemoData => 'डेमो डेटावरून मोजले.';
+
+  @override
+  String get aiShopsAttention => 'साठ्याची गरज असलेली दुकाने';
+
+  @override
+  String get aiAverageWait => 'सरासरी प्रतीक्षा';
+
+  @override
+  String get aiAlertsToReview => 'तपासण्यासाठी अलर्ट';
+
+  @override
+  String minutesShort(String minutes) {
+    return '$minutes मिनिटे';
+  }
+
+  @override
+  String get aiDemandTitle => 'मागणी: पुढील 30 दिवस';
+
+  @override
+  String aiDemandLine(String last, String previous) {
+    return 'मागील 30 दिवस $last · त्यापूर्वी $previous';
+  }
+
+  @override
+  String get aiDemandExpected => 'अंदाज';
+
+  @override
+  String get aiNoDemand =>
+      'मागणीचा अंदाज लावण्यासाठी अजून पुरेसे वितरण झालेले नाही.';
+
+  @override
+  String get aiStockRiskTitle => 'संपत चाललेला साठा';
+
+  @override
+  String get aiShowAllStock => 'सर्व वस्तू दाखवा';
+
+  @override
+  String aiDaysLeft(int days) {
+    return 'सुमारे $days दिवसांत पुन्हा मागवा';
+  }
+
+  @override
+  String get aiReorderNow => 'आता मागवा';
+
+  @override
+  String get aiNoRecentUse => 'अलीकडे वापर नाही';
+
+  @override
+  String get aiQueueTitle => 'आज अपेक्षित प्रतीक्षा';
+
+  @override
+  String aiQueueLine(int count) {
+    return '$count प्रतीक्षेत';
+  }
+
+  @override
+  String get aiNoQueue => 'कोणत्याही दुकानात कोणी प्रतीक्षेत नाही.';
 }
