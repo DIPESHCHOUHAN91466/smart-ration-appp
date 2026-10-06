@@ -5,7 +5,7 @@
 # Secrets are NEVER baked in: DATABASE_URL, JWT_SECRET_KEY, ... come from the environment at run time.
 
 # Stage 1: the React frontend, built for same-origin "/api" (no VITE_API_BASE_URL: see frontend/src/config/env.js).
-FROM node:22-slim AS web
+FROM node:22-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392 AS web
 WORKDIR /web
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
@@ -18,13 +18,13 @@ ENV VITE_DEMO_MODE=$VITE_DEMO_MODE
 RUN npm run build
 
 # Stage 2: Python dependencies.
-FROM python:3.13-slim AS build
+FROM python:3.13-slim@sha256:bf44cdfcb76cd3b41e879bc058fc37ec5872002ccfde7fcb765e218cde0cd79c AS build
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 RUN python -m venv /opt/venv
 COPY backend/SmartRation/requirements.txt /tmp/requirements.txt
 RUN /opt/venv/bin/pip install -r /tmp/requirements.txt
 
-FROM python:3.13-slim
+FROM python:3.13-slim@sha256:bf44cdfcb76cd3b41e879bc058fc37ec5872002ccfde7fcb765e218cde0cd79c
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH="/opt/venv/bin:$PATH" \
     ENVIRONMENT=production RUN_DB_SETUP=false \
     CHATBOT_KNOWLEDGE_DIR=/app/ai/chatbot/knowledge SYNTHETIC_DATA_DIR=/app/database/seeds/synthetic INTEGRITY_QUERIES_DIR=/app/database/queries \

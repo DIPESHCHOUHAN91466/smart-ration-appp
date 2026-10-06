@@ -1,0 +1,12 @@
+# Reviewed gitleaks findings (fingerprint = commit:file:rule:line). CI fails on anything not listed here.
+#
+# Deliberately fake values in tests (an attacker's wrong QR secret, wrong passwords in a log-redaction test):
+8528e610f4f96e40a4c9681a36a0bf6b27cd4d83:backend/SmartRation/tests/api/test_qr_security.py:generic-api-key:113
+5f926dc532c2d20e8a108cc0e7694e01cbca1227:backend/SmartRation.Python/tests/mysql_suite/test_06_error_handling.py:generic-api-key:147
+5f926dc532c2d20e8a108cc0e7694e01cbca1227:backend/SmartRation.Python/tests/mysql_suite/test_06_error_handling.py:generic-api-key:155
+#
+# REAL secrets committed in 972d853 (finding S1 in SECURITY_REPORT.md). They are public forever; the remedy is that
+# no server may use them: the backend refuses both values outside development (LEAKED_SECRET_SHA256 in
+# app/config/settings.py) and every deployment generates its own. Listed here so the scan can gate NEW leaks.
+972d853ff06f015dd7644f2b67f958016e38bbfb:backend/SmartRation.Api/appsettings.Development.json:generic-api-key:10
+972d853ff06f015dd7644f2b67f958016e38bbfb:backend/SmartRation.Api/appsettings.Development.json:generic-api-key:14

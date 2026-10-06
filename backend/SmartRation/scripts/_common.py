@@ -57,7 +57,8 @@ def current_revision(eng: Engine) -> str | None:
     with eng.connect() as conn:
         if ALEMBIC_TABLE not in {t.lower() for t in inspect(conn).get_table_names()}:
             return None
-        return conn.execute(text(f"SELECT version_num FROM {ALEMBIC_TABLE}")).scalar()
+        # ALEMBIC_TABLE is a module constant, never input.
+        return conn.execute(text(f"SELECT version_num FROM {ALEMBIC_TABLE}")).scalar()  # nosemgrep: python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text
 
 
 def table_names(eng: Engine) -> set[str]:
