@@ -95,10 +95,10 @@ Elevation of privilege: deactivated staff keeping sessions (N3), over-privileged
 | N7 | Medium | A01 | `app/api/routes/people.py:88` | Public badge: no login, no rate limit, sequential codes → enumerable scheme / district / shop | **Mitigated** (446a202: 30/min per client); non-guessable codes would need a data change |
 | N8 | Medium | A05 | `database/schema/mysql-setup.sql:13` | Runtime database account has `ALL PRIVILEGES` (can drop tables) | Needs owner decision |
 | N9 | Medium | A07 | `app/schemas/auth.py:39` | Password minimum 8, no common-password check | **Fixed** (135714f) |
-| N10 | Medium | A06 | `frontend/package.json` | `vitest` critical advisories (dev-only); fix is a major upgrade | Open (Phase 9) |
+| N10 | Medium | A06 | `frontend/package.json` | `vitest` critical advisories (dev-only); fix is a major upgrade | **Fixed** (4b68a06) |
 | N11 | Low | A07 | `app/services/auth_service.py:122` | Login answers faster for unknown emails (account enumeration) | **Fixed** (ce04d25) |
 | N12 | Low | A07 | — | No password change, no password reset, no MFA for officials | **Fixed** (8f5e8fa, bb00fcf); Android app code step open |
-| N13 | Low | A08 | `.github/workflows/ci.yml`, Dockerfile | Actions and base images pinned by tag; no Dependabot | Open (Phase 9) |
+| N13 | Low | A08 | `.github/workflows/ci.yml`, Dockerfile | Actions and base images pinned by tag; no Dependabot | **Fixed** (1e8b893) |
 | N14 | Low | A05 | `app/main.py` | Swagger UI / OpenAPI served in production | **Fixed** (Phase 1) |
 | N15 | Low | A05 | `app/config/settings.py` | Unknown `ENVIRONMENT` values accepted silently; legacy C# proxy on by default (`localhost:5188`) | **Fixed** (Phase 1) |
 
@@ -186,3 +186,90 @@ Tests: `test_edge.py` (13). Backend 648 passed incl. MySQL; regression 34; brows
 **To verify after the first Render deploy:** `TRUSTED_PROXY_HOPS=2` follows Render's community-reported behaviour (its
 proxy appends to `X-Forwarded-For` and never replaces it), not an official specification. Check that the audit log shows
 visitors' addresses rather than one Render address; if every request shows the same address, set 1.
+
+## Phase 6 — frontend (2026-10-06)
+
+| Commit | Change |
+|---|---|
+| 41531ce | N16 (Low): the bundle hard-coded and displayed the demo password `demo123`, whatever the deployment was seeded with. Now the optional, explicitly public build setting `VITE_DEMO_PASSWORD`; unset, the demo buttons fill the email only |
+
+Checked on the built bundle: gitleaks clean, no `dangerouslySetInnerHTML` / `innerHTML` / `eval`, every `target="_blank"`
+has `rel="noopener noreferrer"`, no source maps shipped, post-sign-in redirects are in-app routes only, strict CSP (S3),
+no token in `localStorage` (S7). Frontend checks are for convenience only; every rule is enforced by the API.
+
+## Phase 7 — data protection (2026-10-06)
+
+Re-checked: Argon2id passwords; SHA-256 only for refresh tokens, OTPs and reset codes; TOTP secrets encrypted
+(Fernet); Aadhaar masked; mobiles masked for shops; no personal data in log messages (request logs carry path and
+status only); TLS to MySQL reported by `/health/db`; backups script with SHA-256 files (`scripts/database/backup.ps1`).
+
+| ID | Severity | Finding | Status |
+|---|---|---|---|
+| N8 | Medium | Runtime database account has `ALL PRIVILEGES` (can drop tables) | **Needs owner decision** (separate migration and runtime accounts) |
+| N17 | Medium | No self-service export or deletion of a citizen's data (DPDP Act 2023 rights) | **Needs owner decision**: retention duties for public-distribution records must be settled first |
+
+## Phase 8 — AI / LLM (2026-10-06)
+
+No generative model is called: the chatbot answers from the reviewed knowledge base, the assistant is rule-based with
+a per-role action allow-list and only proposes (never performs) actions; the AI analytics service needs an API key and
+only reads aggregates. d1703eb adds 24 tests that any future model must keep passing (OWASP LLM01/02/06): injected
+instructions in English, Hindi and Marathi, fake system tags, "admin mode" and secret names never yield an action
+outside the caller's role, never return secrets or another citizen's details, and the chatbot never echoes markup.
+When a model is added (planned step 1E): key server-side only, per-user rate limits and token caps, no other user's
+data in prompts, model output treated as untrusted text, and these tests in CI.
+
+## Phase 9 — dependencies, containers and CI (2026-10-06)
+
+| Commit | Change |
+|---|---|
+| 4b68a06 | N10: vitest 3 → 5 and the source-map-js fix; website `npm audit`: 0 |
+| 1e8b893 | N13: 14 action references pinned to release SHAs; base images pinned by digest; Dependabot for pip, npm, pub, docker, actions; CI job `code-scan` (gitleaks full history, semgrep failing on ERROR); dependency audit now covers dev and e2e dependencies |
+| 1e25a42 | line-length fix for 1e8b893 |
+
+Containers (unchanged, re-checked): non-root user, health check, `.dockerignore`, no secrets in the image or build args.
+The new CI job has not run on GitHub yet (nothing pushed); its commands were run locally with the same rules.
+
+## Phase 10 — logging and incident readiness (2026-10-06)
+
+c87f00b: 403, 429 and 413 responses are logged as structured `smartration.security` events (request id, method,
+path, client address, user and role — never bodies, query strings or tokens); `SECURITY.md` gains a reporting
+contact placeholder, an incident-response checklist (what to rotate per secret and what it breaks, evidence,
+CERT-In 6-hour and DPDP breach notification duties). Request ids, health endpoints and the sign-in/account audit trail
+were already in place.
+
+## Phase 11 — security tests and final scans (2026-10-06)
+
+**Before / after**
+
+| Scanner | Phase 0 (before) | Now |
+|---|---|---|
+| gitleaks, git history | 5 findings, unreviewed | 5 known, all reviewed in `.gitleaksignore`; **0 new**; gated in CI |
+| pip-audit (backend, AI service) | 0 / 0 | 0 / 0 |
+| npm audit (website / e2e) | 2 critical, 1 high, 1 moderate / 0 | **0 / 0** |
+| bandit | 0 high, 0 medium, 6 low | 0 high, 0 medium, 7 low (all false positives: error-message strings, synthetic-data `random`, asserts) |
+| semgrep (same rulesets) | 21 (2 ERROR-level) | **5 WARNING, 0 ERROR**; gated in CI (remaining: add-mask after use, a "token" that is a ration token number, nginx example `$host`) |
+| OWASP ZAP baseline | — | **not run**: ZAP not installed and Docker Desktop is stopped |
+
+**Security tests added in this programme** (backend unless noted): config hardening (10), refresh-token reuse and
+deactivation (4), OTP lock and SMS cap (2), unknown-email timing (1), password policy (unit), password change/reset (15),
+cookie sessions (7), MFA (13), shop scope / IDOR (12), deny-by-default route list (1), proxy address, body limit and badge
+limit (13), AI injection (24), security logging (3); website auth store (4); browser tests for registration, password
+reset and change, cookie session, MFA. Every OWASP-listed case in the brief is covered except file-upload variants beyond
+S4's magic-byte test, and a live ZAP scan.
+
+**Final results:** backend 670 passed in the full run (5 MySQL login-injection checks failed once during a run that took
+twice as long as usual; the whole MySQL suite then passed 146/146 twice and the file 68/68 — most likely the tests'
+3-second timing assertion under load, not confirmed); website 109; regression 34; browser 11 passed / 3 skipped (signed-in
+accessibility pages need `E2E_DEMO_PASSWORD`); `mfa.spec.js` passed with a throwaway official.
+
+## Actions only the owner can take
+
+1. **S1:** generate new local `JWT_SECRET_KEY` and `QR_SECRET` (rotating `QR_SECRET` invalidates locally issued QR codes).
+2. **N8:** decide on separate database accounts (migrations vs. the running app), then apply them in each environment.
+3. **N17:** decide data retention and the citizen export/deletion process (DPDP).
+4. Fill in `[SECURITY CONTACT EMAIL]` in SECURITY.md (and the placeholders in the app's privacy policy).
+5. After the first Render deploy: confirm the audit log shows visitors' addresses (`TRUSTED_PROXY_HOPS=2`); push the
+   branch so CI runs the new `code-scan` job; enable Dependabot alerts and secret scanning in the GitHub repository settings.
+6. Turn on two-factor sign-in for every official and admin account; decide whether to make it mandatory.
+7. Enable MFA on the cloud accounts (GitHub, Render, the database provider) and keep `MFA_ENCRYPTION_KEY` with the other secrets.
+8. Consider a WAF / bot protection in front of the public site, and a CERT-In empanelled audit before real data (COMPLIANCE_CHECKLIST.md).
