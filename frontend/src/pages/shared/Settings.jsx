@@ -11,6 +11,7 @@ import { useToast } from "../../state/toast";
 import ProfileSection from "./ProfileSection";
 import PasswordSection from "./PasswordSection";
 import MfaSection from "./MfaSection";
+import DataExportSection from "./DataExportSection";
 
 const ROLE_LABEL_KEY = {
   RuralUser: "role_rural_user",
@@ -114,6 +115,7 @@ export default function Settings() {
         <ProfileSection />
         <PasswordSection />
         {user && user.role !== "RuralUser" && <MfaSection />}
+        <DataExportSection />
 
         {/* Language */}
         <section className="panel">

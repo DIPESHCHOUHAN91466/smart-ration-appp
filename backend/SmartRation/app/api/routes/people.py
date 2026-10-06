@@ -7,7 +7,7 @@ PublicController and RationCollectionController (history).
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.auth import Actor, actor
@@ -17,10 +17,20 @@ from app.core.errors import ok
 from app.database.connection import get_db
 from app.database.enums import UserRole
 from app.security.rate_limit import rate_limit
-from app.services import profile_service
+from app.services import audit_service, data_export_service, profile_service
 
 router = APIRouter(prefix="/api", tags=["people"])
 any_user = actor()
+
+
+@router.get("/users/me/export", summary="Download all my personal data (JSON; DPDP Act 2023)",
+            dependencies=[Depends(rate_limit("data-export", lambda s: 5))])
+def export_my_data(response: Response, who: Actor = Depends(any_user), db: Session = Depends(get_db)):
+    data = data_export_service.export(db, who.user_id)
+    audit_service.record(db, who.user_id, "DATA_EXPORTED", "User", str(who.user_id), ip_address=who.ip_address)
+    db.commit()
+    response.headers["Cache-Control"] = "no-store"   # personal data: never kept by a browser or proxy cache
+    return ok(data)
 
 
 @router.get("/users/profile", summary="My account")

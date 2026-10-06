@@ -4778,6 +4778,25 @@
         ]
       }
     },
+    "/api/users/me/export": {
+      "get": {
+        "operationId": "export_my_data_api_users_me_export_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Download all my personal data (JSON; DPDP Act 2023)",
+        "tags": [
+          "people"
+        ]
+      }
+    },
     "/api/users/profile": {
       "get": {
         "operationId": "my_profile_api_users_profile_get",
