@@ -1648,4 +1648,33 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get amountInvalid => '0 या उससे अधिक संख्या लिखें।';
+
+  @override
+  String get helpTopicsTitle => 'सहायता विषय';
+
+  @override
+  String get helpSearchLabel => 'सहायता खोजें';
+
+  @override
+  String helpResultsFor(String query) {
+    return '“$query” के परिणाम';
+  }
+
+  @override
+  String get helpNoResults =>
+      'कुछ नहीं मिला। दूसरे शब्द आज़माएँ या सहायक से पूछें।';
+
+  @override
+  String get helpAskAssistant => 'सहायक से पूछें';
+
+  @override
+  String helpArticleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count लेख',
+      one: '1 लेख',
+    );
+    return '$_temp0';
+  }
 }

@@ -41,4 +41,30 @@ FakeReply helpServer(RequestOptions r) {
 }
 
 /// Help questions go to the assistant; everything else to the demo citizen's backend.
-FakeReply helpOrDemo(RequestOptions r) => r.path.startsWith('/api/chatbot') ? helpServer(r) : demoServer(r);
+FakeReply helpOrDemo(RequestOptions r) =>
+    r.path.startsWith('/api/chatbot') ? helpServer(r) : (r.path.startsWith('/api/public-help') ? publicHelpServer(r) : demoServer(r));
+
+/// The help page's routes, shaped like the real /api/public-help answers.
+FakeReply publicHelpServer(RequestOptions r) {
+  final lang = r.queryParameters['language'];
+  if (r.path == '/api/public-help/categories') {
+    return FakeReply.ok([
+      {'id': 'booking', 'icon': 'calendar', 'title': 'Booking and tokens ($lang)', 'description': 'Book a slot and use your token.',
+          'ask': 'How do I book?', 'primaryArticle': 'how-to-book', 'quick': [],
+          'articles': [{'id': 'how-to-book', 'title': 'How to book a slot'}, {'id': 'cancel', 'title': 'Cancel a booking'}]},
+      {'id': 'eligibility', 'icon': 'info', 'title': 'Eligibility', 'description': 'Who can get ration.', 'ask': '',
+          'primaryArticle': 'eligibility', 'quick': [], 'articles': [{'id': 'eligibility', 'title': 'Who is eligible'}]},
+    ]);
+  }
+  if (r.path == '/api/public-help/search') {
+    return FakeReply.ok('${r.queryParameters['q']}'.contains('book')
+        ? [{'id': 'how-to-book', 'category': 'booking', 'title': 'How to book a slot', 'excerpt': 'Open Book Ration.', 'score': 1.0}]
+        : []);
+  }
+  if (r.path == '/api/public-help/articles/how-to-book') {
+    return FakeReply.ok({'kind': 'answer', 'language': lang, 'text': '1. Open Book Ration 📅\n2. Pick a time', 'articleId': 'how-to-book',
+        'title': 'How to book a slot', 'links': [{'path': '/rural/book', 'label': 'Book a slot'}],
+        'suggestions': [], 'related': [{'id': 'cancel', 'title': 'Cancel a booking'}], 'requiresLogin': false, 'confidence': 1.0});
+  }
+  return FakeReply.fail(404, 'Help article not found.');
+}

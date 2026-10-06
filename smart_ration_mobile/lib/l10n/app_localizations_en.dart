@@ -1665,4 +1665,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get amountInvalid => 'Enter a number, 0 or more.';
+
+  @override
+  String get helpTopicsTitle => 'Help topics';
+
+  @override
+  String get helpSearchLabel => 'Search help';
+
+  @override
+  String helpResultsFor(String query) {
+    return 'Results for “$query”';
+  }
+
+  @override
+  String get helpNoResults =>
+      'Nothing found. Try other words or ask the assistant.';
+
+  @override
+  String get helpAskAssistant => 'Ask the assistant';
+
+  @override
+  String helpArticleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count articles',
+      one: '1 article',
+    );
+    return '$_temp0';
+  }
 }

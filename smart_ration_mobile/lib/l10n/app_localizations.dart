@@ -3069,6 +3069,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a number, 0 or more.'**
   String get amountInvalid;
+
+  /// No description provided for @helpTopicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help topics'**
+  String get helpTopicsTitle;
+
+  /// No description provided for @helpSearchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search help'**
+  String get helpSearchLabel;
+
+  /// No description provided for @helpResultsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Results for “{query}”'**
+  String helpResultsFor(String query);
+
+  /// No description provided for @helpNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found. Try other words or ask the assistant.'**
+  String get helpNoResults;
+
+  /// No description provided for @helpAskAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the assistant'**
+  String get helpAskAssistant;
+
+  /// No description provided for @helpArticleCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 article} other{{count} articles}}'**
+  String helpArticleCount(int count);
 }
 
 class _AppLocalizationsDelegate

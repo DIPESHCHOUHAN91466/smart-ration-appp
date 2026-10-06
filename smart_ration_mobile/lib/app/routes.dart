@@ -17,6 +17,11 @@ abstract final class Routes {
   /// The Public Help assistant: open to everyone, signed in or not.
   static const help = '/help';
 
+  /// The help page's sections and search (public), and one article.
+  static const helpTopics = '/help/topics';
+  static const helpArticlePattern = '/help/topics/:id';
+  static String helpArticle(String id) => '/help/topics/${Uri.encodeComponent(id)}';
+
   /// My notifications (any signed-in role).
   static const notifications = '/notifications';
 
@@ -55,7 +60,10 @@ abstract final class Routes {
   static const officialInsights = '/official/insights';
 
   /// Screens anyone may open without signing in.
-  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, forgotPassword, help};
+  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, forgotPassword, help, helpTopics};
+
+  /// [public], plus every help article.
+  static bool isPublic(String location) => public.contains(location) || location.startsWith('$helpTopics/');
 
   /// The dashboard for each role. Admins use the officials' dashboard, as on the website.
   static String homeFor(AppRole role) => switch (role) {

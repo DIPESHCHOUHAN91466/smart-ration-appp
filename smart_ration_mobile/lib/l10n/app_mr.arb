@@ -493,5 +493,11 @@
   "correctConfirmBody": "हे तुमच्या नावाने हाताने केलेली दुरुस्ती म्हणून नोंदवले जाईल. अधिकारी ते पाहू शकतात.",
   "correctNoChange": "काहीही बदलले नाही.",
   "stockCorrected": "साठा दुरुस्त केला.",
-  "amountInvalid": "0 किंवा त्याहून जास्त संख्या लिहा."
+  "amountInvalid": "0 किंवा त्याहून जास्त संख्या लिहा.",
+  "helpTopicsTitle": "मदत विषय",
+  "helpSearchLabel": "मदत शोधा",
+  "helpResultsFor": "“{query}” चे परिणाम",
+  "helpNoResults": "काहीही सापडले नाही. दुसरे शब्द वापरून पाहा किंवा सहाय्यकाला विचारा.",
+  "helpAskAssistant": "सहाय्यकाला विचारा",
+  "helpArticleCount": "{count, plural, =1{1 लेख} other{{count} लेख}}"
 }

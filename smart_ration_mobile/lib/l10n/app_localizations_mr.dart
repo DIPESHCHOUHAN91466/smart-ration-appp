@@ -1649,4 +1649,33 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get amountInvalid => '0 किंवा त्याहून जास्त संख्या लिहा.';
+
+  @override
+  String get helpTopicsTitle => 'मदत विषय';
+
+  @override
+  String get helpSearchLabel => 'मदत शोधा';
+
+  @override
+  String helpResultsFor(String query) {
+    return '“$query” चे परिणाम';
+  }
+
+  @override
+  String get helpNoResults =>
+      'काहीही सापडले नाही. दुसरे शब्द वापरून पाहा किंवा सहाय्यकाला विचारा.';
+
+  @override
+  String get helpAskAssistant => 'सहाय्यकाला विचारा';
+
+  @override
+  String helpArticleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count लेख',
+      one: '1 लेख',
+    );
+    return '$_temp0';
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
 import '../../l10n/app_localizations.dart';
@@ -156,7 +157,14 @@ class _HelpChatScreenState extends ConsumerState<HelpChatScreen> {
     final l = AppLocalizations.of(context);
     final lastAnswer = _entries.lastOrNull is _Answered ? _entries.length - 1 : null;
     return Scaffold(
-      appBar: AppBar(title: Text(l.helpTitle)),
+      appBar: AppBar(title: Text(l.helpTitle), actions: [
+        IconButton(
+          icon: const Icon(Icons.menu_book_outlined),
+          tooltip: l.helpTopicsTitle,
+          iconSize: 28,
+          onPressed: () => context.push(Routes.helpTopics),
+        ),
+      ]),
       body: Column(children: [
         Container(
           width: double.infinity,

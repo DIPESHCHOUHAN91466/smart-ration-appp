@@ -39,6 +39,7 @@ class _SilentSpeaker implements Speaker {
 FakeReply everything(RequestOptions r) {
   final p = r.path;
   if (p.startsWith('/api/chatbot')) return helpServer(r);
+  if (p.startsWith('/api/public-help')) return publicHelpServer(r);
   if (p == '/api/grievances/mine') {
     return FakeReply.ok([complaintJson(1, 'LessRation', 'This month I got 2 kg less wheat.', rationType: 'Wheat', status: 'UnderReview',
         reply: 'The shop owner has been asked to explain.')]);
@@ -70,6 +71,8 @@ SessionUser official() => SessionUser.tryParse(userJson(id: 4, fullName: 'Distri
 final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('signed out', () => null, Routes.login, () => null),
   ('signed out', () => null, Routes.help, () => null),
+  ('signed out', () => null, Routes.helpTopics, () => null),
+  ('signed out', () => null, Routes.helpArticle('how-to-book'), () => null),
   ('signed out', () => null, Routes.forgotPassword, () => null),
   ('citizen', citizen, Routes.changePassword, () => null),
   ('official', official, Routes.changePassword, () => null),

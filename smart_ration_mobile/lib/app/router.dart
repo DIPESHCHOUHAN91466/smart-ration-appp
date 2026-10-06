@@ -16,6 +16,7 @@ import '../features/grievance/complaint_screen.dart';
 import '../features/grievance/grievance_data.dart';
 import '../features/grievance/my_complaints_screen.dart';
 import '../features/help/help_chat_screen.dart';
+import '../features/help/help_topics_screen.dart';
 import '../features/language/language_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/official/alerts_screen.dart';
@@ -59,6 +60,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.forgotPassword, builder: (context, state) => const ForgotPasswordScreen()),
       GoRoute(path: Routes.changePassword, builder: (context, state) => const ChangePasswordScreen()),
       GoRoute(path: Routes.help, builder: (context, state) => const HelpChatScreen()),
+      GoRoute(path: Routes.helpTopics, builder: (context, state) => const HelpTopicsScreen()),
+      GoRoute(
+        path: Routes.helpArticlePattern,
+        builder: (context, state) => HelpArticleScreen(articleId: state.pathParameters['id'] ?? ''),
+      ),
       GoRoute(path: Routes.notifications, builder: (context, state) => const NotificationsScreen()),
       GoRoute(path: Routes.citizenHome, builder: (context, state) => const CitizenHomeScreen()),
       GoRoute(path: Routes.citizenFamily, builder: (context, state) => const FamilyScreen()),
@@ -127,7 +133,7 @@ String _child(String path) => path.substring(path.lastIndexOf('/') + 1);
 
 /// Where to send someone instead of [location], or null to let them in. Kept separate so it can be tested.
 String? redirectFor(SessionUser? user, String location) {
-  if (user == null) return Routes.public.contains(location) ? null : Routes.login;
+  if (user == null) return Routes.isPublic(location) ? null : Routes.login;
   final home = Routes.homeFor(user.role);
   if (location == Routes.login) return home;
   final area = Routes.areaOf(location);

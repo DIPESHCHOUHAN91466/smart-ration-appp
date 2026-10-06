@@ -752,5 +752,13 @@
   "correctConfirmBody": "This is recorded as a manual correction with your name. Officials can see it.",
   "correctNoChange": "Nothing was changed.",
   "stockCorrected": "Stock corrected.",
-  "amountInvalid": "Enter a number, 0 or more."
+  "amountInvalid": "Enter a number, 0 or more.",
+  "helpTopicsTitle": "Help topics",
+  "helpSearchLabel": "Search help",
+  "helpResultsFor": "Results for “{query}”",
+  "@helpResultsFor": {"placeholders": {"query": {"type": "String"}}},
+  "helpNoResults": "Nothing found. Try other words or ask the assistant.",
+  "helpAskAssistant": "Ask the assistant",
+  "helpArticleCount": "{count, plural, =1{1 article} other{{count} articles}}",
+  "@helpArticleCount": {"placeholders": {"count": {"type": "int"}}}
 }
