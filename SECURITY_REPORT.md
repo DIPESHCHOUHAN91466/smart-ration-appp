@@ -19,7 +19,7 @@ This is an internal engineering review, **not** a CERT-In audit (see COMPLIANCE_
 
 | # | Severity | Finding | Status | Fix / evidence |
 |---|---|---|---|---|
-| S1 | **Critical** | A JWT signing key and a QR signing secret were committed in `backend/SmartRation.Api/appsettings.Development.json` (commit 972d853, 2026-09-21). The repository is public; **the same two values are still the local development secrets** (verified by comparing SHA-256 fingerprints, values never printed). Anyone could mint admin tokens or forge QR codes against a server using them. | **Guarded; rotation open** | 410149e: outside development the backend refuses to start with either value (fingerprints only in code). Render generates fresh secrets, so the cloud deployment is not exposed. **Owner action:** generate new local `JWT_SECRET_KEY` and `QR_SECRET` (rotating QR_SECRET invalidates previously issued local QR codes). History rewriting is not recommended: the values are already public, so replacement is the remedy. |
+| S1 | **Critical** | A JWT signing key and a QR signing secret were committed in `backend/SmartRation.Api/appsettings.Development.json` (commit 972d853, 2026-09-21). The repository is public; **the same two values are still the local development secrets** (verified by comparing SHA-256 fingerprints, values never printed). Anyone could mint admin tokens or forge QR codes against a server using them. | **Fixed 2026-10-06** (guard 410149e; local values rotated) | 410149e: outside development the backend refuses to start with either value (fingerprints only in code). Render generates fresh secrets, so the cloud deployment is not exposed. **Owner action:** generate new local `JWT_SECRET_KEY` and `QR_SECRET` (rotating QR_SECRET invalidates previously issued local QR codes). History rewriting is not recommended: the values are already public, so replacement is the remedy. |
 | S2 | High | No per-account brute-force protection: sign-in was limited per IP address only (10/min). | **Fixed** | 4a83231: 5 failures in 15 min lock the account for the window (even for the right password), `LOGIN_LOCKED` audited, success resets; migration 0005 indexes the audit log for this. Tests in `tests/api/test_auth.py`. |
 | S3 | High | No Content-Security-Policy on the website. | **Fixed** | 883b586: strict CSP on website pages (self scripts only, no inline/eval, no plugins/framing, base-uri/form-action self). Browser tests fail on any CSP violation (detector proven with an injected off-policy image); 19 browser tests pass (1 skipped by design) across 27 signed-in pages and the public pages. |
 | S4 | High | File upload (`/api/ocr/extract`) trusted the client-declared content type. | **Fixed** | 9d67270: PNG/JPEG signature required; disguised file refused (test). Size limit 5 MB and staff-only access were already in place. |
@@ -264,7 +264,7 @@ accessibility pages need `E2E_DEMO_PASSWORD`); `mfa.spec.js` passed with a throw
 
 ## Actions only the owner can take
 
-1. **S1:** generate new local `JWT_SECRET_KEY` and `QR_SECRET` (rotating `QR_SECRET` invalidates locally issued QR codes).
+1. ~~**S1:** rotate the local secrets~~ — **done 2026-10-06** (see "S1 rotation" below).
 2. **N8:** decide on separate database accounts (migrations vs. the running app), then apply them in each environment.
 3. **N17:** decide data retention and the citizen export/deletion process (DPDP).
 4. Fill in `[SECURITY CONTACT EMAIL]` in SECURITY.md (and the placeholders in the app's privacy policy).
@@ -273,3 +273,19 @@ accessibility pages need `E2E_DEMO_PASSWORD`); `mfa.spec.js` passed with a throw
 6. Turn on two-factor sign-in for every official and admin account; decide whether to make it mandatory.
 7. Enable MFA on the cloud accounts (GitHub, Render, the database provider) and keep `MFA_ENCRYPTION_KEY` with the other secrets.
 8. Consider a WAF / bot protection in front of the public site, and a CERT-In empanelled audit before real data (COMPLIANCE_CHECKLIST.md).
+
+## S1 rotation (2026-10-06, owner's decision)
+
+The local `JWT_SECRET_KEY` and `QR_SECRET` — the values published in commit 972d853 — were replaced with new random
+values (64 bytes, `secrets.token_urlsafe`) in `backend/SmartRation/.env` and in the retired C# API's user-secrets
+(`Jwt:Key`, `Qr:Secret`). No value was printed or committed. Before: a database backup
+(`database/backups/smartration_20261006_152444.sql.gz`). The stored QR reference of the 87 open bookings was recomputed
+with the new secret (demo `SRQR-DEMO-` aliases unchanged).
+
+Effects: sessions continue (refresh tokens don't depend on the JWT key; access tokens are re-issued within 15
+minutes); QR codes captured before the rotation (screenshots, the Android app's offline cache) stop working, and
+reopening the booking shows a valid one.
+
+Verified on the running API: an admin token forged with the leaked JWT key → 401; a QR signed with the leaked QR
+secret → `INVALID_SIGNATURE`; sign-in and a freshly issued QR (signature accepted) work. No local file holds a leaked
+value any more (fingerprint scan). The values stay public in git history; servers keep refusing them.
