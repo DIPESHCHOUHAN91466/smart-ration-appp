@@ -669,5 +669,15 @@
   "changePasswordButton": "Change password",
   "passwordChanged": "Password changed. Other devices have been signed out.",
   "passwordChangeSignsOut": "Changing it signs you out on every other device.",
-  "passwordChangeFailed": "The password could not be changed. Please try again."
+  "passwordChangeFailed": "The password could not be changed. Please try again.",
+  "officialComplaintsTitle": "Citizen complaints",
+  "noComplaintsHere": "No complaints here.",
+  "complaintShopLabel": "Shop",
+  "complaintUpdateTitle": "Update this complaint",
+  "complaintChooseReviewHint": "You are checking it. The citizen is told.",
+  "complaintChooseResolvedHint": "The problem has been fixed.",
+  "complaintChooseRejectedHint": "No action can be taken. Say why in the reply.",
+  "complaintReplyLabel": "Reply to the citizen (optional)",
+  "complaintReplyHint": "The citizen sees this reply. Do not write Aadhaar numbers, OTPs or passwords.",
+  "complaintUpdated": "Complaint updated"
 }

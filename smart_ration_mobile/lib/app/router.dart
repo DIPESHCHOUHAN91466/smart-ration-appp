@@ -19,6 +19,7 @@ import '../features/help/help_chat_screen.dart';
 import '../features/language/language_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/official/alerts_screen.dart';
+import '../features/official/complaints_screen.dart';
 import '../features/official/official_home_screen.dart';
 import '../features/official/shops_screen.dart';
 import '../features/server_status/server_status_screen.dart';
@@ -106,6 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(path: _child(Routes.officialAlerts), builder: (context, state) => const AlertsScreen()),
+          GoRoute(path: _child(Routes.officialComplaints), builder: (context, state) => const OfficialComplaintsScreen()),
         ],
       ),
     ],

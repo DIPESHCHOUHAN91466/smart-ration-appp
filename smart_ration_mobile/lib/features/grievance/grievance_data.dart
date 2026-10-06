@@ -7,6 +7,9 @@ import '../../core/providers.dart';
 /// Citizens' complaints, on the backend routes (citizens only):
 ///   POST /api/grievances        file one (Idempotency-Key); returns its reference number, e.g. GRV-2026-000123
 ///   GET  /api/grievances/mine   my complaints, newest first, with their status
+/// and for officials (the backend refuses everyone else):
+///   GET  /api/grievances?status=  every complaint, newest first, optionally one status
+///   POST /api/grievances/{id}/status  move one to UnderReview / Resolved / Rejected, with a reply the citizen sees
 /// The citizen's name, mobile and shop come from their account on the backend, never from this form.
 
 /// What the complaint is about (the backend's names).
@@ -30,14 +33,22 @@ enum ComplaintCategory {
 /// The ration items a complaint can be about (the backend's names).
 const complaintItems = ['Rice', 'Wheat', 'Sugar', 'Pulses', 'EdibleOil', 'Salt'];
 
-enum ComplaintStatus { submitted, underReview, resolved, rejected }
+enum ComplaintStatus {
+  submitted('Submitted'),
+  underReview('UnderReview'),
+  resolved('Resolved'),
+  rejected('Rejected');
 
-ComplaintStatus _status(Object? v) => switch (v) {
-      'UnderReview' => ComplaintStatus.underReview,
-      'Resolved' => ComplaintStatus.resolved,
-      'Rejected' => ComplaintStatus.rejected,
-      _ => ComplaintStatus.submitted,
-    };
+  const ComplaintStatus(this.wire);
+
+  /// The backend's name for it.
+  final String wire;
+
+  /// Resolved and rejected complaints are finished; the office no longer acts on them.
+  bool get isOpen => this == submitted || this == underReview;
+}
+
+ComplaintStatus _status(Object? v) => ComplaintStatus.values.where((s) => s.wire == v).firstOrNull ?? ComplaintStatus.submitted;
 
 /// A complaint being written, possibly pre-filled by the AI assistant from what the person said.
 class ComplaintDraft {
@@ -135,12 +146,31 @@ class GrievanceRepository {
     return Complaint.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
   }
 
-  Future<List<Complaint>> mine() async {
-    final data = await _api.get<Object?>('/api/grievances/mine');
-    return data is List ? [for (final e in data) ?Complaint.tryParse(e)] : (throw const ApiException(ApiErrorKind.unknown));
+  Future<List<Complaint>> mine() async => _list(await _api.get<Object?>('/api/grievances/mine'));
+
+  /// Officials: every complaint (newest first), or only those with [status].
+  Future<List<Complaint>> all({ComplaintStatus? status}) async =>
+      _list(await _api.get<Object?>('/api/grievances', query: {'status': ?status?.wire}));
+
+  /// Officials: records the outcome and the reply. The backend replaces any earlier reply, tells the
+  /// citizen in their notifications and keeps an audit record of who did it.
+  Future<Complaint> updateStatus(int id, ComplaintStatus status, {String note = ''}) async {
+    assert(status != ComplaintStatus.submitted, 'a complaint cannot go back to Submitted');
+    final data = await _api.post<Object?>('/api/grievances/$id/status', body: {
+      'Status': status.wire,
+      if (note.trim().isNotEmpty) 'Note': note.trim(),
+    });
+    return Complaint.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
   }
+
+  static List<Complaint> _list(Object? data) =>
+      data is List ? [for (final e in data) ?Complaint.tryParse(e)] : (throw const ApiException(ApiErrorKind.unknown));
 }
 
 final grievanceRepositoryProvider = Provider<GrievanceRepository>((ref) => GrievanceRepository(ref.watch(apiClientProvider)));
 
 final myComplaintsProvider = FutureProvider.autoDispose<List<Complaint>>((ref) => ref.watch(grievanceRepositoryProvider).mine());
+
+/// Officials' list; null = every status.
+final allComplaintsProvider = FutureProvider.autoDispose.family<List<Complaint>, ComplaintStatus?>(
+    (ref, status) => ref.watch(grievanceRepositoryProvider).all(status: status));

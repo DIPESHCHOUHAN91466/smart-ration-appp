@@ -2619,6 +2619,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The password could not be changed. Please try again.'**
   String get passwordChangeFailed;
+
+  /// No description provided for @officialComplaintsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen complaints'**
+  String get officialComplaintsTitle;
+
+  /// No description provided for @noComplaintsHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No complaints here.'**
+  String get noComplaintsHere;
+
+  /// No description provided for @complaintShopLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get complaintShopLabel;
+
+  /// No description provided for @complaintUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update this complaint'**
+  String get complaintUpdateTitle;
+
+  /// No description provided for @complaintChooseReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You are checking it. The citizen is told.'**
+  String get complaintChooseReviewHint;
+
+  /// No description provided for @complaintChooseResolvedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The problem has been fixed.'**
+  String get complaintChooseResolvedHint;
+
+  /// No description provided for @complaintChooseRejectedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No action can be taken. Say why in the reply.'**
+  String get complaintChooseRejectedHint;
+
+  /// No description provided for @complaintReplyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to the citizen (optional)'**
+  String get complaintReplyLabel;
+
+  /// No description provided for @complaintReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The citizen sees this reply. Do not write Aadhaar numbers, OTPs or passwords.'**
+  String get complaintReplyHint;
+
+  /// No description provided for @complaintUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint updated'**
+  String get complaintUpdated;
 }
 
 class _AppLocalizationsDelegate

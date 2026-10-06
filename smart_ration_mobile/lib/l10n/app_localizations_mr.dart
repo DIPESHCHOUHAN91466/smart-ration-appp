@@ -1400,4 +1400,37 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get passwordChangeFailed =>
       'पासवर्ड बदलता आला नाही. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get officialComplaintsTitle => 'नागरिकांच्या तक्रारी';
+
+  @override
+  String get noComplaintsHere => 'येथे कोणतीही तक्रार नाही.';
+
+  @override
+  String get complaintShopLabel => 'दुकान';
+
+  @override
+  String get complaintUpdateTitle => 'ही तक्रार अपडेट करा';
+
+  @override
+  String get complaintChooseReviewHint =>
+      'तुम्ही याची तपासणी करत आहात. नागरिकाला कळवले जाईल.';
+
+  @override
+  String get complaintChooseResolvedHint => 'समस्या दूर केली आहे.';
+
+  @override
+  String get complaintChooseRejectedHint =>
+      'कोणतीही कारवाई करता येत नाही. उत्तरात कारण लिहा.';
+
+  @override
+  String get complaintReplyLabel => 'नागरिकाला उत्तर (ऐच्छिक)';
+
+  @override
+  String get complaintReplyHint =>
+      'नागरिकाला हे उत्तर दिसेल. आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका.';
+
+  @override
+  String get complaintUpdated => 'तक्रार अपडेट झाली';
 }

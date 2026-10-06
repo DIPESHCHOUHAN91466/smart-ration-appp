@@ -1417,4 +1417,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get passwordChangeFailed =>
       'The password could not be changed. Please try again.';
+
+  @override
+  String get officialComplaintsTitle => 'Citizen complaints';
+
+  @override
+  String get noComplaintsHere => 'No complaints here.';
+
+  @override
+  String get complaintShopLabel => 'Shop';
+
+  @override
+  String get complaintUpdateTitle => 'Update this complaint';
+
+  @override
+  String get complaintChooseReviewHint =>
+      'You are checking it. The citizen is told.';
+
+  @override
+  String get complaintChooseResolvedHint => 'The problem has been fixed.';
+
+  @override
+  String get complaintChooseRejectedHint =>
+      'No action can be taken. Say why in the reply.';
+
+  @override
+  String get complaintReplyLabel => 'Reply to the citizen (optional)';
+
+  @override
+  String get complaintReplyHint =>
+      'The citizen sees this reply. Do not write Aadhaar numbers, OTPs or passwords.';
+
+  @override
+  String get complaintUpdated => 'Complaint updated';
 }

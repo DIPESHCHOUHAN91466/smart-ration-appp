@@ -1399,4 +1399,37 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get passwordChangeFailed =>
       'पासवर्ड नहीं बदल सका। कृपया फिर से प्रयास करें।';
+
+  @override
+  String get officialComplaintsTitle => 'नागरिकों की शिकायतें';
+
+  @override
+  String get noComplaintsHere => 'यहाँ कोई शिकायत नहीं है।';
+
+  @override
+  String get complaintShopLabel => 'दुकान';
+
+  @override
+  String get complaintUpdateTitle => 'इस शिकायत को अपडेट करें';
+
+  @override
+  String get complaintChooseReviewHint =>
+      'आप इसकी जाँच कर रहे हैं। नागरिक को सूचित किया जाएगा।';
+
+  @override
+  String get complaintChooseResolvedHint => 'समस्या ठीक कर दी गई है।';
+
+  @override
+  String get complaintChooseRejectedHint =>
+      'कोई कार्रवाई नहीं हो सकती। उत्तर में कारण लिखें।';
+
+  @override
+  String get complaintReplyLabel => 'नागरिक को उत्तर (वैकल्पिक)';
+
+  @override
+  String get complaintReplyHint =>
+      'नागरिक यह उत्तर देखेगा। आधार नंबर, OTP या पासवर्ड न लिखें।';
+
+  @override
+  String get complaintUpdated => 'शिकायत अपडेट हो गई';
 }

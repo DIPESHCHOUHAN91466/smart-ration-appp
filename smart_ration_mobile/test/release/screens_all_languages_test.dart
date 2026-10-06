@@ -42,6 +42,10 @@ FakeReply everything(RequestOptions r) {
     return FakeReply.ok([complaintJson(1, 'LessRation', 'This month I got 2 kg less wheat.', rationType: 'Wheat', status: 'UnderReview',
         reply: 'The shop owner has been asked to explain.')]);
   }
+  if (p == '/api/grievances' && r.method == 'GET') {
+    return FakeReply.ok([complaintJson(2, 'StaffBehaviour', 'The shop keeper shouted at my mother and sent her home.',
+        status: 'Submitted')]);
+  }
   if (p == '/api/notifications') {
     return FakeReply.ok([
       {'id': 1, 'type': 'CollectionCompleted', 'title': 'Ration collected', 'message': 'Collection ID COL-DEMO-000042.',
@@ -88,6 +92,7 @@ final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('official', official, Routes.officialShops, () => null),
   ('official', official, Routes.officialShop(1), () => null),
   ('official', official, Routes.officialAlerts, () => null),
+  ('official', official, Routes.officialComplaints, () => null),
 ];
 
 void main() {
@@ -156,6 +161,27 @@ void main() {
 
       expect(tester.takeException(), isNull, reason: '$language alert update form');
       expect(find.byType(TextField), findsOneWidget); // the form is open
+    });
+
+    testWidgets('$language · official · the complaint update form fits a small phone with large text', (tester) async {
+      tester.view.physicalSize = const Size(720, 1280);
+      tester.view.devicePixelRatio = 2.0;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      final app = await TestApp.build(FakeBackend(everything), savedLanguage: language, signedInAs: official());
+      await tester.pumpWidget(app.widget);
+      await tester.pumpAndSettle();
+      containerOf(tester.element(find.byType(Scaffold).first)).read(routerProvider).push(Routes.officialComplaints);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byIcon(Icons.edit_note).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.edit_note).first);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull, reason: '$language complaint update form');
+      expect(find.byType(TextField), findsOneWidget);
     });
   }
 }

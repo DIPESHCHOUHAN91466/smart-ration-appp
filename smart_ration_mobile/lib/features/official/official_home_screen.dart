@@ -14,7 +14,8 @@ import '../notifications/notifications_screen.dart';
 import 'official_data.dart';
 
 /// The government official's (and admin's) dashboard: today's totals across every shop, the last
-/// 30 days, and the way into the shops and the open alerts. Only alerts can be changed (on the alerts screen).
+/// 30 days, and the way into the shops, the open alerts and citizens' complaints (alerts and complaints
+/// can be updated on their own screens).
 class OfficialHomeScreen extends ConsumerWidget {
   const OfficialHomeScreen({super.key});
 
@@ -147,6 +148,12 @@ class OfficialHomeScreen extends ConsumerWidget {
               icon: const Icon(Icons.notification_important_outlined),
               label: Text(alerts.value == null ? l.alertsTitle : l.alertsButton(alerts.value!.length)),
               onPressed: () => context.push(Routes.officialAlerts),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.report_problem_outlined),
+              label: Text(l.officialComplaintsTitle),
+              onPressed: () => context.push(Routes.officialComplaints),
             ),
             const SizedBox(height: 24),
             OutlinedButton.icon(

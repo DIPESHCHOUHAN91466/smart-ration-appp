@@ -418,5 +418,15 @@
   "changePasswordButton": "पासवर्ड बदलें",
   "passwordChanged": "पासवर्ड बदल गया। अन्य उपकरणों से साइन आउट कर दिया गया है।",
   "passwordChangeSignsOut": "बदलने पर आप बाकी सभी उपकरणों से साइन आउट हो जाएँगे।",
-  "passwordChangeFailed": "पासवर्ड नहीं बदल सका। कृपया फिर से प्रयास करें।"
+  "passwordChangeFailed": "पासवर्ड नहीं बदल सका। कृपया फिर से प्रयास करें।",
+  "officialComplaintsTitle": "नागरिकों की शिकायतें",
+  "noComplaintsHere": "यहाँ कोई शिकायत नहीं है।",
+  "complaintShopLabel": "दुकान",
+  "complaintUpdateTitle": "इस शिकायत को अपडेट करें",
+  "complaintChooseReviewHint": "आप इसकी जाँच कर रहे हैं। नागरिक को सूचित किया जाएगा।",
+  "complaintChooseResolvedHint": "समस्या ठीक कर दी गई है।",
+  "complaintChooseRejectedHint": "कोई कार्रवाई नहीं हो सकती। उत्तर में कारण लिखें।",
+  "complaintReplyLabel": "नागरिक को उत्तर (वैकल्पिक)",
+  "complaintReplyHint": "नागरिक यह उत्तर देखेगा। आधार नंबर, OTP या पासवर्ड न लिखें।",
+  "complaintUpdated": "शिकायत अपडेट हो गई"
 }
