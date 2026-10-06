@@ -1648,4 +1648,27 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get amountInvalid => '0 या उससे अधिक संख्या लिखें।';
+
+  @override
+  String get accountTitle => 'मेरा खाता';
+
+  @override
+  String get exportTitle => 'मेरा डेटा डाउनलोड करें';
+
+  @override
+  String get exportIntro =>
+      'यह सेवा आपके बारे में जो कुछ रखती है उसकी प्रति लें: आपका खाता, राशन कार्ड और परिवार, बुकिंग, वितरण, शिकायतें, सूचनाएँ और खाते की गतिविधि। पासवर्ड और सुरक्षा कुंजियाँ कभी शामिल नहीं होतीं। फ़ाइल निजी रखें।';
+
+  @override
+  String get exportDownload => 'मेरा डेटा डाउनलोड करें (JSON)';
+
+  @override
+  String get exportPreparing => 'तैयार हो रहा है…';
+
+  @override
+  String get exportDone => 'आपका डेटा सहेज लिया गया।';
+
+  @override
+  String get exportFailed =>
+      'आपका डेटा तैयार नहीं हो सका। कृपया फिर से प्रयास करें।';
 }

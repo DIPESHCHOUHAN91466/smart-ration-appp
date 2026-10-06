@@ -3069,6 +3069,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a number, 0 or more.'**
   String get amountInvalid;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My account'**
+  String get accountTitle;
+
+  /// No description provided for @exportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download my data'**
+  String get exportTitle;
+
+  /// No description provided for @exportIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a copy of everything this service holds about you: your account, ration card and family, bookings, collections, complaints, notifications and account activity. Passwords and security keys are never included. Keep the file private.'**
+  String get exportIntro;
+
+  /// No description provided for @exportDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download my data (JSON)'**
+  String get exportDownload;
+
+  /// No description provided for @exportPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing…'**
+  String get exportPreparing;
+
+  /// No description provided for @exportDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data has been saved.'**
+  String get exportDone;
+
+  /// No description provided for @exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not prepare your data. Please try again.'**
+  String get exportFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -752,5 +752,12 @@
   "correctConfirmBody": "This is recorded as a manual correction with your name. Officials can see it.",
   "correctNoChange": "Nothing was changed.",
   "stockCorrected": "Stock corrected.",
-  "amountInvalid": "Enter a number, 0 or more."
+  "amountInvalid": "Enter a number, 0 or more.",
+  "accountTitle": "My account",
+  "exportTitle": "Download my data",
+  "exportIntro": "Get a copy of everything this service holds about you: your account, ration card and family, bookings, collections, complaints, notifications and account activity. Passwords and security keys are never included. Keep the file private.",
+  "exportDownload": "Download my data (JSON)",
+  "exportPreparing": "Preparing…",
+  "exportDone": "Your data has been saved.",
+  "exportFailed": "Could not prepare your data. Please try again."
 }

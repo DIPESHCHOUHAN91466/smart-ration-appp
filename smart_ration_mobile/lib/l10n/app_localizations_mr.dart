@@ -1649,4 +1649,27 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get amountInvalid => '0 किंवा त्याहून जास्त संख्या लिहा.';
+
+  @override
+  String get accountTitle => 'माझे खाते';
+
+  @override
+  String get exportTitle => 'माझा डेटा डाउनलोड करा';
+
+  @override
+  String get exportIntro =>
+      'ही सेवा आपल्याबद्दल जे काही ठेवते त्याची प्रत घ्या: आपले खाते, रेशन कार्ड आणि कुटुंब, बुकिंग, वितरण, तक्रारी, सूचना आणि खात्यातील हालचाली. पासवर्ड आणि सुरक्षा की कधीही समाविष्ट नसतात. फाइल खाजगी ठेवा.';
+
+  @override
+  String get exportDownload => 'माझा डेटा डाउनलोड करा (JSON)';
+
+  @override
+  String get exportPreparing => 'तयार होत आहे…';
+
+  @override
+  String get exportDone => 'आपला डेटा जतन झाला.';
+
+  @override
+  String get exportFailed =>
+      'आपला डेटा तयार करता आला नाही. कृपया पुन्हा प्रयत्न करा.';
 }

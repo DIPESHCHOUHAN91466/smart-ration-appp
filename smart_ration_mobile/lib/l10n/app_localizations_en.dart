@@ -1665,4 +1665,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get amountInvalid => 'Enter a number, 0 or more.';
+
+  @override
+  String get accountTitle => 'My account';
+
+  @override
+  String get exportTitle => 'Download my data';
+
+  @override
+  String get exportIntro =>
+      'Get a copy of everything this service holds about you: your account, ration card and family, bookings, collections, complaints, notifications and account activity. Passwords and security keys are never included. Keep the file private.';
+
+  @override
+  String get exportDownload => 'Download my data (JSON)';
+
+  @override
+  String get exportPreparing => 'Preparing…';
+
+  @override
+  String get exportDone => 'Your data has been saved.';
+
+  @override
+  String get exportFailed => 'Could not prepare your data. Please try again.';
 }

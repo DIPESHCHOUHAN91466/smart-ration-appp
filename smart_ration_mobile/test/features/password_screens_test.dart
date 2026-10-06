@@ -99,7 +99,9 @@ void main() {
         : demoServer(r));
     final app = await start(tester, backend, signedIn: true);
 
-    await tester.tap(find.byTooltip('Change password'));
+    await tester.tap(find.byTooltip('My account'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Change password'));
     await tester.pumpAndSettle();
     await fill(tester, 'Current password', 'old-secret');
     await fill(tester, 'New password', _strong);
