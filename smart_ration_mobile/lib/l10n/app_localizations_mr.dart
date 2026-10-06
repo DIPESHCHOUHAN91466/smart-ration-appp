@@ -1321,4 +1321,83 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get nAnnouncement => 'घोषणा';
+
+  @override
+  String get mfaPrompt =>
+      'या खात्यासाठी दोन-टप्पी साइन इन चालू आहे. आपल्या ऑथेंटिकेटर अॅपमधील 6 अंकी कोड टाका.';
+
+  @override
+  String get mfaCodeLabel => 'ऑथेंटिकेटर अॅपमधील कोड';
+
+  @override
+  String get mfaCodeWrong =>
+      'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. ऑथेंटिकेटर अॅपमधील सध्याचा कोड वापरा.';
+
+  @override
+  String get mfaExpired =>
+      'साइन इनला खूप वेळ लागला. कृपया आपला ईमेल आणि पासवर्ड पुन्हा टाका.';
+
+  @override
+  String get mfaStartAgain => 'पुन्हा सुरू करा';
+
+  @override
+  String get forgotPassword => 'पासवर्ड विसरलात?';
+
+  @override
+  String get resetTitle => 'आपला पासवर्ड रीसेट करा';
+
+  @override
+  String get resetIntro =>
+      'आपल्या खात्याशी जोडलेला मोबाइल नंबर टाका. आम्ही त्यावर 6 अंकी कोड पाठवू.';
+
+  @override
+  String resetCodeSent(String mobile) {
+    return '$mobile नोंदणीकृत असल्यास त्यावर 6 अंकी कोड पाठवला आहे.';
+  }
+
+  @override
+  String get resetSendCode => 'कोड पाठवा';
+
+  @override
+  String get resetSetPassword => 'नवीन पासवर्ड सेट करा';
+
+  @override
+  String get resetDone => 'पासवर्ड बदलला. कृपया नवीन पासवर्डने साइन इन करा.';
+
+  @override
+  String get newPasswordLabel => 'नवीन पासवर्ड';
+
+  @override
+  String get confirmPasswordLabel => 'नवीन पासवर्डची पुष्टी करा';
+
+  @override
+  String get currentPasswordLabel => 'सध्याचा पासवर्ड';
+
+  @override
+  String get passwordRules =>
+      'किमान 12 अक्षरे. काही असंबंधित शब्द चांगले असतात. आपले नाव, मोबाइल नंबर किंवा सामान्य पासवर्ड वापरू नका.';
+
+  @override
+  String get passwordTooShort => 'किमान 12 अक्षरे वापरा.';
+
+  @override
+  String get passwordsMismatch => 'पासवर्ड जुळत नाहीत.';
+
+  @override
+  String get changePasswordTitle => 'पासवर्ड बदला';
+
+  @override
+  String get changePasswordButton => 'पासवर्ड बदला';
+
+  @override
+  String get passwordChanged =>
+      'पासवर्ड बदलला. इतर उपकरणांवरून साइन आउट केले आहे.';
+
+  @override
+  String get passwordChangeSignsOut =>
+      'बदलल्यावर आपण इतर सर्व उपकरणांवरून साइन आउट व्हाल.';
+
+  @override
+  String get passwordChangeFailed =>
+      'पासवर्ड बदलता आला नाही. कृपया पुन्हा प्रयत्न करा.';
 }

@@ -21,7 +21,7 @@ enum ApiErrorKind {
 
 /// Every failed backend call becomes one of these. Screens show [messageIn], never the raw error.
 class ApiException implements Exception {
-  const ApiException(this.kind, {this.serverMessage, this.errorCode, this.statusCode});
+  const ApiException(this.kind, {this.serverMessage, this.errorCode, this.statusCode, this.errors = const []});
 
   final ApiErrorKind kind;
 
@@ -32,6 +32,10 @@ class ApiException implements Exception {
   /// A stable code from the backend, e.g. `INVALID_SIGNATURE` or `WRONG_SHOP`.
   final String? errorCode;
   final int? statusCode;
+
+  /// The backend's "Field: reason" list for a refused form (e.g. "NewPassword: This password is too common."),
+  /// in English. Empty for other failures.
+  final List<String> errors;
 
   /// The backend could not be reached at all (as opposed to answering with an error).
   bool get isOffline => kind == ApiErrorKind.noConnection || kind == ApiErrorKind.timeout;
@@ -76,11 +80,14 @@ class ApiException implements Exception {
   factory ApiException.fromResponse(int? status, Object? body) {
     String? message;
     String? code;
+    var errors = const <String>[];
     if (body is Map) {
       final m = body['message'];
       final c = body['errorCode'];
+      final e = body['errors'];
       if (m is String && m.trim().isNotEmpty) message = m;
       if (c is String && c.isNotEmpty) code = c;
+      if (e is List) errors = [for (final item in e) if (item is String && item.trim().isNotEmpty) item];
     }
     final kind = switch (status) {
       400 => ApiErrorKind.badRequest,
@@ -95,7 +102,8 @@ class ApiException implements Exception {
     };
     // Server errors (5xx) are never shown in the backend's words: they are not written for users.
     final shown = kind == ApiErrorKind.server ? null : message;
-    return ApiException(kind, serverMessage: shown, errorCode: code, statusCode: status);
+    return ApiException(kind, serverMessage: shown, errorCode: code, statusCode: status,
+        errors: kind == ApiErrorKind.server ? const [] : errors);
   }
 
   @override

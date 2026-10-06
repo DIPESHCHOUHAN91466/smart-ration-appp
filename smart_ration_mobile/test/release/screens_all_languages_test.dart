@@ -61,6 +61,9 @@ SessionUser official() => SessionUser.tryParse(userJson(id: 4, fullName: 'Distri
 final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('signed out', () => null, Routes.login, () => null),
   ('signed out', () => null, Routes.help, () => null),
+  ('signed out', () => null, Routes.forgotPassword, () => null),
+  ('citizen', citizen, Routes.changePassword, () => null),
+  ('official', official, Routes.changePassword, () => null),
   ('citizen', citizen, Routes.citizenHome, () => null),
   ('citizen', citizen, Routes.citizenFamily, () => null),
   ('citizen', citizen, Routes.citizenCard, () => null),

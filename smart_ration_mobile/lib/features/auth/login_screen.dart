@@ -296,6 +296,8 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
   final _form = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _code = TextEditingController();
+  String? _mfaToken; // set after the password step for two-factor accounts
   bool _hidePassword = true;
   bool _busy = false;
   String? _error;
@@ -304,6 +306,7 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _code.dispose();
     super.dispose();
   }
 
@@ -315,11 +318,31 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
       _busy = true;
       _error = null;
     });
+    final pending = _mfaToken;
     try {
-      await ref.read(authControllerProvider.notifier).signIn(_email.text, _password.text);
+      final auth = ref.read(authControllerProvider.notifier);
+      if (pending != null) {
+        await auth.signInWithMfa(pending, _code.text.trim());
+      } else {
+        await auth.signIn(_email.text, _password.text);
+      }
       // The router now sends the user to their dashboard.
+    } on MfaRequired catch (m) {
+      if (mounted) setState(() => _mfaToken = m.token);
     } on ApiException catch (e) {
       if (!mounted) return;
+      if (pending != null) {
+        setState(() {
+          if (e.errorCode == 'MFA_PENDING_INVALID') {
+            _mfaToken = null; // the 5 minutes ran out: start again with the password
+            _password.clear();
+            _error = l.mfaExpired;
+          } else {
+            _error = e.kind == ApiErrorKind.unauthorized ? l.mfaCodeWrong : e.messageIn(l);
+          }
+        });
+        return;
+      }
       setState(() => _error = switch (e.kind) {
             ApiErrorKind.unauthorized => l.loginInvalid,
             ApiErrorKind.forbidden => l.loginAccountDisabled,
@@ -343,6 +366,31 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
           Text(l.signInSubtitle, style: const TextStyle(color: AppColors.muted, fontSize: 16)),
           const SizedBox(height: 16),
           if (_error != null) Notice(text: _error!),
+          if (_mfaToken != null) ...[
+            Text(l.mfaPrompt, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _code,
+              enabled: !_busy,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              maxLength: 6,
+              autofillHints: const [AutofillHints.oneTimeCode],
+              onFieldSubmitted: (_) => _submit(),
+              decoration: InputDecoration(labelText: l.mfaCodeLabel, prefixIcon: const Icon(Icons.verified_user_outlined)),
+              validator: (value) => RegExp(r'^\d{6}$').hasMatch(value?.trim() ?? '') ? null : l.codeInvalidFormat,
+            ),
+            const SizedBox(height: 16),
+            _BusyButton(busy: _busy, label: l.signInButton, busyLabel: l.signingIn, onPressed: _submit),
+            TextButton(
+              onPressed: _busy ? null : () => setState(() {
+                _mfaToken = null;
+                _code.clear();
+                _error = null;
+              }),
+              child: Text(l.mfaStartAgain),
+            ),
+          ] else ...[
           TextFormField(
             controller: _email,
             enabled: !_busy,
@@ -377,9 +425,17 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
             ),
             validator: (value) => (value ?? '').isEmpty ? l.passwordRequired : null,
           ),
-          const SizedBox(height: 24),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _busy ? null : () => context.push(Routes.forgotPassword),
+              child: Text(l.forgotPassword),
+            ),
+          ),
+          const SizedBox(height: 8),
           _BusyButton(busy: _busy, label: l.signInButton, busyLabel: l.signingIn, onPressed: _submit),
-          if (showDemo) ...[
+          ],
+          if (showDemo && _mfaToken == null) ...[
             const SizedBox(height: 28),
             Text(l.demoAccountsTitle, style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 4),

@@ -1337,4 +1337,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nAnnouncement => 'Announcement';
+
+  @override
+  String get mfaPrompt =>
+      'Two-factor sign-in is on for this account. Enter the 6-digit code from your authenticator app.';
+
+  @override
+  String get mfaCodeLabel => 'Code from the authenticator app';
+
+  @override
+  String get mfaCodeWrong =>
+      'The code is wrong or has expired. Use the current code from your authenticator app.';
+
+  @override
+  String get mfaExpired =>
+      'The sign-in took too long. Please enter your email and password again.';
+
+  @override
+  String get mfaStartAgain => 'Start again';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetTitle => 'Reset your password';
+
+  @override
+  String get resetIntro =>
+      'Enter the mobile number registered with your account. We will send a 6-digit code to it.';
+
+  @override
+  String resetCodeSent(String mobile) {
+    return 'If $mobile is registered, a 6-digit code has been sent to it.';
+  }
+
+  @override
+  String get resetSendCode => 'Send code';
+
+  @override
+  String get resetSetPassword => 'Set new password';
+
+  @override
+  String get resetDone =>
+      'Password changed. Please sign in with the new password.';
+
+  @override
+  String get newPasswordLabel => 'New password';
+
+  @override
+  String get confirmPasswordLabel => 'Confirm new password';
+
+  @override
+  String get currentPasswordLabel => 'Current password';
+
+  @override
+  String get passwordRules =>
+      'At least 12 characters. A few unrelated words work well. Do not use your name, mobile number or a common password.';
+
+  @override
+  String get passwordTooShort => 'Use at least 12 characters.';
+
+  @override
+  String get passwordsMismatch => 'The passwords do not match.';
+
+  @override
+  String get changePasswordTitle => 'Change password';
+
+  @override
+  String get changePasswordButton => 'Change password';
+
+  @override
+  String get passwordChanged =>
+      'Password changed. Other devices have been signed out.';
+
+  @override
+  String get passwordChangeSignsOut =>
+      'Changing it signs you out on every other device.';
+
+  @override
+  String get passwordChangeFailed =>
+      'The password could not be changed. Please try again.';
 }

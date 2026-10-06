@@ -8,6 +8,12 @@ abstract final class Routes {
   static const serverStatus = '/settings/server';
   static const login = '/login';
 
+  /// Forgotten password (public): a code to the registered mobile, then a new password.
+  static const forgotPassword = '/login/forgot';
+
+  /// Change my password (any signed-in role).
+  static const changePassword = '/account/password';
+
   /// The Public Help assistant: open to everyone, signed in or not.
   static const help = '/help';
 
@@ -42,7 +48,7 @@ abstract final class Routes {
   static const officialAlerts = '/official/alerts';
 
   /// Screens anyone may open without signing in.
-  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, help};
+  static const public = {splash, chooseLanguage, changeLanguage, serverStatus, login, forgotPassword, help};
 
   /// The dashboard for each role. Admins use the officials' dashboard, as on the website.
   static String homeFor(AppRole role) => switch (role) {

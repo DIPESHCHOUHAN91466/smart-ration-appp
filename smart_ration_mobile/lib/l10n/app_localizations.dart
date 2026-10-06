@@ -2481,6 +2481,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Announcement'**
   String get nAnnouncement;
+
+  /// No description provided for @mfaPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor sign-in is on for this account. Enter the 6-digit code from your authenticator app.'**
+  String get mfaPrompt;
+
+  /// No description provided for @mfaCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code from the authenticator app'**
+  String get mfaCodeLabel;
+
+  /// No description provided for @mfaCodeWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'The code is wrong or has expired. Use the current code from your authenticator app.'**
+  String get mfaCodeWrong;
+
+  /// No description provided for @mfaExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The sign-in took too long. Please enter your email and password again.'**
+  String get mfaExpired;
+
+  /// No description provided for @mfaStartAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Start again'**
+  String get mfaStartAgain;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password'**
+  String get resetTitle;
+
+  /// No description provided for @resetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the mobile number registered with your account. We will send a 6-digit code to it.'**
+  String get resetIntro;
+
+  /// No description provided for @resetCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If {mobile} is registered, a 6-digit code has been sent to it.'**
+  String resetCodeSent(String mobile);
+
+  /// No description provided for @resetSendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send code'**
+  String get resetSendCode;
+
+  /// No description provided for @resetSetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Set new password'**
+  String get resetSetPassword;
+
+  /// No description provided for @resetDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Please sign in with the new password.'**
+  String get resetDone;
+
+  /// No description provided for @newPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPasswordLabel;
+
+  /// No description provided for @confirmPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get confirmPasswordLabel;
+
+  /// No description provided for @currentPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPasswordLabel;
+
+  /// No description provided for @passwordRules.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 12 characters. A few unrelated words work well. Do not use your name, mobile number or a common password.'**
+  String get passwordRules;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 12 characters.'**
+  String get passwordTooShort;
+
+  /// No description provided for @passwordsMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The passwords do not match.'**
+  String get passwordsMismatch;
+
+  /// No description provided for @changePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePasswordTitle;
+
+  /// No description provided for @changePasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePasswordButton;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Other devices have been signed out.'**
+  String get passwordChanged;
+
+  /// No description provided for @passwordChangeSignsOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing it signs you out on every other device.'**
+  String get passwordChangeSignsOut;
+
+  /// No description provided for @passwordChangeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The password could not be changed. Please try again.'**
+  String get passwordChangeFailed;
 }
 
 class _AppLocalizationsDelegate

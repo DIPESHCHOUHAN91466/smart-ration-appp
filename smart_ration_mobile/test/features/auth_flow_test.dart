@@ -26,6 +26,8 @@ Future<void> signIn(WidgetTester tester, String email, String password) async {
   if (find.widgetWithText(TextFormField, 'Email').evaluate().isEmpty) await useEmail(tester);
   await tester.enterText(find.widgetWithText(TextFormField, 'Email'), email);
   await tester.enterText(find.widgetWithText(TextFormField, 'Password'), password);
+  await tester.ensureVisible(find.widgetWithText(FilledButton, 'Sign in'));   // the form scrolls on small screens
+  await tester.pumpAndSettle();
   await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
   await tester.pumpAndSettle();
 }

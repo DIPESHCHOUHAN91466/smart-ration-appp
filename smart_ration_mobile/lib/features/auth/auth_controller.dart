@@ -12,8 +12,17 @@ class AuthRepository {
 
   final ApiClient _api;
 
+  /// Throws [MfaRequired] for a staff account with two-factor sign-in: the password was right, and the
+  /// code from the authenticator app finishes the sign-in ([verifyMfa]).
   Future<AuthResult> login(String email, String password) async {
     final data = await _api.post<Object?>('/api/auth/login', body: {'email': email.trim(), 'password': password});
+    if (data is Map && data['mfaRequired'] == true && data['mfaToken'] is String) throw MfaRequired(data['mfaToken'] as String);
+    return AuthResult.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
+  }
+
+  /// Second sign-in step for two-factor accounts: the pending sign-in (5 minutes) and the app's 6-digit code.
+  Future<AuthResult> verifyMfa(String mfaToken, String code) async {
+    final data = await _api.post<Object?>('/api/auth/mfa/verify', body: {'mfaToken': mfaToken, 'code': code});
     return AuthResult.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
   }
 
@@ -29,8 +38,34 @@ class AuthRepository {
     return AuthResult.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
   }
 
+  /// Texts a password-reset code to the account's registered mobile (any role). Same answer whether or not the
+  /// number is registered.
+  Future<OtpSent> requestPasswordReset(String mobile) async {
+    final data = await _api.post<Object?>('/api/auth/password/reset/request', body: {'mobileNumber': mobile});
+    return OtpSent.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
+  }
+
+  /// Sets the new password with the code; every session of the account ends.
+  Future<void> confirmPasswordReset(String mobile, String code, String newPassword) => _api.post<Object?>(
+      '/api/auth/password/reset/confirm', body: {'mobileNumber': mobile, 'otp': code, 'newPassword': newPassword});
+
+  /// Changes the password while signed in; the answer is the new session for this phone.
+  Future<AuthResult> changePassword(String current, String newPassword) async {
+    final data = await _api.post<Object?>('/api/auth/password/change',
+        body: {'currentPassword': current, 'newPassword': newPassword});
+    return AuthResult.tryParse(data) ?? (throw const ApiException(ApiErrorKind.unknown));
+  }
+
   /// Tells the backend to cancel the refresh token, so a copied token can't be used later.
   Future<void> logout(String refreshToken) => _api.post<Object?>('/api/auth/logout', body: {'refreshToken': refreshToken});
+}
+
+/// The password was right, but the account uses two-factor sign-in: no session yet. [token] is the pending
+/// sign-in for [AuthRepository.verifyMfa]; it is not an access token and is never saved.
+class MfaRequired implements Exception {
+  const MfaRequired(this.token);
+
+  final String token;
 }
 
 /// What `/api/auth/otp/request` answers.
@@ -81,9 +116,18 @@ class AuthController extends Notifier<SessionUser?> {
   @override
   SessionUser? build() => ref.read(restoredSessionProvider);
 
-  /// Throws [ApiException] when the backend refuses (wrong password, too many attempts, offline…).
+  /// Throws [ApiException] when the backend refuses (wrong password, too many attempts, offline…), and
+  /// [MfaRequired] when the account needs the two-factor code.
   Future<void> signIn(String email, String password) async =>
       _start(await ref.read(authRepositoryProvider).login(email, password));
+
+  /// Second step for staff with two-factor sign-in, after [signIn] threw [MfaRequired].
+  Future<void> signInWithMfa(String mfaToken, String code) async =>
+      _start(await ref.read(authRepositoryProvider).verifyMfa(mfaToken, code));
+
+  /// Every other device is signed out by the backend; this phone continues with the new session.
+  Future<void> changePassword(String current, String newPassword) async =>
+      _start(await ref.read(authRepositoryProvider).changePassword(current, newPassword));
 
   /// Sign-in with the code texted to a citizen's mobile. Throws [ApiException] like [signIn].
   Future<void> signInWithOtp(String mobile, String code) async =>
