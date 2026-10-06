@@ -7,7 +7,7 @@ import { homePathForRole } from "../features/auth/roleHome";
 import { useTranslation } from "../i18n/useTranslation";
 import { LANGUAGE_OPTIONS } from "../i18n/translations";
 import BrandMark from "../components/BrandMark";
-import { DEMO_MODE } from "../config/env";
+import { DEMO_MODE, DEMO_PASSWORD } from "../config/env";
 
 // Demo accounts are a development/demo aid only: hidden when the build sets VITE_DEMO_MODE=false
 // (config/env.js).
@@ -41,7 +41,7 @@ export default function Login() {
   const [mfaToken, setMfaToken] = useState(null);
   const [code, setCode] = useState("");
 
-  const fillDemo = (email) => setForm({ email, password: "demo123" });
+  const fillDemo = (email) => setForm({ email, password: DEMO_PASSWORD });
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -238,7 +238,7 @@ export default function Login() {
             <>
               <div className="or"><span>OR</span></div>
               <div className="demo-box">
-                <b>{t("demo_accounts")}:</b><br />
+                <b>{t("demo_accounts")}{DEMO_PASSWORD && ` (${t("password").toLowerCase()}: ${DEMO_PASSWORD})`}:</b><br />
                 {DEMO_ACCOUNTS.map((account) => (
                   <button key={account.email} type="button" className="link-btn" style={{ marginTop: 6, marginRight: 12 }} onClick={() => fillDemo(account.email)}>
                     {t(account.labelKey)}
