@@ -16,6 +16,7 @@ from app.core.body import Body
 from app.core.errors import ok
 from app.database.connection import get_db
 from app.database.enums import UserRole
+from app.security.rate_limit import rate_limit
 from app.services import profile_service
 
 router = APIRouter(prefix="/api", tags=["people"])
@@ -85,6 +86,7 @@ def search(q: str | None = None, who: Actor = Depends(any_user), db: Session = D
     return ok(profile_service.search(db, who, q))
 
 
-@router.get("/public/beneficiaries/{reference}", summary="Public verification badge (no login; non-sensitive fields only)")
+@router.get("/public/beneficiaries/{reference}", summary="Public verification badge (no login; non-sensitive fields only)",
+            dependencies=[Depends(rate_limit("public-badge", lambda s: s.public_badge_rate_limit_per_minute))])
 def public_badge(reference: str, db: Session = Depends(get_db)):
     return ok(profile_service.public_badge(db, reference))

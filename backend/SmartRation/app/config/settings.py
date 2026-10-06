@@ -56,8 +56,12 @@ class Settings(BaseSettings):
     # Serve the built frontend from this API (single-service deployments, e.g. Render). Empty = don't.
     frontend_dist_dir: str = Field(default="", description="path to frontend/dist; the Docker image sets it")
 
-    # Largest request body accepted (OCR uploads are up to 5 MB).
+    # Largest request body accepted (OCR uploads are up to 5 MB), chunked or not.
     max_request_bytes: int = 6 * 1024 * 1024
+
+    # How many reverse proxies in front of the API append to X-Forwarded-For (app/middleware/edge.py):
+    # 0 = none (use the socket address), 1 = one proxy such as nginx, 2 = Render. Never trust more than exist.
+    trusted_proxy_hops: int = Field(default=0, ge=0, le=5)
 
     log_level: str = "INFO"
 
@@ -86,6 +90,7 @@ class Settings(BaseSettings):
     chatbot_rate_limit_per_minute: int = 30
     public_help_rate_limit_per_minute: int = 120
     grievance_rate_limit_per_minute: int = 5   # complaints filed per client IP (stops scripted flooding)
+    public_badge_rate_limit_per_minute: int = 30   # public verification badges per client IP (stops enumeration)
 
     # ---- QR codes ----
     # HMAC key that signs every booking's QR code. Changing it invalidates all issued QR codes, so an

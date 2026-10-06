@@ -27,6 +27,7 @@ from app.core.errors import install_exception_handlers
 from app.core.logging import configure_logging
 from app.database.connection import configure_database, get_session_factory
 from app.middleware.api_version import ApiVersionAliasMiddleware
+from app.middleware.edge import BodySizeLimitMiddleware, ClientAddressMiddleware
 from app.middleware.http import install_middleware
 from app.security.rate_limit import FixedWindowLimiter
 from app.services import slot_service
@@ -134,6 +135,9 @@ def create_app(settings: Settings | None = None, legacy_transport: httpx.AsyncBa
     )
     # Outermost: /api/v1/* is rewritten to /api/* before anything else sees the request.
     app.add_middleware(ApiVersionAliasMiddleware)
+    # Before everything: the request body limit (chunked bodies too) and the real client address (security N5, N1).
+    app.add_middleware(BodySizeLimitMiddleware, max_bytes=settings.max_request_bytes)
+    app.add_middleware(ClientAddressMiddleware, trusted_hops=settings.trusted_proxy_hops)
 
     # ---- Python-native routes (grow with each migration phase) ----
     app.include_router(health.router)

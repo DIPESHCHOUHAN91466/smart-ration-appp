@@ -214,6 +214,7 @@ jobs:
             -e JWT_SECRET_KEY=ci-only-signing-key-not-a-secret-0123456789abcdef \
             -e QR_SECRET=ci-only-qr-secret-not-a-secret-0123456789abcdef \
             -e MFA_ENCRYPTION_KEY=ci-only-mfa-key-not-a-secret-0123456789abcdef \
+            -e TRUSTED_PROXY_HOPS=2 \
             -e DEMO_OTP_ENABLED=false -e SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true \
             -e LEGACY_API_URL= -e AI_SERVICE_URL= \
             -e RUN_DB_SETUP=true -e RUN_DB_SEED=true -e SEED_DEMO_PASSWORD=ci-demo-password \

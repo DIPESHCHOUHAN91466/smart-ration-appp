@@ -31,8 +31,9 @@ accepts the old secret for verification during a transition window.
 - Rate limiting: login + register share 10 requests/minute per client IP (as in C#).
   Requests the Python proxy forwards carry `X-Forwarded-For`; the C# API trusts it from loopback
   proxies only (`UseForwardedHeaders`, fixed 2026-09-25), so its per-IP limits (QR scan, OTP) see the
-  real client. The Python limiter keys on the socket address: run uvicorn with `--proxy-headers`
-  behind a reverse proxy.
+  real client. The Python limiter keys on the client address that `app/middleware/edge.py` derives:
+  `TRUSTED_PROXY_HOPS` entries from the right of `X-Forwarded-For` (0 = socket address, 1 = nginx, 2 = Render),
+  never the left-most, client-controlled entry; uvicorn runs with `--no-proxy-headers` (security N1).
 - Token storage (website): requests carry `X-Auth-Mode: cookie`, so the API keeps the refresh token in an HttpOnly,
   SameSite=Strict cookie (`sr_refresh`, path `/api`, Secure in production) and answers `refreshToken: null`. The
   access token lives in memory only; after a reload the first 401 refreshes from the cookie. `localStorage` holds

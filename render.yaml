@@ -37,6 +37,8 @@ services:
         generateValue: true
       - key: MFA_ENCRYPTION_KEY      # encrypts staff two-factor secrets; NEVER change it once staff use two-factor sign-in
         generateValue: true
+      - key: TRUSTED_PROXY_HOPS      # Render's edge appends the client, its proxy appends itself: client = 2nd from the right
+        value: "2"
       - key: DEMO_OTP_ENABLED
         value: "false"
       - key: SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT   # synthetic demo: sign-in codes are NOT delivered (no SMS gateway)

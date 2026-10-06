@@ -128,6 +128,7 @@ git. Templates listing every setting are in the repository; an automated test ke
 | `JWT_SECRET_KEY` | the first random value from step 2 | **yes** |
 | `QR_SECRET` | the second random value. **Never change it after the first booking:** a new value invalidates every QR code already issued | **yes** |
 | `MFA_ENCRYPTION_KEY` | the third random value: encrypts staff two-factor secrets. **Never change it once staff use two-factor sign-in** (their codes would stop working) | **yes** |
+| `TRUSTED_PROXY_HOPS` | `1` behind the nginx of this guide (it appends the visitor's address); `2` on Render. Decides which `X-Forwarded-For` entry is the real visitor for rate limits and the audit log | no |
 | `CORS_ORIGINS` | leave empty (the website and API share one address) | no |
 | `RUN_DB_SETUP` | `true` for the first start (creates the tables). **[production]** `false`, and run migrations by hand after a backup (Step 9) | no |
 | `RUN_DB_SEED` | `true` for the synthetic demo (fills empty tables only). **[production]** always `false` | no |
