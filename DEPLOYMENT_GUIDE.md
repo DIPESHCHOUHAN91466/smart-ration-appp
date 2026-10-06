@@ -125,6 +125,7 @@ git. Templates listing every setting are in the repository; an automated test ke
 | `DATA_MODE` | `synthetic` for the demo; `real` only when production is unblocked | no |
 | `DATABASE_URL` | `mysql+pymysql://smartration_app:<APP_DB_PASSWORD>@<DB_HOST>:<DB_PORT>/smartration?charset=utf8mb4&ssl_ca=/tmp/mysql-ca.pem` | **yes** |
 | `MYSQL_SSL_CA` | the whole text of the provider's CA `.pem` file, on one line or several | no (public), but keep it with the URL |
+| `MIGRATION_DATABASE_URL` | recommended: a second database account that may change the schema (migrations run at start-up with `RUN_DB_SETUP`); then `DATABASE_URL` can be an account with only SELECT, INSERT, UPDATE, DELETE (`database/schema/mysql-setup.sql`). Empty: `DATABASE_URL` does both | **yes** |
 | `JWT_SECRET_KEY` | the first random value from step 2 | **yes** |
 | `QR_SECRET` | the second random value. **Never change it after the first booking:** a new value invalidates every QR code already issued | **yes** |
 | `MFA_ENCRYPTION_KEY` | the third random value: encrypts staff two-factor secrets. **Never change it once staff use two-factor sign-in** (their codes would stop working) | **yes** |

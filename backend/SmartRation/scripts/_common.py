@@ -25,7 +25,8 @@ ALEMBIC_TABLE = "alembic_version"
 
 
 def database_url() -> str:
-    return get_settings().database_url
+    # Setup, seeding and checks run as the migration account when one is configured (security N8).
+    return get_settings().schema_database_url
 
 
 def safe_url(url: str) -> str:

@@ -22,7 +22,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Callers (tests, scripts) may pass an explicit URL; otherwise use the app settings.
-_url = config.attributes.get("database_url") or get_settings().database_url
+_url = config.attributes.get("database_url") or get_settings().schema_database_url   # the migration account (N8)
 config.set_main_option("sqlalchemy.url", _url.replace("%", "%%"))
 target_metadata = Base.metadata
 

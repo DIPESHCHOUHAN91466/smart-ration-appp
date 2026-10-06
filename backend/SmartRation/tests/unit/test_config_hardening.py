@@ -60,3 +60,12 @@ def test_production_app_serves_no_api_explorer(tmp_path):
         for path in ("/docs", "/redoc", "/openapi.json"):
             assert client.get(path).status_code == 404, path
         assert client.get("/health/live").status_code == 200              # the API itself still answers
+
+
+def test_migrations_use_the_migration_account_when_one_is_configured():
+    rows_only = Settings(_env_file=None, database_url="mysql+pymysql://app@h/smartration")
+    assert rows_only.schema_database_url == "mysql+pymysql://app@h/smartration"          # as before: one account
+    split = Settings(_env_file=None, database_url="mysql+pymysql://app@h/smartration",
+                     migration_database_url="mysql+pymysql://migrator@h/smartration")
+    assert split.schema_database_url == "mysql+pymysql://migrator@h/smartration"
+    assert "migrator" not in repr(split)                                                 # never printed with settings

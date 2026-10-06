@@ -38,6 +38,11 @@ class Settings(BaseSettings):
     # MySQL (the same database the C# API uses). Required.
     database_url: str = Field(description="mysql+pymysql://USER:PASSWORD@localhost:3306/smartration?charset=utf8mb4")
 
+    # Optional, recommended (security N8): an account that may change the schema, used ONLY by migrations and the
+    # setup scripts. The running API then connects with DATABASE_URL as an account that can only read and write rows
+    # (database/schema/mysql-setup.sql). Empty: DATABASE_URL is used for both, as before.
+    migration_database_url: str = Field(default="", repr=False)
+
     # Side-by-side migration: routes not yet migrated are forwarded here.
     # Empty by default: the C# API is retired, and a stray default would forward unknown /api/* requests to a local port.
     legacy_api_url: str = Field(default="", description="C# API base URL; empty disables the fallback proxy")
@@ -183,6 +188,11 @@ class Settings(BaseSettings):
     @property
     def is_development(self) -> bool:
         return self.environment.lower() == "development"
+
+    @property
+    def schema_database_url(self) -> str:
+        """The account that changes the schema: MIGRATION_DATABASE_URL, else DATABASE_URL."""
+        return self.migration_database_url.strip() or self.database_url
 
     @property
     def docs_enabled(self) -> bool:

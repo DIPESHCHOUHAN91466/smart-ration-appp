@@ -69,6 +69,7 @@ jobs:
       - name: MySQL suite (CRUD, injection, 1000 records, concurrency 10-100) on smartration_test
         env:
           TEST_DATABASE_URL: mysql+pymysql://smartration_app:ci-app-only@127.0.0.1:3306/smartration_test?charset=utf8mb4
+          TEST_MYSQL_ROOT_URL: mysql+pymysql://root:ci-root-only@127.0.0.1:3306/smartration_test?charset=utf8mb4
         run: python -m pytest tests/integration/mysql_suite
       - name: Chatbot evaluation (en/hi/mr)
         run: python -m app.ai.chatbot.evaluate
