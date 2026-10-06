@@ -54,6 +54,10 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            // R8: removes unused code and resources and obfuscates class names. Flutter's Gradle plugin turns
+            // this on by default; it is written here so the release build does not depend on that default.
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 }
