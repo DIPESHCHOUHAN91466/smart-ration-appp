@@ -62,6 +62,8 @@ FakeReply everything(RequestOptions r) {
     return shopServer(r);
   }
   if (p.startsWith('/api/admin') || p.startsWith('/api/shops') || p.startsWith('/api/ai')) return officialServer(r);
+  if (p == '/api/users/profile') return FakeReply.ok(userJson());
+  if (p == '/api/auth/mfa/status') return FakeReply.ok({'enabled': false, 'available': true});
   return demoServer(r);
 }
 
@@ -76,6 +78,9 @@ final screens = <(String, SessionUser? Function(), String, Object? Function())>[
   ('signed out', () => null, Routes.forgotPassword, () => null),
   ('citizen', citizen, Routes.changePassword, () => null),
   ('official', official, Routes.changePassword, () => null),
+  ('citizen', citizen, Routes.account, () => null),
+  ('shop', shopOwner, Routes.account, () => null),
+  ('official', official, Routes.account, () => null),
   ('citizen', citizen, Routes.citizenHome, () => null),
   ('citizen', citizen, Routes.citizenFamily, () => null),
   ('citizen', citizen, Routes.citizenCard, () => null),

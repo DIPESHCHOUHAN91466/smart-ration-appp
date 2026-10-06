@@ -11,6 +11,9 @@ abstract final class Routes {
   /// Forgotten password (public): a code to the registered mobile, then a new password.
   static const forgotPassword = '/login/forgot';
 
+  /// My account (any signed-in role): change password, download my data.
+  static const account = '/account';
+
   /// Change my password (any signed-in role).
   static const changePassword = '/account/password';
 

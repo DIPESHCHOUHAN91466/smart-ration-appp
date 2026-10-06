@@ -45,10 +45,10 @@ class CitizenHomeScreen extends ConsumerWidget {
             onPressed: () => context.push(Routes.changeLanguage),
           ),
           IconButton(
-            icon: const Icon(Icons.password),
-            tooltip: l.changePasswordTitle,
+            icon: const Icon(Icons.manage_accounts),
+            tooltip: l.accountTitle,
             iconSize: 28,
-            onPressed: () => context.push(Routes.changePassword),
+            onPressed: () => context.push(Routes.account),
           ),
           IconButton(
             icon: const Icon(Icons.logout),

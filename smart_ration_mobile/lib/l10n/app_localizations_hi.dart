@@ -1677,4 +1677,125 @@ class AppLocalizationsHi extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get accountTitle => 'मेरा खाता';
+
+  @override
+  String get exportTitle => 'मेरा डेटा डाउनलोड करें';
+
+  @override
+  String get exportIntro =>
+      'यह सेवा आपके बारे में जो कुछ रखती है उसकी प्रति लें: आपका खाता, राशन कार्ड और परिवार, बुकिंग, वितरण, शिकायतें, सूचनाएँ और खाते की गतिविधि। पासवर्ड और सुरक्षा कुंजियाँ कभी शामिल नहीं होतीं। फ़ाइल निजी रखें।';
+
+  @override
+  String get exportDownload => 'मेरा डेटा डाउनलोड करें (JSON)';
+
+  @override
+  String get exportPreparing => 'तैयार हो रहा है…';
+
+  @override
+  String get exportDone => 'आपका डेटा सहेज लिया गया।';
+
+  @override
+  String get exportFailed =>
+      'आपका डेटा तैयार नहीं हो सका। कृपया फिर से प्रयास करें।';
+
+  @override
+  String get profileTitle => 'मेरी प्रोफ़ाइल';
+
+  @override
+  String get profileEmailNote =>
+      'ईमेल आपका लॉगिन नाम है और इसे यहाँ से नहीं बदला जा सकता।';
+
+  @override
+  String get profileNameLabel => 'पूरा नाम';
+
+  @override
+  String get profileNameInvalid => 'कृपया अपना पूरा नाम लिखें।';
+
+  @override
+  String get profileSave => 'सहेजें';
+
+  @override
+  String get profileSaved => 'प्रोफ़ाइल सहेजी गई';
+
+  @override
+  String get verificationTitle => 'मेरा सत्यापन';
+
+  @override
+  String get verificationAadhaar => 'आधार';
+
+  @override
+  String get verificationRationCard => 'राशन कार्ड';
+
+  @override
+  String get verificationMobile => 'मोबाइल नंबर';
+
+  @override
+  String get verificationVerified => 'सत्यापित';
+
+  @override
+  String get verificationPending => 'लंबित';
+
+  @override
+  String get verificationNotVerified => 'सत्यापित नहीं';
+
+  @override
+  String get verificationFailed => 'असफल';
+
+  @override
+  String get verificationExpired => 'समाप्त';
+
+  @override
+  String get verificationHelp =>
+      'अगर यहाँ कुछ गलत है, तो अपने दस्तावेज़ों के साथ राशन कार्यालय जाएँ।';
+
+  @override
+  String get mfaTitle => 'दो-चरणीय साइन इन';
+
+  @override
+  String get mfaIntro =>
+      'इस स्टाफ़ खाते को दूसरे चरण से सुरक्षित करें: पासवर्ड के बाद ऑथेंटिकेटर ऐप (Google Authenticator, Microsoft Authenticator आदि) का 6 अंकों का कोड डालें।';
+
+  @override
+  String get mfaStart => 'दो-चरणीय साइन इन सेट करें';
+
+  @override
+  String get mfaScan =>
+      'इस QR कोड को अपने ऑथेंटिकेटर ऐप से स्कैन करें, फिर उसमें दिखा 6 अंकों का कोड डालें।';
+
+  @override
+  String get mfaQrLabel => 'ऑथेंटिकेटर ऐप के लिए QR कोड';
+
+  @override
+  String get mfaManualKey => 'या यह कुंजी टाइप करें';
+
+  @override
+  String get mfaCopyKey => 'कुंजी कॉपी करें';
+
+  @override
+  String get mfaTurnOn => 'चालू करें';
+
+  @override
+  String get mfaIsOn => 'दो-चरणीय साइन इन चालू है।';
+
+  @override
+  String get mfaOffHint => 'बंद करने के लिए अपना पासवर्ड और वर्तमान कोड डालें।';
+
+  @override
+  String get mfaTurnOff => 'दो-चरणीय साइन इन बंद करें';
+
+  @override
+  String get mfaTurnedOn => 'दो-चरणीय साइन इन चालू है।';
+
+  @override
+  String get mfaTurnedOff => 'दो-चरणीय साइन इन बंद है।';
+
+  @override
+  String get mfaWrongPassword => 'पासवर्ड गलत है।';
+
+  @override
+  String get mfaWrongCode =>
+      'कोड गलत है या उसकी अवधि समाप्त हो गई है। अपने ऑथेंटिकेटर ऐप का वर्तमान कोड डालें।';
 }
