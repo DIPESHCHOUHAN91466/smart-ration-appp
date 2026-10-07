@@ -15,8 +15,15 @@ These tests exercise the full client-server stack without mocking the API.
 
 The full application stack should be running:
 - Frontend on `http://localhost:5173`
-- Python API Gateway on `http://127.0.0.1:8000`
-- C# Business API on `http://localhost:5188`
+- Python API on `http://127.0.0.1:8000`, started for the test run with a higher sign-in limit:
+  `AUTH_RATE_LIMIT_PER_MINUTE=60` (in the API's environment, not committed). Every test signs in or registers from the
+  same address, and the default limit (10 a minute per address) would answer some of them `429 Too Many Requests`.
+  Never raise it on a deployed server.
+- AI analytics service on `http://127.0.0.1:8001` (the status-page test expects every configured service to be healthy)
+- `E2E_DEMO_PASSWORD` set to the demo accounts' password (the signed-in journeys are skipped without it)
+
+The tests run one at a time (`workers: 1` in `playwright.config.js`): they share the demo accounts, and a password
+change signs an account out everywhere, so spec files running in parallel would break each other.
 
 ## Running E2E Tests
 

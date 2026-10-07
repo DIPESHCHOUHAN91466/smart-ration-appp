@@ -3,8 +3,8 @@ import { persist } from "zustand/middleware";
 import apiClient from "../api/client";
 
 // Sessions (security S7): the refresh token is an HttpOnly cookie the page can never read (the API client sends
-// X-Auth-Mode: cookie on every request). The access token lives in memory only: after a reload the first API call
-// gets 401 and the client refreshes from the cookie. Only the user summary is saved in localStorage, for the UI.
+// X-Auth-Mode: cookie on every request). The access token lives in memory only: after a reload the API client
+// refreshes from the cookie before its first call (api/client.js). Only the user summary is saved in localStorage.
 export const useAuthStore = create(
   persist(
     (set, get) => ({

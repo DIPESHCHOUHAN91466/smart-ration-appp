@@ -10,43 +10,63 @@ export const apiClient = axios.create({
   headers: { "Content-Type": "application/json", "X-Auth-Mode": "cookie" },
 });
 
-apiClient.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken;
+// Sign-in, refresh and sign-out answer 401 for their own reasons and never need an access token first.
+const AUTH_ROUTE = /\/auth\/(login|register|refresh|logout|otp|password\/reset|mfa\/verify)/;
+
+// One refresh at a time: every request that needs a token while it runs waits for the same answer.
+let refreshInFlight = null;
+function refreshOnce() {
+  if (!refreshInFlight) {
+    refreshInFlight = useAuthStore.getState().refreshAccessToken().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+  return refreshInFlight;
+}
+
+function endSession() {
+  useAuthStore.getState().clearSession();
+  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+    window.location.href = "/login";
+  }
+}
+
+apiClient.interceptors.request.use(async (config) => {
+  const { accessToken, isAuthenticated } = useAuthStore.getState();
+  let token = accessToken;
+  // After a page load the access token (memory only) is gone but the session cookie is not: get a new token
+  // BEFORE the first call, instead of letting every call fail with 401 and repeat it.
+  if (!token && isAuthenticated && !AUTH_ROUTE.test(config.url || "")) {
+    try {
+      token = await refreshOnce();
+    } catch (refreshError) {
+      endSession();
+      throw normalizeError(refreshError);
+    }
+  }
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-let refreshInFlight = null;
-
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
-    // Sign-in, refresh and sign-out answer 401 for their own reasons; any other route (password change too)
-    // may just need a fresh access token.
-    const isAuthRoute = /\/auth\/(login|register|refresh|logout|otp|password\/reset|mfa\/verify)/.test(originalRequest?.url || "");
+    // Any other route (password change too) may just need a fresh access token, e.g. one expired mid-session.
+    const isAuthRoute = AUTH_ROUTE.test(originalRequest?.url || "");
 
     if (status === 401 && originalRequest && !originalRequest._retry && !isAuthRoute) {
       originalRequest._retry = true;
 
       try {
-        if (!refreshInFlight) {
-          refreshInFlight = useAuthStore.getState().refreshAccessToken();
-        }
-        const newAccessToken = await refreshInFlight;
-        refreshInFlight = null;
-
+        const newAccessToken = await refreshOnce();
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        refreshInFlight = null;
-        useAuthStore.getState().clearSession();
-        if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-          window.location.href = "/login";
-        }
+        endSession();
         return Promise.reject(normalizeError(refreshError));
       }
     }
