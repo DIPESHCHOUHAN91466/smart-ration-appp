@@ -198,6 +198,11 @@ class VerificationCard extends ConsumerWidget {
           _row(l, l.verificationAadhaar, v.aadhaar),
           _row(l, l.verificationRationCard, v.rationCard),
           _row(l, l.verificationMobile, v.mobile),
+          // After a number change the new number starts unverified; a code sent to it fixes that (no office visit).
+          if (v.mobile.status != 'Verified') ...[
+            const SizedBox(height: 4),
+            Notice(text: l.verificationMobileHint, warning: true),
+          ],
           const SizedBox(height: 8),
           Text(l.verificationHelp, style: const TextStyle(color: AppColors.muted)),
         ],

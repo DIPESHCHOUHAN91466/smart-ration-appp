@@ -1847,4 +1847,8 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get profileMobilePasswordNote =>
       'साइन-इन कोड आणि पासवर्ड रीसेट याच नंबरवर येतात, म्हणून तो बदलण्यासाठी पासवर्ड लागतो.';
+
+  @override
+  String get verificationMobileHint =>
+      'मोबाइल क्रमांक बदलला आहे? नवीन क्रमांकावर पाठवलेल्या कोडने एकदा साइन इन करा, किंवा तुमच्या रेशन दुकानात कोडने पडताळणी करून घ्या.';
 }

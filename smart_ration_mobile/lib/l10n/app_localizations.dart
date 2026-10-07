@@ -3417,6 +3417,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign-in codes and password resets go to this number, so changing it needs your password.'**
   String get profileMobilePasswordNote;
+
+  /// No description provided for @verificationMobileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed your mobile number? Sign in once with a code sent to the new number, or ask your ration shop to verify it with a code.'**
+  String get verificationMobileHint;
 }
 
 class _AppLocalizationsDelegate

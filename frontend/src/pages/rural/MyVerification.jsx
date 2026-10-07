@@ -7,8 +7,10 @@ import VerificationStatusCard from "../../components/verification/VerificationSt
 import FamilyMembersTable from "../../components/verification/FamilyMembersTable";
 import EntitlementTable from "../../components/verification/EntitlementTable";
 import { getMyProfile, getEntitlement } from "../../services/beneficiariesService";
+import { useTranslation } from "../../i18n/useTranslation";
 
 export default function MyVerification() {
+  const { t } = useTranslation();
   const [profile, setProfile] = useState(null);
   const [entitlement, setEntitlement] = useState(null);
   const [error, setError] = useState("");
@@ -70,6 +72,11 @@ export default function MyVerification() {
           rows={[{ label: "Mobile", value: profile.mobileVerification.mobileMasked }]}
         />
       </div>
+
+      {/* After a number change the new number starts unverified; a code sent to it fixes that (no office visit). */}
+      {profile.mobileVerification.status !== "Verified" && (
+        <p className="info-callout" role="note" style={{ marginTop: 0, marginBottom: 18 }}>{t("mobile_reverify_hint")}</p>
+      )}
 
       <div style={{ marginBottom: 18 }}>
         <FamilyMembersTable family={profile.family} />

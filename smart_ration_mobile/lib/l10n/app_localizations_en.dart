@@ -1863,4 +1863,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get profileMobilePasswordNote =>
       'Sign-in codes and password resets go to this number, so changing it needs your password.';
+
+  @override
+  String get verificationMobileHint =>
+      'Changed your mobile number? Sign in once with a code sent to the new number, or ask your ration shop to verify it with a code.';
 }

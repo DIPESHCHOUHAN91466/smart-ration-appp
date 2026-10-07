@@ -140,9 +140,26 @@ void main() {
     expect(find.text('PB-DEMO-0001'), findsOneWidget);
     expect(find.text('Verified'), findsNWidgets(2));
     expect(find.text('Pending'), findsOneWidget);
+    // Not verified yet (e.g. a new number): how to fix it without visiting the office.
+    expect(find.textContaining('Sign in once with a code sent to the new number'), findsOneWidget);
     expect(find.text('Demo data: this is not a real ration card.'), findsOneWidget);
     expect(find.text('Two-factor sign-in'), findsNothing);
     expect(backend.paths, isNot(contains('/api/auth/mfa/status')));
+  });
+
+  testWidgets('a verified mobile number gets no re-verify hint', (tester) async {
+    final backend = FakeBackend((r) => switch (r.path) {
+          '/api/users/profile' => FakeReply.ok(profileJson()),
+          '/api/beneficiaries/me' => FakeReply.ok({
+              ...citizenProfileJson(),
+              'mobileVerification': {'mobileMasked': '******0007', 'status': 'Verified'},
+            }),
+          _ => demoServer(r),
+        });
+    await openAccount(tester, backend, FakeSaver());
+
+    expect(find.text('Verified'), findsNWidgets(3));
+    expect(find.textContaining('Sign in once with a code sent to the new number'), findsNothing);
   });
 
   testWidgets('a shop owner turns on two-factor sign-in: password, QR and key, then a code', (tester) async {
