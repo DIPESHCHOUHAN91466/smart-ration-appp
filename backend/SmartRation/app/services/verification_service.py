@@ -17,6 +17,7 @@ from app.database.enums import (
     AadhaarVerificationStatus,
     Gender,
     MobileVerificationStatus,
+    OtpStatus,
     PassbookVerificationStatus,
     TokenStatus,
     VerificationAction,
@@ -26,7 +27,9 @@ from app.database.models import (
     Beneficiary,
     Family,
     MobileVerification,
+    OtpVerification,
     PassbookVerification,
+    PasswordResetCode,
     RationCollection,
     RationShop,
     TimeSlot,
@@ -85,6 +88,41 @@ def mobile_record(db: Session, beneficiary: Beneficiary, user: User) -> MobileVe
         db.add(record)
         db.flush()
     return record
+
+
+def mobile_number_changed(db: Session, user: User) -> None:
+    """The account's mobile number has just changed (user.MobileNumber is the new one). The new number has not been
+    shown to work yet, so its verification starts again: NotVerified, with the new masked number. Codes already sent to
+    the old number (counter and sign-in codes, password resets) stop working, so they cannot confirm the new number or
+    reset the password. The caller commits."""
+    for code in db.scalars(select(PasswordResetCode).where(PasswordResetCode.UserId == user.Id,
+                                                           PasswordResetCode.Status == int(OtpStatus.Pending))):
+        code.Status = int(OtpStatus.Expired)
+    beneficiary = db.scalar(select(Beneficiary).where(Beneficiary.UserId == user.Id).limit(1))
+    if beneficiary is None:   # staff accounts have no beneficiary record
+        return
+    for otp in db.scalars(select(OtpVerification).where(OtpVerification.BeneficiaryId == beneficiary.Id,
+                                                        OtpVerification.Status == int(OtpStatus.Pending))):
+        otp.Status = int(OtpStatus.Expired)
+    record = mobile_record(db, beneficiary, user)
+    record.MobileMasked = mask_mobile(user.MobileNumber)
+    record.Status = int(MobileVerificationStatus.NotVerified)
+    record.VerifiedAt = None
+
+
+def mobile_number_confirmed(db: Session, beneficiary_id: int) -> None:
+    """A one-time code sent to the account's current number was entered correctly (at the counter or at sign-in):
+    that number works, so it is Verified. The caller commits."""
+    beneficiary = db.get(Beneficiary, beneficiary_id)
+    user = db.get(User, beneficiary.UserId) if beneficiary is not None else None
+    if beneficiary is None or user is None:
+        return
+    record = mobile_record(db, beneficiary, user)
+    if record.Status == MobileVerificationStatus.Verified and record.MobileMasked == mask_mobile(user.MobileNumber):
+        return
+    record.MobileMasked = mask_mobile(user.MobileNumber)
+    record.Status = int(MobileVerificationStatus.Verified)
+    record.VerifiedAt = utc_now()
 
 
 # ---------------------------------------------------------------- the verification bundle

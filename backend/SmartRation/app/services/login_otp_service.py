@@ -27,7 +27,7 @@ from app.core.errors import Forbidden, ServiceUnavailable, Unauthorized
 from app.core.validation import ValidationFailed
 from app.database.enums import OtpStatus, UserRole
 from app.database.models import Beneficiary, OtpVerification, User
-from app.services import audit_service, auth_service, otp_service
+from app.services import audit_service, auth_service, otp_service, verification_service
 from app.services.auth_service import RequestContext
 from app.utils.masking import mask_mobile
 from app.utils.time import utc_now
@@ -135,7 +135,7 @@ def verify_code(db: Session, settings: Settings, ctx: RequestContext, raw_mobile
     if found is None or record is None:
         _failed(db, ctx, None, mobile)
         raise Unauthorized(INVALID_CODE, "OTP_INVALID")
-    user, _ = found
+    user, beneficiary = found
     if auth_service.is_locked(db, user.Id):
         # The sign-in lock (5 failures of either kind in 15 minutes) holds here too. The answer is the usual one,
         # so a lock never reveals that a number is registered.
@@ -159,6 +159,7 @@ def verify_code(db: Session, settings: Settings, ctx: RequestContext, raw_mobile
         raise Forbidden("This account has been deactivated. Contact your ration shop or district office.")
     record.Status = int(OtpStatus.Verified)
     record.VerifiedAt = utc_now()
+    verification_service.mobile_number_confirmed(db, beneficiary.Id)   # the code reached this number
     audit_service.record(db, user.Id, "LOGIN", "User", str(user.Id), details="method=otp",
                          role=UserRole.RuralUser.name, ip_address=ctx.ip_address)
     response = auth_service.issue_session(db, user, settings)

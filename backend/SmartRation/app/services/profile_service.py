@@ -43,7 +43,7 @@ from app.services.mappers import (
     passbook_dto,
     user_summary,
 )
-from app.services.verification_service import aadhaar_record, mobile_record, passbook_record
+from app.services.verification_service import aadhaar_record, mobile_number_changed, mobile_record, passbook_record
 from app.utils.dotnet import enum_name, hhmm, month_year, ymd
 from app.utils.masking import mask_mobile
 from app.utils.time import utc_now
@@ -87,6 +87,8 @@ def update_own_profile(db: Session, actor: Actor, full_name: str, mobile: str, c
                              f"from={mask_mobile(user.MobileNumber or '')} to={mask_mobile(mobile)}", ip_address=actor.ip_address)
     user.FullName = full_name.strip()
     user.MobileNumber = mobile
+    if mobile_changed:
+        mobile_number_changed(db, user)   # the new number must prove itself with a code; old codes stop working
     db.commit()
     return user_summary(user)
 

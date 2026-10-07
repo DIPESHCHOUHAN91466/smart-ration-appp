@@ -108,6 +108,10 @@ def otp_verify(body: Body = Depends(json_body), who: Actor = Depends(shop_owner)
     otp = otp_service.verify(db, otp_id, code)
     if who.ration_shop_id is None:
         raise BadRequest("Your account is not linked to a ration shop.")
+    # The code went to the citizen's current number, so that number works (e.g. after they changed it). Committed
+    # on purpose before the booking check below: the number stays confirmed even if this shop then finds no booking.
+    verification_service.mobile_number_confirmed(db, otp.BeneficiaryId)
+    db.commit()
     return ok(verification_service.verify_beneficiary_at_shop(db, who, otp.BeneficiaryId, who.ration_shop_id, "OTP"), "OTP verified")
 
 

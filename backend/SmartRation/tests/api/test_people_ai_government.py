@@ -13,8 +13,8 @@ import pytest
 from ration_world import TEST_PASSWORD, book, qr_payload, session
 from sqlalchemy import func, select
 
-from app.database.enums import AIAlertStatus
-from app.database.models import AIAlert, AIInsight, AuditLog, Beneficiary
+from app.database.enums import AIAlertStatus, MobileVerificationStatus, OtpStatus
+from app.database.models import AIAlert, AIInsight, AuditLog, Beneficiary, MobileVerification, OtpVerification, PasswordResetCode
 
 
 def register(env, n: int) -> dict:
@@ -72,6 +72,66 @@ def test_a_new_mobile_number_needs_the_password_but_a_new_name_does_not(env):
     with session() as db:
         details = db.scalar(select(AuditLog.Details).where(AuditLog.Action == "MOBILE_CHANGED"))
     assert details is not None and "9000000077" not in details and "9000000001" not in details   # masked in the log
+
+
+def change_mobile(env, number: str) -> None:
+    r = env["client"].put("/api/users/profile", headers=env["citizen"],
+                          json={"fullName": "Asha Devi", "mobileNumber": number, "currentPassword": TEST_PASSWORD})
+    assert r.status_code == 200, r.text
+
+
+def mobile_verification(env) -> MobileVerification:
+    with session() as db:
+        return db.scalars(select(MobileVerification).where(MobileVerification.BeneficiaryId == my_beneficiary_id(env))).one()
+
+
+def test_a_new_mobile_number_starts_unverified_and_codes_sent_to_the_old_one_stop_working(env):
+    c = env["client"]
+    assert mobile_verification(env).Status == MobileVerificationStatus.Verified
+    # Codes sent to the old number before the change: a sign-in code and a password-reset code.
+    assert c.post("/api/auth/otp/request", json={"mobileNumber": "9000000001"}).status_code == 200
+    assert c.post("/api/auth/password/reset/request", json={"mobileNumber": "9000000001"}).status_code == 200
+
+    change_mobile(env, "9000000077")
+
+    record = mobile_verification(env)
+    assert record.Status == MobileVerificationStatus.NotVerified and record.VerifiedAt is None
+    assert record.MobileMasked.endswith("0077") and "9000000077" not in record.MobileMasked
+    with session() as db:
+        assert {o.Status for o in db.scalars(select(OtpVerification))} == {OtpStatus.Expired}
+        assert {r.Status for r in db.scalars(select(PasswordResetCode))} == {OtpStatus.Expired}
+
+
+def test_the_counter_asks_for_a_code_once_and_a_correct_code_verifies_the_new_number(env):
+    c = env["client"]
+    change_mobile(env, "9000000077")
+    token = book(env).json()["data"]
+
+    scan = c.post("/api/qr/scan", headers=env["shop"], json={"qrData": qr_payload(env, token["id"])}).json()["data"]
+    summary = scan["verification"]["verificationSummary"]
+    assert summary["mobileVerified"] is False and summary["blockedReason"] == "Mobile OTP verification required."
+
+    otp = c.post("/api/verification/otp/request", headers=env["shop"], json={"mobileNumber": "9000000077"}).json()["data"]
+    r = c.post("/api/verification/otp/verify", headers=env["shop"], json={"otpVerificationId": otp["otpVerificationId"], "code": "123456"})
+    assert r.status_code == 200, r.text
+    assert r.json()["data"]["verificationSummary"]["overallStatus"] == "READY_FOR_RATION_COLLECTION"
+    record = mobile_verification(env)
+    assert record.Status == MobileVerificationStatus.Verified and record.VerifiedAt is not None and record.MobileMasked.endswith("0077")
+
+
+def test_signing_in_with_a_code_sent_to_the_new_number_verifies_it(env):
+    c = env["client"]
+    change_mobile(env, "9000000077")
+    assert c.post("/api/auth/otp/request", json={"mobileNumber": "9000000077"}).status_code == 200
+    r = c.post("/api/auth/otp/verify", json={"mobileNumber": "9000000077", "otp": "123456"})
+    assert r.status_code == 200, r.text
+    assert mobile_verification(env).Status == MobileVerificationStatus.Verified
+
+
+def test_a_name_only_change_keeps_the_number_verified(env):
+    r = env["client"].put("/api/users/profile", headers=env["citizen"], json={"fullName": "Asha D", "mobileNumber": "9000000001"})
+    assert r.status_code == 200
+    assert mobile_verification(env).Status == MobileVerificationStatus.Verified
 
 
 def test_a_locked_account_cannot_change_its_mobile_number(env):
