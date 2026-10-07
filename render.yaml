@@ -29,6 +29,8 @@ services:
         value: synthetic
       - key: DATABASE_URL            # mysql+pymysql://USER:PASSWORD@HOST:PORT/smartration?charset=utf8mb4&ssl_ca=/tmp/mysql-ca.pem
         sync: false
+      - key: MIGRATION_DATABASE_URL  # the schema-changing account (migrations, setup, seed); DATABASE_URL then only reads/writes rows
+        sync: false                  # same format; type the DATABASE_URL value again to use one account
       - key: MYSQL_SSL_CA            # the database provider's CA certificate (PEM text, "-----BEGIN CERTIFICATE-----...")
         sync: false
       - key: JWT_SECRET_KEY          # signs login tokens

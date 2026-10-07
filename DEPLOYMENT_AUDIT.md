@@ -59,7 +59,7 @@ settings. This is already the simplest reliable shape; a separate `api.` domain 
   verification records, audit logs…), Alembic migrations `0001`–`0007`; the container runs migrations and the
   synthetic seed on start (`RUN_DB_SETUP`, `RUN_DB_SEED`).
 - Least privilege (N8) is coded: `MIGRATION_DATABASE_URL` (schema changes) vs `DATABASE_URL` (rows only), SQL in
-  `database/schema/mysql-least-privilege.sql`. **Not wired into `render.yaml`**, see risk R3.
+  `database/schema/mysql-least-privilege.sql`; on Render both URLs are typed in (RENDER.md step 1.6).
 - Local backups exist in `database/backups/` (gz dumps taken before each migration).
 
 ## 6. Android
@@ -97,7 +97,7 @@ after two fixes found during the baseline.
 |---|---|---|---|
 | R1 | Nothing deployed; no accounts on Render/Aiven/GitHub CI for this branch | Blocker | Owner (section 12) |
 | R2 | Branch not pushed: CI (`main`, `feature/**`, PRs only) has never run on these 60 commits | High | Push + PR, owner approval |
-| R3 | `render.yaml` has no `MIGRATION_DATABASE_URL`: on Render the running API would use the schema-changing account | Medium | Add when the Aiven app user exists |
+| R3 | ~~`render.yaml` had no `MIGRATION_DATABASE_URL`~~: fixed, both accounts are typed in Render; the rows-only Aiven user is RENDER.md step 1.6 | Done (owner creates the user) | — |
 | R4 | Data residency: Render Singapore and Aiven region are outside India (MeitY guidance for government data) | High for real data, none for the synthetic demo | Decide before real data |
 | R5 | Free plans: Render free sleeps after inactivity (cold start ~1 min), Aiven free has no point-in-time recovery | Medium | Paid plans for production |
 | R6 | Public demo: the demo accounts' password is published in README; anyone can sign in as the demo officer | Accepted for a synthetic demo | Change `SEED_DEMO_PASSWORD` / disable demo accounts for real use |

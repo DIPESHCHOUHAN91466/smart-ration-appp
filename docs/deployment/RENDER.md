@@ -35,7 +35,8 @@ Environment variables of `smart-ration-hsd2c` (all defined by `render.yaml`; you
 
 | Variable | Value | Secret | Set by |
 |---|---|---|---|
-| `DATABASE_URL` | `mysql+pymysql://avnadmin:<password>@<host>:<port>/smartration?charset=utf8mb4&ssl_ca=/tmp/mysql-ca.pem` | yes | **you** (Blueprint prompt) |
+| `DATABASE_URL` | the account the running API uses: `smartration_app` (rows only, step 1.6), or `avnadmin` | yes | **you** (Blueprint prompt) |
+| `MIGRATION_DATABASE_URL` | the account that changes the schema on start: `mysql+pymysql://avnadmin:<password>@<host>:<port>/smartration?charset=utf8mb4&ssl_ca=/tmp/mysql-ca.pem` | yes | **you** (Blueprint prompt) |
 | `MYSQL_SSL_CA` | Aiven's CA certificate, whole PEM text | no (public CA), but keep it with the URL | **you** |
 | `SEED_DEMO_PASSWORD` | password of the 3 synthetic demo accounts, 8+ characters | yes | **you** |
 | `JWT_SECRET_KEY` | random | yes | Render (`generateValue`) |
@@ -71,7 +72,19 @@ checksPass`).
    mysql+pymysql://avnadmin:PASSWORD@HOST:PORT/smartration?charset=utf8mb4&ssl_ca=/tmp/mysql-ca.pem
    ```
    If the password contains `@ : / ? # %`, replace them with `%40 %3A %2F %3F %23 %25`.
-   Keep this line private; it contains the password.
+   Keep this line private; it contains the password. This is your **`MIGRATION_DATABASE_URL`**.
+6. **Recommended: a second account for the running API** (security N8, least privilege). Then a bug or an
+   injection in the API can change rows but never drop or alter a table. Connect once as `avnadmin` with any MySQL
+   client (MySQL Workbench, or `mysql --ssl-ca=ca.pem -h HOST -P PORT -u avnadmin -p`) and run, with a new long
+   random password:
+
+   ```sql
+   CREATE USER 'smartration_app'@'%' IDENTIFIED BY 'NEW-RANDOM-PASSWORD' REQUIRE SSL;
+   GRANT SELECT, INSERT, UPDATE, DELETE ON smartration.* TO 'smartration_app'@'%';
+   ```
+   Your **`DATABASE_URL`** is the line from step 5 with `smartration_app` and that password instead of `avnadmin`.
+   Skipping this step: use the step-5 line for both `DATABASE_URL` and `MIGRATION_DATABASE_URL` (one account,
+   full rights, as before).
 
 ## 2. Make sure the code is on GitHub
 
@@ -83,7 +96,8 @@ and `backend/SmartRation/Dockerfile`. Push your latest commits first (`git push 
 1. Sign up at https://render.com (you can sign in with GitHub) and allow access to the repository.
 2. **New → Blueprint** → choose `smart-ration-appp`. Render reads `render.yaml` and lists one service.
 3. It asks for the values marked `sync: false`:
-   - `DATABASE_URL`: the line from step 1.5
+   - `DATABASE_URL`: the `smartration_app` line from step 1.6 (or the step 1.5 line)
+   - `MIGRATION_DATABASE_URL`: the `avnadmin` line from step 1.5
    - `MYSQL_SSL_CA`: the certificate text from step 1.4
    - `SEED_DEMO_PASSWORD`: the password for the three demo accounts (your choice, at least 8 characters).
      Anyone you give it to can sign in as the demo citizen, shop owner and **government official**.

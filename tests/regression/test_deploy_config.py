@@ -45,7 +45,8 @@ def test_non_secret_values_are_identical():
 
 def test_secrets_are_generated_or_typed_in_render_and_dummies_in_ci():
     ci = smoke_step_env()
-    secrets = {"DATABASE_URL", "MYSQL_SSL_CA", "JWT_SECRET_KEY", "QR_SECRET", "MFA_ENCRYPTION_KEY", "SEED_DEMO_PASSWORD"}
+    secrets = {"DATABASE_URL", "MIGRATION_DATABASE_URL", "MYSQL_SSL_CA", "JWT_SECRET_KEY", "QR_SECRET", "MFA_ENCRYPTION_KEY",
+               "SEED_DEMO_PASSWORD"}
     for key in secrets:
         entry = RENDER_ENV[key]
         assert "value" not in entry and (entry.get("sync") is False or entry.get("generateValue") is True), key

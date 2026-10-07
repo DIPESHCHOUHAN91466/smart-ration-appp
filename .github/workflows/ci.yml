@@ -246,6 +246,7 @@ jobs:
           docker run -d --name api --network host \
             -e ENVIRONMENT=production -e DATA_MODE=synthetic \
             -e "DATABASE_URL=mysql+pymysql://smartration_app:ci-app-only@127.0.0.1:3306/smartration?charset=utf8mb4" \
+            -e "MIGRATION_DATABASE_URL=mysql+pymysql://smartration_app:ci-app-only@127.0.0.1:3306/smartration?charset=utf8mb4" \
             -e JWT_SECRET_KEY=ci-only-signing-key-not-a-secret-0123456789abcdef \
             -e QR_SECRET=ci-only-qr-secret-not-a-secret-0123456789abcdef \
             -e MFA_ENCRYPTION_KEY=ci-only-mfa-key-not-a-secret-0123456789abcdef \
