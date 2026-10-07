@@ -1,40 +1,40 @@
-# Smart Ration (Ration Mitra / राशन मित्र) 🌾
+# Smart Ration (Ration Mitra / राशन मित्र) 🌾🇮🇳
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-smart--ration--appp-181717?logo=github)](https://github.com/DIPESHCHOUHAN91466/smart-ration-appp)
+[![Backend](https://img.shields.io/badge/Backend-FastAPI%20%7C%20Python%203.13-3776AB?logo=fastapi)](backend/SmartRation/README.md)
 [![Frontend](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite%206-61DAFB?logo=react)](frontend/README.md)
-[![Core API](https://img.shields.io/badge/Core%20API-ASP.NET%20Core%208%20(C%23)-512BD4?logo=dotnet)](backend/SmartRation.Api/README.md)
-[![Gateway & AI](https://img.shields.io/badge/Gateway%20%26%20AI-FastAPI%20%7C%20Python%203.12%2B-3776AB?logo=fastapi)](backend/SmartRation/README.md)
-[![Database](https://img.shields.io/badge/Database-MySQL%208-4479A1?logo=mysql)](database/README.md)
-[![Mobile](https://img.shields.io/badge/Mobile-Expo%20%7C%20React%20Native-000020?logo=expo)](mobile/README.md)
-[![Tests](https://img.shields.io/badge/Tests-612%20passing%20(104%20xUnit%20%7C%20314%20pytest%20%7C%20146%20MySQL%20%7C%2039%20vitest%20%7C%209%20E2E)-success)](tests/README.md)
+[![Mobile App](https://img.shields.io/badge/Mobile-Flutter%203%20%7C%20Dart-02569B?logo=flutter)](smart_ration_mobile/README.md)
+[![Database](https://img.shields.io/badge/Database-MySQL%208.4%20(Azure%20Flexible)-4479A1?logo=mysql)](database/README.md)
+[![Cloud](https://img.shields.io/badge/Cloud-Microsoft%20Azure-0078D4?logo=microsoftazure)](docs/deployment/AZURE_AND_PLAYSTORE_DEPLOYMENT_GUIDE.md)
+[![Store](https://img.shields.io/badge/Distribution-Google%20Play%20Store-34A853?logo=googleplay)](smart_ration_mobile/RELEASE.md)
+[![Compliance](https://img.shields.io/badge/Compliance-DPDP%20Act%202023%20%7C%20WCAG%202.1%20AA-success)](COMPLIANCE_CHECKLIST.md)
 
-A modern, transparent, and resilient digital **Public Distribution System (PDS)** for India. **Smart Ration** eliminates long queues at Fair Price Shops (FPS) through scheduled slot reservations, cryptographically signed offline-verifiable QR tokens, real-time stock ledgering, predictive supply chain analytics, and a multilingual AI assistant (**Ration Mitra**).
+A next-generation, transparent, and resilient digital **Public Distribution System (PDS)** for India. **Smart Ration** modernizes grain distribution by eliminating overcrowded queues at Fair Price Shops (FPS) through scheduled slot reservations, cryptographically signed offline-verifiable QR tokens, real-time stock ledgering, predictive supply chain analytics, and a multilingual voice-assisted AI companion (**Ration Mitra**).
 
 Supported Languages: **English**, **हिंदी (Hindi)**, and **मराठी (Marathi)**.
 
 > [!NOTE]
-> **Demonstration System & Data Guard**: All citizen profiles, households, passbooks, Aadhaar references, and ration card quotas in this repository are **synthetic** (`DATA_MODE=synthetic`). The system contains built-in guards that safely refuse to start in `DATA_MODE=real` until certified government API gateways (UIDAI eKYC, State PDS portals) are configured.
+> **Data Protection & Synthetic Barrier**: All citizen households, ration card quotas, Aadhaar references, and transactions in this repository are **synthetic** (`DATA_MODE=synthetic`). The system contains hard startup barriers that refuse to boot in `DATA_MODE=real` until certified government gateways (UIDAI eKYC, State PDS, DLT-registered SMS) are securely integrated.
 
 ---
 
 ## Table of Contents
 
 - [Key Highlights & Problems Solved](#key-highlights--problems-solved)
+- [System Architecture](#system-architecture)
 - [User Personas & Capabilities](#user-personas--capabilities)
-- [How It Works (End-to-End Workflow)](#how-it-works-end-to-end-workflow)
-- [System Architecture (Frozen Hybrid)](#system-architecture-frozen-hybrid)
+- [End-to-End Workflow](#end-to-end-workflow)
 - [Technology Stack](#technology-stack)
 - [Repository Structure](#repository-structure)
-- [Security & Cryptography](#security--cryptography)
-- [AI Analytics & Public Help Chatbot](#ai-analytics--public-help-chatbot)
-- [Quick Start & Setup](#quick-start--setup)
-- [Configuration & Secrets](#configuration--secrets)
-- [Default Demo Accounts](#default-demo-accounts)
+- [Security, Privacy & DPDP Act 2023](#security-privacy--dpdp-act-2023)
+- [AI Subsystem & Ration Mitra Assistant](#ai-subsystem--ration-mitra-assistant)
+- [Quick Start & Local Setup](#quick-start--local-setup)
+- [Configuration & Environment Variables](#configuration--environment-variables)
+- [Default Demo Credentials](#default-demo-credentials)
 - [Developer CLI (`sr.ps1`)](#developer-cli-srps1)
-- [Testing Strategy](#testing-strategy)
-- [API Documentation](#api-documentation)
-- [Docker & Deployment](#docker--deployment)
-- [Project Documentation Links](#project-documentation-links)
+- [Testing & Quality Assurance](#testing--quality-assurance)
+- [Azure Cloud & Play Store 5-Phase Deployment](#azure-cloud--play-store-5-phase-deployment)
+- [Documentation Directory](#documentation-directory)
 
 ---
 
@@ -42,12 +42,49 @@ Supported Languages: **English**, **हिंदी (Hindi)**, and **मरा�
 
 | Traditional PDS Challenge | Smart Ration Solution |
 |---|---|
-| **Overcrowding & Long Waiting Times** | Citizens book a **5-minute time slot** at their designated Fair Price Shop. |
-| **Tampering & Ration Card Fraud** | Time-limited **HMAC-SHA256 digitally signed QR tokens**; zero PII stored inside the QR code. |
-| **Network Blackouts at Rural Shops** | Signed QR tokens checked by the server, with an **OTP fallback** when scanning fails (SMS delivery is a mock until a registered gateway is configured). Offline verification is *planned*. |
-| **Stock Leakages & Ghost Beneficiaries** | Transactional, **idempotent collection ledger** with optimistic concurrency control. |
-| **Information Barriers & Low Literacy** | Full trilingual UI (English, Hindi, Marathi) and a **safe AI Chatbot (Ration Mitra)**. |
-| **Last-Minute Stockouts** | Python AI analytics service predicting **stock depletion risks**, demand spikes, and distribution anomalies. |
+| **Overcrowding & Long Lines** | Citizens book a guaranteed **5-minute time slot** at their designated Fair Price Shop via Web or Android App. |
+| **Ration Card Fraud & Tampering** | Time-limited **HMAC-SHA256 digitally signed QR tokens** (`SRQR-{tokenId}-{sig}`) with zero PII stored inside the QR code. |
+| **Rural Connectivity Dropouts** | Cached offline QR token display in the Flutter mobile app; server-side verification with **SMS OTP fallback** when scanning fails. |
+| **Stock Leakage & Ghost Beneficiaries** | Transactional, **idempotent collection ledger** with optimistic concurrency controls and atomic stock decrements. |
+| **Illiteracy & Language Barriers** | Trilingual user interfaces (English, Hindi, Marathi) with **Speech-to-Text** voice commands and **Text-to-Speech (TTS)** narration. |
+| **Stockouts & Supply Bottlenecks** | Python AI predictive analytics modeling **stockout risk horizons**, queue bottlenecks, and fraudulent distribution spikes. |
+| **Data Privacy & Legal Compliance** | Full **DPDP Act 2023** compliance: single-click "Download My Data" JSON export and verifiable consent logs at signup. |
+
+---
+
+## System Architecture
+
+```
+                       [Clients]
+         ┌───────────────────────────────────┐
+         │                                   │
+         ▼                                   ▼
+Android App (Flutter)              Web Portal (React 18 + Vite)
+smart_ration_mobile/               frontend/ (built into backend image)
+         │                                   │
+         └─────────────────┬─────────────────┘
+                           │ HTTPS / JSON (JWT Bearer / Cookie)
+                           ▼
+          Backend API — backend/SmartRation (Python FastAPI)
+          ├── Auth & Security (Argon2id, JWT, MFA/TOTP, Account Lockout)
+          ├── Citizen Portal (Entitlements, Slot Booking, Signed QR)
+          ├── FPS Counter (QR Scanner, OTP Verification, Stock Issue)
+          ├── Inventory Ledger (Idempotent Deliveries & Write-Offs)
+          ├── Grievance Redressal (Lodge, Track, Resolve)
+          ├── Government Dashboard (GIS Map, Inspections, Stock Alerts)
+          ├── DPDP Act 2023 ("Download My Data" Export, Consent Audits)
+          ├── Public Help & Ration Mitra AI Assistant (Knowledge Retrieval)
+          └── Static Web Server (Serves React Web App on Same Origin)
+                           │
+             ┌─────────────┴─────────────┐
+             │ SQLAlchemy 2.0 (TLS)      │ Internal HTTP (API Key)
+             ▼                           ▼
+      MySQL 8.4 Flexible           AI Analytics Service (:8001)
+      (Azure Flexible Server)      ai/ (Demand Forecasts, Stockout Risk,
+      27 tables, Alembic 0001-0004      Queue Predictions, Anomaly Detection)
+```
+
+> **Historical Note**: The original C# .NET 8 API in `backend/SmartRation.Api` has been retired. Every business route, ledger operation, and cryptographic verification is natively handled by the Python FastAPI backend. The C# source is retained for historical and architectural reference.
 
 ---
 
@@ -55,381 +92,267 @@ Supported Languages: **English**, **हिंदी (Hindi)**, and **मरा�
 
 ```mermaid
 graph TD
-    Public[Public / Unregistered] -->|Browse Schemes & FAQs| Help[Public Help & AI Assistant]
-    Citizen[Citizen / Rural User] -->|Book 5-min Slot| Token[Signed QR Token]
-    Shop[FPS Shop Owner] -->|Scan QR / Send OTP| Verify[Collection Verification]
-    Verify -->|Deduct Stock| Ledger[Inventory Ledger]
-    Admin[Govt Official / Inspector] -->|Monitor Live| Dash[GIS Map & AI Risk Dashboard]
+    Public[Public Visitor] -->|Browse Schemes & Guidelines| Help[Public Help & AI Assistant]
+    Citizen[Rural Citizen / Beneficiary] -->|Book 5-min Slot| Token[Signed QR Token]
+    Shop[FPS Dealer / Shopkeeper] -->|Scan QR / Verify OTP| Verify[Counter Verification]
+    Verify -->|Atomic Stock Deduction| Ledger[Inventory Ledger]
+    Admin[Govt Official / Inspector] -->|Live Monitoring| Dash[GIS Map & AI Risk Dashboard]
 ```
 
-### 1. Public Visitor (No Login Required)
-- Access transparent information on government schemes (Antyodaya Anna Yojana - AAY, Priority Household - PHH).
-- Eligibility explained in Public Help and the chatbot (an interactive eligibility calculator is *planned*).
-- Searchable Public Knowledge Base articles in English, Hindi, and Marathi.
-- Interactive **Ration Mitra AI Chatbot** for general guidance.
+### 1. Citizen / Beneficiary (Rural User)
+- Authenticate via registered mobile + OTP or email + password.
+- View ration card details, eligible family members, and monthly entitlement balance.
+- Book 5-minute time slots at their assigned Fair Price Shop.
+- Generate and display HMAC-SHA256 signed QR tokens (saved offline in Flutter Secure Storage).
+- Ask the **Ration Mitra AI Assistant** questions via text or voice in English, Hindi, or Marathi.
+- Lodge grievances with tracking IDs and monitor resolution status.
+- Download a complete copy of personal records ("Download My Data" under DPDP Act 2023).
 
-### 2. Citizen / Beneficiary (Rural User)
-- Authenticated citizen portal with family member details and monthly ration card entitlement balance.
-- 5-minute time slot booking at their assigned local Fair Price Shop.
-- Generation of a digitally signed QR token (`SRQR-{tokenId}-{signature}`).
-- Token collection history, active passbook verification, and in-app notifications (SMS delivery is a mock until a real gateway is configured).
+### 2. Fair Price Shop (FPS) Dealer
+- Real-time queue view and appointment timetable for the day.
+- High-speed camera QR code scanner (web camera or mobile camera).
+- Real-time cryptographic signature and eligibility verification.
+- SMS OTP fallback (6-digit, 5-minute expiry) for citizens with broken phone screens.
+- Atomic grain distribution with digital receipt generation.
+- Idempotent stock delivery acceptance and write-off logging.
 
-### 3. Fair Price Shop (FPS) Operator
-- Today's appointment queue and real-time operational dashboard.
-- High-speed camera QR scanner via the browser (`html5-qrcode`). A mobile scanner app is *planned* — `mobile/` is still the Expo starter template.
-- Cryptographic HMAC signature validation.
-- Fail-safe **SMS OTP verification** (6-digit, 5-minute expiry, 3-attempt limit) if the beneficiary's phone screen is damaged.
-- Real-time stock issuance and automated stock ledger deductions.
+### 3. Government Official & District Inspector
+- Live GIS district map tracking shop distributions and activity.
+- Real-time inventory status across all fair price shops.
+- AI-driven stockout alerts (7-day predictive demand vs. physical stock).
+- Fraud and anomaly detection (unusual collection spikes, off-hours activity).
+- Review and resolve citizen grievances with automated SMS/in-app notifications.
 
-### 4. Government Official & District Admin
-- Live district/taluka GIS map tracking Fair Price Shop activity.
-- Real-time distribution progress vs. monthly quotas.
-- AI-driven stockout alerts (forecast demand for the next 7 days — `FORECAST_DAYS` — compared with the stock left after reservations).
-- Anomaly and fraud detection flags (unusual booking spikes, off-hours collections).
-- Full audit trails and read-only administrative database viewer.
+### 4. Public Visitor (Unauthenticated)
+- Transparent details on government food schemes (AAY, PHH).
+- Searchable trilingual Public Knowledge Base articles.
+- Ration Mitra AI Chatbot for scheme inquiries and FAQs.
 
 ---
 
-## How It Works (End-to-End Workflow)
+## End-to-End Workflow
 
-1. **Beneficiary Registration & Entitlement**: The citizen registers or is seeded into a household. The system calculates monthly entitlement based on the assigned scheme:
-   $$\text{Available Quota} = (\text{Scheme Quota} \times \text{Eligible Family Members}) - \text{Collected This Month}$$
-2. **Slot Reservation**: The citizen selects a convenient 5-minute window for their assigned Fair Price Shop.
-3. **Token Issuance**: The server generates a unique Token record and computes an HMAC-SHA256 signature containing token ID, shop code, slot window, and items.
-4. **Shop Verification**:
-   - The shopkeeper scans the QR code.
-   - The server verifies the signature, shop tenancy, and slot validity.
-   - Only masked beneficiary data (e.g., `XXXX-XXXX-1234`) and eligible item quantities are displayed to the shopkeeper.
-   - *Fallback*: If camera scanning fails, the shopkeeper clicks "Send OTP" to transmit a 6-digit code to the registered mobile.
-5. **Idempotent Collection**: When items are handed over, the transaction completes atomically:
-   - The token status is marked `Collected`.
-   - Inventory is decremented using optimistic concurrency (`UPDATE Inventory SET AvailableQuantity = ... WHERE AvailableQuantity = @readVal`).
-   - An immutable record is created in `InventoryMovements` and `RationCollections`.
-
----
-
-## System Architecture (Frozen Hybrid)
-
-Smart Ration adopts a **frozen hybrid architecture**: ASP.NET Core 8 powers high-performance transactional business rules and inventory ledgers; Python FastAPI serves as the intelligent API gateway, authentication authority, and AI analytics engine.
-
-```
-                         User (Browser; mobile app planned)
-                                    │
-                                    ▼
-                         Frontend (React 18 + Vite, :5173)
-                                    │  All API calls
-                                    ▼
-                Python API Gateway (FastAPI, :8000)
-                ├── Authentication (Argon2id, JWT, Refresh Tokens)
-                ├── Public Help & Ration Mitra AI Chatbot
-                ├── Health & Readiness Probes (/health, /ready)
-                └── Reverse Proxy (Forwards business routes)
-                         │
-                         ├───────────────────────────────────┐
-                         │                                   ▼
-                         │                      Core Business API (ASP.NET Core 8, :5188)
-                         │                      ├── Slot Management & Allocation
-                         │                      ├── Token Issuance & HMAC QR Verification
-                         │                      ├── OTP Generation & Fallback Service
-                         │                      ├── Idempotent Collection & Inventory Ledger
-                         │                      └── Admin & Beneficiary Profiles
-                         │                                   │
-                         │                                   ▼ HTTP (Internal)
-                         │                      AI Analytics Service (FastAPI, :8001)
-                         │                      ├── Demand & Stockout Forecasting (7 days, configurable)
-                         │                      ├── Anomaly Detection & Fraud Scoring
-                         │                      └── Document OCR (Optional)
-                         │                                   │
-                         ▼                                   ▼ (Read-Only)
-                    MySQL 8 Database (`smartration` / 25 Tables)
-```
+1. **Quota Calculation**:
+   $$\text{Available Monthly Quota} = (\text{Scheme Quota per Person} \times \text{Family Members}) - \text{Collected This Month}$$
+2. **Slot Reservation**: Citizen books an open 5-minute window for their FPS.
+3. **Token Issuance**: The backend issues a unique token record and signs the payload with HMAC-SHA256 using `QR_SECRET`:
+   $$\text{Signature} = \text{Base64Url}(\text{HMAC-SHA256}(\text{QR\_SECRET}, \text{Payload}))$$
+4. **Verification at FPS**: The dealer scans the QR code. The server verifies signature validity, dealer tenancy, and time slot window. (No Aadhaar or PII is exposed in the QR code).
+5. **Atomic Handover**: When grains are weighed and distributed, the transaction completes atomically:
+   - Token marked as `Collected`.
+   - Inventory decremented using optimistic concurrency (`WHERE AvailableQuantity >= requested`).
+   - Immutable audit entries appended to `InventoryMovements` and `RationCollections`.
 
 ---
 
 ## Technology Stack
 
-| Layer | Technologies |
-|---|---|
-| **Frontend Web** | React 18, Vite 6, React Router 7, Zustand, Axios, Leaflet / React-Leaflet, html5-qrcode, Lucide Icons, Vitest |
-| **Mobile App** | Expo SDK 57 / React Native starter template — *not yet connected to the API* (see `mobile/README.md`) |
-| **API Gateway** | Python 3.12+, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, httpx, Argon2-cffi, PyJWT |
-| **Core Business API** | .NET 8 (C#), ASP.NET Core Web API, Entity Framework Core 8, Pomelo MySQL Provider |
-| **AI & Analytics** | Python 3.12+, FastAPI, SQLAlchemy/PyMySQL (read-only), statistical forecasting and rules — no ML libraries or trained models |
-| **Database** | MySQL 8.0 (`InnoDB`, `utf8mb4_0900_ai_ci`), Alembic Migrations |
-| **Testing & Quality** | xUnit (SQLite in-memory), pytest, Vitest, Playwright, Ruff, mypy, ESLint |
-| **Deployment** | Docker, Docker Compose, Nginx, PowerShell Automation |
+| Layer | Technologies | Primary Path |
+|---|---|---|
+| **Backend API** | Python 3.13 / FastAPI, SQLAlchemy 2.0, Alembic, Uvicorn, PyJWT, Argon2-cffi, Pydantic v2 | `backend/SmartRation` |
+| **Web Frontend** | React 18, Vite 6, React Router 7, Zustand, Tailwind CSS, Leaflet, Vitest | `frontend/` |
+| **Mobile App** | Flutter 3.24+ / Dart 3.5+, Riverpod, GoRouter, Dio, MobileScanner, Speech-to-Text, Flutter TTS, Flutter Secure Storage | `smart_ration_mobile/` |
+| **Database** | MySQL 8.0 / 8.4 Flexible Server (`utf8mb4_unicode_ci`), 27 tables, Alembic revisions `0001`–`0004` | `database/`, `backend/SmartRation/migrations` |
+| **AI Analytics** | Python FastAPI microservice, transparent statistical forecasting and anomaly detection | `ai/` |
+| **Cloud Hosting** | Microsoft Azure (Azure Database for MySQL Flexible Server, Azure Container Apps / App Service) | `docs/deployment/AZURE_AND_PLAYSTORE_DEPLOYMENT_GUIDE.md` |
+| **Distribution** | Google Play Store (Release AAB with R8 shrinking & Play App Signing) | `smart_ration_mobile/RELEASE.md` |
 
 ---
 
 ## Repository Structure
 
 ```
-Smart_Ration_HSD2C_Final/
-├── .github/workflows/            # CI: lint, tests, MySQL suite, integrity, contracts, security audit, images
-├── .vscode/                      # One workspace: tasks, debug configs, extensions   → .vscode/README.md
-├── frontend/                     # React 18 + Vite web app (en/hi/mr)                → frontend/README.md
-│   ├── src/pages/ layouts/ components/   # UI: role dashboards, shells, reusable widgets
-│   ├── src/api/ services/        # HTTP client (JWT, refresh) + one module per API area
-│   ├── src/state/                # Zustand stores + toasts
-│   ├── src/features/             # qr, auth, chatbot logic (no UI)
-│   ├── src/config/ utils/ types/ hooks/ i18n/ styles/ assets/
-│   └── tests/                    # Vitest unit + component tests
+smart-ration-appp/
+├── .github/workflows/         # CI/CD workflows: tests, MySQL suite, security audits, Playwright
 ├── backend/
-│   ├── SmartRation/              # Python gateway (:8000): auth, Public Help, chatbot, proxy, website
-│   │   ├── app/api/{routes,dependencies}  app/{config,core,schemas,services,repositories}
-│   │   ├── app/database/{connection,models,enums,types}.py  app/{security,middleware,ai/chatbot,workers,utils,synthetic}
-│   │   ├── migrations/           # Alembic — the schema's source of truth
-│   │   ├── scripts/              # setup / verify / seed / reset / integrity / export
-│   │   └── tests/                # unit/ api/ integration/ security/ performance/
-│   ├── SmartRation.Api/          # C# ASP.NET Core business API (:5188)              → backend/SmartRation.Api/README.md
-│   └── SmartRation.Api.Tests/    # xUnit (136 tests)
-├── ai/                           # AI analytics service (:8001) + chatbot content    → ai/README.md
-│   ├── configs/ preprocessing/ models/ training/ evaluation/ inference/ postprocessing/ pipelines/ api/
-│   └── chatbot/                  # knowledge base (en/hi/mr), evaluation set, prompts
-├── database/                     # MySQL outside app code                            → database/README.md
-│   ├── schema/  migrations/      # generated SQL (whole schema, per revision) + setup script
-│   ├── seeds/                    # synthetic reference data; REAL_DATA.md
-│   └── queries/                  # read-only data-integrity checks
-├── tests/                        # cross-component                                   → tests/README.md
-│   ├── e2e/  smoke/              # browser journeys (Playwright); post-deploy checks
-│   └── integration/mysql/  regression/
-├── scripts/                      # development/ database/ testing/ deployment/       → scripts/README.md
-├── deployment/                   # docker/ staging/ production/ nginx/ scripts/      → deployment/README.md
-├── docs/                         # architecture, api, database, security, testing, deployment, user-guides
-├── mobile/                       # Expo starter — planned, not connected yet         → mobile/README.md
-├── ARCHITECTURE.md  DEVELOPMENT.md  TESTING.md  DEPLOYMENT.md  SECURITY.md  CONTRIBUTING.md  CHANGELOG.md
-├── sr.ps1                        # one developer command: .\sr.ps1 help
-└── render.yaml                   # Render blueprint (staging demo)                   → docs/deployment/RENDER.md
+│   ├── SmartRation/           # Production Python FastAPI backend (:8000)
+│   │   ├── app/               # API routes, auth, database models, services, security, workers
+│   │   ├── migrations/        # Alembic database migrations (0001 to 0004)
+│   │   ├── scripts/           # DB setup, schema verification, seeding, integrity checks
+│   │   ├── tests/             # Pytest unit, API, integration, and security suites
+│   │   └── Dockerfile         # Multi-stage production Dockerfile (React + FastAPI)
+│   ├── SmartRation.Api/       # Retired .NET 8 C# business API (retained for reference)
+│   └── SmartRation.Api.Tests/ # xUnit test suite (104 tests)
+├── frontend/                  # React 18 + Vite web portal (:5173)
+│   ├── src/                   # Pages, components, state, services, translations (en/hi/mr)
+│   └── tests/                 # Vitest component test suite
+├── smart_ration_mobile/       # Production Flutter Android app
+│   ├── android/               # Android native project (build.gradle.kts, signing config)
+│   ├── lib/                   # Riverpod features: citizen, booking, shop, official, help
+│   ├── test/                  # Automated Flutter widget & integration tests
+│   ├── PRIVACY_POLICY.md      # Play Store privacy compliance policy
+│   └── RELEASE.md             # AAB release & keystore guide
+├── ai/                        # AI predictive analytics microservice (:8001)
+│   ├── chatbot/knowledge/     # Reviewed PDS guidelines in English, Hindi, and Marathi
+│   └── pipelines/ models/     # Stockout risk forecasting and anomaly scoring
+├── database/                  # MySQL schema, SQL exports, queries, and synthetic seeds
+├── docs/                      # Comprehensive technical documentation & deployment guides
+├── scripts/                   # PowerShell & Bash automation scripts
+└── sr.ps1                     # Developer CLI for local orchestration
 ```
 
 ---
 
-## Security & Cryptography
+## Security, Privacy & DPDP Act 2023
 
-- **Password Protection**: Modern **Argon2id** password hashing. Legacy BCrypt hashes are transparently verified and automatically upgraded on subsequent logins.
-- **Interchangeable JWT Authentication**: 15-minute cryptographically signed JWTs shared between the Python Gateway and the C# API using standard HMAC-SHA256 with identical issuer, audience, and secret keys.
-- **Rotating Refresh Tokens**: 7-day refresh tokens stored as one-way SHA-256 hashes in MySQL, rotated upon every refresh cycle.
-- **Tamper-Proof QR Tokens**:
-  - Format: `SRQR-{tokenId}-{base64url(HMAC-SHA256(secret, payload))}`
-  - The QR contains **no personally identifiable information (PII)**.
-  - The QR signature expires at the end of the scheduled time slot.
-- **Masked Data Governance**: Beneficiary Aadhaar numbers are never transmitted in plaintext (`XXXX-XXXX-1234`).
-- **Data Mode Barrier**: If `DATA_MODE=real` is specified, backends will cleanly halt at startup with an explanatory message until certified UIDAI/PDS endpoints are linked.
+- **Argon2id Password Security**: Passwords are saved with Argon2id; legacy BCrypt hashes are transparently upgraded upon login.
+- **Two-Factor Authentication (MFA)**: TOTP-based 2FA with secrets encrypted at rest using AES-256 (`MFA_ENCRYPTION_KEY`).
+- **Account Lockout Defense**: Automatically locks accounts after 5 consecutive failed login attempts within 15 minutes.
+- **Tamper-Proof QR Codes**: HMAC-SHA256 signature calculated over token metadata; invalid if forged or expired; zero PII stored inside QR.
+- **Data Protection (DPDP Act 2023)**:
+  - Explicit informed consent logged with timestamps upon registration.
+  - Citizens can download all personal records in a standardized JSON bundle via **"Download My Data"**.
+- **Web Accessibility (WCAG 2.1 AA & GIGW)**: Zero automated axe-core violations across 25 pages, screen reader announcements for live toasts, full keyboard navigation.
 
 ---
 
-## AI Analytics & Public Help Chatbot
+## AI Subsystem & Ration Mitra Assistant
 
-### Ration Mitra (AI Assistant)
-- Located on every page (bottom-right widget) and in Public Help.
-- Works across English, Hindi, and Marathi.
-- **Safety Filters First**:
-  - Rejects queries containing 12-digit Aadhaar patterns or 6-digit OTP codes.
-  - Prevents prompt injection and requests for internal source code or databases.
-  - Limits authenticated citizens to querying only their *own* active bookings.
-  - Enforces general healthcare and nutrition boundaries.
-- **Knowledge Retrieval Engine**: Grounded in human-reviewed government guidelines stored in `ai/chatbot/knowledge/`.
+### Ration Mitra (Public & In-App Assistant)
+- Floating assistant available across Web and Mobile in English, Hindi, and Marathi.
+- **Strict Guardrails**: Automatically rejects inputs containing 12-digit Aadhaar patterns or 6-digit OTP codes; immune to prompt injection attacks; never outputs internal SQL or system secrets.
+- **Zero Query Logging**: Chat queries are processed in memory and never logged to disk or databases.
 
 ### Predictive Analytics Engine (:8001)
-- **Stockout Risk Modeling**: Calculates days of stock remaining at current usage and flags shops below `LOW_STOCK_DAYS` (default 7) or `CRITICAL_STOCK_DAYS` (default 3).
-- **Queue & Demand Forecasting**: Analyzes historical slot bookings to recommend optimal staffing hours for shop owners.
-- **Anomaly Detection**: Flags anomalous collection volumes exceeding standard family quota thresholds.
+- **Stockout Risk Modeling**: Computes stock runout horizons based on historical consumption trends and flags shops below 7 days (`LOW_STOCK_DAYS`) or 3 days (`CRITICAL_STOCK_DAYS`).
+- **Queue Optimization**: Forecasts peak collection hours to suggest shop staffing levels.
+- **Anomaly Detection**: Flags suspicious transactions exceeding household entitlement formulas.
 
 ---
 
-## Quick Start & Setup
+## Quick Start & Local Setup
 
 ### Prerequisites
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Python 3.12+](https://www.python.org/downloads/)
-- [Node.js 18+ and npm](https://nodejs.org/)
-- [MySQL 8.0+](https://dev.mysql.com/downloads/mysql/) (running on localhost:3306)
+- **Python 3.12+** or **3.13**
+- **Node.js 20+** and npm
+- **Flutter SDK 3.24+** (for mobile development)
+- **MySQL 8.0+** running locally on port 3306
 
-### Setup
+### One-Command Setup (`sr.ps1`)
 
-Run from PowerShell in the repository root:
+From PowerShell at the repository root:
 
 ```powershell
-# 1. Create the database and accounts (one time): copy database/schema/mysql-setup.sql to
-#    database/mysql-setup.local.sql (git-ignored), replace the CHANGE_ME passwords, then:
-mysql -u root -p < database\mysql-setup.local.sql
-
-# 2. Virtual environments, npm install, dotnet restore and .env templates
+# 1. Setup virtualenvs, dependencies, and environment templates
 .\sr.ps1 setup
 
-# 3. Fill in the secrets (see Configuration & Secrets below)
+# 2. Initialize database schema & seed synthetic reference data
+.\sr.ps1 db seed
 
-# 4. Check everything is in place, then start all 4 services in separate windows
+# 3. Perform pre-flight health diagnostic
 .\sr.ps1 health
+
+# 4. Launch the application stack (Backend :8000, AI :8001, Frontend :5173)
 .\sr.ps1 run
 ```
 
-The full walkthrough is in [docs/development/LOCAL_SETUP.md](docs/development/LOCAL_SETUP.md). If something fails, see [docs/development/TROUBLESHOOTING.md](docs/development/TROUBLESHOOTING.md).
-
-Access the applications:
-- **Frontend Dashboard**: [http://localhost:5173](http://localhost:5173)
-- **Python Gateway (Docs)**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **C# Business API (Swagger)**: [http://localhost:5188/swagger](http://localhost:5188/swagger)
+Access the services in your browser:
+- **Web Portal**: [http://localhost:5173](http://localhost:5173)
+- **FastAPI Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **AI Analytics Service**: [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs)
 
 ---
 
-## Configuration & Secrets
+## Default Demo Credentials
 
-No real secret is committed. [`.env.example`](.env.example) documents every value in one place; each component reads its own git-ignored store:
+In synthetic data mode (`DATA_MODE=synthetic`), the following pre-seeded test accounts are available:
 
-| Component | Where its settings live | Key values |
-|---|---|---|
-| Python gateway | `backend/SmartRation/.env` | `DATABASE_URL`, `JWT_SECRET_KEY`, `LEGACY_API_URL`, `CORS_ORIGINS` |
-| C# business API | `dotnet user-secrets` (never a file) | `Database:Provider=MySql`, `ConnectionStrings:MySql`, `Jwt:Key`, `Qr:Secret`, `AiService:ApiKey` |
-| AI service | `ai/.env` | `SMARTRATION_AI_DB_URL` (read-only account), `SMARTRATION_AI_API_KEY` |
-| Frontend | `frontend/.env` | `VITE_API_BASE_URL`, `VITE_DEMO_MODE` |
-| Docker Compose | `.env` at the repo root (from `deployment/docker/compose.env.example`) | `MYSQL_*`, `JWT_SECRET_KEY` |
-
-Values that must match across services:
-
-- `JWT_SECRET_KEY` (Python) = `Jwt:Key` (C#). Both backends issue and accept the same tokens.
-- `SMARTRATION_AI_API_KEY` (AI service) = `AiService:ApiKey` (C#).
-- `Qr:Secret`: keep the same value on an existing install, or every issued QR token becomes invalid.
-
-**Startup guards.** The backends refuse to start rather than run with unsafe settings:
-
-- `DATA_MODE=real` is refused until certified UIDAI / State PDS integrations exist.
-- Outside Development, the C# API requires `Demo:DemoOtpEnabled=false` and `Sms:Provider=Http`, so it never uses a fixed OTP or an SMS provider that sends nothing. The one exception is a public demo on synthetic data. It may set `Sms__AllowMockOutsideDevelopment=true`, and the API then logs a warning that OTPs are not delivered. This is never allowed with `DATA_MODE=real`.
-
----
-
-## Default Demo Accounts
-
-In synthetic mode the C# API seeds these accounts on first start into an empty database. With `VITE_DEMO_MODE=true`, the login page shows a quick-login button for each:
-
-| Persona | Email | Password | Role | Description |
+| Persona | Email | Password | Role | Primary Capabilities |
 |---|---|---|---|---|
-| **Citizen (Rural User)** | `rural@example.com` | `demo123` | `RuralUser` | Book slots, view family entitlements, view QR token |
-| **Fair Price Shop Owner** | `shop@example.com` | `demo123` | `ShopOwner` | Scan QR tokens, verify OTPs, manage shop stock |
-| **Government Official** | `officer@example.com` | `demo123` | `GovernmentOfficial` | Inspect district map, view stock alerts, view AI insights |
-
-No admin account ships with a default password. To create one, set `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` before seeding (`.\sr.ps1 db seed`, or `RUN_DB_SEED=true` in Docker). When the Python seeder creates the demo users, it takes their password from `SEED_DEMO_PASSWORD`.
-
-> [!WARNING]
-> These credentials are public. Never enable `VITE_DEMO_MODE` or seed demo users on a deployment that holds real data.
+| **Citizen (Rural User)** | `rural@example.com` | `demo123` | `RuralUser` | Book slots, view family entitlements, view signed QR token |
+| **FPS Dealer / Shop Owner** | `shop@example.com` | `demo123` | `ShopOwner` | Camera QR scanning, OTP verification, stock ledger |
+| **Government Official** | `officer@example.com` | `demo123` | `GovernmentOfficial` | GIS district map, stockout alerts, grievance redressal |
 
 ---
 
 ## Developer CLI (`sr.ps1`)
 
-The repository includes a unified developer command line interface in the root directory:
+The repository includes a unified developer CLI in the root directory:
 
 ```powershell
-.\sr.ps1 help                         # Display CLI help
-.\sr.ps1 setup                        # Setup venvs, install packages, prepare .env files
-.\sr.ps1 run                          # Launch all 4 services in parallel
-.\sr.ps1 stop                         # Terminate all running service processes
-.\sr.ps1 health                       # Perform diagnostic health checks on tools, services & DB
-.\sr.ps1 test                         # Every test suite + lint + build + database health
-.\sr.ps1 test -Quick                  # Faster subset for the inner dev loop
-.\sr.ps1 test -MySql                  # Also run the live MySQL suite (needs smartration_test)
-.\sr.ps1 e2e                          # Playwright end-to-end browser tests (stack must be running)
-.\sr.ps1 build                        # Compile .NET, build Vite bundle, check Python imports
+.\sr.ps1 help                         # Display CLI manual
+.\sr.ps1 setup                        # Setup venvs, install packages, generate .env templates
+.\sr.ps1 run                          # Launch all services in parallel
+.\sr.ps1 stop                         # Terminate all running stack processes
+.\sr.ps1 health                       # Diagnostic checks on tools, services, and database
+.\sr.ps1 test                         # Execute all test suites (unit, integration, lint, build)
+.\sr.ps1 test -Quick                  # Faster inner-loop test subset
+.\sr.ps1 test -MySql                  # Execute live MySQL database concurrency suite
+.\sr.ps1 e2e                          # Playwright end-to-end browser tests
 .\sr.ps1 lint                         # Execute Ruff, mypy, and ESLint
-.\sr.ps1 db verify                    # Verify MySQL connection and schema state (read-only)
+.\sr.ps1 db verify                    # Verify schema against SQLAlchemy models
 .\sr.ps1 db seed                      # Seed reference and demo data into empty tables
-.\sr.ps1 db schema                    # Regenerate the SQL schema export in database/
-.\sr.ps1 synthetic --users 1000       # Generate 1000 synthetic citizen records & bookings
-.\sr.ps1 contracts                    # Export OpenAPI contracts to docs/api/openapi/
-.\sr.ps1 docker                       # Build the Python gateway image locally
+.\sr.ps1 docker                       # Build production Docker image locally
 ```
 
 ---
 
-## Testing Strategy
+## Testing & Quality Assurance
 
-Smart Ration enforces high test coverage across all layers:
+Smart Ration implements comprehensive multi-tier testing:
 
 ```
                             Testing Pyramid
                                ┌───────┐
-                               │  E2E  │ Playwright (Smoke & Mobile Viewports)
+                               │  E2E  │ Playwright (Desktop + Mobile Journeys)
                             ┌──┴───────┴──┐
-                            │ Contract/Live│ Proxy Parity & MySQL Suite (1000 records)
-                         ┌──┴──────────────┴──┐
-                         │    Unit & Component │ xUnit (104), pytest (201 + AI 46), Vitest (39)
-                         └─────────────────────┘
+                            │ Flutter App │ 203+ Widget & Language Tests
+                         ┌──┴─────────────┴──┐
+                         │ Integration / DB  │ 146 MySQL Concurrency & Scale Tests
+                      ┌──┴───────────────────┴──┐
+                      │    Unit & Component     │ 201 pytest, 39 Vitest, 46 AI tests
+                      └─────────────────────────┘
 ```
 
-| Component | Framework | Count | Command |
-|---|---|---|---|
-| **C# Business API** | xUnit | **104** | `dotnet test SmartRation.sln -c Release` |
-| **Python Gateway** | pytest | **201** | `backend\SmartRation\.venv\Scripts\pytest` |
-| **Chatbot Evaluation** | pytest (en / hi / mr cases) | **67** | run by `.\sr.ps1 test` |
-| **AI Analytics Service** | pytest | **46** | run by `.\sr.ps1 test` |
-| **Frontend Web** | Vitest, Testing Library | **39** | `cd frontend && npm test` |
-| **End-to-End** | Playwright (installed Edge) | **9** (stack must be running) | `.\sr.ps1 e2e` |
-| **Direct MySQL** | pytest, SQLAlchemy | **146** | `.\sr.ps1 test -MySql` |
-| **Total** | | **612** | `.\sr.ps1 test -MySql` + E2E |
-
-These counts come from the last full run recorded in [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md). CI ([.github/workflows](.github/workflows)) runs every suite except E2E on each push, with Python 3.13 and 3.14 against MySQL 8. E2E is left out because it needs the whole stack running.
+Run test suites locally:
+- **Backend Tests**: `cd backend/SmartRation && pytest`
+- **Frontend Tests**: `cd frontend && npm test`
+- **Flutter Mobile Tests**: `cd smart_ration_mobile && flutter test`
+- **End-to-End Tests**: `.\sr.ps1 e2e`
 
 ---
 
-## API Documentation
+## Azure Cloud & Play Store 5-Phase Deployment
 
-- **Python API Gateway**: Interactive Swagger docs at `http://127.0.0.1:8000/docs`
-  - `/api/auth/register`, `/api/auth/login`, `/api/auth/refresh`, `/api/auth/logout`
-  - `/api/public-help/categories`, `/api/public-help/topics`
-  - `/api/chatbot/message`, `/api/chatbot/feedback`
-  - `/health`, `/health/live`, `/ready`
-- **C# Business API**: Swagger UI at `http://localhost:5188/swagger`
-  - `/api/timeslots`, `/api/timeslots/available`
-  - `/api/tokens/book`, `/api/tokens/my-tokens`, `/api/tokens/verify-qr`
-  - `/api/collections/record`, `/api/collections/otp/send`, `/api/collections/otp/verify`
-  - `/api/inventory`, `/api/inventory/movements`
-  - `/api/beneficiaries/me`, `/api/beneficiaries/family`
-  - `/api/admin/database/tables`, `/api/admin/reports`
-- **Static OpenAPI Specifications**: Exported contracts live in [`docs/api/openapi/`](docs/api/openapi/).
+To make the system publicly accessible to citizens and FPS dealers across India, follow the detailed **[Azure & Play Store Master Guide](docs/deployment/AZURE_AND_PLAYSTORE_DEPLOYMENT_GUIDE.md)**:
 
----
+### 1. Phase 1: Azure MySQL Flexible Server Setup & Schema Migration
+- Connect to your **Azure Database for MySQL Flexible Server** (`smartration-ai.mysql.database.azure.com`).
+- Create database `smartration` and least-privilege users (`smartration_app`, `smartration_migrator`, `smartration_ai`).
+- Run Alembic migrations `0001` to `0004` to create all 27 tables with TLS encryption.
 
-## Docker & Deployment
+### 2. Phase 2: Azure Cloud Deployment of Backend API & Web Application
+- Build the multi-stage Docker image (`backend/SmartRation/Dockerfile`) containing both React frontend and FastAPI backend.
+- Push to **Azure Container Registry (ACR)** and deploy to **Azure App Service** or **Azure Container Apps**.
+- Configure production secrets (`DATABASE_URL`, `JWT_SECRET_KEY`, `QR_SECRET`, `MFA_ENCRYPTION_KEY`) and enable HTTPS.
 
-**Public demo on Render:** [`render.yaml`](render.yaml) deploys the website + Python API and the C# API from this repository; the database is a free Aiven MySQL. Step by step: [docs/deployment/RENDER.md](docs/deployment/RENDER.md).
+### 3. Phase 3: AI Analytics Microservice Deployment
+- Deploy `ai/` container on Azure Container Apps with internal HTTP communication and read-only MySQL credentials.
+- Connect backend's `AI_SERVICE_URL` to the deployed AI service.
 
-Docker Compose runs **MySQL 8 + the C# business API + the Python gateway with the website** — the same two images and start-up order as Render. The optional AI analytics service is not part of it.
+### 4. Phase 4: Flutter Android Mobile App Production Build & Signing
+- Generate an upload signing keystore (`smart-ration-upload.jks`) using `keytool` and configure `key.properties`.
+- Point `API_BASE_URL` to your production Azure backend (`https://smartration-api.azurewebsites.net`).
+- Compile the release **Android App Bundle (`.aab`)**:
+  ```powershell
+  flutter build appbundle --release --dart-define=APP_ENV=production --dart-define=API_BASE_URL=https://smartration-api.azurewebsites.net
+  ```
 
-```powershell
-copy deployment\docker\compose.env.example deployment\docker\.env   # fill in the values; .env is git-ignored
-docker compose -f deployment/docker/docker-compose.yml up --build -d
-.\scripts\deployment\verify-deployment.ps1 http://127.0.0.1:8000     # smoke test
-```
-
-| Service | Host address | Notes |
-|---|---|---|
-| `mysql` | `127.0.0.1:3307` | Port 3307 avoids a clash with a host MySQL. Data lives in the `mysql-data` volume. `docker compose down -v` **deletes** it. |
-| `core` | `http://localhost:5188` | C# business API; migrates the schema and seeds synthetic demo data on first start. |
-| `api` | `http://localhost:8000` | Website + Python gateway. Waits for `core`, adopts the schema with Alembic (never drops data), proxies business routes to `core`. |
-
-Build both images without running them: `.\scripts\deployment\build-images.ps1` (`.\sr.ps1 docker`).
-Environment templates and checklists for staging and production: [deployment/](deployment/README.md).
-
-It runs as a non-root user and listens on `$PORT` (default `8080`). All configuration is passed as environment variables at run time: `Database__Provider`, `ConnectionStrings__MySql`, `Jwt__Key`, `Qr__Secret`, `DATA_MODE`, `Demo__DemoOtpEnabled=false`, `Sms__*`. Against an empty database it creates the schema with EF Core migrations and, in synthetic mode, seeds the demo data. When the Python gateway starts against the same fresh database, set `WAIT_FOR_URL` on the gateway to the C# API's `/health` URL, so the gateway waits until the schema exists.
-
-Both Dockerfiles use the repository root as their build context. The root [`.dockerignore`](.dockerignore) is an allow-list, so secrets, `.env` files, `bin/obj` and local databases cannot enter an image.
-
-For a production setup with TLS, the Nginx reverse proxy and health probes, see [docs/deployment/DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md) and [deployment/README.md](deployment/README.md).
+### 5. Phase 5: Google Play Store Console Setup & Public Rollout
+- Register on Google Play Console and create app listing with multilingual screenshots.
+- Complete Data Safety and Privacy Policy submissions (using `smart_ration_mobile/PRIVACY_POLICY.md`).
+- Conduct internal/closed testing, submit for Google Play Review, and roll out to production across India!
 
 ---
 
-## Project Documentation Links
+## Documentation Directory
 
-- 🏛️ **System Architecture**: [docs/architecture/SYSTEM_ARCHITECTURE.md](docs/architecture/SYSTEM_ARCHITECTURE.md)
-- 🔌 **API Architecture & Contracts**: [docs/api/API.md](docs/api/API.md)
-- 💾 **Database Architecture & Schema**: [docs/database/DATABASE_ARCHITECTURE.md](docs/database/DATABASE_ARCHITECTURE.md)
-- 🔒 **Security & Cryptography Design**: [docs/security/SECURITY_ARCHITECTURE.md](docs/security/SECURITY_ARCHITECTURE.md)
-- 🤖 **Chatbot & AI Architecture**: [docs/chatbot/CHATBOT_ARCHITECTURE.md](docs/chatbot/CHATBOT_ARCHITECTURE.md)
-- 📊 **Synthetic Data Generation**: [docs/architecture/DATA_ARCHITECTURE.md](docs/architecture/DATA_ARCHITECTURE.md)
-- 🧪 **Testing Guidelines**: [docs/testing/TESTING.md](docs/testing/TESTING.md)
-- 🚀 **Local Setup Guide**: [docs/development/LOCAL_SETUP.md](docs/development/LOCAL_SETUP.md)
-- 📋 **Project Status & Audit**: [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)
-- 🤝 **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
-- 🛡️ **Security Policy**: [SECURITY.md](SECURITY.md)
-- 📜 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- 🚀 **Azure & Play Store Master Deployment Guide**: [docs/deployment/AZURE_AND_PLAYSTORE_DEPLOYMENT_GUIDE.md](docs/deployment/AZURE_AND_PLAYSTORE_DEPLOYMENT_GUIDE.md)
+- 📱 **Mobile App Release & Play Store Guide**: [smart_ration_mobile/RELEASE.md](smart_ration_mobile/RELEASE.md)
+- 🔒 **Security & Cryptography Architecture**: [docs/security/SECURITY_ARCHITECTURE.md](docs/security/SECURITY_ARCHITECTURE.md)
+- 📜 **Security Audit & Findings Report**: [SECURITY_REPORT.md](SECURITY_REPORT.md)
+- ⚖️ **Compliance & DPDP Act Checklist**: [COMPLIANCE_CHECKLIST.md](COMPLIANCE_CHECKLIST.md)
+- 💾 **Database Schema & Architecture**: [database/README.md](database/README.md)
+- 🤖 **AI Assistant & Chatbot Design**: [docs/chatbot/CHATBOT_ARCHITECTURE.md](docs/chatbot/CHATBOT_ARCHITECTURE.md)
+- 🧪 **Testing Guidelines & Load Reports**: [TESTING.md](TESTING.md)
+- 📝 **Changelog**: [CHANGELOG.md](CHANGELOG.md)

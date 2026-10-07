@@ -22,8 +22,8 @@ npm run build                   # production build → dist/
 ```
 (Or start everything with `..\scripts\development\start-all.ps1`.)
 
-**How does it connect?** Every request goes through `src/api/client.js` to the **Python API**
-(`:8000`), which answers auth/help/chatbot itself and forwards everything else to the C# API. The JWT
+**How does it connect?** Every request goes through `src/api/client.js` to the **Python FastAPI backend**
+(`:8000`), which serves all business routes, authentication, slot reservations, QR verification, and chatbot logic. The JWT
 from login is sent on each request and refreshed automatically.
 
 | Folder | Holds |

@@ -5,6 +5,13 @@
   "tasks": [
     // ---------------------------------------------------------------- whole stack
     {
+      "label": "START SMART RATION",
+      "detail": "Python :8000, AI :8001, frontend :5173 in VS Code terminals (no C#; it has been replaced by the Python API)",
+      "dependsOn": ["Smart Ration: Python API", "AI service: Start", "Smart Ration: Frontend"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
       "label": "Smart Ration: Setup",
       "detail": "First-time/refresh setup: virtualenvs, pip, npm, dotnet restore; copies .env.example -> .env only if missing",
       "type": "shell",

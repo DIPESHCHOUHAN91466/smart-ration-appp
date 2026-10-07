@@ -84,8 +84,11 @@ test("a wrong password shows an error and does not sign in", async ({ page }) =>
   await page.locator('input[type="email"]').fill(ROLES[0].email);
   await page.locator('input[type="password"]').fill("definitely-not-the-password");
   await page.locator('button[type="submit"]').click();
-  await expect(page.getByRole("alert").first()).toBeVisible({ timeout: 10_000 });
-  await expect(page).toHaveURL(/\/login$/);
+
+  const alert = page.getByRole("alert").filter({ hasText: /invalid|incorrect|wrong|password|email/i });
+  await expect(alert.first()).toBeVisible({ timeout: 10_000 });
+  await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
+  await expect(page).not.toHaveURL(/\/(rural|shop|gov)\//);
 });
 
 async function signIn(page, email) {

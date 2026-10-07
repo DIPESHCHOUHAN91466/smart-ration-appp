@@ -1,0 +1,25 @@
+{
+  "name": "smart_ration_hsd2c_final",
+  "version": "1.0.0",
+  "description": "[![GitHub Repository](https://img.shields.io/badge/GitHub-smart--ration--appp-181717?logo=github)](https://github.com/DIPESHCHOUHAN91466/smart-ration-appp) [![Frontend](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite%206-61DAFB?logo=react)](frontend/README.md) [![Core API](https://img.shields.io/badge/Core%20API-ASP.NET%20Core%208%20(C%23)-512BD4?logo=dotnet)](backend/SmartRation.Api/README.md) [![Gateway & AI](https://img.shields.io/badge/Gateway%20%26%20AI-FastAPI%20%7C%20Python%203.12%2B-3776AB?logo=fastapi)](backend/SmartRation/README.md) [![Database](https://img.shields.io/badge/Database-MySQL%208-4479A1?logo=mysql)](database/README.md) [![Mobile](https://img.shields.io/badge/Mobile-Expo%20%7C%20React%20Native-000020?logo=expo)](mobile/README.md) [![Tests](https://img.shields.io/badge/Tests-612%20passing%20(104%20xUnit%20%7C%20314%20pytest%20%7C%20146%20MySQL%20%7C%2039%20vitest%20%7C%209%20E2E)-success)](tests/README.md)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DIPESHCHOUHAN91466/smart-ration-appp.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DIPESHCHOUHAN91466/smart-ration-appp/issues"
+  },
+  "homepage": "https://github.com/DIPESHCHOUHAN91466/smart-ration-appp#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.4"
+  }
+}

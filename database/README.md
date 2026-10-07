@@ -20,7 +20,7 @@ installation and checking the data are tasks with their own safety rules.
 `backend/SmartRation/migrations` (Python code, applied with `alembic upgrade head` / `setup_database.py`);
 passwords; real personal data.
 
-## Run
+## Run (Local MySQL)
 
 ```powershell
 mysql -u root -p < database\mysql-setup.local.sql            # one time, as root
@@ -30,6 +30,35 @@ cd backend\SmartRation
 .venv\Scripts\python scripts\check_data_integrity.py           # database/queries (read-only; exit 1 on errors)
 .venv\Scripts\python scripts\export_schema_sql.py              # regenerate schema/ and migrations/ after a new revision
 ```
+
+## Azure Database for MySQL Flexible Server Setup
+
+When deploying to Azure Database for MySQL Flexible Server (e.g. `smartration-ai.mysql.database.azure.com`):
+
+1. **Connect via Azure Cloud Shell or MySQL CLI with SSL CA:**
+   ```bash
+   mysql -h <server-name>.mysql.database.azure.com -u <admin-login> -p --ssl-ca=MysqlflexGlobalRootCA.crt.pem
+   ```
+2. **Create the database and remote least-privilege users (`@'%'`):**
+   ```sql
+   CREATE DATABASE IF NOT EXISTS smartration CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+   CREATE USER IF NOT EXISTS 'smartration_migrator'@'%' IDENTIFIED BY 'STRONG_MIGRATOR_PASSWORD';
+   GRANT ALL PRIVILEGES ON smartration.* TO 'smartration_migrator'@'%';
+
+   CREATE USER IF NOT EXISTS 'smartration_app'@'%' IDENTIFIED BY 'STRONG_APP_PASSWORD';
+   GRANT SELECT, INSERT, UPDATE, DELETE ON smartration.* TO 'smartration_app'@'%';
+
+   CREATE USER IF NOT EXISTS 'smartration_ai'@'%' IDENTIFIED BY 'STRONG_AI_PASSWORD';
+   GRANT SELECT ON smartration.* TO 'smartration_ai'@'%';
+
+   FLUSH PRIVILEGES;
+   ```
+3. **Firewall Rule:** In Azure Portal -> Networking, ensure *"Allow public access from any Azure service within Azure to this server"* is checked (or add your App Service/Container subnet VNet rule and your local client IP).
+4. **Run Alembic Migrations:** Point `MIGRATION_DATABASE_URL` or `DATABASE_URL` to Azure with `ssl_ca`:
+   ```bash
+   mysql+pymysql://smartration_migrator:<password>@<server-name>.mysql.database.azure.com:3306/smartration?charset=utf8mb4&ssl_ca=MysqlflexGlobalRootCA.crt.pem
+   ```
 
 `export_schema_sql.py --check` runs in the tests, so a migration committed without refreshed SQL fails.
 `check_data_integrity.py` prints ids and counts only — never names, e-mails or Aadhaar values — and runs every

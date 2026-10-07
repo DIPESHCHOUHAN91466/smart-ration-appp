@@ -69,3 +69,12 @@ database/backups/
 # Local log files (the folder itself is kept)
 logs/*
 !logs/.gitkeep
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Generated tree dump
+project-tree.txt

@@ -30,9 +30,9 @@ test("the session cookie is HttpOnly, survives a reload, and is removed on sign-
   expect(stored).not.toMatch(/accessToken|refreshToken|eyJ/);          // no token of any kind in storage
   expect(await page.evaluate(() => document.cookie)).not.toContain("sr_refresh");   // invisible to script
 
+  const refreshed = page.waitForResponse((r) => r.url().includes("/auth/refresh") && r.status() === 200);
   await page.reload();                                                   // memory is gone: the cookie signs back in
   await expect(page).toHaveURL(/\/rural\/dashboard$/);
-  const refreshed = page.waitForResponse((r) => r.url().includes("/auth/refresh") && r.status() === 200);
   await page.goto("/settings");
   await refreshed;
   await expect(page.getByLabel("Email")).toHaveValue(email, { timeout: 15_000 });   // profile loaded with the new token
