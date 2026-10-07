@@ -1,0 +1,54 @@
+name: Deploy to Azure App Service
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_ai:
+        description: 'Also deploy the AI microservice'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Container to Azure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Azure Container Registry
+        if: ${{ env.ACR_LOGIN_SERVER != '' }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push API & Web Container
+        if: ${{ env.ACR_LOGIN_SERVER != '' }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: backend/SmartRation/Dockerfile
+          push: true
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/smartration-api:${{ github.sha }},${{ secrets.ACR_LOGIN_SERVER }}/smartration-api:latest
+
+      - name: Log in to Azure CLI
+        if: ${{ env.AZURE_CREDENTIALS != '' }}
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Container to Azure App Service
+        if: ${{ env.AZURE_WEBAPP_NAME != '' }}
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/smartration-api:${{ github.sha }}
