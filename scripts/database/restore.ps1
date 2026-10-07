@@ -57,7 +57,10 @@ try {
     if (-not ((Get-Content $sqlFile -Tail 3) -match "Dump completed")) { throw "Backup is incomplete; refusing to restore." }
 
     Set-Content -Path $optionFile -Encoding ascii -Value "[client]`nuser=$user`npassword=`"$password`"`nhost=$DbHost`nport=$Port"
-    Get-Content $sqlFile -Raw -Encoding utf8 | & $mysql "--defaults-extra-file=$optionFile" --default-character-set=utf8mb4 $Database
+    # mysql reads the file itself. Piping it through PowerShell 5.1 (Get-Content | mysql) re-encodes the text as
+    # ASCII and turned every Hindi/Marathi character into "?" (found by the restore drill, 2026-10-07).
+    $sourcePath = $sqlFile.Replace("\", "/")
+    & $mysql "--defaults-extra-file=$optionFile" --default-character-set=utf8mb4 $Database "--execute=source $sourcePath"
     if ($LASTEXITCODE -ne 0) { throw "mysql restore failed with exit code $LASTEXITCODE." }
 }
 finally {
