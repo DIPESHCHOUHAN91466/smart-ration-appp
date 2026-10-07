@@ -104,14 +104,14 @@ after two fixes found during the baseline.
 | R7 | No SMS gateway: citizen sign-in codes are not delivered in the cloud demo (`SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT`) | Medium | Choose an SMS provider before real use |
 | R8 | Android release: no upload key, legal placeholders (`[OPERATOR NAME]`…) in the privacy policy, no production API URL yet | Blocker for Play | Owner |
 | R9 | No custom domain; `*.onrender.com` gives HTTPS, a domain needs ownership | Optional | Owner |
-| R10 | Monitoring: health checks and structured logs exist; no uptime alerting or error tracking configured | Medium | After deploy (free uptime monitor) |
+| R10 | Monitoring: `.github/workflows/uptime.yml` (hourly health, daily live smoke, GitHub failure e-mail) is ready; switched on by the repo variable `SMOKE_BASE_URL`. No error tracking (e.g. Sentry) yet | Low | Set the variable after deploy |
 | R11 | Docker image not built locally (Docker Desktop not running); CI builds and smoke-tests it | Low | CI |
 
 ## 11. Recommended plan
 
 1. Owner pushes `audit-and-deploy` and opens a PR to `main` → CI runs all 8 jobs (incl. Docker first-boot smoke).
 2. Owner creates Aiven MySQL (database `smartration`) and the Render Blueprint from `render.yaml` (RENDER.md).
-3. First deploy creates schema + synthetic demo data; run `tests/smoke` (52 live checks) against the URL.
+3. First deploy creates schema + synthetic demo data; run `tests/smoke` (10 live tests) against the URL.
 4. Build the Android app against that HTTPS URL (`APP_ENV=staging`), test on a phone; release `.aab` once the
    owner has the upload key and the policy placeholders are filled.
 5. Add uptime monitoring and a backup/restore drill on Aiven.

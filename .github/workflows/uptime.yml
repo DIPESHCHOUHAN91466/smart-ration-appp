@@ -1,0 +1,52 @@
+# Uptime monitoring of the deployed site, with no extra service: hourly health check, daily full live smoke test.
+# A failed run makes GitHub send its "workflow failed" e-mail (Settings -> Notifications -> Actions).
+# Off until the repository variable SMOKE_BASE_URL is set (Settings -> Secrets and variables -> Actions -> Variables),
+# e.g. https://smart-ration-hsd2c.onrender.com . Scheduled runs only happen from the default branch (main).
+# Hourly runs also keep a free Render service awake (one service fits in the free 750 hours a month).
+name: Uptime
+
+on:
+  schedule:
+    - cron: "7 * * * *"     # every hour: /health/live and /health
+    - cron: "23 3 * * *"    # every day 03:23 UTC: the full live smoke test (tests/smoke)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  health:
+    if: vars.SMOKE_BASE_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Site and API answer, database healthy
+        env:
+          BASE_URL: ${{ vars.SMOKE_BASE_URL }}
+        run: |
+          # A sleeping free instance can take about a minute to wake: retry before calling it down.
+          curl -fsS --retry 6 --retry-delay 15 --retry-all-errors --max-time 30 "$BASE_URL/health/live" > /dev/null
+          body=$(curl -fsS --retry 3 --retry-delay 10 --retry-all-errors --max-time 30 "$BASE_URL/health")
+          echo "$body"
+          echo "$body" | grep -q '"database":"healthy"' || { echo "::error::database not healthy"; exit 1; }
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$BASE_URL/login")
+          [ "$code" = 200 ] || { echo "::error::website answered $code"; exit 1; }
+
+  smoke:
+    if: vars.SMOKE_BASE_URL != '' && (github.event_name == 'workflow_dispatch' || github.event.schedule == '23 3 * * *')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: "3.13"
+      - run: python -m pip install httpx==0.28.1 pytest==9.1.1
+      - name: Live smoke test
+        env:
+          SMOKE_BASE_URL: ${{ vars.SMOKE_BASE_URL }}
+        run: python -m pytest tests/smoke -q

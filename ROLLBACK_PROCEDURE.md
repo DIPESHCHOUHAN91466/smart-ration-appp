@@ -12,7 +12,7 @@ The website and the API ship in one Docker image, so they always roll back toget
 2. Or from git, so the history stays honest: `git revert <bad commit>` on `main`, push; Render deploys after CI
    passes (`autoDeployTrigger: checksPass`).
 3. Check: `/health/live` 200, `/health` → `"database":"healthy"`, sign in as each role, open one booking's QR.
-   Script: `pytest tests/smoke` with `SMOKE_BASE_URL=<site>` (52 live checks).
+   Script: `pytest tests/smoke` with `SMOKE_BASE_URL=<site>` (10 live tests).
 
 **Database compatibility:** the container runs migrations on start (`RUN_DB_SETUP=true`) but never downgrades. If
 the bad release added a migration, the old code usually still runs (migrations here only add tables/columns). If it
