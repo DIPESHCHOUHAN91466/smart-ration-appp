@@ -134,7 +134,8 @@ void main() {
     final app = await TestApp.build(backend, savedLanguage: 'en', signedInAs: citizen());
     await tester.pumpWidget(app.widget);
     await tester.pumpAndSettle();
-    await tapText(tester, 'My complaints'); // from the home screen
+    await tester.tap(find.text('My complaints').first); // the home screen's menu
+    await tester.pumpAndSettle();
 
     expect(find.text('GRV-2026-000007'), findsOneWidget);
     expect(find.text('Resolved'), findsOneWidget);

@@ -68,6 +68,8 @@ class CitizenHomeScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(l.roleRuralUser, style: const TextStyle(color: AppColors.blue, fontWeight: FontWeight.w600, fontSize: 16)),
           const SizedBox(height: 16),
+          const _QuickMenu(),
+          const SizedBox(height: 16),
           const _NextCollectionCard(),
           const SizedBox(height: 12),
           SectionCard(
@@ -238,6 +240,81 @@ class Initials extends StatelessWidget {
         radius: radius,
         backgroundColor: const Color(0xFFE7F1FF),
         child: Text(letters, style: TextStyle(color: AppColors.blue, fontWeight: FontWeight.w700, fontSize: radius * 0.75)),
+      ),
+    );
+  }
+}
+
+/// The website's side menu as large buttons at the top of the home screen, so every citizen page is one tap away
+/// (Book ration is always here, also when a booking already exists).
+class _QuickMenu extends ConsumerWidget {
+  const _QuickMenu();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final unread = ref.watch(unreadCountProvider);
+    final items = [
+      (Icons.event_available, l.bookRation, Routes.citizenBook, true, 0),
+      (Icons.history, l.bookingHistory, Routes.citizenTokens, false, 0),
+      (Icons.verified_user_outlined, l.verificationTitle, Routes.account, false, 0),
+      (Icons.report_problem_outlined, l.myComplaints, Routes.citizenComplaints, false, 0),
+      (Icons.notifications_outlined, l.notificationsTitle, Routes.notifications, false, unread),
+      (Icons.settings_outlined, l.accountTitle, Routes.account, false, 0),
+    ];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(l.quickMenuTitle, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+      const SizedBox(height: 10),
+      LayoutBuilder(builder: (context, box) {
+        const gap = 10.0;
+        final width = (box.maxWidth - gap * 2) / 3;
+        return Wrap(spacing: gap, runSpacing: gap, children: [
+          for (final (icon, label, route, primary, badge) in items)
+            SizedBox(
+              width: width,
+              child: _MenuTile(icon: icon, label: label, primary: primary, badge: badge, onTap: () => context.push(route)),
+            ),
+        ]);
+      }),
+    ]);
+  }
+}
+
+class _MenuTile extends StatelessWidget {
+  const _MenuTile({required this.icon, required this.label, required this.primary, required this.badge, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final bool primary;
+  final int badge;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = primary ? Colors.white : AppColors.blue;
+    return Material(
+      color: primary ? AppColors.blue : Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 96),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: primary ? null : Border.all(color: AppColors.border),
+          ),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Badge(isLabelVisible: badge > 0, label: Text('$badge'), child: Icon(icon, color: fg, size: 30)),
+            const SizedBox(height: 8),
+            Text(label,
+                textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: primary ? Colors.white : AppColors.ink, fontWeight: FontWeight.w600, fontSize: 13)),
+          ]),
+        ),
       ),
     );
   }

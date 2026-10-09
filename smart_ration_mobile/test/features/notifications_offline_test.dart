@@ -53,10 +53,19 @@ void main() {
     final tokensBefore = count('/api/ration/bookings');
     final notificationsBefore = count('/api/notifications');
 
-    await tester.fling(find.byType(ListView).first, const Offset(0, 400), 1000);
+    await tester.fling(find.textContaining('Namaste'), const Offset(0, 400), 1000);   // from the top of the page
     await tester.pumpAndSettle();
     expect(count('/api/ration/bookings'), tokensBefore + 1);
     expect(count('/api/notifications'), notificationsBefore + 1);
+  });
+
+  testWidgets("pulling down also works when the finger starts on a menu button", (tester) async {
+    final (_, backend) = await openCitizen(tester, Switchable());
+    int count() => backend.requests.where((r) => r.method == 'GET' && r.path == '/api/ration/bookings').length;
+    final before = count();
+    await tester.fling(find.text('Booking history'), const Offset(0, 900), 1000);
+    await tester.pumpAndSettle();
+    expect(count(), before + 1);
   });
 
   group('notifications', () {

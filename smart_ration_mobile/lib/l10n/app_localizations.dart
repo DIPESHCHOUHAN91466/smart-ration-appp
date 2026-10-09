@@ -892,6 +892,18 @@ abstract class AppLocalizations {
   /// **'Ration shop'**
   String get chooseShopLabel;
 
+  /// No description provided for @bookingHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking history'**
+  String get bookingHistory;
+
+  /// No description provided for @quickMenuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to do?'**
+  String get quickMenuTitle;
+
   /// No description provided for @stepDay.
   ///
   /// In en, this message translates to:

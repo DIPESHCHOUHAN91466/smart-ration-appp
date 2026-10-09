@@ -245,6 +245,8 @@
   "bookRation": "Book ration",
   "chooseShopTitle": "Choose your ration shop",
   "chooseShopLabel": "Ration shop",
+  "bookingHistory": "Booking history",
+  "quickMenuTitle": "What would you like to do?",
   "stepDay": "1. Choose a day",
   "stepTime": "2. Choose a 5-minute time",
   "stepItems": "3. Choose items",

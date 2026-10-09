@@ -452,6 +452,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get chooseShopLabel => 'रेशन दुकान';
 
   @override
+  String get bookingHistory => 'बुकिंग इतिहास';
+
+  @override
+  String get quickMenuTitle => 'तुम्हाला काय करायचे आहे?';
+
+  @override
   String get stepDay => '1. दिवस निवडा';
 
   @override

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_ration_mobile/app/routes.dart';
 
+import '../support/test_app.dart';
+
 import '../support/fake_backend.dart';
 import 'booking_test.dart' show hm, openAt, scrollTo;
 
@@ -43,5 +45,21 @@ void main() {
         handler: (r) => r.path == '/api/shops' ? const FakeReply(503, {'success': false, 'message': 'down'}) : demoServer(r));
     expect(find.text('Choose your ration shop'), findsOneWidget);
     expect(find.text('Book and get token'), findsOneWidget);
+  });
+
+  testWidgets('Book ration is on the home screen also when a booking already exists', (tester) async {
+    tester.view.physicalSize = const Size(1080, 3200);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(tester.view.reset);
+    final app = await TestApp.build(FakeBackend(withShops), savedLanguage: 'en', signedInAs: citizen());
+    await tester.pumpWidget(app.widget);
+    await tester.pumpAndSettle();
+    expect(find.text('Show QR code'), findsOneWidget, reason: 'the demo citizen already has a token');
+    for (final label in ['Book ration', 'Booking history', 'My verification', 'My complaints', 'Notifications', 'My account']) {
+      expect(find.text(label), findsWidgets, reason: label);
+    }
+    await tester.tap(find.text('Book ration').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Choose your ration shop'), findsOneWidget);
   });
 }
