@@ -511,7 +511,7 @@ abstract class AppLocalizations {
   /// No description provided for @codeSentTo.
   ///
   /// In en, this message translates to:
-  /// **'If {mobile} is registered, a code has been sent to it.'**
+  /// **'If {mobile} is registered, a code has been sent to it and to the account\'s email.'**
   String codeSentTo(String mobile);
 
   /// No description provided for @codeLabel.
@@ -2569,7 +2569,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetCodeSent.
   ///
   /// In en, this message translates to:
-  /// **'If {mobile} is registered, a 6-digit code has been sent to it.'**
+  /// **'If {mobile} is registered, a 6-digit code has been sent to it and to the account\'s email. Check your inbox and spam folder.'**
   String resetCodeSent(String mobile);
 
   /// No description provided for @resetSendCode.

@@ -39,6 +39,13 @@ QR code, or every staff two-factor setup, stops working.
 - Demo accounts (`rural@`, `shop@`, `officer@example.com`): password in `build\azure\demo-accounts.txt` on the
   deploying PC only (git-ignored). Sign-in codes by SMS are not sent (no SMS provider yet).
 
+## Codes by e-mail
+
+There is no SMS gateway yet, so password-reset, sign-in and counter codes are e-mailed to the account's address.
+Turn it on with your Gmail and an App password: `powershell -ExecutionPolicy Bypass -File scriptszure\set-email.ps1`
+(it asks for the password and stores it only in the app's settings; `-Off` turns it off). Gmail sends about 500
+e-mails a day.
+
 ## When something is wrong
 
 - Portal -> `smartration-api-prod` -> **Log stream** shows start-up errors; or

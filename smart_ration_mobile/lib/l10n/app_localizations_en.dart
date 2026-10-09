@@ -237,7 +237,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String codeSentTo(String mobile) {
-    return 'If $mobile is registered, a code has been sent to it.';
+    return 'If $mobile is registered, a code has been sent to it and to the account\'s email.';
   }
 
   @override
@@ -1388,7 +1388,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String resetCodeSent(String mobile) {
-    return 'If $mobile is registered, a 6-digit code has been sent to it.';
+    return 'If $mobile is registered, a 6-digit code has been sent to it and to the account\'s email. Check your inbox and spam folder.';
   }
 
   @override

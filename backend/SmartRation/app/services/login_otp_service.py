@@ -110,8 +110,8 @@ def request_code(db: Session, settings: Settings, ctx: RequestContext, raw_mobil
                              CreatedAt=now, ExpiresAt=now + timedelta(minutes=settings.otp_expiry_minutes))
     db.add(record)
     db.commit()
-    sent = otp_service.send_sms(settings, user.MobileNumber,
-                                f"Your Smart Ration sign-in code is {code}. Valid for {settings.otp_expiry_minutes} minutes. "
+    sent = otp_service.deliver_code(settings, user, "Your Smart Ration sign-in code",
+                                    f"Your Smart Ration sign-in code is {code}. Valid for {settings.otp_expiry_minutes} minutes. "
                                 "Never share it, not even with the ration shop.")
     if not sent.sent:
         record.Status = int(OtpStatus.Failed)  # an undeliverable code must not stay usable

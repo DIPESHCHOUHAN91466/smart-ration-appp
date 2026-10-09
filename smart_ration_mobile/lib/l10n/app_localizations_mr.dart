@@ -238,7 +238,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String codeSentTo(String mobile) {
-    return '$mobile नोंदणीकृत असल्यास त्यावर कोड पाठवला आहे.';
+    return '$mobile नोंदणीकृत असल्यास त्यावर आणि खात्याच्या ईमेलवर कोड पाठवला आहे.';
   }
 
   @override
@@ -1372,7 +1372,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String resetCodeSent(String mobile) {
-    return '$mobile नोंदणीकृत असल्यास त्यावर 6 अंकी कोड पाठवला आहे.';
+    return '$mobile नोंदणीकृत असल्यास त्यावर आणि खात्याच्या ईमेलवर 6 अंकी कोड पाठवला आहे. इनबॉक्स आणि स्पॅम फोल्डर तपासा.';
   }
 
   @override

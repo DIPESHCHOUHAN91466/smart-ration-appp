@@ -108,7 +108,7 @@
   "mobileInvalid": "Please enter a 10-digit mobile number.",
   "sendCode": "Send code",
   "sendingCode": "Sending code...",
-  "codeSentTo": "If {mobile} is registered, a code has been sent to it.",
+  "codeSentTo": "If {mobile} is registered, a code has been sent to it and to the account's email.",
   "@codeSentTo": {
     "placeholders": {
       "mobile": {
@@ -664,7 +664,7 @@
   "forgotPassword": "Forgot password?",
   "resetTitle": "Reset your password",
   "resetIntro": "Enter the mobile number registered with your account. We will send a 6-digit code to it.",
-  "resetCodeSent": "If {mobile} is registered, a 6-digit code has been sent to it.",
+  "resetCodeSent": "If {mobile} is registered, a 6-digit code has been sent to it and to the account's email. Check your inbox and spam folder.",
   "@resetCodeSent": {"placeholders": {"mobile": {"type": "String", "example": "******0001"}}},
   "resetSendCode": "Send code",
   "resetSetPassword": "Set new password",

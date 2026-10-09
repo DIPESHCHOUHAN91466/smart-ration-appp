@@ -121,8 +121,8 @@ def request_reset(db: Session, settings: Settings, ctx: RequestContext, raw_mobi
                                Status=int(OtpStatus.Pending), CreatedAt=now, ExpiresAt=now + timedelta(minutes=settings.otp_expiry_minutes))
     db.add(record)
     db.commit()
-    sent = otp_service.send_sms(settings, user.MobileNumber,
-                                f"Your Smart Ration password reset code is {code}. Valid for {settings.otp_expiry_minutes} minutes. "
+    sent = otp_service.deliver_code(settings, user, "Your Smart Ration password reset code",
+                                    f"Your Smart Ration password reset code is {code}. Valid for {settings.otp_expiry_minutes} minutes. "
                                 "If you did not ask for it, ignore this message. Never share it.")
     if not sent.sent:
         record.Status = int(OtpStatus.Failed)  # an undeliverable code must not stay usable

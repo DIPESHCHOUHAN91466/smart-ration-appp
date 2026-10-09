@@ -54,7 +54,7 @@ void main() {
     final app = await start(tester, backend);
 
     await askForCode(tester, '+91 90000 00001');
-    expect(find.text('If ******0001 is registered, a code has been sent to it.'), findsOneWidget);
+    expect(find.text("If ******0001 is registered, a code has been sent to it and to the account's email."), findsOneWidget);
     expect(find.text('Development demo code: 123456'), findsOneWidget);
     expect(backend.requests.last.data, {'mobileNumber': '9000000001'});
 

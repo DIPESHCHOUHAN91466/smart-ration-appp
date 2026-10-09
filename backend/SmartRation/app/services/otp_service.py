@@ -11,9 +11,12 @@ from __future__ import annotations
 import hashlib
 import logging
 import secrets
+import smtplib
+import ssl
 import uuid
 from dataclasses import dataclass
 from datetime import timedelta
+from email.message import EmailMessage
 
 import httpx
 from sqlalchemy import select
@@ -56,6 +59,38 @@ def send_sms(settings: Settings, phone: str, message: str) -> SmsResult:
     return SmsResult(True, "Http")
 
 
+def send_email(settings: Settings, to: str, subject: str, text: str) -> SmsResult:
+    """Plain-text e-mail over SMTP with STARTTLS (port 587). Never logs the address or the message."""
+    message = EmailMessage()
+    message["From"] = f"Smart Ration <{settings.smtp_from or settings.smtp_username}>"
+    message["To"] = to
+    message["Subject"] = subject
+    message.set_content(text)
+    try:
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=10) as smtp:
+            smtp.starttls(context=ssl.create_default_context())
+            if settings.smtp_username:
+                smtp.login(settings.smtp_username, settings.smtp_password)
+            smtp.send_message(message)
+    except (OSError, smtplib.SMTPException) as exc:
+        log.warning("E-mail not sent", extra={"fields": {"error": type(exc).__name__}})
+        return SmsResult(False, "Email", "E-mail could not be sent.")
+    return SmsResult(True, "Email")
+
+
+def deliver_code(settings: Settings, user: User, subject: str, text: str) -> SmsResult:
+    """Sends a one-time code by SMS and, when SMTP is configured, also to the account's e-mail.
+    With a real SMS gateway either channel is enough. With the mock SMS (no gateway: the synthetic demo) the
+    e-mail is the only real delivery, so the code counts as sent only if the e-mail went out."""
+    sms = send_sms(settings, user.MobileNumber, text)
+    if not settings.smtp_host.strip() or not (user.Email or "").strip():
+        return sms
+    mail = send_email(settings, user.Email, subject, text)
+    if settings.sms_provider.lower() == "http":
+        return SmsResult(sms.sent or mail.sent, "Http+Email", None if sms.sent or mail.sent else sms.error)
+    return mail
+
+
 def _hash(code: str) -> str:
     return hashlib.sha256(code.encode("utf-8")).hexdigest().upper()
 
@@ -92,8 +127,9 @@ def request(db: Session, settings: Settings, beneficiary_id: int, requested_by: 
     db.add(record)
     db.commit()
     user = require(db, User, beneficiary.UserId, "User not found.")
-    sent = send_sms(settings, user.MobileNumber,
-                    f"Your Smart Ration verification code is {code}. Valid for {settings.otp_expiry_minutes} minutes. Do not share it.")
+    sent = deliver_code(settings, user, "Your Smart Ration verification code",
+                        f"Your Smart Ration verification code is {code}. Valid for {settings.otp_expiry_minutes} minutes. "
+                        "Do not share it.")
     if not sent.sent:
         record.Status = int(OtpStatus.Failed)   # an undeliverable code must not stay usable
         db.commit()

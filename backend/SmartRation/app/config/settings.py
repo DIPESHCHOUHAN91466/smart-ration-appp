@@ -142,6 +142,15 @@ class Settings(BaseSettings):
     # A public demo on SYNTHETIC data may run the mock provider outside development; never with real data.
     sms_allow_mock_outside_development: bool = False
 
+    # E-mail delivery of the same codes (password reset, sign-in, counter check), e.g. Gmail with an app password:
+    # SMTP_HOST=smtp.gmail.com SMTP_PORT=587 SMTP_USERNAME=you@gmail.com SMTP_PASSWORD=<16-letter app password>.
+    # Empty SMTP_HOST: no e-mail is sent.
+    smtp_host: str = ""
+    smtp_port: int = Field(default=587, ge=1, le=65535)
+    smtp_username: str = ""
+    smtp_password: str = Field(default="", repr=False)
+    smtp_from: str = ""   # default: SMTP_USERNAME
+
     # ---- AI analytics service calls (forecasts, alerts, OCR) ----
     ai_service_api_key: str = Field(default="", repr=False)   # = SMARTRATION_AI_API_KEY of the AI service
     ai_service_timeout_seconds: float = 8.0
