@@ -91,7 +91,10 @@ def main() -> None:
                     if file.suffix == ".sh":
                         info.external_attr = 0o100755 << 16   # executable on Linux
                     info.compress_type = zipfile.ZIP_DEFLATED
-                    zf.writestr(info, file.read_bytes())
+                    data = file.read_bytes()
+                    if file.suffix == ".sh":
+                        data = data.replace(b"\r\n", b"\n")   # Windows checkouts: sh fails on CRLF
+                    zf.writestr(info, data)
     print(f"built {OUT.relative_to(ROOT)} from commit {commit} ({OUT.stat().st_size // 1024} KB)")
 
 
