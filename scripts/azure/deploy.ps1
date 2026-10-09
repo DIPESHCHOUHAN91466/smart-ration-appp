@@ -37,8 +37,13 @@ Write-Host "Target: $site"
 
 if (-not $SkipSettings) {
     Write-Host "1/4 Runtime, start command, HTTPS only"
-    Az webapp config set -g $ResourceGroup -n $AppName --linux-fx-version "PYTHON|3.13" --startup-file "sh startup.sh" `
-        --always-on true --ftps-state Disabled --min-tls-version 1.2 --output none
+    # Through a JSON file: az is a .cmd script, and cmd.exe would read the "|" in "PYTHON|3.13" as a pipe.
+    $siteFile = Join-Path $env:TEMP ("sr-site-" + [guid]::NewGuid() + ".json")
+    try {
+        @{ linuxFxVersion = "PYTHON|3.13"; appCommandLine = "sh startup.sh"; alwaysOn = $true
+           ftpsState = "Disabled"; minTlsVersion = "1.2" } | ConvertTo-Json | Set-Content -Encoding utf8 $siteFile
+        Az webapp config set -g $ResourceGroup -n $AppName --generic-configurations "@$siteFile" --output none
+    } finally { Remove-Item $siteFile -ErrorAction SilentlyContinue }
     Az webapp update -g $ResourceGroup -n $AppName --https-only true --output none
 
     Write-Host "2/4 Application settings (values not shown)"
