@@ -9,6 +9,27 @@ CSP and HSTS sent; the 11th wrong sign-in in a minute gets 429 (fixed for Azure 
 the real client address; no `/download` page or demo password published. Android: APK built for this address
 (`app-arm64-v8a-release.apk`), not yet tested on a phone.
 
+## Release audit 2026-10-09 (evidence)
+
+| Area | Command / check | Result |
+|---|---|---|
+| API + MySQL suite | `pytest` in a clean checkout of `2ad8d84`, `TEST_DATABASE_URL` = local `smartration_test` | 698 passed, 0 failed, 5 skipped (need a MySQL account that may create users) — 314 s |
+| API static | `ruff check .`, `mypy app` | clean; 108 files type-checked |
+| API dependencies | `pip-audit -r requirements.txt` | no known vulnerabilities |
+| Regression | `pytest tests/regression` | 34 passed |
+| Website | `eslint .`, `vitest run`, `npm run build`, `npm audit --omit=dev` | clean; 117 passed; build ok; 0 vulnerabilities; no API URL to localhost in the bundle |
+| Android | `flutter analyze`, `flutter test`; `aapt2`/`apksigner` on v1.0.8 APK | clean; 371 passed; versionCode 9, targetSdk 36, not debuggable, no cleartext, release-signed |
+| Live smoke | `pytest tests/smoke` against the site | 10 passed |
+| Live access control | each role against others' routes; forged token; other citizens' records | all refused (403/401); own record only. P3: unknown record ids answer 404 instead of 403 |
+| Live transport | certificate, HTTPS-only, TLS | TLS 1.3, Microsoft certificate valid to 2027-04-23; database link TLS 1.3, `require_secure_transport=ON` |
+| Azure | subscription, app, MySQL (read-only) | Free Trial enabled; app Running, Python 3.13, FTPS off, min TLS 1.2; MySQL 8.4 B1ms, 7-day backups (earliest restore 2026-10-07), geo-backup and HA off |
+| Changed today | App Service health check | `healthCheckPath=/health/live` (site healthy afterwards) |
+| Repository | 233 files staged by another tool (backend copy, website copy, 3 zips, 55 MB exe, 28 MB APK, a `/download` page showing an e-mail and a password) | 232 unstaged (kept on disk) and ignored in `.gitignore`; the owner's `tests/e2e/session.spec.js` left staged |
+
+Open (owner decisions): e-mail codes off until `scripts/azure/set-email.ps1` is run; database firewall still allows all
+Azure services (+2 old home-IP rules); no Application Insights; the app's database account can also change the schema
+(a rows-only account needs the MySQL admin password); Google Play not submitted (no developer account yet).
+
 The table below is the Render/Aiven plan written before the Azure deployment; Render was not used.
 
 | # | Item | State |

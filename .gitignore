@@ -78,3 +78,14 @@ logs/*
 
 # Generated tree dump
 project-tree.txt
+
+# Local deployment leftovers (never source): copies of the backend/website, packages, tunnels, built apps.
+# Deploy with scripts/azure/build_package.py, which builds from committed code.
+backend/SmartRation/azure-deploy/
+backend/SmartRation/frontend-dist/
+backend/SmartRation/apk/
+backend/SmartRation/*.zip
+/smartration-deploy.zip
+/cloudflared.exe
+*.apk
+*.aab
