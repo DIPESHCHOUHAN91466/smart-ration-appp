@@ -59,6 +59,9 @@ def main() -> None:
     parser.add_argument("--ref", default="HEAD", help="commit to package (default HEAD)")
     parser.add_argument("--demo-mode", default="true", choices=["true", "false"],
                         help="login page offers the synthetic demo accounts (VITE_DEMO_MODE)")
+    parser.add_argument("--demo-password-file", default="",
+                        help="public demo: show this password on the login page (file with a 'password: ...' line, "
+                             "e.g. build/azure/demo-accounts.txt). Anyone can then sign in to the demo accounts.")
     args = parser.parse_args()
     commit = subprocess.run(["git", "rev-parse", "--short", args.ref], cwd=ROOT, check=True,
                             capture_output=True, text=True).stdout.strip()
@@ -70,6 +73,11 @@ def main() -> None:
         import os
         env = {**os.environ, "VITE_DEMO_MODE": args.demo_mode}
         env.pop("VITE_API_BASE_URL", None)   # same origin: the website calls /api on the host that served it
+        env.pop("VITE_DEMO_PASSWORD", None)
+        if args.demo_password_file:
+            import re
+            text = Path(args.demo_password_file).read_text(encoding="utf-8-sig")
+            env["VITE_DEMO_PASSWORD"] = re.search(r"^password: (.+)$", text, re.M).group(1).strip()
         run(["npm", "ci", "--no-audit", "--no-fund"], src / "frontend", env)
         run(["npm", "run", "build"], src / "frontend", env)
 
