@@ -26,6 +26,16 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from app.core.errors import fail_body, log_security_event
 
 
+def _without_port(host: str) -> str:
+    """Azure App Service writes the client as "203.0.113.7:51234" (and "[2001:db8::1]:51234"); with the port, every
+    new connection looked like a new client and per-IP rate limits never triggered."""
+    if host.startswith("["):
+        return host[1:].split("]", 1)[0]
+    if host.count(":") == 1:   # IPv4 with a port; a bare IPv6 address has several colons
+        return host.split(":", 1)[0]
+    return host
+
+
 def _header(scope: Scope, name: bytes) -> str | None:
     values = [v.decode("latin-1") for k, v in scope.get("headers", []) if k == name]
     return ",".join(values) if values else None
@@ -44,7 +54,7 @@ class ClientAddressMiddleware:
                 if hosts:
                     # Fewer entries than hops: nothing was prepended by the client, the first one is the client.
                     host = hosts[-self.hops] if len(hosts) >= self.hops else hosts[0]
-                    scope = {**scope, "client": (host[:64], 0)}
+                    scope = {**scope, "client": (_without_port(host)[:64], 0)}
             proto = _header(scope, b"x-forwarded-proto")
             if proto:
                 last = proto.split(",")[-1].strip().lower()

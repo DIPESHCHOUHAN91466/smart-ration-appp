@@ -47,6 +47,9 @@ def capture(middleware_cls, scope, chunks=(b"",), **kwargs):
     (2, "6.6.6.6, 203.0.113.7, 10.1.1.1", "203.0.113.7"),    # Render: client, then its proxy
     (2, "203.0.113.7, 10.1.1.1", "203.0.113.7"),             # nothing prepended by the client
     (2, "203.0.113.7", "203.0.113.7"),                       # fewer entries than hops: the only one
+    (1, "6.6.6.6, 203.0.113.7:51234", "203.0.113.7"),        # Azure App Service: the port is dropped
+    (1, "[2001:db8::1]:51234", "2001:db8::1"),               # Azure, IPv6 with a port
+    (1, "2001:db8::1", "2001:db8::1"),                       # bare IPv6 is not mistaken for host:port
 ])
 def test_the_client_address_is_counted_from_the_right(hops, forwarded, expected):
     seen, _ = capture(ClientAddressMiddleware, http_scope([("x-forwarded-for", forwarded)]), trusted_hops=hops)
@@ -65,6 +68,14 @@ def test_rotating_a_fake_left_entry_no_longer_escapes_the_sign_in_limit(make_cli
     codes = [api.post("/api/auth/login", headers={"X-Forwarded-For": f"6.6.6.{i}, 203.0.113.7"},
                       json={"email": "x@y.z", "password": "bad"}).status_code for i in range(12)]
     assert codes[:10] == [401] * 10 and codes[10:] == [429, 429]                          # the same real client, whatever it claims first
+
+
+def test_a_new_source_port_does_not_escape_the_sign_in_limit(make_client):
+    api = make_client(lambda r: None, trusted_proxy_hops=1)
+    Base.metadata.create_all(get_engine())
+    codes = [api.post("/api/auth/login", headers={"X-Forwarded-For": f"203.0.113.7:{50000 + i}"},
+                      json={"email": "x@y.z", "password": "bad"}).status_code for i in range(12)]
+    assert codes[:10] == [401] * 10 and codes[10:] == [429, 429]   # Azure gives each connection a new port
 
 
 def test_different_real_clients_keep_separate_limits(make_client):
