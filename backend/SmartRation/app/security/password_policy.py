@@ -31,17 +31,23 @@ def _common() -> frozenset[str]:
     return frozenset(line.strip() for line in lines if line.strip() and not line.startswith("#"))
 
 
-def _personal_parts(email: str | None, mobile: str | None, full_name: str | None) -> list[str]:
-    parts: list[str] = []
+def _personal_parts(email: str | None, mobile: str | None, full_name: str | None) -> list[tuple[str, str]]:
+    """(text, where it comes from) pairs a password must not contain."""
+    parts: list[tuple[str, str]] = []
     if email:
         local = email.split("@", 1)[0].lower()
-        parts += [local] if len(local) >= 4 else []
+        parts += [(local, "your email")] if len(local) >= 4 else []
     if mobile:
         digits = re.sub(r"\D", "", mobile)
-        parts += [digits[-10:]] if len(digits) >= 10 else []
+        parts += [(digits[-10:], "your mobile number")] if len(digits) >= 10 else []
     if full_name:
-        parts += [w.lower() for w in re.split(r"\s+", full_name) if len(w) >= 4]
+        parts += [(w.lower(), "your name") for w in re.split(r"\s+", full_name) if len(w) >= 4]
     return parts
+
+
+def too_personal(found: str, source: str) -> str:
+    """Says exactly what to change: people could not tell which part of a long password was refused."""
+    return f'Password: Remove "{found}" (it comes from {source}). ' + TOO_PERSONAL.removeprefix("Password: ")
 
 
 def _repetitive(password: str) -> bool:
@@ -67,9 +73,12 @@ def problems(password: str, *, email: str | None = None, mobile: str | None = No
     if variants & _common():
         return [TOO_COMMON]
     squashed = re.sub(r"[\s._-]", "", lowered)
-    if any(word.replace(" ", "") in squashed for word in SERVICE_WORDS) or \
-            any(part and part in lowered for part in _personal_parts(email, mobile, full_name)):
-        return [TOO_PERSONAL]
+    for word in SERVICE_WORDS:
+        if word.replace(" ", "") in squashed:
+            return [too_personal(word.replace(" ", ""), "the service's name")]
+    for part, source in _personal_parts(email, mobile, full_name):
+        if part and part in lowered:
+            return [too_personal(part, source)]
     if _repetitive(password):
         return [TOO_REPETITIVE]
     return []

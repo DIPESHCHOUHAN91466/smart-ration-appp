@@ -28,10 +28,19 @@ def test_the_common_list_ships_with_the_code_and_has_only_12_plus_entries():
     assert len(common) > 1000 and all(len(p) >= 12 for p in common)
 
 
-@pytest.mark.parametrize("personal", ["sunita.more.2026", "my-9000000001-pin", "SmartRation-2026!", "ration mitra rocks"])
-def test_passwords_built_from_the_persons_details_or_the_service_name_are_refused(personal):
-    assert policy.problems(personal, email="sunita.more@example.com", mobile="+91 90000 00001",
-                           full_name="Sunita More") == [policy.TOO_PERSONAL]
+@pytest.mark.parametrize("personal, found, source", [
+    ("sunita.more.2026", "sunita.more", "your email"),
+    ("my-9000000001-pin", "9000000001", "your mobile number"),
+    ("SmartRation-2026!", "smartration", "the service's name"),
+    ("ration mitra rocks", "rationmitra", "the service's name"),
+    ("x-sunita-x-2026-blue", "sunita", "your name"),
+])
+def test_passwords_built_from_the_persons_details_or_the_service_name_are_refused(personal, found, source):
+    """The message names the part to remove: people could not tell which part of a long password was refused."""
+    problems = policy.problems(personal, email="sunita.more@example.com", mobile="+91 90000 00001", full_name="Sunita More")
+    assert problems == [policy.too_personal(found, source)]
+    assert problems[0].startswith(f'Password: Remove "{found}" (it comes from {source}). ')
+    assert problems[0].endswith(policy.TOO_PERSONAL.removeprefix("Password: "))
 
 
 @pytest.mark.parametrize("repetitive", ["aaaaaaaaaaaaaa", "abababababab", "my-12345678-key", "zz-abcdefgh-zz"])
