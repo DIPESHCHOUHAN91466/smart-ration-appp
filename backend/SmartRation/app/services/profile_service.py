@@ -29,6 +29,7 @@ from app.database.models import (
     User,
     VerificationAuditLog,
 )
+from app.repositories import refresh_tokens
 from app.security.passwords import verify_password
 from app.security.rate_limit import TooManyRequests
 from app.services import ai_rules_service, audit_service, auth_service, entitlement_service, verification_audit_service
@@ -60,6 +61,37 @@ def own_profile(db: Session, actor: Actor) -> dict:
 
 PASSWORD_FOR_MOBILE = "CurrentPassword: Enter your password to change the mobile number."
 WRONG_PASSWORD = "CurrentPassword: The password is incorrect."
+
+
+# The shared synthetic demo accounts: their password is public, so nobody may close them for everyone else.
+DEMO_ACCOUNT_EMAILS = frozenset({"rural@example.com", "shop@example.com", "officer@example.com"})
+PASSWORD_FOR_CLOSING = "CurrentPassword: Enter your password to close your account."
+
+
+def close_own_account(db: Session, actor: Actor, current_password: str | None) -> None:
+    """A citizen closes their own account (Google Play account-deletion rule; privacy policy "Your rights").
+    It is switched off at once: no sign-in, every session ends. The records are erased or anonymised within the
+    retention period the privacy policy states (one year), as the law allows for complaints and audits.
+    Shop and official accounts are managed by the office; the public demo accounts cannot be closed."""
+    user = require(db, User, actor.user_id, "User profile not found.")
+    if user.Role != int(UserRole.RuralUser):
+        raise Forbidden("Shop and official accounts are closed by the district office. Please contact them.")
+    if (user.Email or "").strip().lower() in DEMO_ACCOUNT_EMAILS:
+        raise Forbidden("The shared demo accounts cannot be closed.")
+    if auth_service.is_locked(db, user.Id):
+        raise TooManyRequests("Too many failed sign-in attempts for this account. Please wait 15 minutes and try again.",
+                              "ACCOUNT_TEMPORARILY_LOCKED")
+    if not current_password:
+        raise ValidationFailed([PASSWORD_FOR_CLOSING])
+    if not verify_password(current_password, user.PasswordHash).valid:
+        audit_service.record(db, user.Id, "LOGIN_FAILED", "User", str(user.Id), "method=account-closure", result="FAILED",
+                             ip_address=actor.ip_address)
+        db.commit()
+        raise ValidationFailed([WRONG_PASSWORD])
+    user.IsActive = False
+    refresh_tokens.revoke_all_for_user(db, user.Id, utc_now())
+    audit_service.record(db, user.Id, "ACCOUNT_CLOSED", "User", str(user.Id), "by=self", ip_address=actor.ip_address)
+    db.commit()
 
 
 def update_own_profile(db: Session, actor: Actor, full_name: str, mobile: str, current_password: str | None = None) -> dict:

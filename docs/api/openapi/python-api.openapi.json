@@ -4778,6 +4778,25 @@
         ]
       }
     },
+    "/api/users/me/close": {
+      "post": {
+        "operationId": "close_my_account_api_users_me_close_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Close my account (citizens; needs currentPassword)",
+        "tags": [
+          "people"
+        ]
+      }
+    },
     "/api/users/me/export": {
       "get": {
         "operationId": "export_my_data_api_users_me_export_get",

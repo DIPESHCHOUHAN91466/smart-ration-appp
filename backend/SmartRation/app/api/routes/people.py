@@ -33,6 +33,15 @@ def export_my_data(response: Response, who: Actor = Depends(any_user), db: Sessi
     return ok(data)
 
 
+@router.post("/users/me/close", summary="Close my account (citizens; needs currentPassword)",
+             dependencies=[Depends(rate_limit("account-close", lambda s: 5))])
+def close_my_account(body: Body = Depends(json_body), who: Actor = Depends(any_user), db: Session = Depends(get_db)):
+    password = body.string("CurrentPassword", max_length=100)
+    body.raise_if_invalid()
+    profile_service.close_own_account(db, who, password)
+    return ok(None, "Your account is closed. Its data will be erased as described in the privacy policy.")
+
+
 @router.get("/users/profile", summary="My account")
 def my_profile(who: Actor = Depends(any_user), db: Session = Depends(get_db)):
     return ok(profile_service.own_profile(db, who))

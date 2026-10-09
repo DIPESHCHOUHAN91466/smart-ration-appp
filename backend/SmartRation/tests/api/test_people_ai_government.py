@@ -415,3 +415,34 @@ def test_database_viewer_is_read_only_and_paged(env):
     assert c.get("/api/admin/database/beneficiaries?search=900000000", headers=env["official"]).json()["data"]["totalCount"] == 0
     assert c.get("/api/admin/synthetic-data/beneficiaries?aadhaarStatus=Failed", headers=env["official"]).json()["data"]["totalCount"] == 0
     assert c.get("/api/admin/database/tokens", headers=env["shop"]).status_code == 403
+
+
+def test_a_citizen_closes_their_own_account_with_the_password(env):
+    """Google Play account deletion: the account is switched off at once and every session ends."""
+    c = env["client"]
+    r = c.post("/api/auth/register", json={"fullName": "Leaving Citizen", "email": "leaving@example.org",
+                                           "mobileNumber": "9000000188", "password": TEST_PASSWORD})
+    tokens = r.json()["data"]
+    headers = {"Authorization": f"Bearer {tokens['accessToken']}"}
+
+    r = c.post("/api/users/me/close", headers=headers, json={})
+    assert r.status_code == 400 and r.json()["errors"] == ["CurrentPassword: Enter your password to close your account."]
+    r = c.post("/api/users/me/close", headers=headers, json={"currentPassword": "not-the-password"})
+    assert r.status_code == 400 and r.json()["errors"] == ["CurrentPassword: The password is incorrect."]
+
+    r = c.post("/api/users/me/close", headers=headers, json={"currentPassword": TEST_PASSWORD})
+    assert r.status_code == 200, r.text
+    assert c.post("/api/auth/login", json={"email": "leaving@example.org", "password": TEST_PASSWORD}).status_code != 200
+    assert c.post("/api/auth/refresh", json={"refreshToken": tokens["refreshToken"]}).status_code == 401
+    with session() as db:
+        assert db.scalar(select(func.count()).select_from(AuditLog).where(AuditLog.Action == "ACCOUNT_CLOSED")) == 1
+
+
+def test_staff_and_the_shared_demo_accounts_cannot_be_closed_by_themselves(env):
+    c = env["client"]
+    assert c.post("/api/users/me/close", headers=env["shop"], json={"currentPassword": TEST_PASSWORD}).status_code == 403
+    r = c.post("/api/auth/register", json={"fullName": "Demo Citizen", "email": "rural@example.com",
+                                           "mobileNumber": "9000000189", "password": TEST_PASSWORD})
+    headers = {"Authorization": f"Bearer {r.json()['data']['accessToken']}"}
+    r = c.post("/api/users/me/close", headers=headers, json={"currentPassword": TEST_PASSWORD})
+    assert r.status_code == 403 and "demo" in r.json()["message"]
