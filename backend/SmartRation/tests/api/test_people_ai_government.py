@@ -446,3 +446,31 @@ def test_staff_and_the_shared_demo_accounts_cannot_be_closed_by_themselves(env):
     headers = {"Authorization": f"Bearer {r.json()['data']['accessToken']}"}
     r = c.post("/api/users/me/close", headers=headers, json={"currentPassword": TEST_PASSWORD})
     assert r.status_code == 403 and "demo" in r.json()["message"]
+
+
+# ---------------------------------------------------------------- no probing for record existence
+
+def test_record_ids_cannot_be_probed_for_existence(env):
+    """A citizen or a shop owner gets the same 403 for someone else's record and for an id that does not exist,
+    so sequential ids reveal nothing. Officials (who may see every record) still learn that an id is missing."""
+    c = env["client"]
+    mine = my_beneficiary_id(env)
+    with session() as db:
+        family_id = db.get(Beneficiary, mine).FamilyId
+    others = register(env, 41)   # a second citizen, at no shop of the test shop owners
+    theirs = my_beneficiary_id(env, others)
+    missing = 999_999
+    for path in ("verification", "family", "entitlement", "collections", "full-profile"):
+        assert c.get(f"/api/beneficiaries/{mine}/{path}", headers=env["citizen"]).status_code == 200, path
+        foreign = c.get(f"/api/beneficiaries/{theirs}/{path}", headers=env["citizen"])
+        absent = c.get(f"/api/beneficiaries/{missing}/{path}", headers=env["citizen"])
+        assert (foreign.status_code, foreign.json()["message"]) == (absent.status_code, absent.json()["message"]) \
+            == (403, "You do not have access to this beneficiary."), path
+        assert c.get(f"/api/beneficiaries/{missing}/{path}", headers=env["other_shop"]).status_code == 403, path
+        assert c.get(f"/api/beneficiaries/{missing}/{path}", headers=env["official"]).status_code == 404, path
+        assert c.get(f"/api/beneficiaries/{theirs}/{path}", headers=env["official"]).status_code == 200, path
+    for who, expected in (("citizen", 200), ("other_shop", 403), ("official", 200)):
+        assert c.get(f"/api/families/{family_id}", headers=env[who]).status_code == expected, who
+    assert c.get(f"/api/families/{missing}", headers=env["citizen"]).json()["message"] == "You do not have access to this family."
+    assert c.get(f"/api/families/{missing}", headers=env["other_shop"]).status_code == 403
+    assert c.get(f"/api/families/{missing}", headers=env["official"]).status_code == 404

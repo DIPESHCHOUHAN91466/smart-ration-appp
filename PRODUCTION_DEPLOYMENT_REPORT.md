@@ -26,6 +26,18 @@ the real client address; no `/download` page or demo password published. Android
 | Changed today | App Service health check | `healthCheckPath=/health/live` (site healthy afterwards) |
 | Repository | 233 files staged by another tool (backend copy, website copy, 3 zips, 55 MB exe, 28 MB APK, a `/download` page showing an e-mail and a password) | 232 unstaged (kept on disk) and ignored in `.gitignore`; the owner's `tests/e2e/session.spec.js` left staged |
 
+### Remediation 2026-10-09 (later)
+
+| Item | Evidence |
+|---|---|
+| Record ids can no longer be probed | citizens and shop owners get the same 403 for someone else's record and for a missing id; officials still get 404 (`test_record_ids_cannot_be_probed_for_existence`); full API + MySQL suite on a clean checkout with the fix: 699 passed, 5 skipped, 0 failed. Not deployed yet |
+| Browser tests | `npx playwright test` (Edge, desktop + Pixel 7 sizes) against a local stack: 27 passed, 1 skipped (staff two-factor test needs a dedicated account) |
+| Load (local, not production) | `tests/load/load_test.py --users 10 25 50`: 0 errors; ~80 req/s, p95 181 / 553 / 939 ms on one local process |
+| Duplicate collection race (local) | 10 simultaneous collections of one token: one 200, nine 409 |
+| Android | v1.0.8 APK: no secrets, no localhost/tunnel URLs, live API address; not tested on a phone or emulator (too little free memory for the emulator) |
+| Least privilege | scripts to test locally and switch the live app to a rows-only account, with automatic switch-back (owner runs them: needs admin passwords) |
+| Found | a third web app `smartration-api` (created 2026-10-09 01:20 UTC by another tool) with its own secrets and database access; currently 503 |
+
 Open (owner decisions): e-mail codes off until `scripts/azure/set-email.ps1` is run; database firewall still allows all
 Azure services (+2 old home-IP rules); no Application Insights; the app's database account can also change the schema
 (a rows-only account needs the MySQL admin password); Google Play not submitted (no developer account yet).

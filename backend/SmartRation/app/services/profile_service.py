@@ -153,12 +153,24 @@ def _can_see(db: Session, actor: Actor, owner_user_ids: list[int], family_id: in
         Token.UserId.in_(owner_user_ids), Token.RationShopId == actor.ration_shop_id).limit(1)) is not None
 
 
+def _sees_everyone(actor: Actor) -> bool:
+    return actor.role in (UserRole.GovernmentOfficial, UserRole.Admin)
+
+
+NO_BENEFICIARY_ACCESS = "You do not have access to this beneficiary."
+NO_FAMILY_ACCESS = "You do not have access to this family."
+
+
 def _load(db: Session, actor: Actor, beneficiary_id: int) -> tuple[Beneficiary, User]:
     beneficiary = db.get(Beneficiary, beneficiary_id)
     if beneficiary is None:
-        raise NotFound("Beneficiary not found.")
+        # Only callers allowed to see every record may learn that an id does not exist: for everyone else a missing
+        # id answers exactly like someone else's record, so ids cannot be probed for existence.
+        if _sees_everyone(actor):
+            raise NotFound("Beneficiary not found.")
+        raise Forbidden(NO_BENEFICIARY_ACCESS)
     if not _can_see(db, actor, [beneficiary.UserId], beneficiary.FamilyId):
-        raise Forbidden("You do not have access to this beneficiary.")
+        raise Forbidden(NO_BENEFICIARY_ACCESS)
     return beneficiary, require(db, User, beneficiary.UserId, "Beneficiary not found.")
 
 
@@ -287,10 +299,12 @@ def full_profile(db: Session, actor: Actor, beneficiary_id: int) -> dict:
 def _visible_family(db: Session, actor: Actor, family_id: int) -> Family:
     fam = db.get(Family, family_id)
     if fam is None:
-        raise NotFound("Family not found.")
+        if _sees_everyone(actor):
+            raise NotFound("Family not found.")
+        raise Forbidden(NO_FAMILY_ACCESS)   # as for someone else's family: no probing for existence
     owners = list(db.scalars(select(Beneficiary.UserId).where(Beneficiary.FamilyId == family_id)))
     if not _can_see(db, actor, owners, family_id):
-        raise Forbidden("You do not have access to this family.")
+        raise Forbidden(NO_FAMILY_ACCESS)
     return fam
 
 

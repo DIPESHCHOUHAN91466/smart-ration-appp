@@ -46,6 +46,29 @@ Turn it on with your Gmail and an App password: `powershell -ExecutionPolicy Byp
 (it asks for the password and stores it only in the app's settings; `-Off` turns it off). Gmail sends about 500
 e-mails a day.
 
+## Least privilege for the database (security N8)
+
+The running app only reads and writes rows; only the start-up migration step changes tables, and it uses
+`MIGRATION_DATABASE_URL` when that is set. To give the app a rows-only account:
+
+1. Check locally that it works: `powershell -ExecutionPolicy Bypass -File scripts\database\run-least-privilege-tests.ps1`
+   (asks for your local MySQL root password; 5 tests).
+2. As the Azure MySQL admin (Workbench or Cloud Shell) run `scripts\database\azure-runtime-account.sql`, typing a new
+   long password in the editor only.
+3. `powershell -ExecutionPolicy Bypass -File scripts\azure\set-runtime-db-account.ps1` (asks for that password). It keeps
+   today's account as `MIGRATION_DATABASE_URL`, switches `DATABASE_URL` to `smartration_runtime`, and switches back by
+   itself if `/health/db` is not healthy within 5 minutes. Undo: the same script with `-Undo`.
+
+## Database firewall (plan, not applied)
+
+The server allows "all Azure services" (`AllowAllAzureServicesAndAgents` and a duplicate) plus two old home addresses.
+The app has no private network link; it connects from its 31 possible outbound addresses
+(`az webapp show -g SmartRation-AI -n smartration-api-prod --query possibleOutboundIpAddresses`). Tighter, at no cost:
+add one rule per outbound address, check `/health/db`, then delete the two "all Azure" rules and the old home rules.
+Side effects: Azure Cloud Shell can no longer reach the database (add your own IP when you need Workbench), and a
+change of App Service plan changes the outbound addresses (repeat the step). Private networking would need a new
+server (Azure cannot switch an existing public flexible server to private) and extra cost.
+
 ## When something is wrong
 
 - Portal -> `smartration-api-prod` -> **Log stream** shows start-up errors; or
