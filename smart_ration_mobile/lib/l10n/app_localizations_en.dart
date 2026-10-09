@@ -445,6 +445,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookRation => 'Book ration';
 
   @override
+  String get chooseShopTitle => 'Choose your ration shop';
+
+  @override
+  String get chooseShopLabel => 'Ration shop';
+
+  @override
   String get stepDay => '1. Choose a day';
 
   @override

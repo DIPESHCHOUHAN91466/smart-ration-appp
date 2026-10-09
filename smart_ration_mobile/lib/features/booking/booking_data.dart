@@ -163,6 +163,25 @@ String ymd(DateTime d) =>
 List<T> _list<T>(Object? data, T? Function(Object?) parse) =>
     data is List ? [for (final e in data) ?parse(e)] : (throw const ApiException(ApiErrorKind.unknown));
 
+/// A fair price shop a citizen can book at (GET /api/shops), like the website's "Choose your ration shop".
+class ShopOption {
+  const ShopOption({required this.id, required this.name, required this.address, required this.district});
+
+  final int id;
+  final String name;
+  final String address;
+  final String district;
+
+  String get place => [address, district].where((s) => s.isNotEmpty).join(', ');
+
+  static ShopOption? tryParse(Object? json) {
+    if (json is! Map || json['id'] is! num) return null;
+    String text(Object? v) => v is String ? v : '';
+    return ShopOption(
+        id: (json['id'] as num).toInt(), name: text(json['shopName']), address: text(json['address']), district: text(json['district']));
+  }
+}
+
 class BookingRepository {
   const BookingRepository(this._api, {this._offline, this._userId});
 
@@ -171,6 +190,8 @@ class BookingRepository {
   /// Where the citizen's tokens and QR codes are saved for use without internet (see [_withSavedCopy]).
   final OfflineStore? _offline;
   final int? _userId;
+
+  Future<List<ShopOption>> shops() async => _list(await _api.get<Object?>('/api/shops'), ShopOption.tryParse);
 
   Future<List<Slot>> slots(int shopId, DateTime day) async =>
       _list(await _api.get<Object?>('/api/slots', query: {'shopId': shopId, 'date': ymd(day)}), Slot.tryParse);

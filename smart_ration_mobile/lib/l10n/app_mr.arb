@@ -130,6 +130,8 @@
   "genderFemale": "स्त्री",
   "genderOther": "इतर",
   "bookRation": "रेशन बुक करा",
+  "chooseShopTitle": "तुमचे रेशन दुकान निवडा",
+  "chooseShopLabel": "रेशन दुकान",
   "stepDay": "1. दिवस निवडा",
   "stepTime": "2. 5 मिनिटांची वेळ निवडा",
   "stepItems": "3. वस्तू निवडा",

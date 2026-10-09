@@ -880,6 +880,18 @@ abstract class AppLocalizations {
   /// **'Book ration'**
   String get bookRation;
 
+  /// No description provided for @chooseShopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your ration shop'**
+  String get chooseShopTitle;
+
+  /// No description provided for @chooseShopLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ration shop'**
+  String get chooseShopLabel;
+
   /// No description provided for @stepDay.
   ///
   /// In en, this message translates to:

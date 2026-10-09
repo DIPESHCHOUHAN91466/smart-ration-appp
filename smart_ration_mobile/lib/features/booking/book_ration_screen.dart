@@ -16,10 +16,11 @@ const bookingDays = 7;
 
 final _slotsProvider = FutureProvider.autoDispose.family<List<Slot>, (int, String)>(
     (ref, key) => ref.watch(bookingRepositoryProvider).slots(key.$1, DateTime.parse(key.$2)));
+final _shopsProvider = FutureProvider.autoDispose<List<ShopOption>>((ref) => ref.watch(bookingRepositoryProvider).shops());
 final _itemsProvider =
     FutureProvider.autoDispose.family<List<BookableItem>, int>((ref, shopId) => ref.watch(bookingRepositoryProvider).items(shopId));
 
-/// Book a 5-minute slot at the family's own ration shop: day -> time -> items -> token.
+/// Book a 5-minute slot, like the website: shop (the family's own is chosen first) -> day -> time -> items -> token.
 /// The backend checks everything again (slot still free, within quota, in stock) and creates the token.
 class BookRationScreen extends ConsumerStatefulWidget {
   const BookRationScreen({super.key, this.now});
@@ -33,6 +34,7 @@ class BookRationScreen extends ConsumerStatefulWidget {
 
 class _BookRationScreenState extends ConsumerState<BookRationScreen> {
   late DateTime _day;
+  int? _shopId; // null: the family's assigned shop
   int? _slotId;
   Map<String, double>? _quantities; // set when the items arrive: each starts at its maximum
   bool _busy = false;
@@ -79,13 +81,60 @@ class _BookRationScreenState extends ConsumerState<BookRationScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l.bookRation)),
       body: CitizenDataView(builder: (context, overview) {
-        final shop = overview.shop;
-        if (shop == null) return [Text(l.noShopAssigned, style: Theme.of(context).textTheme.titleMedium)];
-        return [
-          Text(shop.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-          Text([shop.address, shop.district].where((s) => s.isNotEmpty).join(', '),
-              style: const TextStyle(color: AppColors.muted)),
+        final assigned = overview.shop;
+        final shopList = ref.watch(_shopsProvider);
+        // Without the list (offline, or still loading) the family's own shop can still be booked.
+        final shops = shopList.value ??
+            [if (assigned != null) ShopOption(id: assigned.id, name: assigned.name, address: assigned.address, district: assigned.district)];
+        final shopId = _shopId ?? assigned?.id;
+        final shop = shops.where((s) => s.id == shopId).firstOrNull;
+        final shopPicker = <Widget>[
+          _Heading(l.chooseShopTitle),
+          if (shops.isEmpty && shopList.isLoading)
+            const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()))
+          else if (shops.isEmpty)
+            _InlineError(
+                message: shopList.error is ApiException ? (shopList.error as ApiException).messageIn(l) : l.errorGeneric,
+                onRetry: () => ref.invalidate(_shopsProvider))
+          else
+            DropdownButtonFormField<int>(
+              key: ValueKey(shopId),
+              initialValue: shop?.id,
+              isExpanded: true,
+              itemHeight: null,
+              decoration: InputDecoration(labelText: l.chooseShopLabel, prefixIcon: const Icon(Icons.storefront_outlined)),
+              selectedItemBuilder: (context) => [for (final s in shops) Text(s.name, overflow: TextOverflow.ellipsis)],
+              items: [
+                for (final s in shops)
+                  DropdownMenuItem(
+                    value: s.id,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                        Text(s.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        Text(s.place, style: const TextStyle(color: AppColors.muted, fontSize: 13)),
+                      ]),
+                    ),
+                  ),
+              ],
+              onChanged: _busy
+                  ? null
+                  : (id) => setState(() {
+                        _shopId = id;
+                        _slotId = null;
+                        _quantities = null; // the new shop's items arrive with their own limits
+                        _error = null;
+                      }),
+            ),
           const SizedBox(height: 20),
+        ];
+        if (shop == null) return shopPicker;
+        return [
+          ...shopPicker,
+          if (shop.place.isNotEmpty) ...[
+            Text(shop.place, style: const TextStyle(color: AppColors.muted)),
+            const SizedBox(height: 16),
+          ],
           _Heading(l.stepDay),
           _DayPicker(
             now: _now,
