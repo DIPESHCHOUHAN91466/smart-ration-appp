@@ -24,6 +24,10 @@ class AccountRepository {
         'currentPassword': ?currentPassword,
       }));
 
+  /// Closes the signed-in citizen's account (POST /api/users/me/close); the caller then signs out.
+  Future<void> closeAccount(String currentPassword) =>
+      _api.post<Object?>('/api/users/me/close', body: {'currentPassword': currentPassword});
+
   Future<Verification> verification() async {
     final data = await _api.get<Object?>('/api/beneficiaries/me');
     if (data is! Map) throw const ApiException(ApiErrorKind.unknown);

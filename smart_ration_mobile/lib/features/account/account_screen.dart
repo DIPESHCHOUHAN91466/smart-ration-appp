@@ -104,6 +104,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
               ]),
             ),
           ),
+          if (isCitizen) ...[const SizedBox(height: 16), const CloseAccountCard()],
         ]),
       ),
     );

@@ -1691,6 +1691,22 @@ class AppLocalizationsMr extends AppLocalizations {
   String get accountTitle => 'माझे खाते';
 
   @override
+  String get closeAccountTitle => 'माझे खाते बंद करा';
+
+  @override
+  String get closeAccountIntro =>
+      'तुमचे खाते लगेच बंद होईल आणि तुम्ही साइन आउट व्हाल. गोपनीयता धोरणानुसार तुमच्या नोंदी एका वर्षात पुसल्या जातात. तुमच्या रेशन कार्डवर याचा कोणताही परिणाम होत नाही.';
+
+  @override
+  String get closeAccountConfirm => 'माझे खाते कायमचे बंद करा';
+
+  @override
+  String get closeAccountClosing => 'बंद होत आहे…';
+
+  @override
+  String get closeAccountDone => 'तुमचे खाते बंद केले आहे.';
+
+  @override
   String get exportTitle => 'माझा डेटा डाउनलोड करा';
 
   @override

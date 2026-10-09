@@ -393,3 +393,98 @@ class _MfaCardState extends ConsumerState<MfaCard> {
     ]);
   }
 }
+
+/// A citizen closes their own account (Google Play's account-deletion rule). It needs the password, signs out
+/// at once, and the privacy policy says when the records are erased. Staff accounts are closed by the office.
+class CloseAccountCard extends ConsumerStatefulWidget {
+  const CloseAccountCard({super.key});
+
+  @override
+  ConsumerState<CloseAccountCard> createState() => _CloseAccountCardState();
+}
+
+class _CloseAccountCardState extends ConsumerState<CloseAccountCard> {
+  final _form = GlobalKey<FormState>();
+  final _password = TextEditingController();
+  bool _open = false;
+  bool _busy = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _close() async {
+    if (!_form.currentState!.validate()) return;
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await ref.read(accountRepositoryProvider).closeAccount(_password.text);
+      messenger.showSnackBar(SnackBar(content: Text(l.closeAccountDone)));
+      await ref.read(authControllerProvider.notifier).signOut();
+    } on ApiException catch (e) {
+      if (mounted) setState(() => _error = formProblem(l, e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final danger = Theme.of(context).colorScheme.error;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _form,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Row(children: [
+              Icon(Icons.person_remove_outlined, color: danger),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(l.closeAccountTitle,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Text(l.closeAccountIntro, style: const TextStyle(color: AppColors.muted)),
+            const SizedBox(height: 16),
+            if (!_open)
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(foregroundColor: danger),
+                onPressed: () => setState(() => _open = true),
+                child: Text(l.closeAccountTitle),
+              )
+            else ...[
+              PasswordFormField(
+                controller: _password,
+                enabled: !_busy,
+                autofillHints: const [AutofillHints.password],
+                decoration: InputDecoration(labelText: l.currentPasswordLabel),
+                validator: (v) => (v ?? '').isEmpty ? l.passwordRequired : null,
+              ),
+              if (_error != null) ...[const SizedBox(height: 12), Notice(text: _error!)],
+              const SizedBox(height: 16),
+              FilledButton(
+                style: FilledButton.styleFrom(backgroundColor: danger),
+                onPressed: _busy ? null : _close,
+                child: Text(_busy ? l.closeAccountClosing : l.closeAccountConfirm),
+              ),
+              TextButton(
+                onPressed: _busy ? null : () => setState(() => _open = false),
+                child: Text(l.cancelButton),
+              ),
+            ],
+          ]),
+        ),
+      ),
+    );
+  }
+}

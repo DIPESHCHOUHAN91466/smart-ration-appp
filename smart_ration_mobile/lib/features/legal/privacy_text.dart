@@ -54,7 +54,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'Your rights',
         paragraphs: [
-          'Under the DPDP Act you can ask to see a summary of your data, correct it, have it erased, and have a grievance addressed, and you may nominate a person to exercise these rights for you. Write to our Grievance Officer: Dipesh Chouhan, dipeshchouhan9146@gmail.com. We will reply within 30 days. If you are not satisfied you may approach the Data Protection Board of India.',
+          'Under the DPDP Act you can ask to see a summary of your data, correct it, have it erased, and have a grievance addressed, and you may nominate a person to exercise these rights for you. Write to our Grievance Officer: Dipesh Chouhan, dipeshchouhan9146@gmail.com. To delete your account, use "Close my account" under My account in the app or Settings on the website, or write to that address. We will reply within 30 days. If you are not satisfied you may approach the Data Protection Board of India.',
         ],
       ),
       (
@@ -117,7 +117,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'आपके अधिकार',
         paragraphs: [
-          'DPDP अधिनियम के तहत आप अपने डेटा का सारांश देखने, उसे सुधारने, हटवाने और अपनी शिकायत का निवारण माँग सकते हैं, और इन अधिकारों के लिए किसी व्यक्ति को नामित कर सकते हैं। हमारे शिकायत अधिकारी को लिखें: दीपेश चौहान, dipeshchouhan9146@gmail.com। हम 30 दिनों में उत्तर देंगे। संतुष्ट न होने पर आप भारतीय डेटा संरक्षण बोर्ड से संपर्क कर सकते हैं।',
+          'DPDP अधिनियम के तहत आप अपने डेटा का सारांश देखने, उसे सुधारने, हटवाने और अपनी शिकायत का निवारण माँग सकते हैं, और इन अधिकारों के लिए किसी व्यक्ति को नामित कर सकते हैं। हमारे शिकायत अधिकारी को लिखें: दीपेश चौहान, dipeshchouhan9146@gmail.com। अपना खाता हटाने के लिए ऐप में "मेरा खाता" या वेबसाइट पर सेटिंग्स में "मेरा खाता बंद करें" चुनें, या इसी पते पर लिखें। हम 30 दिनों में उत्तर देंगे। संतुष्ट न होने पर आप भारतीय डेटा संरक्षण बोर्ड से संपर्क कर सकते हैं।',
         ],
       ),
       (
@@ -180,7 +180,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'तुमचे अधिकार',
         paragraphs: [
-          'DPDP अधिनियमानुसार तुम्ही तुमच्या डेटाचा सारांश पाहणे, तो दुरुस्त करणे, हटवणे आणि तक्रार निवारण मागू शकता, आणि या अधिकारांसाठी एखाद्या व्यक्तीला नामनिर्देशित करू शकता. आमच्या तक्रार अधिकाऱ्याला लिहा: दीपेश चौहान, dipeshchouhan9146@gmail.com. आम्ही 30 दिवसांत उत्तर देऊ. समाधान न झाल्यास तुम्ही भारतीय डेटा संरक्षण मंडळाकडे जाऊ शकता.',
+          'DPDP अधिनियमानुसार तुम्ही तुमच्या डेटाचा सारांश पाहणे, तो दुरुस्त करणे, हटवणे आणि तक्रार निवारण मागू शकता, आणि या अधिकारांसाठी एखाद्या व्यक्तीला नामनिर्देशित करू शकता. आमच्या तक्रार अधिकाऱ्याला लिहा: दीपेश चौहान, dipeshchouhan9146@gmail.com. खाते हटवण्यासाठी ॲपमध्ये "माझे खाते" किंवा वेबसाइटवर सेटिंग्जमध्ये "माझे खाते बंद करा" निवडा, किंवा याच पत्त्यावर लिहा. आम्ही 30 दिवसांत उत्तर देऊ. समाधान न झाल्यास तुम्ही भारतीय डेटा संरक्षण मंडळाकडे जाऊ शकता.',
         ],
       ),
       (

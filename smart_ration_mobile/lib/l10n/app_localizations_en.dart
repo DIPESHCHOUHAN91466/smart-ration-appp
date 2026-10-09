@@ -1707,6 +1707,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountTitle => 'My account';
 
   @override
+  String get closeAccountTitle => 'Close my account';
+
+  @override
+  String get closeAccountIntro =>
+      'Your account is switched off at once and you are signed out. Your records are erased within one year, as the privacy policy explains. Your ration card itself is not affected.';
+
+  @override
+  String get closeAccountConfirm => 'Close my account permanently';
+
+  @override
+  String get closeAccountClosing => 'Closing…';
+
+  @override
+  String get closeAccountDone => 'Your account is closed.';
+
+  @override
   String get exportTitle => 'Download my data';
 
   @override

@@ -3124,6 +3124,36 @@ abstract class AppLocalizations {
   /// **'My account'**
   String get accountTitle;
 
+  /// No description provided for @closeAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close my account'**
+  String get closeAccountTitle;
+
+  /// No description provided for @closeAccountIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is switched off at once and you are signed out. Your records are erased within one year, as the privacy policy explains. Your ration card itself is not affected.'**
+  String get closeAccountIntro;
+
+  /// No description provided for @closeAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Close my account permanently'**
+  String get closeAccountConfirm;
+
+  /// No description provided for @closeAccountClosing.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing…'**
+  String get closeAccountClosing;
+
+  /// No description provided for @closeAccountDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is closed.'**
+  String get closeAccountDone;
+
   /// No description provided for @exportTitle.
   ///
   /// In en, this message translates to:
