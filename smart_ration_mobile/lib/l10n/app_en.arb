@@ -67,6 +67,12 @@
     "description": "Shown only in development builds."
   },
   "demoAccountsHelp": "Tap one to fill in its email. The demo password is in the project README.",
+  "demoAccountsPublicTitle": "Try a demo account",
+  "demoAccountsPublicHelp": "Tap a role to fill in its email and password. Demo password: {password}. Demo accounts hold sample data only.",
+  "@demoAccountsPublicHelp": {
+    "description": "Login screen of a public demo build.",
+    "placeholders": { "password": { "type": "String" } }
+  },
   "checkServer": "Check server connection",
   "serverStatusTitle": "Server status",
   "roleRuralUser": "Rural User",

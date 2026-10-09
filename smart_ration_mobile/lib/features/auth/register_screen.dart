@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
+import '../../core/password_field.dart';
 import '../../l10n/app_localizations.dart';
 import 'auth_controller.dart';
 import 'login_screen.dart' show Notice;
@@ -121,20 +122,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 validator: (v) => normalizeMobile(v ?? '') == null ? l.mobileInvalid : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              PasswordFormField(
                 controller: _password,
                 enabled: !_busy,
-                obscureText: true,
                 maxLength: 100,
                 autofillHints: const [AutofillHints.newPassword],
                 decoration: InputDecoration(labelText: l.passwordLabel, helperText: l.passwordRules, helperMaxLines: 3, counterText: ''),
                 validator: (v) => (v ?? '').length < passwordMinLength ? l.passwordTooShort : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              PasswordFormField(
                 controller: _confirm,
                 enabled: !_busy,
-                obscureText: true,
                 decoration: InputDecoration(labelText: l.confirmPasswordPlain),
                 validator: (v) => v != _password.text ? l.passwordsMismatch : null,
               ),

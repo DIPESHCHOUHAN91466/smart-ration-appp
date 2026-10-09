@@ -382,6 +382,18 @@ abstract class AppLocalizations {
   /// **'Tap one to fill in its email. The demo password is in the project README.'**
   String get demoAccountsHelp;
 
+  /// No description provided for @demoAccountsPublicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a demo account'**
+  String get demoAccountsPublicTitle;
+
+  /// Login screen of a public demo build.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a role to fill in its email and password. Demo password: {password}. Demo accounts hold sample data only.'**
+  String demoAccountsPublicHelp(String password);
+
   /// No description provided for @checkServer.
   ///
   /// In en, this message translates to:

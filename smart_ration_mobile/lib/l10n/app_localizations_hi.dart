@@ -163,6 +163,14 @@ class AppLocalizationsHi extends AppLocalizations {
       'ईमेल भरने के लिए किसी एक पर टैप करें। डेमो पासवर्ड प्रोजेक्ट की README में है।';
 
   @override
+  String get demoAccountsPublicTitle => 'डेमो खाता आज़माएँ';
+
+  @override
+  String demoAccountsPublicHelp(String password) {
+    return 'ईमेल और पासवर्ड भरने के लिए किसी भूमिका पर टैप करें। डेमो पासवर्ड: $password. डेमो खातों में केवल नमूना डेटा है।';
+  }
+
+  @override
   String get checkServer => 'सर्वर कनेक्शन जाँचें';
 
   @override

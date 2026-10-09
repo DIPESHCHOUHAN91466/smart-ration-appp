@@ -12,9 +12,13 @@ import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import 'auth_controller.dart';
 
-/// Demo accounts from the synthetic data (README). Only the email is filled in: the password is
-/// never written into the app.
-const _demoEmails = ['rural@example.com', 'shop@example.com', 'officer@example.com'];
+/// Demo accounts from the synthetic data. The password is filled in only by a public demo build
+/// (`--dart-define=DEMO_PASSWORD=...`); a normal build never contains it.
+const _demoAccounts = [
+  (email: 'rural@example.com', role: 'rural'),
+  (email: 'shop@example.com', role: 'shop'),
+  (email: 'officer@example.com', role: 'official'),
+];
 
 enum _Method { mobile, email }
 
@@ -365,7 +369,8 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final showDemo = ref.watch(envProvider).isDevelopment;
+    final env = ref.watch(envProvider);
+    final showDemo = env.showsDemoAccounts;
 
     return AutofillGroup(
       child: Form(
@@ -445,13 +450,33 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
           ],
           if (showDemo && _mfaToken == null) ...[
             const SizedBox(height: 28),
-            Text(l.demoAccountsTitle, style: Theme.of(context).textTheme.titleSmall),
+            Text(env.demoPassword.isEmpty ? l.demoAccountsTitle : l.demoAccountsPublicTitle,
+                style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 4),
-            Text(l.demoAccountsHelp, style: const TextStyle(color: AppColors.muted)),
+            Text(env.demoPassword.isEmpty ? l.demoAccountsHelp : l.demoAccountsPublicHelp(env.demoPassword),
+                style: const TextStyle(color: AppColors.muted)),
             const SizedBox(height: 8),
             Wrap(spacing: 8, runSpacing: 8, children: [
-              for (final email in _demoEmails)
-                ActionChip(label: Text(email), onPressed: _busy ? null : () => setState(() => _email.text = email)),
+              for (final demo in _demoAccounts)
+                ActionChip(
+                  avatar: Icon(switch (demo.role) {
+                    'rural' => Icons.person_outline,
+                    'shop' => Icons.storefront_outlined,
+                    _ => Icons.account_balance_outlined,
+                  }, size: 18),
+                  label: Text(switch (demo.role) {
+                    'rural' => l.roleRuralUser,
+                    'shop' => l.roleShopOwner,
+                    _ => l.roleOfficial,
+                  }),
+                  tooltip: demo.email,
+                  onPressed: _busy
+                      ? null
+                      : () => setState(() {
+                            _email.text = demo.email;
+                            if (env.demoPassword.isNotEmpty) _password.text = env.demoPassword;
+                          }),
+                ),
             ]),
           ],
         ]),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
+import '../../core/password_field.dart';
 import '../../l10n/app_localizations.dart';
 import 'auth_controller.dart';
 import 'login_screen.dart' show Notice;
@@ -121,19 +122,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 validator: (v) => RegExp(r'^\d{6}$').hasMatch(v?.trim() ?? '') ? null : l.codeInvalidFormat,
               ),
               const SizedBox(height: 8),
-              TextFormField(
+              PasswordFormField(
                 controller: _password,
                 enabled: !_busy,
-                obscureText: true,
                 autofillHints: const [AutofillHints.newPassword],
                 decoration: InputDecoration(labelText: l.newPasswordLabel, helperText: l.passwordRules, helperMaxLines: 3),
                 validator: (v) => _newPasswordProblem(l, v),
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              PasswordFormField(
                 controller: _confirm,
                 enabled: !_busy,
-                obscureText: true,
                 decoration: InputDecoration(labelText: l.confirmPasswordLabel),
                 validator: (v) => v != _password.text ? l.passwordsMismatch : null,
               ),
@@ -205,28 +204,25 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           key: _form,
           child: ListView(padding: const EdgeInsets.all(20), children: [
             if (_error != null) Notice(text: _error!),
-            TextFormField(
+            PasswordFormField(
               controller: _current,
               enabled: !_busy,
-              obscureText: true,
               autofillHints: const [AutofillHints.password],
               decoration: InputDecoration(labelText: l.currentPasswordLabel),
               validator: (v) => (v ?? '').isEmpty ? l.passwordRequired : null,
             ),
             const SizedBox(height: 16),
-            TextFormField(
+            PasswordFormField(
               controller: _password,
               enabled: !_busy,
-              obscureText: true,
               autofillHints: const [AutofillHints.newPassword],
               decoration: InputDecoration(labelText: l.newPasswordLabel, helperText: l.passwordRules, helperMaxLines: 3),
               validator: (v) => _newPasswordProblem(l, v),
             ),
             const SizedBox(height: 16),
-            TextFormField(
+            PasswordFormField(
               controller: _confirm,
               enabled: !_busy,
-              obscureText: true,
               decoration: InputDecoration(labelText: l.confirmPasswordLabel),
               validator: (v) => v != _password.text ? l.passwordsMismatch : null,
             ),

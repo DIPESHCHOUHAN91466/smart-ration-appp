@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 enum AppEnvironment { development, staging, production }
 
 class Env {
-  const Env({required this.environment, required this.apiBaseUrl});
+  const Env({required this.environment, required this.apiBaseUrl, this.demoPassword = ''});
 
   final AppEnvironment environment;
 
@@ -18,6 +18,12 @@ class Env {
 
   bool get isDevelopment => environment == AppEnvironment.development;
 
+  /// The password of the synthetic demo accounts, for a public demo build (`--dart-define=DEMO_PASSWORD=...`).
+  /// Empty in a normal build: then the demo accounts are offered in development builds only, email only.
+  final String demoPassword;
+
+  bool get showsDemoAccounts => isDevelopment || demoPassword.isNotEmpty;
+
   /// The Android emulator reaches your PC's `localhost` at 10.0.2.2.
   static const developmentDefaultUrl = 'http://10.0.2.2:8000';
 
@@ -25,10 +31,11 @@ class Env {
   static Env fromDefines() => Env.parse(
         environment: const String.fromEnvironment('APP_ENV', defaultValue: 'development'),
         apiBaseUrl: const String.fromEnvironment('API_BASE_URL'),
+        demoPassword: const String.fromEnvironment('DEMO_PASSWORD'),
       );
 
   /// [release] is true in a release build (`flutter build ... --release`); tests pass it explicitly.
-  static Env parse({required String environment, required String apiBaseUrl, bool release = kReleaseMode}) {
+  static Env parse({required String environment, required String apiBaseUrl, String demoPassword = '', bool release = kReleaseMode}) {
     final env = AppEnvironment.values.where((e) => e.name == environment).firstOrNull;
     if (env == null) {
       throw ArgumentError('Unknown APP_ENV "$environment". Use development, staging or production.');
@@ -55,7 +62,7 @@ class Env {
         throw ArgumentError('${env.name} builds must not point at a local or private address ("$url").');
       }
     }
-    return Env(environment: env, apiBaseUrl: url);
+    return Env(environment: env, apiBaseUrl: url, demoPassword: demoPassword.trim());
   }
 
   static bool _isPrivateHost(String host) =>

@@ -5,6 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../app/theme.dart';
 import '../../core/network/api_exception.dart';
+import '../../core/password_field.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_controller.dart';
 import '../auth/login_screen.dart' show Notice;
@@ -157,10 +158,9 @@ class _ProfileCardState extends ConsumerState<ProfileCard> {
                 ),
                 if (mobileChanged) ...[
                   const SizedBox(height: 12),
-                  TextFormField(
+                  PasswordFormField(
                     controller: _password,
                     enabled: !_busy,
-                    obscureText: true,
                     autofillHints: const [AutofillHints.password],
                     decoration: InputDecoration(
                         labelText: l.currentPasswordLabel, helperText: l.profileMobilePasswordNote, helperMaxLines: 3),
@@ -288,10 +288,9 @@ class _MfaCardState extends ConsumerState<MfaCard> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final setup = _setup;
-    final passwordField = TextFormField(
+    final passwordField = PasswordFormField(
       controller: _password,
       enabled: !_busy,
-      obscureText: true,
       autofillHints: const [AutofillHints.password],
       decoration: InputDecoration(labelText: l.currentPasswordLabel),
       validator: (v) => (v ?? '').isEmpty ? l.passwordRequired : null,

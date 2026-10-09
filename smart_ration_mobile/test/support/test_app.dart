@@ -17,6 +17,7 @@ import 'fake_backend.dart';
 /// The whole app, wired to a fake backend and fake phone storage.
 ///  * [savedLanguage]: what the phone remembers from a previous launch (null = first launch);
 ///  * [signedInAs]: a session saved on the phone from a previous launch (null = signed out);
+///  * [env]: the build type (default: a development build);
 ///  * [overrides]: anything else to replace, e.g. the camera.
 class TestApp {
   TestApp._(this.widget, this.preferences, this.tokens, this.offline);
@@ -28,7 +29,8 @@ class TestApp {
   /// The saved copies for offline use (tokens and QR codes).
   final MemoryOfflineStore offline;
 
-  static Future<TestApp> build(FakeBackend backend, {String? savedLanguage, SessionUser? signedInAs, List<Override> overrides = const []}) async {
+  static Future<TestApp> build(FakeBackend backend,
+      {String? savedLanguage, SessionUser? signedInAs, Env? env, List<Override> overrides = const []}) async {
     SharedPreferences.setMockInitialValues({LanguageController.storageKey: ?savedLanguage});
     final preferences = await SharedPreferences.getInstance();
     final tokens = MemoryTokenStorage();
@@ -39,7 +41,7 @@ class TestApp {
     final widget = ProviderScope(
       retry: noAutomaticRetry,
       overrides: [
-        envProvider.overrideWithValue(Env.parse(environment: 'development', apiBaseUrl: 'http://test.local')),
+        envProvider.overrideWithValue(env ?? Env.parse(environment: 'development', apiBaseUrl: 'http://test.local')),
         sharedPreferencesProvider.overrideWithValue(preferences),
         splashDurationProvider.overrideWithValue(Duration.zero),
         httpAdapterProvider.overrideWithValue(backend),

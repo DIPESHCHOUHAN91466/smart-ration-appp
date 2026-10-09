@@ -163,6 +163,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap one to fill in its email. The demo password is in the project README.';
 
   @override
+  String get demoAccountsPublicTitle => 'Try a demo account';
+
+  @override
+  String demoAccountsPublicHelp(String password) {
+    return 'Tap a role to fill in its email and password. Demo password: $password. Demo accounts hold sample data only.';
+  }
+
+  @override
   String get checkServer => 'Check server connection';
 
   @override
