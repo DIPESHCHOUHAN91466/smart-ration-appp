@@ -4,7 +4,7 @@
 typedef PolicySection = ({String heading, List<String> paragraphs});
 
 /// The website's "last reviewed" note (a placeholder until the operator publishes the policy).
-const privacyReviewed = '[DATE OF PUBLICATION]';
+const privacyReviewed = '9 October 2026';
 
 /// The privacy policy in each app language: its title and sections.
 const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
@@ -14,7 +14,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'Who we are',
         paragraphs: [
-          'This service is operated by [OPERATOR NAME] (the "Data Fiduciary" under the Digital Personal Data Protection Act, 2023). It helps ration card holders book a time to collect their ration, lets fair-price shops record collections, and lets government officials oversee distribution.',
+          'This service is operated by Dipesh Chouhan (the "Data Fiduciary" under the Digital Personal Data Protection Act, 2023). It helps ration card holders book a time to collect their ration, lets fair-price shops record collections, and lets government officials oversee distribution.',
         ],
       ),
       (
@@ -42,7 +42,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'Where and how long it is kept',
         paragraphs: [
-          'Data is stored on servers located in [COUNTRY / REGION — must be India for government use]. Records are kept for [RETENTION PERIOD AND LEGAL BASIS] and then deleted or anonymised.',
+          'Data is stored on servers located in India (Microsoft Azure, India South Central region). Records are kept for as long as your account is active and up to one year after it is closed, to provide the service and to handle complaints or disputes and then deleted or anonymised.',
         ],
       ),
       (
@@ -54,7 +54,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'Your rights',
         paragraphs: [
-          'Under the DPDP Act you can ask to see a summary of your data, correct it, have it erased, and have a grievance addressed, and you may nominate a person to exercise these rights for you. Write to our Grievance Officer: [NAME], [EMAIL ADDRESS], [POSTAL ADDRESS]. We will reply within [NUMBER] days. If you are not satisfied you may approach the Data Protection Board of India.',
+          'Under the DPDP Act you can ask to see a summary of your data, correct it, have it erased, and have a grievance addressed, and you may nominate a person to exercise these rights for you. Write to our Grievance Officer: Dipesh Chouhan, dipeshchouhan9146@gmail.com. We will reply within 30 days. If you are not satisfied you may approach the Data Protection Board of India.',
         ],
       ),
       (
@@ -77,7 +77,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'हम कौन हैं',
         paragraphs: [
-          'यह सेवा [ऑपरेटर का नाम] द्वारा संचालित है (डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 के तहत "डेटा फ़िड्यूशियरी")। यह राशन कार्ड धारकों को राशन लेने का समय बुक करने में, उचित मूल्य की दुकानों को वितरण दर्ज करने में और सरकारी अधिकारियों को वितरण की निगरानी में मदद करती है।',
+          'यह सेवा दीपेश चौहान द्वारा संचालित है (डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम, 2023 के तहत "डेटा फ़िड्यूशियरी")। यह राशन कार्ड धारकों को राशन लेने का समय बुक करने में, उचित मूल्य की दुकानों को वितरण दर्ज करने में और सरकारी अधिकारियों को वितरण की निगरानी में मदद करती है।',
         ],
       ),
       (
@@ -105,7 +105,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'कहाँ और कितने समय तक रखा जाता है',
         paragraphs: [
-          'डेटा [देश / क्षेत्र — सरकारी उपयोग के लिए भारत होना चाहिए] में स्थित सर्वरों पर रखा जाता है। रिकॉर्ड [अवधि और कानूनी आधार] तक रखे जाते हैं और फिर हटा दिए जाते हैं या अनाम कर दिए जाते हैं।',
+          'डेटा भारत (Microsoft Azure, India South Central क्षेत्र) में स्थित सर्वरों पर रखा जाता है। रिकॉर्ड जब तक आपका खाता सक्रिय है और बंद होने के बाद एक वर्ष तक, सेवा देने और शिकायतों या विवादों के निपटारे के लिए तक रखे जाते हैं और फिर हटा दिए जाते हैं या अनाम कर दिए जाते हैं।',
         ],
       ),
       (
@@ -117,7 +117,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'आपके अधिकार',
         paragraphs: [
-          'DPDP अधिनियम के तहत आप अपने डेटा का सारांश देखने, उसे सुधारने, हटवाने और अपनी शिकायत का निवारण माँग सकते हैं, और इन अधिकारों के लिए किसी व्यक्ति को नामित कर सकते हैं। हमारे शिकायत अधिकारी को लिखें: [नाम], [ईमेल पता], [डाक पता]। हम [संख्या] दिनों में उत्तर देंगे। संतुष्ट न होने पर आप भारतीय डेटा संरक्षण बोर्ड से संपर्क कर सकते हैं।',
+          'DPDP अधिनियम के तहत आप अपने डेटा का सारांश देखने, उसे सुधारने, हटवाने और अपनी शिकायत का निवारण माँग सकते हैं, और इन अधिकारों के लिए किसी व्यक्ति को नामित कर सकते हैं। हमारे शिकायत अधिकारी को लिखें: दीपेश चौहान, dipeshchouhan9146@gmail.com। हम 30 दिनों में उत्तर देंगे। संतुष्ट न होने पर आप भारतीय डेटा संरक्षण बोर्ड से संपर्क कर सकते हैं।',
         ],
       ),
       (
@@ -140,7 +140,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'आम्ही कोण आहोत',
         paragraphs: [
-          'ही सेवा [ऑपरेटरचे नाव] चालवते (डिजिटल वैयक्तिक डेटा संरक्षण अधिनियम, 2023 अंतर्गत "डेटा फिड्युशियरी"). ती शिधापत्रिकाधारकांना रेशन घेण्याची वेळ बुक करण्यास, रास्त भाव दुकानांना वितरण नोंदवण्यास आणि सरकारी अधिकाऱ्यांना वितरणावर देखरेख ठेवण्यास मदत करते.',
+          'ही सेवा दीपेश चौहान चालवते (डिजिटल वैयक्तिक डेटा संरक्षण अधिनियम, 2023 अंतर्गत "डेटा फिड्युशियरी"). ती शिधापत्रिकाधारकांना रेशन घेण्याची वेळ बुक करण्यास, रास्त भाव दुकानांना वितरण नोंदवण्यास आणि सरकारी अधिकाऱ्यांना वितरणावर देखरेख ठेवण्यास मदत करते.',
         ],
       ),
       (
@@ -168,7 +168,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'कुठे आणि किती काळ ठेवली जाते',
         paragraphs: [
-          'डेटा [देश / प्रदेश — सरकारी वापरासाठी भारत असणे आवश्यक] येथील सर्व्हरवर ठेवला जातो. नोंदी [कालावधी आणि कायदेशीर आधार] पर्यंत ठेवल्या जातात आणि नंतर हटवल्या किंवा अनामिक केल्या जातात.',
+          'डेटा भारत (Microsoft Azure, India South Central प्रदेश) येथील सर्व्हरवर ठेवला जातो. नोंदी तुमचे खाते सक्रिय असेपर्यंत आणि बंद झाल्यानंतर एक वर्षापर्यंत, सेवा देण्यासाठी आणि तक्रारी किंवा वाद सोडवण्यासाठी ठेवल्या जातात आणि नंतर हटवल्या किंवा अनामिक केल्या जातात.',
         ],
       ),
       (
@@ -180,7 +180,7 @@ const privacyPolicy = <String, ({String title, List<PolicySection> sections})>{
       (
         heading: 'तुमचे अधिकार',
         paragraphs: [
-          'DPDP अधिनियमानुसार तुम्ही तुमच्या डेटाचा सारांश पाहणे, तो दुरुस्त करणे, हटवणे आणि तक्रार निवारण मागू शकता, आणि या अधिकारांसाठी एखाद्या व्यक्तीला नामनिर्देशित करू शकता. आमच्या तक्रार अधिकाऱ्याला लिहा: [नाव], [ईमेल पत्ता], [पोस्टल पत्ता]. आम्ही [संख्या] दिवसांत उत्तर देऊ. समाधान न झाल्यास तुम्ही भारतीय डेटा संरक्षण मंडळाकडे जाऊ शकता.',
+          'DPDP अधिनियमानुसार तुम्ही तुमच्या डेटाचा सारांश पाहणे, तो दुरुस्त करणे, हटवणे आणि तक्रार निवारण मागू शकता, आणि या अधिकारांसाठी एखाद्या व्यक्तीला नामनिर्देशित करू शकता. आमच्या तक्रार अधिकाऱ्याला लिहा: दीपेश चौहान, dipeshchouhan9146@gmail.com. आम्ही 30 दिवसांत उत्तर देऊ. समाधान न झाल्यास तुम्ही भारतीय डेटा संरक्षण मंडळाकडे जाऊ शकता.',
         ],
       ),
       (

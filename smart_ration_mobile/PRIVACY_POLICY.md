@@ -1,12 +1,11 @@
 # Privacy Policy — Smart Ration AI (Powered by HSD2C)
 
-_Last updated: [DATE OF PUBLICATION]_
+_Last updated: 9 October 2026_
 
 This policy explains what the **Smart Ration AI** Android app does with your information. The app is
-run by **[OPERATOR NAME]** ("we"). If you have a question, write to **[CONTACT EMAIL]**.
+run by **Dipesh Chouhan** ("we"). If you have a question, write to **dipeshchouhan9146@gmail.com**.
 
-> **Before publishing:** replace every part in [square brackets]. Do not publish this policy until the
-> details are correct for the organisation that runs the Smart Ration service.
+> The same policy is published at https://smartration-api-prod.azurewebsites.net/privacy .
 
 ## Who the app is for
 
@@ -68,8 +67,7 @@ about your own bookings, the answer uses your account.
 
 We do not sell your information, and the app contains **no advertising and no tracking or analytics
 tools**. Your information is shared only as needed to provide the ration service: with your ration
-shop (to serve you) and with government officials who oversee the public distribution system,
-[AND ANY OTHER PARTIES REQUIRED BY LAW OR BY THE SCHEME — OPERATOR TO CONFIRM].
+shop (to serve you) and with government officials who oversee the public distribution system, and with authorities when the law requires it.
 
 ## Security
 
@@ -82,8 +80,8 @@ ended by signing out.
 - You can sign out at any time; this removes your data from the phone.
 - You can turn off the microphone permission in your phone's settings.
 - To correct your ration card or family details, contact your ration office.
-- To ask about or request deletion of your account, write to **[CONTACT EMAIL]**.
-  [OPERATOR TO STATE HOW LONG RECORDS ARE KEPT AND ANY LEGAL RETENTION RULES.]
+- To ask about or request deletion of your account, write to **dipeshchouhan9146@gmail.com**.
+  Records are kept while your account is active and up to one year after it is closed, then deleted or anonymised.
 
 ## Children
 
