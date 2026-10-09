@@ -1,9 +1,15 @@
 # Production deployment report
 
-**Status: DEPLOYMENT NOT VERIFIED — nothing is deployed yet.** Last updated 2026-10-07, branch `audit-and-deploy`
-(not pushed). `https://smart-ration-hsd2c.onrender.com` answers `404 x-render-routing: no-server`: no Render
-service exists. Everything up to the cloud step is done and tested locally; the cloud steps need the owner's
-accounts (section 21). Update this report after the first deploy.
+**Status: DEPLOYED AND VERIFIED on Azure, 2026-10-09** — https://smartration-api-prod.azurewebsites.net (commit
+`72d6fba`). Details and redeploy steps: [docs/deployment/AZURE.md](docs/deployment/AZURE.md).
+
+Verified against the live site: `/health` healthy, database healthy over **TLS 1.3**, migrations at head; live smoke
+suite **10/10**; sign-in as citizen, shop owner and officer; wrong password 401; `http://` redirects to `https://`;
+CSP and HSTS sent; the 11th wrong sign-in in a minute gets 429 (fixed for Azure in `bb85eb4`); the audit log records
+the real client address; no `/download` page or demo password published. Android: APK built for this address
+(`app-arm64-v8a-release.apk`), not yet tested on a phone.
+
+The table below is the Render/Aiven plan written before the Azure deployment; Render was not used.
 
 | # | Item | State |
 |---|---|---|
