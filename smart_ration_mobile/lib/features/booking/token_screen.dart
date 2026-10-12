@@ -151,14 +151,18 @@ class _QrCard extends ConsumerWidget {
               image: true,
               label: l.qrCodeLabel(token.number),
               child: ExcludeSemantics(
-                child: Container(
-                  color: Colors.white, // a white quiet zone around the code, so every scanner can read it
-                  padding: const EdgeInsets.all(12),
-                  child: QrImageView(
-                    data: text,
-                    size: 260,
-                    backgroundColor: Colors.white,
-                    errorCorrectionLevel: QrErrorCorrectLevel.M,
+                // As big as the screen allows (up to 340): the code is dense, and bigger squares scan faster.
+                child: LayoutBuilder(
+                  builder: (context, constraints) => Container(
+                    color: Colors.white, // a white quiet zone around the code, so every scanner can read it
+                    padding: const EdgeInsets.all(16),
+                    child: QrImageView(
+                      data: text,
+                      size: (constraints.maxWidth - 32).clamp(220.0, 340.0),
+                      padding: EdgeInsets.zero,
+                      backgroundColor: Colors.white,
+                      errorCorrectionLevel: QrErrorCorrectLevel.M,
+                    ),
                   ),
                 ),
               ),

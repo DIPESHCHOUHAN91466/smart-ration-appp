@@ -152,15 +152,37 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   }
 }
 
-class _LiveCamera extends StatelessWidget {
+class _LiveCamera extends StatefulWidget {
   const _LiveCamera({required this.onCode});
 
   final ValueChanged<String> onCode;
 
   @override
+  State<_LiveCamera> createState() => _LiveCameraState();
+}
+
+class _LiveCameraState extends State<_LiveCamera> {
+  // Tuned for the token QR (dense: ~250 characters): look for QR codes only, analyse frames at 720p so the
+  // small squares are sharp, retry every 100 ms instead of the default 250 ms, and zoom in on a far code (Android).
+  final _controller = MobileScannerController(
+    formats: const [BarcodeFormat.qrCode],
+    detectionTimeoutMs: 100,
+    cameraResolution: const Size(1280, 720),
+    autoZoom: true,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final onCode = widget.onCode;
     return MobileScanner(
+      controller: _controller,
       onDetect: (capture) {
         final text = capture.barcodes.map((b) => b.rawValue).nonNulls.where((v) => v.isNotEmpty).firstOrNull;
         if (text != null) onCode(text);

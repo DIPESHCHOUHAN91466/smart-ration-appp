@@ -77,7 +77,7 @@ export default function MyToken() {
           <span className="eyebrow blue">YOUR TOKEN NUMBER</span>
           <div className="token-number">{token.tokenNumber}</div>
           <div className="qr-preview">
-            <QRCodeCanvas value={qrPayload || token.qrCodeValue} size={210} errorCorrectionLevel={qrPayload ? "M" : "H"} />
+            <QRCodeCanvas value={qrPayload || token.qrCodeValue} size={300} errorCorrectionLevel={qrPayload ? "M" : "H"} />
           </div>
           <b className="qr-ref">{token.qrCodeValue}</b>
           <button className="secondary-btn wide" onClick={() => window.print()}>

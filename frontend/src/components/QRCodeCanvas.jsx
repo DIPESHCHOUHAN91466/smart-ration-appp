@@ -6,9 +6,11 @@ export default function QRCodeCanvas({ value, size = 190, errorCorrectionLevel =
 
   useEffect(() => {
     if (ref.current && value) {
-      QRCode.toCanvas(ref.current, value, { width: size, margin: 2, errorCorrectionLevel });
+      // margin 4 = the standard white quiet zone: cameras find the code faster with it.
+      QRCode.toCanvas(ref.current, value, { width: size, margin: 4, errorCorrectionLevel });
     }
   }, [value, size, errorCorrectionLevel]);
 
-  return <canvas ref={ref} role="img" aria-label={label} />;
+  // Shrinks with a narrow screen instead of overflowing it.
+  return <canvas ref={ref} role="img" aria-label={label} style={{ maxWidth: "100%", height: "auto" }} />;
 }

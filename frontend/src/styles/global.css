@@ -65,7 +65,7 @@
 .qr-entitlement li{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid #edf2f7;font-size:13px}
 .qr-entitlement b{color:var(--green)}
 .qr-result-actions{margin-top:6px}
-.qr-preview canvas{max-width:210px}
+.qr-preview canvas{max-width:min(300px,100%)!important;height:auto!important}
 .app-shell.reduce-motion .qr-scan-line{display:none}
 @media(prefers-reduced-motion:reduce){.qr-scan-line{animation:none;top:50%}.qr-spin{animation:none}}
 @media(max-width:760px){
