@@ -8,7 +8,8 @@ What it does (no value is ever printed):
   1. Keeps today's DATABASE_URL (the account that may change tables) as MIGRATION_DATABASE_URL: only the start-up
      migration step uses it.
   2. Sets DATABASE_URL to the same server and database with the rows-only account and the password you type.
-  3. Waits for /health/db. If the app is not healthy within 5 minutes it switches back by itself.
+  3. Restarts the app (so no old process answers for it) and needs 3 healthy /health/db answers in a row within
+     5 minutes; otherwise it puts the old DATABASE_URL back, restarts again, and checks again.
 #>
 param(
     [string]$ResourceGroup = "SmartRation-AI",
@@ -34,15 +35,22 @@ function Set-Settings([hashtable]$values) {
         if ($LASTEXITCODE -ne 0) { throw "az failed" }
     } finally { Remove-Item $tmp -ErrorAction SilentlyContinue }
 }
+function Restart-App {
+    # A settings change restarts the app LATER; until then the old process (old account) still answers "healthy".
+    # Restarting now stops that process, so every check below talks to the new configuration.
+    & $az webapp restart -g $ResourceGroup -n $AppName --output none
+    if ($LASTEXITCODE -ne 0) { throw "az webapp restart failed" }
+}
 function Wait-Healthy([int]$minutes) {
+    # Healthy = 3 answers in a row, 20 s apart: one lucky answer is not enough.
     $deadline = (Get-Date).AddMinutes($minutes)
-    Start-Sleep -Seconds 20
+    $streak = 0
+    Start-Sleep -Seconds 30
     while ((Get-Date) -lt $deadline) {
-        try {
-            $r = Invoke-RestMethod -TimeoutSec 30 "$site/health/db"
-            if ($r.status -eq "healthy") { return $r }
-        } catch { }
-        Start-Sleep -Seconds 15
+        $r = $null
+        try { $r = Invoke-RestMethod -TimeoutSec 30 "$site/health/db" } catch { }
+        if ($r -and $r.status -eq "healthy") { $streak++; if ($streak -ge 3) { return $r } } else { $streak = 0 }
+        Start-Sleep -Seconds 20
     }
     return $null
 }
@@ -52,6 +60,7 @@ if ($Undo) {
     if (-not $migration) { throw "MIGRATION_DATABASE_URL is not set: nothing to undo." }
     Set-Settings @{ DATABASE_URL = $migration }
     & $az webapp config appsettings delete -g $ResourceGroup -n $AppName --setting-names MIGRATION_DATABASE_URL --output none
+    Restart-App
     $h = Wait-Healthy 5
     if ($h) { Write-Host "Switched back to the original account; database $($h.status)." } else { Write-Host "Switched back, but /health/db is not healthy yet: check the Log stream." }
     return
@@ -70,13 +79,15 @@ $plain = $null
 $values = @{ DATABASE_URL = $runtimeUrl }
 if (-not $migration) { $values.MIGRATION_DATABASE_URL = $current }   # the account that may change tables
 Set-Settings $values
-Write-Host "Settings changed; the app restarts (about a minute). Checking health..."
+Restart-App
+Write-Host "Settings changed and the app restarted. Checking health (3 good answers in a row)..."
 $h = Wait-Healthy 5
 if ($h) {
     Write-Host "OK: the app now uses '$RuntimeUser' (rows only). Database $($h.status), migrations $($h.migrations), encryption $($h.encryption)."
 } else {
     Write-Host "Not healthy after 5 minutes: switching back to the original account."
     Set-Settings @{ DATABASE_URL = $current }
+    Restart-App
     $h = Wait-Healthy 5
     Write-Host ("Switched back; database " + $(if ($h) { $h.status } else { "still not healthy: check the Log stream" }))
     exit 1
