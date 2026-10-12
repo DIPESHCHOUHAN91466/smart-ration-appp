@@ -74,6 +74,9 @@ class BookableItem {
     return max < 0 ? 0 : max;
   }
 
+  /// Nothing of this item is left for the family this month (stock does not matter).
+  bool get usedUpThisMonth => remainingThisMonth != null && remainingThisMonth! <= 0;
+
   static BookableItem? tryParse(Object? j) {
     if (j is! Map || j['rationType'] is! String) return null;
     double? n(Object? v) => v is num ? v.toDouble() : null;

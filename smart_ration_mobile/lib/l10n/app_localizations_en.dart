@@ -492,6 +492,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notAvailableNow => 'Not available now';
 
   @override
+  String get monthUsedUpTitle => 'This month\'s ration is fully used';
+
+  @override
+  String monthUsedUpText(String date) {
+    return 'Your family has already collected its whole ration for this month. It renews on $date.';
+  }
+
+  @override
   String increaseItem(String item) {
     return 'More $item';
   }

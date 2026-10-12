@@ -964,6 +964,18 @@ abstract class AppLocalizations {
   /// **'Not available now'**
   String get notAvailableNow;
 
+  /// No description provided for @monthUsedUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s ration is fully used'**
+  String get monthUsedUpTitle;
+
+  /// Shown on Book ration when nothing is left this month; date = the 1st of next month.
+  ///
+  /// In en, this message translates to:
+  /// **'Your family has already collected its whole ration for this month. It renews on {date}.'**
+  String monthUsedUpText(String date);
+
   /// Screen-reader label of the + button.
   ///
   /// In en, this message translates to:

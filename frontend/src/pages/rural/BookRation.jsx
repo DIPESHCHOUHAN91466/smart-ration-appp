@@ -15,6 +15,18 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// Monthly entitlements renew on the 1st (the server counts calendar months).
+function nextMonthStart() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() + 1, 1).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
+}
+
+// What can still be booked of an item: the remaining entitlement, limited by the shop's stock.
+function bookableCap(item) {
+  const eligible = item.eligibleQuantity ?? item.standardQuotaPerBooking;
+  return item.availableQuantity != null ? Math.min(eligible, item.availableQuantity) : eligible;
+}
+
 export default function BookRation() {
   const navigate = useNavigate();
   const notify = useToast();
@@ -60,8 +72,7 @@ export default function BookRation() {
         setSelections(
           Object.fromEntries(
             items.map((item) => {
-              const eligible = item.eligibleQuantity ?? item.standardQuotaPerBooking;
-              const cap = item.availableQuantity != null ? Math.min(eligible, item.availableQuantity) : eligible;
+              const cap = bookableCap(item);
               const initialQty = Math.min(item.standardQuotaPerBooking, cap);
               return [item.rationType, { checked: cap > 0, quantity: cap > 0 ? initialQty : 0 }];
             }),
@@ -72,6 +83,9 @@ export default function BookRation() {
   }, [step, shopId]);
 
   const selectedShop = shops?.find((s) => s.id === shopId);
+  // Everything used up this month (not just out of stock here): say so plainly instead of six red lines.
+  const monthUsedUp = !!catalog?.length && catalog.every((item) => item.eligibleQuantity != null && item.eligibleQuantity <= 0);
+  const hasSelection = Object.values(selections).some((v) => v.checked && Number(v.quantity) > 0);
   const selectedSlot = slots?.find((s) => s.id === timeSlotId);
 
   const toggleItem = (rationType) =>
@@ -206,6 +220,15 @@ export default function BookRation() {
           {catalogError && <ErrorState text={catalogError} />}
           {!catalogError && catalog === null && <LoadingState text={t("loading")} />}
 
+          {monthUsedUp && (
+            <div className="panel" role="status" style={{ borderColor: "var(--orange)", marginBottom: 16 }}>
+              <b>{t("month_used_up_title")}</b>
+              <p className="muted" style={{ margin: "6px 0 0" }}>
+                {t("month_used_up_text")} <b>{nextMonthStart()}</b>.
+              </p>
+            </div>
+          )}
+
           {catalog && (
             <div className="item-grid">
               {catalog.map((item) => {
@@ -228,7 +251,7 @@ export default function BookRation() {
             <button className="secondary-btn" onClick={() => setStep(2)}>
               <ArrowLeft /> {t("back")}
             </button>
-            <button className="primary-btn" onClick={() => setStep(4)}>
+            <button className="primary-btn" disabled={!hasSelection} onClick={() => setStep(4)}>
               {t("review_confirm_heading")} <ArrowRight />
             </button>
           </div>

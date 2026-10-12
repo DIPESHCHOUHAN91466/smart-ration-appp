@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../app/routes.dart';
 import '../../app/theme.dart';
@@ -41,6 +42,8 @@ class _BookRationScreenState extends ConsumerState<BookRationScreen> {
   String? _error;
 
   DateTime get _now => widget.now?.call() ?? DateTime.now();
+
+  bool get _hasSelection => (_quantities ?? const <String, double>{}).values.any((q) => q > 0);
 
   @override
   void initState() {
@@ -169,6 +172,7 @@ class _BookRationScreenState extends ConsumerState<BookRationScreen> {
                 data: (items) {
                   _quantities ??= {for (final i in items) i.rationType: i.maxQuantity};
                   return [
+                    if (items.isNotEmpty && items.every((i) => i.usedUpThisMonth)) _MonthUsedUp(now: _now),
                     for (final item in items)
                       _ItemStepper(
                         item: item,
@@ -184,7 +188,7 @@ class _BookRationScreenState extends ConsumerState<BookRationScreen> {
             const SizedBox(height: 12),
           ],
           FilledButton.icon(
-            onPressed: _busy ? null : () => _book(shop.id),
+            onPressed: _busy || !_hasSelection ? null : () => _book(shop.id),
             icon: _busy
                 ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
                 : const Icon(Icons.confirmation_number_outlined),
@@ -360,6 +364,36 @@ class _ItemStepper extends StatelessWidget {
           ),
         ]),
       ),
+    );
+  }
+}
+
+/// Everything is used up for this month: one clear message with the renewal date instead of six "not available".
+class _MonthUsedUp extends StatelessWidget {
+  const _MonthUsedUp({required this.now});
+
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final renews = DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag()).format(DateTime(now.year, now.month + 1));
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+          color: const Color(0xFFFFF7E6), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFF5A623))),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Icon(Icons.event_repeat, color: Color(0xFFB26A00)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(l.monthUsedUpTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+            const SizedBox(height: 4),
+            Text(l.monthUsedUpText(renews), style: const TextStyle(fontSize: 15)),
+          ]),
+        ),
+      ]),
     );
   }
 }

@@ -157,6 +157,26 @@ void main() {
     expect(backend.requests.where((r) => r.method == 'POST'), isEmpty);
   });
 
+  testWidgets('when the month is used up it says so with the renewal date, and booking is off', (tester) async {
+    final backend = await openAt(tester, Routes.citizenBook,
+        handler: (r) => r.path == '/api/ration/items'
+            ? FakeReply.ok([
+                for (final i in bookableItemsJson()) {...i, 'eligibleQuantity': 0},
+              ])
+            : demoServer(r));
+    await tester.tap(find.text('Tomorrow'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(hm('11:50 PM')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("This month's ration is fully used"), findsOneWidget);
+    expect(find.textContaining('It renews on'), findsOneWidget);
+    await scrollTo(tester, find.text('Book and get token'));
+    await tester.tap(find.text('Book and get token'));
+    await tester.pumpAndSettle();
+    expect(backend.requests.where((r) => r.method == 'POST'), isEmpty);
+  });
+
   testWidgets('the backend refusing a booking is shown plainly', (tester) async {
     await openAt(tester, Routes.citizenBook,
         handler: (r) => r.method == 'POST' && r.path == '/api/ration/bookings'

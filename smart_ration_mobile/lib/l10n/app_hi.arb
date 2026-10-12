@@ -144,6 +144,8 @@
   "placesLeft": "{count} बाकी",
   "perVisitLimit": "इस बार अधिकतम {amount} {unit}",
   "notAvailableNow": "अभी उपलब्ध नहीं",
+  "monthUsedUpTitle": "इस महीने का राशन पूरा ले लिया गया है",
+  "monthUsedUpText": "आपके परिवार ने इस महीने का पूरा राशन ले लिया है। नया राशन {date} से मिलेगा।",
   "increaseItem": "{item} बढ़ाएँ",
   "decreaseItem": "{item} घटाएँ",
   "bookAndGetToken": "बुक करें और टोकन पाएँ",
