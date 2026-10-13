@@ -496,6 +496,11 @@ class AppLocalizationsMr extends AppLocalizations {
   String get monthUsedUpTitle => 'या महिन्याचे रेशन पूर्ण घेतले आहे';
 
   @override
+  String collectedThisMonth(String date) {
+    return 'या महिन्यात पूर्ण घेतले · $date पासून पुन्हा मिळेल';
+  }
+
+  @override
   String monthUsedUpText(String date) {
     return 'तुमच्या कुटुंबाने या महिन्याचे संपूर्ण रेशन घेतले आहे. नवीन रेशन $date पासून मिळेल.';
   }

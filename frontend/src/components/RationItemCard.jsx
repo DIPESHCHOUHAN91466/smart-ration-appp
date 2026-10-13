@@ -2,6 +2,11 @@ import { Minus, Plus } from "lucide-react";
 import { useTranslation } from "../i18n/useTranslation";
 
 const RATION_ICONS = { Rice: "🌾", Wheat: "🌿", Sugar: "🍬", Pulses: "🫘", EdibleOil: "🛢️", Salt: "🧂" };
+// Monthly entitlements renew on the 1st (the server counts calendar months).
+const renewsOn = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() + 1, 1).toLocaleDateString(undefined, { day: "numeric", month: "long" });
+};
 const RATION_NAME_KEY = { Rice: "ration_rice", Wheat: "ration_wheat", Sugar: "ration_sugar", Pulses: "ration_pulses", EdibleOil: "ration_oil", Salt: "ration_salt" };
 
 // Reusable ration-item selection card: icon + localized name, real Available
@@ -44,9 +49,13 @@ export default function RationItemCard({ item, selected, quantity, onToggle, onQ
           </span>
         </div>
 
-        {exhausted && (
-          <small className="muted" style={{ color: "var(--red)" }}>
-            {available != null && available <= 0 ? t("validation_qty_exceeds_inventory") : t("no_entitlement")}
+        {/* Out of stock here is a problem (red); collected in full this month is normal (grey, with the renewal date). */}
+        {exhausted && available != null && available <= 0 && (
+          <small className="muted" style={{ color: "var(--red)" }}>{t("validation_qty_exceeds_inventory")}</small>
+        )}
+        {exhausted && !(available != null && available <= 0) && (
+          <small className="muted">
+            {t("collected_this_month")} {renewsOn()}
           </small>
         )}
 

@@ -275,6 +275,15 @@
   },
   "notAvailableNow": "Not available now",
   "monthUsedUpTitle": "This month's ration is fully used",
+  "collectedThisMonth": "Collected in full this month · renews on {date}",
+  "@collectedThisMonth": {
+    "description": "Under one item on Book ration when its monthly share is used; date = the 1st of next month.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "monthUsedUpText": "Your family has already collected its whole ration for this month. It renews on {date}.",
   "@monthUsedUpText": {
     "description": "Shown on Book ration when nothing is left this month; date = the 1st of next month.",

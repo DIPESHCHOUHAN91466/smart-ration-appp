@@ -9,7 +9,7 @@ Users (only when the Users table is empty):
   * demo users rural@/shop@/officer@example.com  - password from SEED_DEMO_PASSWORD
   * an admin                                      - SEED_ADMIN_EMAIL + SEED_ADMIN_PASSWORD
 Passwords are never stored in source; if the variables are unset, no users are created.
-Always (any start): the demo citizen's household is topped up to five eligible members (ensure_demo_household).
+Always (any start): every synthetic household is topped up to five eligible members (ensure_demo_households).
 All data is fabricated; no real Aadhaar, passbook or personal data is used.
 
 Usage (from backend/SmartRation):
@@ -28,9 +28,11 @@ from _common import database_url, engine, safe_url
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.database.enums import EligibilityStatus, FamilyRelationship, RationType, UserRole
-from app.database.models import (Beneficiary, FamilyMember, Inventory, RationItem, RationScheme, RationShop,
-                                 SchemeEntitlementItem, TimeSlot, User)
+from app.database.enums import EligibilityStatus, RationType, UserRole
+from app.database.models import (Family, FamilyMember, Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem,
+                                 TimeSlot, User)
+from app.services.provisioning_service import DEMO_HOUSEHOLD_SIZE, household_members
+from app.services.provisioning_service import SOURCE as SYNTHETIC_SOURCE
 from app.security.passwords import hash_password
 from app.services.data_provider import SyntheticDataProvider
 from app.utils.time import utc_now
@@ -142,31 +144,24 @@ def seed(db: Session) -> list[str]:
         if not demo_password and not (admin_email and admin_password):
             print("NOTE: no users created (set SEED_DEMO_PASSWORD and/or SEED_ADMIN_EMAIL + SEED_ADMIN_PASSWORD).")
 
-    added = ensure_demo_household(db)
+    added, families = ensure_demo_households(db)
     if added:
-        done.append(f"{added} member(s) for the demo citizen's household")
+        done.append(f"{added} member(s) for {families} synthetic household(s)")
     return done
 
 
-DEMO_CITIZEN_EMAIL = "rural@example.com"
-# Head (from registration) + these: a household of five, so the shared demo account can book several times a month
-# before the monthly entitlement runs out (it renews on the 1st). Runs on every start; adds only what is missing.
-DEMO_HOUSEHOLD = [("Sunita Patil", 34, FamilyRelationship.Spouse), ("Aarav Patil", 12, FamilyRelationship.Son),
-                  ("Priya Patil", 9, FamilyRelationship.Daughter), ("Shankar Patil", 63, FamilyRelationship.Parent)]
-
-
-def ensure_demo_household(db: Session) -> int:
-    citizen = db.scalar(select(User).where(User.Email == DEMO_CITIZEN_EMAIL))
-    family_id = citizen and db.scalar(select(Beneficiary.FamilyId).where(Beneficiary.UserId == citizen.Id).limit(1))
-    if not family_id:
-        return 0
-    members = db.scalars(select(FamilyMember).where(FamilyMember.FamilyId == family_id)).all()
-    names = {m.FullName for m in members}
-    source = members[0].DataSource if members else "SYNTHETIC_DEMO"
-    new = [FamilyMember(FamilyId=family_id, FullName=n, Age=a, Relationship=int(r), Eligibility=int(EligibilityStatus.Eligible),
-                        DataSource=source) for n, a, r in DEMO_HOUSEHOLD if n not in names]
-    db.add_all(new)
-    return len(new)
+def ensure_demo_households(db: Session) -> tuple[int, int]:
+    """Every synthetic family (registered before households had five people) is topped up to DEMO_HOUSEHOLD_SIZE
+    eligible members, so its citizen can book again. Runs on every start; adds only what is missing."""
+    eligible = (select(FamilyMember.FamilyId, func.count().label("n")).join(Family, Family.Id == FamilyMember.FamilyId)
+                .where(Family.DataSource == SYNTHETIC_SOURCE, FamilyMember.Eligibility == int(EligibilityStatus.Eligible))
+                .group_by(FamilyMember.FamilyId).having(func.count() < DEMO_HOUSEHOLD_SIZE))
+    added = families = 0
+    for family_id, n in db.execute(eligible).all():
+        new = household_members(family_id, have=n)
+        db.add_all(new)
+        added, families = added + len(new), families + 1
+    return added, families
 
 
 def main() -> int:

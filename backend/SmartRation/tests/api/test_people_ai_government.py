@@ -188,7 +188,7 @@ def test_full_profile_after_booking_and_collection(env):
     data = env["client"].get(f"/api/beneficiaries/{ben}/full-profile", headers=env["citizen"]).json()["data"]
     assert data["profile"]["lastCollectionDate"] and data["profile"]["nextCollectionDate"]
     assert data["currentQr"]["tokenNumber"] != token["tokenNumber"] and data["currentQr"]["bookingTime"] == "09:00"
-    assert data["rationCard"]["schemeCode"] == "DEMO-NFSA" and data["rationCard"]["familySize"] == 1
+    assert data["rationCard"]["schemeCode"] == "DEMO-NFSA" and data["rationCard"]["familySize"] == 5
     assert data["collectionHistory"][0]["items"] == [{"rationType": "Rice", "quantity": 5}, {"rationType": "Wheat", "quantity": 3}]
     assert data["entitlement"]["items"][0]["alreadyCollected"] == 5
     # A citizen never sees fraud-risk signals or the shop's verification/scan logs about them...
@@ -205,7 +205,7 @@ def test_family_access(env):
     with session() as db:
         family_id = db.scalar(select(Beneficiary.FamilyId))
     c = env["client"]
-    assert c.get(f"/api/families/{family_id}", headers=env["citizen"]).json()["data"]["familySize"] == 1
+    assert c.get(f"/api/families/{family_id}", headers=env["citizen"]).json()["data"]["familySize"] == 5   # a synthetic household of five
     assert c.get(f"/api/families/{family_id}/entitlement", headers=env["citizen"]).json()["data"]["schemeCode"] == "DEMO-NFSA"
     assert c.get(f"/api/families/{family_id}", headers=register(env, 3)).status_code == 403
     assert c.get("/api/families/9999", headers=env["official"]).status_code == 404

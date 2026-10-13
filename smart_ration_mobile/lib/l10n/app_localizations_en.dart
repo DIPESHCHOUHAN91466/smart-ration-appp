@@ -495,6 +495,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get monthUsedUpTitle => 'This month\'s ration is fully used';
 
   @override
+  String collectedThisMonth(String date) {
+    return 'Collected in full this month · renews on $date';
+  }
+
+  @override
   String monthUsedUpText(String date) {
     return 'Your family has already collected its whole ration for this month. It renews on $date.';
   }

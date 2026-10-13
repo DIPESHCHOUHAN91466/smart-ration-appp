@@ -145,6 +145,7 @@
   "perVisitLimit": "या वेळी जास्तीत जास्त {amount} {unit}",
   "notAvailableNow": "सध्या उपलब्ध नाही",
   "monthUsedUpTitle": "या महिन्याचे रेशन पूर्ण घेतले आहे",
+  "collectedThisMonth": "या महिन्यात पूर्ण घेतले · {date} पासून पुन्हा मिळेल",
   "monthUsedUpText": "तुमच्या कुटुंबाने या महिन्याचे संपूर्ण रेशन घेतले आहे. नवीन रेशन {date} पासून मिळेल.",
   "increaseItem": "{item} वाढवा",
   "decreaseItem": "{item} कमी करा",

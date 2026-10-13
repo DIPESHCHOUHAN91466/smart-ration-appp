@@ -86,16 +86,17 @@ def test_setup_and_seed_are_idempotent(db_url):
     assert count(db_url, RationItem) == 6 and count(db_url, User) == 3
 
 
-def test_demo_citizen_household_is_five_eligible_members_and_topped_up_once(db_url):
+def test_synthetic_households_are_five_eligible_members_and_topped_up_once(db_url):
     from app.database.models import FamilyMember
 
     assert run("setup_database.py", db_url, "--seed").returncode == 0
+    assert count(db_url, FamilyMember) == 5   # the demo citizen registers with a household of five
     eng = create_engine(db_url)
-    with eng.begin() as conn:
-        conn.execute(text("DELETE FROM FamilyMembers WHERE FullName = 'Priya Patil'"))   # e.g. an older database
+    with eng.begin() as conn:   # an older database: households had one person
+        conn.execute(text("DELETE FROM FamilyMembers WHERE Relationship <> 1"))
     eng.dispose()
     again = run("setup_database.py", db_url, "--seed")
-    assert again.returncode == 0 and "1 member(s) for the demo citizen's household" in again.stdout, again.stdout + again.stderr
+    assert again.returncode == 0 and "4 member(s) for 1 synthetic household(s)" in again.stdout, again.stdout + again.stderr
     assert count(db_url, FamilyMember) == 5
     assert "Nothing to seed" in run("setup_database.py", db_url, "--seed").stdout   # nothing more on the next start
     assert count(db_url, FamilyMember) == 5

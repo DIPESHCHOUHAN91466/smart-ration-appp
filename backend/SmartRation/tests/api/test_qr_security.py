@@ -193,7 +193,7 @@ def test_scan_returns_member_details_without_inventing_any(env):
     son, parent = members["Son Test"], members["Parent Test"]
     assert son["gender"] == "Male" and son["aadhaarMasked"] is None and son["identityVerified"] is None
     assert parent["gender"] is None                                   # "Parent" does not imply a gender: not guessed
-    assert v["family"]["familySize"] == 3 and v["family"]["eligibleMemberCount"] == 2
+    assert v["family"]["familySize"] == 7 and v["family"]["eligibleMemberCount"] == 6   # household of 5 + son; parent not eligible
     # Each eligible member's share = the scheme quota per member (rice 5 kg, wheat 3 kg); none for ineligible.
     assert {i["rationType"]: i["quantity"] for i in son["monthlyEntitlement"]} == {"Rice": 5, "Wheat": 3}
     assert parent["monthlyEntitlement"] == []

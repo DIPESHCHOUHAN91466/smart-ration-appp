@@ -970,6 +970,12 @@ abstract class AppLocalizations {
   /// **'This month\'s ration is fully used'**
   String get monthUsedUpTitle;
 
+  /// Under one item on Book ration when its monthly share is used; date = the 1st of next month.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected in full this month · renews on {date}'**
+  String collectedThisMonth(String date);
+
   /// Shown on Book ration when nothing is left this month; date = the 1st of next month.
   ///
   /// In en, this message translates to:

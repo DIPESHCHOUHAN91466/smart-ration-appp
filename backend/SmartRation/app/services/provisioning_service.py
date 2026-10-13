@@ -31,6 +31,19 @@ def _pending_code() -> str:
     return f"PENDING-{uuid.uuid4().hex}"
 
 
+# A synthetic household is five eligible people (head + these), so a demo citizen can book several times a month
+# before the monthly entitlement runs out (it renews on the 1st). One person alone was used up by a single visit.
+DEMO_HOUSEHOLD_SIZE = 5
+_OTHER_MEMBERS = [("Family member 2", 32, FamilyRelationship.Spouse), ("Family member 3", 12, FamilyRelationship.Son),
+                  ("Family member 4", 9, FamilyRelationship.Daughter), ("Family member 5", 63, FamilyRelationship.Parent)]
+
+
+def household_members(family_id: int, have: int) -> list[FamilyMember]:
+    """The synthetic members a family of `have` people needs to reach DEMO_HOUSEHOLD_SIZE."""
+    return [FamilyMember(FamilyId=family_id, FullName=n, Age=a, Relationship=int(r), Eligibility=int(EligibilityStatus.Eligible),
+                         DataSource=SOURCE) for n, a, r in _OTHER_MEMBERS[max(0, have - 1):DEMO_HOUSEHOLD_SIZE - 1]]
+
+
 def provision(db: Session, user: User) -> Beneficiary:
     """Family (head = the user) + beneficiary + mobile/Aadhaar/passbook records.
     Flushes to get ids; the caller commits everything in one transaction."""
@@ -49,6 +62,7 @@ def provision(db: Session, user: User) -> Beneficiary:
 
     db.add(FamilyMember(FamilyId=family.Id, FullName=user.FullName, Age=30, Relationship=int(FamilyRelationship.Head),
                         Eligibility=int(EligibilityStatus.Eligible), DataSource=SOURCE))
+    db.add_all(household_members(family.Id, have=1))
 
     beneficiary = Beneficiary(
         BeneficiaryCode=_pending_code(), Address="Demo Village", UserId=user.Id, FamilyId=family.Id, IsActive=True, IsBlocked=False,

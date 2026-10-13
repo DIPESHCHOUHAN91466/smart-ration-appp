@@ -343,7 +343,13 @@ class _ItemStepper extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
-              Text(max > 0 ? l.perVisitLimit(amount(max), unit) : l.notAvailableNow,
+              Text(
+                  max > 0
+                      ? l.perVisitLimit(amount(max), unit)
+                      // Used up this month is normal: say when it comes back. Otherwise the shop is out of it.
+                      : item.usedUpThisMonth
+                          ? l.collectedThisMonth(_renewsOn(context))
+                          : l.notAvailableNow,
                   style: const TextStyle(color: AppColors.muted, fontSize: 14)),
             ]),
           ),
@@ -396,6 +402,11 @@ class _MonthUsedUp extends StatelessWidget {
       ]),
     );
   }
+}
+
+String _renewsOn(BuildContext context) {
+  final now = DateTime.now();
+  return DateFormat.MMMMd(Localizations.localeOf(context).toLanguageTag()).format(DateTime(now.year, now.month + 1));
 }
 
 class _InlineError extends StatelessWidget {

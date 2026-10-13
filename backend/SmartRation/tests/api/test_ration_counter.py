@@ -34,7 +34,7 @@ def test_items_show_stock_and_remaining_entitlement(env):
     r = env["client"].get("/api/ration/items?shopId=1", headers=env["citizen"])
     assert r.status_code == 200
     rice = next(i for i in r.json()["data"] if i["rationType"] == "Rice")
-    assert rice["availableQuantity"] == 100 and rice["eligibleQuantity"] == 5   # 1 eligible member x 5 kg
+    assert rice["availableQuantity"] == 100 and rice["eligibleQuantity"] == 25   # 5 eligible members x 5 kg
 
 
 def test_slots_list_and_status(env):
