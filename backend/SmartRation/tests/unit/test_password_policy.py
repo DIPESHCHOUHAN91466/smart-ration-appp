@@ -13,7 +13,7 @@ def test_long_unpredictable_passwords_are_accepted(good):
 
 
 def test_length_limits():
-    assert policy.problems("Short-Pw-1") == [policy.TOO_SHORT]                 # 10 characters
+    assert policy.problems("Short-1") == [policy.TOO_SHORT]                    # 7 characters
     assert policy.problems("a" * 3 + "Long-Enough!") == []                     # exactly 15, fine
     assert policy.problems("Kite-River-" * 10) == [policy.TOO_LONG]            # 110 characters
 
@@ -23,9 +23,9 @@ def test_common_passwords_are_refused_case_insensitively(common):
     assert policy.problems(common) in ([policy.TOO_COMMON], [policy.TOO_REPETITIVE])
 
 
-def test_the_common_list_ships_with_the_code_and_has_only_12_plus_entries():
+def test_the_common_list_ships_with_the_code():
     common = policy._common()
-    assert len(common) > 1000 and all(len(p) >= 12 for p in common)
+    assert len(common) > 1000 and {"password1", "12345678", "india"} <= common
 
 
 @pytest.mark.parametrize("personal, found, source", [

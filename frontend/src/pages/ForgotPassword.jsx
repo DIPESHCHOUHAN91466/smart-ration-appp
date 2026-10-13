@@ -5,6 +5,7 @@ import apiClient from "../api/client";
 import { useToast } from "../state/toast";
 import { useTranslation } from "../i18n/useTranslation";
 import BrandMark from "../components/BrandMark";
+import PasswordInput from "../components/PasswordInput";
 
 // Forgotten password: a one-time code goes to the account's registered mobile, then a new password is set
 // (POST /auth/password/reset/request, /confirm). The answer never says whether a number is registered.
@@ -104,14 +105,12 @@ export default function ForgotPassword() {
               </label>
               <label>
                 {t("new_password")}
-                <input type="password" required minLength={12} maxLength={100} autoComplete="new-password"
-                  value={form.password} onChange={update("password")} aria-describedby="reset-password-help" />
+                <PasswordInput required value={form.password} onChange={update("password")} aria-describedby="reset-password-help" />
               </label>
               <p id="reset-password-help" className="muted" style={{ marginTop: -6 }}>{t("password_rules")}</p>
               <label>
                 {t("confirm_password")}
-                <input type="password" required minLength={12} maxLength={100} autoComplete="new-password"
-                  value={form.confirmPassword} onChange={update("confirmPassword")} />
+                <PasswordInput required value={form.confirmPassword} onChange={update("confirmPassword")} />
               </label>
             </>
           )}

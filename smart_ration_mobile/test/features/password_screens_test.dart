@@ -68,7 +68,7 @@ void main() {
     await fill(tester, 'New password', 'short');
     await fill(tester, 'Confirm new password', 'different');
     await tapText(tester, 'Set new password');
-    expect(find.text('Use at least 12 characters.'), findsOneWidget);
+    expect(find.text('Use at least 8 characters.'), findsOneWidget);
     expect(find.text('The passwords do not match.'), findsOneWidget);
     expect(backend.requests.where((r) => r.path == '/api/auth/password/reset/confirm'), isEmpty);
   });

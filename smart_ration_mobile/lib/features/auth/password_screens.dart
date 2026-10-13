@@ -10,8 +10,8 @@ import '../../l10n/app_localizations.dart';
 import 'auth_controller.dart';
 import 'login_screen.dart' show Notice;
 
-/// New passwords: at least 12 characters (the backend also refuses common and personal ones).
-const passwordMinLength = 12;
+/// New passwords: at least 8 characters (the backend also refuses common and personal ones).
+const passwordMinLength = 8;
 
 String? _newPasswordProblem(AppLocalizations l, String? value) =>
     (value ?? '').length < passwordMinLength ? l.passwordTooShort : null;

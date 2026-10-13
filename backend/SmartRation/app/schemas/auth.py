@@ -51,7 +51,7 @@ class RegisterRequest(BaseModel):
     email: str = Field(max_length=200)
     mobileNumber: str = Field(max_length=20)
     password: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH,
-                          description="At least 12 characters; not a common password; not built from the email, mobile or name")
+                          description="At least 8 characters; not a common password; not built from the email, mobile or name")
     consentToPrivacyPolicy: bool = Field(False, description="the person agreed to the privacy policy (recorded in the audit log)")
 
 
@@ -71,7 +71,7 @@ class OtpLoginVerify(BaseModel):
 class PasswordChangeRequest(BaseModel):
     currentPassword: str
     newPassword: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH,
-                             description="At least 12 characters; not common; not built from the email, mobile or name")
+                             description="At least 8 characters; not common; not built from the email, mobile or name")
 
 
 class PasswordResetRequest(BaseModel):

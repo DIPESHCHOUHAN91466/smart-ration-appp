@@ -1,6 +1,6 @@
 """Rules for a NEW password (registration, change, reset). Existing passwords keep working at sign-in.
 
-NIST SP 800-63B style: length over composition. At least 12 characters, not a widely used password, and not
+NIST SP 800-63B style: length over composition. At least 8 characters (NIST's minimum), not a widely used password, and not
 built from the person's own email, mobile number or name, or this service's name. No "one capital, one symbol"
 rules: they make passwords harder to remember without making them harder to guess.
 
@@ -13,7 +13,7 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
-MIN_LENGTH = 12
+MIN_LENGTH = 8
 MAX_LENGTH = 100   # unchanged from the C# API contract
 DIGITS, SYMBOLS = "0123456789", "!@#$%^&*.?_-"
 SERVICE_WORDS = ("smartration", "rationmitra", "smart ration", "ration mitra")

@@ -1425,10 +1425,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordRules =>
-      'At least 12 characters. A few unrelated words work well. Do not use your name, mobile number or a common password.';
+      'At least 8 characters. A few unrelated words work well. Do not use your name, mobile number or a common password.';
 
   @override
-  String get passwordTooShort => 'Use at least 12 characters.';
+  String get passwordTooShort => 'Use at least 8 characters.';
 
   @override
   String get passwordsMismatch => 'The passwords do not match.';

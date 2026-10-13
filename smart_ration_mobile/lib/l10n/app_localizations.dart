@@ -63,8 +63,7 @@ import 'app_localizations_mr.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +71,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,19 +83,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('hi'),
-    Locale('mr'),
+    Locale('mr')
   ];
 
   /// No description provided for @appTitle.
@@ -2510,13 +2507,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Your next ration collection: token {token}, {day}, {start} to {end}, at {shop}.'**
-  String aiHomeSummary(
-    String token,
-    String day,
-    String start,
-    String end,
-    String shop,
-  );
+  String aiHomeSummary(String token, String day, String start, String end, String shop);
 
   /// No description provided for @aiHomeNoBooking.
   ///
@@ -2629,13 +2620,13 @@ abstract class AppLocalizations {
   /// No description provided for @passwordRules.
   ///
   /// In en, this message translates to:
-  /// **'At least 12 characters. A few unrelated words work well. Do not use your name, mobile number or a common password.'**
+  /// **'At least 8 characters. A few unrelated words work well. Do not use your name, mobile number or a common password.'**
   String get passwordRules;
 
   /// No description provided for @passwordTooShort.
   ///
   /// In en, this message translates to:
-  /// **'Use at least 12 characters.'**
+  /// **'Use at least 8 characters.'**
   String get passwordTooShort;
 
   /// No description provided for @passwordsMismatch.
@@ -3509,8 +3500,7 @@ abstract class AppLocalizations {
   String get verificationMobileHint;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -3519,28 +3509,26 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'hi', 'mr'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'hi', 'mr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
-    case 'hi':
-      return AppLocalizationsHi();
-    case 'mr':
-      return AppLocalizationsMr();
+    case 'en': return AppLocalizationsEn();
+    case 'hi': return AppLocalizationsHi();
+    case 'mr': return AppLocalizationsMr();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }

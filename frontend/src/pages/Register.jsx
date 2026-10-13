@@ -6,6 +6,7 @@ import { useToast } from "../state/toast";
 import { homePathForRole } from "../features/auth/roleHome";
 import { useTranslation } from "../i18n/useTranslation";
 import BrandMark from "../components/BrandMark";
+import PasswordInput from "../components/PasswordInput";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -88,29 +89,12 @@ export default function Register() {
           </label>
           <label>
             {t("password")}
-            <input
-              type="password"
-              required
-              minLength={12}
-              maxLength={100}
-              value={form.password}
-              onChange={update("password")}
-              autoComplete="new-password"
-              aria-describedby="register-password-help"
-            />
+            <PasswordInput required value={form.password} onChange={update("password")} aria-describedby="register-password-help" />
           </label>
           <p id="register-password-help" className="muted" style={{ marginTop: -6 }}>{t("password_rules")}</p>
           <label>
             {t("confirm_password")}
-            <input
-              type="password"
-              required
-              minLength={12}
-              maxLength={100}
-              value={form.confirmPassword}
-              onChange={update("confirmPassword")}
-              autoComplete="new-password"
-            />
+            <PasswordInput required value={form.confirmPassword} onChange={update("confirmPassword")} />
           </label>
 
           <label className="consent-row" style={{ display: "flex", gap: 10, alignItems: "flex-start", fontWeight: 500 }}>

@@ -179,7 +179,7 @@ def test_register_validation_messages_match_csharp(api):
     assert sorted(r.json()["errors"]) == sorted([
         "Email: The Email field is not a valid e-mail address.",
         "FullName: The field FullName must be a string with a minimum length of 2 and a maximum length of 150.",
-        "Password: The field Password must be a string with a minimum length of 12 and a maximum length of 100.",
+        "Password: The field Password must be a string with a minimum length of 8 and a maximum length of 100.",
         "MobileNumber: The MobileNumber field is not a valid phone number.",
     ])
 

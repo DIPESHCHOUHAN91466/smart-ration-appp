@@ -86,7 +86,7 @@ void main() {
     expect(find.text('Please enter your full name.'), findsOneWidget);
     expect(find.text('Please enter a valid email address.'), findsOneWidget);
     expect(find.text('Please enter a 10-digit mobile number.'), findsOneWidget);
-    expect(find.text('Use at least 12 characters.'), findsOneWidget);
+    expect(find.text('Use at least 8 characters.'), findsOneWidget);
     expect(find.text('The passwords do not match.'), findsOneWidget);
     expect(registrations(backend), isEmpty);
   });

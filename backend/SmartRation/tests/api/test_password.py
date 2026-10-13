@@ -94,7 +94,7 @@ def test_a_wrong_current_password_is_refused_and_counts_towards_the_lock(api):
 
 
 @pytest.mark.parametrize("new, message", [
-    ("short", "NewPassword: The field NewPassword must be a string with a minimum length of 12 and a maximum length of 100."),
+    ("short", "NewPassword: The field NewPassword must be a string with a minimum length of 8 and a maximum length of 100."),
     ("password1234", "NewPassword: This password is too common. Choose a less predictable one."),
     ("rahul-patil-2026", 'NewPassword: Remove "rahul" (it comes from your name). '
                          "Do not build the password from your email, mobile number, name or the service's name."),
