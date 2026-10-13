@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -27,7 +28,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get chooseLanguageTitle => 'तुमची भाषा निवडा';
 
   @override
-  String get chooseLanguageHelp => 'तुम्ही ती नंतर स्क्रीनच्या वरच्या भाषा बटणावरून बदलू शकता.';
+  String get chooseLanguageHelp =>
+      'तुम्ही ती नंतर स्क्रीनच्या वरच्या भाषा बटणावरून बदलू शकता.';
 
   @override
   String get continueButton => 'पुढे चला';
@@ -42,7 +44,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get serverConnected => 'सर्व्हरशी जोडले गेले';
 
   @override
-  String get serverNoDatabase => 'सर्व्हर त्याच्या डेटाबेसपर्यंत पोहोचू शकत नाही';
+  String get serverNoDatabase =>
+      'सर्व्हर त्याच्या डेटाबेसपर्यंत पोहोचू शकत नाही';
 
   @override
   String get statusOverall => 'एकूण स्थिती';
@@ -80,19 +83,24 @@ class AppLocalizationsMr extends AppLocalizations {
   String get tryAgain => 'पुन्हा प्रयत्न करा';
 
   @override
-  String get errorNoConnection => 'कनेक्ट होऊ शकले नाही. कृपया तुमचे इंटरनेट कनेक्शन तपासा.';
+  String get errorNoConnection =>
+      'कनेक्ट होऊ शकले नाही. कृपया तुमचे इंटरनेट कनेक्शन तपासा.';
 
   @override
-  String get errorTimeout => 'सर्व्हर उत्तर द्यायला खूप वेळ घेत आहे. कृपया पुन्हा प्रयत्न करा.';
+  String get errorTimeout =>
+      'सर्व्हर उत्तर द्यायला खूप वेळ घेत आहे. कृपया पुन्हा प्रयत्न करा.';
 
   @override
-  String get errorSessionEnded => 'तुमचे सत्र संपले आहे. कृपया पुन्हा साइन इन करा.';
+  String get errorSessionEnded =>
+      'तुमचे सत्र संपले आहे. कृपया पुन्हा साइन इन करा.';
 
   @override
-  String get errorTooManyRequests => 'खूप जास्त प्रयत्न झाले. कृपया एक मिनिट थांबून पुन्हा प्रयत्न करा.';
+  String get errorTooManyRequests =>
+      'खूप जास्त प्रयत्न झाले. कृपया एक मिनिट थांबून पुन्हा प्रयत्न करा.';
 
   @override
-  String get errorServer => 'सर्व्हरमध्ये अडचण आली. कृपया काही मिनिटांनी पुन्हा प्रयत्न करा.';
+  String get errorServer =>
+      'सर्व्हरमध्ये अडचण आली. कृपया काही मिनिटांनी पुन्हा प्रयत्न करा.';
 
   @override
   String get errorGeneric => 'काहीतरी चुकले. कृपया पुन्हा प्रयत्न करा.';
@@ -104,13 +112,15 @@ class AppLocalizationsMr extends AppLocalizations {
   String get errorNotFound => 'मागितलेली माहिती सापडली नाही.';
 
   @override
-  String get errorRequestFailed => 'विनंती पूर्ण होऊ शकली नाही. कृपया तपासून पुन्हा प्रयत्न करा.';
+  String get errorRequestFailed =>
+      'विनंती पूर्ण होऊ शकली नाही. कृपया तपासून पुन्हा प्रयत्न करा.';
 
   @override
   String get signInTitle => 'साइन इन करा';
 
   @override
-  String get signInSubtitle => 'तुमच्या स्मार्ट रेशन खात्याचा ईमेल आणि पासवर्ड वापरा.';
+  String get signInSubtitle =>
+      'तुमच्या स्मार्ट रेशन खात्याचा ईमेल आणि पासवर्ड वापरा.';
 
   @override
   String get emailLabel => 'ईमेल';
@@ -143,13 +153,15 @@ class AppLocalizationsMr extends AppLocalizations {
   String get loginInvalid => 'ईमेल किंवा पासवर्ड चुकीचा आहे.';
 
   @override
-  String get loginAccountDisabled => 'हे खाते बंद केले आहे. कृपया तुमच्या रेशन दुकानाशी किंवा जिल्हा कार्यालयाशी संपर्क साधा.';
+  String get loginAccountDisabled =>
+      'हे खाते बंद केले आहे. कृपया तुमच्या रेशन दुकानाशी किंवा जिल्हा कार्यालयाशी संपर्क साधा.';
 
   @override
   String get demoAccountsTitle => 'डेमो खाती (फक्त डेव्हलपमेंट बिल्डमध्ये)';
 
   @override
-  String get demoAccountsHelp => 'ईमेल भरण्यासाठी एकावर टॅप करा. डेमो पासवर्ड प्रोजेक्टच्या README मध्ये आहे.';
+  String get demoAccountsHelp =>
+      'ईमेल भरण्यासाठी एकावर टॅप करा. डेमो पासवर्ड प्रोजेक्टच्या README मध्ये आहे.';
 
   @override
   String get demoAccountsPublicTitle => 'डेमो खाते वापरून पहा';
@@ -191,13 +203,16 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get citizenDashboardIntro => 'तुमचे रेशन कार्ड, कुटुंबातील सदस्य, बुकिंग आणि टोकन येथे दिसतील.';
+  String get citizenDashboardIntro =>
+      'तुमचे रेशन कार्ड, कुटुंबातील सदस्य, बुकिंग आणि टोकन येथे दिसतील.';
 
   @override
-  String get shopDashboardIntro => 'आजचे टोकन, QR स्कॅनर, साठा आणि वितरण येथे दिसतील.';
+  String get shopDashboardIntro =>
+      'आजचे टोकन, QR स्कॅनर, साठा आणि वितरण येथे दिसतील.';
 
   @override
-  String get officialDashboardIntro => 'दुकाने, वितरण, साठ्याचे इशारे आणि अहवाल येथे दिसतील.';
+  String get officialDashboardIntro =>
+      'दुकाने, वितरण, साठ्याचे इशारे आणि अहवाल येथे दिसतील.';
 
   @override
   String get signInWithMobile => 'मोबाइल व कोड';
@@ -206,7 +221,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get signInWithEmail => 'ईमेल व पासवर्ड';
 
   @override
-  String get mobileSignInSubtitle => 'आम्ही तुमच्या नोंदणीकृत मोबाइल नंबरवर 6 अंकी कोड पाठवू.';
+  String get mobileSignInSubtitle =>
+      'आम्ही तुमच्या नोंदणीकृत मोबाइल नंबरवर 6 अंकी कोड पाठवू.';
 
   @override
   String get mobileLabel => 'मोबाइल नंबर';
@@ -232,10 +248,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get codeInvalidFormat => 'कृपया 6 अंकी कोड टाका.';
 
   @override
-  String get otpInvalid => 'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. कृपया पुन्हा प्रयत्न करा किंवा नवीन कोड मागवा.';
+  String get otpInvalid =>
+      'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. कृपया पुन्हा प्रयत्न करा किंवा नवीन कोड मागवा.';
 
   @override
-  String get otpSendFailed => 'आत्ता कोड पाठवता आला नाही. कृपया पुन्हा प्रयत्न करा किंवा ईमेल व पासवर्डने साइन इन करा.';
+  String get otpSendFailed =>
+      'आत्ता कोड पाठवता आला नाही. कृपया पुन्हा प्रयत्न करा किंवा ईमेल व पासवर्डने साइन इन करा.';
 
   @override
   String resendIn(int seconds) {
@@ -254,7 +272,8 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get otpStaffNote => 'रेशन दुकानदार आणि अधिकारी ईमेल व पासवर्डने साइन इन करतात.';
+  String get otpStaffNote =>
+      'रेशन दुकानदार आणि अधिकारी ईमेल व पासवर्डने साइन इन करतात.';
 
   @override
   String get rationCard => 'रेशन कार्ड';
@@ -344,13 +363,16 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get eligibilityExplainEligible => 'तुमच्या कुटुंबातील सर्व सदस्य या महिन्यात रेशन घेऊ शकतात.';
+  String get eligibilityExplainEligible =>
+      'तुमच्या कुटुंबातील सर्व सदस्य या महिन्यात रेशन घेऊ शकतात.';
 
   @override
-  String get eligibilityExplainPartial => 'काही सदस्य अद्याप पात्र नाहीत. तुमचा हक्क फक्त पात्र सदस्यांवर मोजला जातो.';
+  String get eligibilityExplainPartial =>
+      'काही सदस्य अद्याप पात्र नाहीत. तुमचा हक्क फक्त पात्र सदस्यांवर मोजला जातो.';
 
   @override
-  String get eligibilityExplainNot => 'तुमचे कुटुंब सध्या रेशन घेऊ शकत नाही. कृपया तुमच्या रेशन दुकानाशी किंवा जिल्हा कार्यालयाशी संपर्क साधा.';
+  String get eligibilityExplainNot =>
+      'तुमचे कुटुंब सध्या रेशन घेऊ शकत नाही. कृपया तुमच्या रेशन दुकानाशी किंवा जिल्हा कार्यालयाशी संपर्क साधा.';
 
   @override
   String get monthlyEntitlement => 'या महिन्याचा हक्क';
@@ -405,7 +427,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get viewDetails => 'तपशील पहा';
 
   @override
-  String get noBeneficiaryProfile => 'तुमचे रेशन कार्ड अद्याप जोडलेले नाही. कृपया तुमच्या रेशन दुकानाशी संपर्क साधा.';
+  String get noBeneficiaryProfile =>
+      'तुमचे रेशन कार्ड अद्याप जोडलेले नाही. कृपया तुमच्या रेशन दुकानाशी संपर्क साधा.';
 
   @override
   String get demoDataNotice => 'डेमो डेटा: हे खरे रेशन कार्ड नाही.';
@@ -450,7 +473,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get tomorrow => 'उद्या';
 
   @override
-  String get noSlots => 'या दिवशी कोणतीही वेळ उपलब्ध नाही. कृपया दुसरा दिवस निवडा.';
+  String get noSlots =>
+      'या दिवशी कोणतीही वेळ उपलब्ध नाही. कृपया दुसरा दिवस निवडा.';
 
   @override
   String get slotFull => 'भरले';
@@ -504,7 +528,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get chooseItemFirst => 'कृपया किमान एक वस्तू निवडा.';
 
   @override
-  String get noShopAssigned => 'तुमचे रेशन दुकान अद्याप ठरलेले नाही. कृपया जिल्हा कार्यालयाशी संपर्क साधा.';
+  String get noShopAssigned =>
+      'तुमचे रेशन दुकान अद्याप ठरलेले नाही. कृपया जिल्हा कार्यालयाशी संपर्क साधा.';
 
   @override
   String get tokenReady => 'तुमचे टोकन तयार आहे.';
@@ -543,7 +568,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get showQrAtShop => 'रेशन दुकानात हा QR कोड दाखवा.';
 
   @override
-  String get qrManualCode => 'QR स्कॅन न झाल्यास दुकानदार हा कोड टाइप करू शकतो:';
+  String get qrManualCode =>
+      'QR स्कॅन न झाल्यास दुकानदार हा कोड टाइप करू शकतो:';
 
   @override
   String get qrNoPersonalData => 'QR कोडमध्ये कोणतीही वैयक्तिक माहिती नाही.';
@@ -575,7 +601,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get nextCollection => 'तुमचे पुढील रेशन';
 
   @override
-  String get noUpcomingBooking => 'पुढील बुकिंग नाही. रेशन घेण्यासाठी वेळ बुक करा.';
+  String get noUpcomingBooking =>
+      'पुढील बुकिंग नाही. रेशन घेण्यासाठी वेळ बुक करा.';
 
   @override
   String get showQr => 'QR कोड दाखवा';
@@ -623,10 +650,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get checking => 'तपासत आहे…';
 
   @override
-  String get cameraDenied => 'कॅमेऱ्याची परवानगी बंद आहे. फोनच्या सेटिंगमध्ये परवानगी द्या, किंवा खाली कोड लिहा.';
+  String get cameraDenied =>
+      'कॅमेऱ्याची परवानगी बंद आहे. फोनच्या सेटिंगमध्ये परवानगी द्या, किंवा खाली कोड लिहा.';
 
   @override
-  String get cameraUnavailable => 'कॅमेरा सुरू होऊ शकला नाही. त्याऐवजी खाली कोड लिहा.';
+  String get cameraUnavailable =>
+      'कॅमेरा सुरू होऊ शकला नाही. त्याऐवजी खाली कोड लिहा.';
 
   @override
   String get scanRejectedTitle => 'हे टोकन स्वीकारता येत नाही';
@@ -638,7 +667,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get scanNotOurs => 'हा Smart Ration टोकनचा QR कोड नाही.';
 
   @override
-  String get scanUnreadable => 'QR कोड वाचता आला नाही. पुन्हा स्कॅन करा किंवा कोड लिहा.';
+  String get scanUnreadable =>
+      'QR कोड वाचता आला नाही. पुन्हा स्कॅन करा किंवा कोड लिहा.';
 
   @override
   String get scanExpired => 'या टोकनचा रेशन घेण्याचा दिवस निघून गेला आहे.';
@@ -736,10 +766,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get saving => 'जतन होत आहे…';
 
   @override
-  String get errorInsufficientStock => 'या टोकनसाठी पुरेसा साठा नाही. काहीही दिले नाही आणि साठा कमी झाला नाही.';
+  String get errorInsufficientStock =>
+      'या टोकनसाठी पुरेसा साठा नाही. काहीही दिले नाही आणि साठा कमी झाला नाही.';
 
   @override
-  String get errorConcurrentUpdate => 'हे टोकन आत्ताच दुसऱ्या काउंटरवर बदलले. कृपया पुन्हा स्कॅन करा.';
+  String get errorConcurrentUpdate =>
+      'हे टोकन आत्ताच दुसऱ्या काउंटरवर बदलले. कृपया पुन्हा स्कॅन करा.';
 
   @override
   String get reasonAccountBlocked => 'हे लाभार्थी खाते रोखले आहे.';
@@ -763,7 +795,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get reasonPassbookPending => 'पासबुक पडताळणी बाकी आहे.';
 
   @override
-  String get reasonMobileRequired => 'आधी ग्राहकाचा मोबाइल नंबर पडताळला गेला पाहिजे.';
+  String get reasonMobileRequired =>
+      'आधी ग्राहकाचा मोबाइल नंबर पडताळला गेला पाहिजे.';
 
   @override
   String get reasonNotEligible => 'हे कुटुंब त्याच्या योजनेअंतर्गत पात्र नाही.';
@@ -775,7 +808,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get otpCheckTitle => 'मोबाइल कोडने तपासा';
 
   @override
-  String get otpCheckHelp => 'ग्राहकाचा नोंदणीकृत मोबाइल नंबर लिहा. त्यावर 6 अंकी कोड पाठवला जाईल.';
+  String get otpCheckHelp =>
+      'ग्राहकाचा नोंदणीकृत मोबाइल नंबर लिहा. त्यावर 6 अंकी कोड पाठवला जाईल.';
 
   @override
   String get customerMobileLabel => 'ग्राहकाचा मोबाइल नंबर';
@@ -792,7 +826,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get otpNoCustomer => 'या मोबाइल नंबरवर कोणताही ग्राहक नोंदणीकृत नाही.';
 
   @override
-  String get otpNoBookingHere => 'या ग्राहकाची तुमच्या दुकानात कोणतीही सक्रिय बुकिंग नाही.';
+  String get otpNoBookingHere =>
+      'या ग्राहकाची तुमच्या दुकानात कोणतीही सक्रिय बुकिंग नाही.';
 
   @override
   String get receiptTitle => 'रेशन दिले';
@@ -801,7 +836,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get receiptCollectionId => 'वितरण ID';
 
   @override
-  String get receiptSaved => 'जतन झाले. साठा कमी केला आहे आणि ग्राहकाला सूचना पाठवली आहे.';
+  String get receiptSaved =>
+      'जतन झाले. साठा कमी केला आहे आणि ग्राहकाला सूचना पाठवली आहे.';
 
   @override
   String get scanNextCustomer => 'पुढच्या ग्राहकाचे स्कॅन करा';
@@ -837,7 +873,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get queueEmpty => 'आजसाठी कोणतेही टोकन बुक केलेले नाही.';
 
   @override
-  String get queueServeHint => 'हा ग्राहक आल्यावर त्यांचा QR स्कॅन करा किंवा मोबाइल कोडने तपासा.';
+  String get queueServeHint =>
+      'हा ग्राहक आल्यावर त्यांचा QR स्कॅन करा किंवा मोबाइल कोडने तपासा.';
 
   @override
   String get stockAvailable => 'साठ्यात';
@@ -875,7 +912,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get noteLabel => 'टीप (ऐच्छिक)';
 
   @override
-  String get stockAlreadySaved => 'हे आत्ताच जतन झाले आहे. हा फॉर्म बंद करा आणि पुन्हा नोंदवण्यापूर्वी साठा तपासा.';
+  String get stockAlreadySaved =>
+      'हे आत्ताच जतन झाले आहे. हा फॉर्म बंद करा आणि पुन्हा नोंदवण्यापूर्वी साठा तपासा.';
 
   @override
   String get quantityInvalid => '0 पेक्षा जास्त प्रमाण लिहा.';
@@ -889,7 +927,8 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get referenceInvalid => 'फक्त अक्षरे, अंक, मोकळी जागा आणि - / _ . वापरा.';
+  String get referenceInvalid =>
+      'फक्त अक्षरे, अंक, मोकळी जागा आणि - / _ . वापरा.';
 
   @override
   String get saveButton => 'जतन करा';
@@ -903,7 +942,8 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get writeOffConfirmBody => 'यामुळे खराब माल कायमचा वजा होतो. हे साठा नोंदवहीत नोंदवले जाते.';
+  String get writeOffConfirmBody =>
+      'यामुळे खराब माल कायमचा वजा होतो. हे साठा नोंदवहीत नोंदवले जाते.';
 
   @override
   String get stockReceived => 'आलेला माल नोंदवला.';
@@ -975,7 +1015,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get noShops => 'कोणतेही दुकान सापडले नाही.';
 
   @override
-  String get alertsNotice => 'या तपासण्याजोग्या सूचना आहेत, फसवणुकीचा पुरावा नाही. कारवाईपूर्वी तपासा.';
+  String get alertsNotice =>
+      'या तपासण्याजोग्या सूचना आहेत, फसवणुकीचा पुरावा नाही. कारवाईपूर्वी तपासा.';
 
   @override
   String get noAlerts => 'कोणतीही उघडी सूचना नाही.';
@@ -1053,7 +1094,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get youLabel => 'तुम्ही';
 
   @override
-  String get helpPrivacy => 'आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका. तुम्ही लिहिलेले या फोनवर जतन होत नाही.';
+  String get helpPrivacy =>
+      'आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका. तुम्ही लिहिलेले या फोनवर जतन होत नाही.';
 
   @override
   String get askHint => 'तुमचा प्रश्न लिहा';
@@ -1071,10 +1113,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get listening => 'ऐकत आहे… आता बोला';
 
   @override
-  String get voiceNote => 'तुमच्या फोनची स्पीच सेवा आवाजाचे मजकुरात रूपांतर करते आणि त्यासाठी इंटरनेट वापरू शकते.';
+  String get voiceNote =>
+      'तुमच्या फोनची स्पीच सेवा आवाजाचे मजकुरात रूपांतर करते आणि त्यासाठी इंटरनेट वापरू शकते.';
 
   @override
-  String get voiceUnavailable => 'आवाजाने विचारणे उपलब्ध नाही. सेटिंगमध्ये मायक्रोफोनला परवानगी द्या, किंवा प्रश्न लिहा.';
+  String get voiceUnavailable =>
+      'आवाजाने विचारणे उपलब्ध नाही. सेटिंगमध्ये मायक्रोफोनला परवानगी द्या, किंवा प्रश्न लिहा.';
 
   @override
   String get readAloud => 'वाचून दाखवा';
@@ -1083,7 +1127,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get stopReading => 'वाचन थांबवा';
 
   @override
-  String get voiceMissing => 'या फोनमध्ये या भाषेचा आवाज नाही. फोनच्या टेक्स्ट-टू-स्पीच सेटिंगमध्ये जोडू शकता.';
+  String get voiceMissing =>
+      'या फोनमध्ये या भाषेचा आवाज नाही. फोनच्या टेक्स्ट-टू-स्पीच सेटिंगमध्ये जोडू शकता.';
 
   @override
   String get relatedTitle => 'संबंधित';
@@ -1095,10 +1140,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get noSpeechHeard => 'काहीच ऐकू आले नाही. माइक दाबून पुन्हा बोला.';
 
   @override
-  String get offlineBanner => 'इंटरनेट नाही. या फोनवर जतन केलेली माहिती दिसत आहे; ती जुनी असू शकते. ताजी करण्यासाठी खाली ओढा.';
+  String get offlineBanner =>
+      'इंटरनेट नाही. या फोनवर जतन केलेली माहिती दिसत आहे; ती जुनी असू शकते. ताजी करण्यासाठी खाली ओढा.';
 
   @override
-  String get offlineQrNote => 'हे या फोनवर जतन आहे. तुमच्या इंटरनेटशिवायही दुकान हा QR स्कॅन करू शकते.';
+  String get offlineQrNote =>
+      'हे या फोनवर जतन आहे. तुमच्या इंटरनेटशिवायही दुकान हा QR स्कॅन करू शकते.';
 
   @override
   String get notificationsTitle => 'सूचना';
@@ -1184,10 +1231,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get complaintDescribe => 'काय झाले ते सांगा';
 
   @override
-  String get complaintDescribeHint => 'उदाहरण: या महिन्यात मला 2 किलो गहू कमी मिळाला.';
+  String get complaintDescribeHint =>
+      'उदाहरण: या महिन्यात मला 2 किलो गहू कमी मिळाला.';
 
   @override
-  String get complaintDescribeShort => 'कृपया थोडे अधिक लिहा (किमान 10 अक्षरे).';
+  String get complaintDescribeShort =>
+      'कृपया थोडे अधिक लिहा (किमान 10 अक्षरे).';
 
   @override
   String get complaintNoPrivate => 'आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका.';
@@ -1208,7 +1257,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get complaintReviewTitle => 'पाठवण्यापूर्वी तपासा';
 
   @override
-  String get complaintReviewNote => 'सादर करण्यापूर्वी कृपया तुमची माहिती तपासा.';
+  String get complaintReviewNote =>
+      'सादर करण्यापूर्वी कृपया तुमची माहिती तपासा.';
 
   @override
   String get complaintEdit => 'बदला';
@@ -1228,10 +1278,12 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get complaintKeepReference => 'हा क्रमांक जपून ठेवा. स्थिती बदलल्यावर तुम्हाला सूचनांमध्ये कळवले जाईल.';
+  String get complaintKeepReference =>
+      'हा क्रमांक जपून ठेवा. स्थिती बदलल्यावर तुम्हाला सूचनांमध्ये कळवले जाईल.';
 
   @override
-  String get complaintFilledByAi => 'तुम्ही सांगितलेल्यावरून भरले आहे. कृपया तपासा.';
+  String get complaintFilledByAi =>
+      'तुम्ही सांगितलेल्यावरून भरले आहे. कृपया तपासा.';
 
   @override
   String get myComplaints => 'माझ्या तक्रारी';
@@ -1270,7 +1322,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get aiTypeHint => 'तुम्हाला काय हवे ते बोला किंवा लिहा';
 
   @override
-  String get aiExample => 'उदाहरण: “माझं रेशन कधी मिळेल?” किंवा “मला गहू कमी मिळाला, तक्रार करायची आहे.”';
+  String get aiExample =>
+      'उदाहरण: “माझं रेशन कधी मिळेल?” किंवा “मला गहू कमी मिळाला, तक्रार करायची आहे.”';
 
   @override
   String get aiReadScreen => 'ही स्क्रीन वाचा';
@@ -1282,12 +1335,19 @@ class AppLocalizationsMr extends AppLocalizations {
   String get aiLanguageChanged => 'भाषा बदलली.';
 
   @override
-  String aiHomeSummary(String token, String day, String start, String end, String shop) {
+  String aiHomeSummary(
+    String token,
+    String day,
+    String start,
+    String end,
+    String shop,
+  ) {
     return 'तुमचे पुढील रेशन: टोकन $token, $day, $start ते $end, $shop येथे.';
   }
 
   @override
-  String get aiHomeNoBooking => 'तुमची कोणतीही रेशन बुकिंग नाही. बुक करण्यासाठी “रेशन बुक करा” म्हणा.';
+  String get aiHomeNoBooking =>
+      'तुमची कोणतीही रेशन बुकिंग नाही. बुक करण्यासाठी “रेशन बुक करा” म्हणा.';
 
   @override
   String get aiSignInHelp => 'साइन इन करण्यासाठी मदत हवी? AI ला विचारा';
@@ -1296,16 +1356,19 @@ class AppLocalizationsMr extends AppLocalizations {
   String get nAnnouncement => 'घोषणा';
 
   @override
-  String get mfaPrompt => 'या खात्यासाठी दोन-टप्पी साइन इन चालू आहे. आपल्या ऑथेंटिकेटर अॅपमधील 6 अंकी कोड टाका.';
+  String get mfaPrompt =>
+      'या खात्यासाठी दोन-टप्पी साइन इन चालू आहे. आपल्या ऑथेंटिकेटर अॅपमधील 6 अंकी कोड टाका.';
 
   @override
   String get mfaCodeLabel => 'ऑथेंटिकेटर अॅपमधील कोड';
 
   @override
-  String get mfaCodeWrong => 'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. ऑथेंटिकेटर अॅपमधील सध्याचा कोड वापरा.';
+  String get mfaCodeWrong =>
+      'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. ऑथेंटिकेटर अॅपमधील सध्याचा कोड वापरा.';
 
   @override
-  String get mfaExpired => 'साइन इनला खूप वेळ लागला. कृपया आपला ईमेल आणि पासवर्ड पुन्हा टाका.';
+  String get mfaExpired =>
+      'साइन इनला खूप वेळ लागला. कृपया आपला ईमेल आणि पासवर्ड पुन्हा टाका.';
 
   @override
   String get mfaStartAgain => 'पुन्हा सुरू करा';
@@ -1317,7 +1380,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get resetTitle => 'आपला पासवर्ड रीसेट करा';
 
   @override
-  String get resetIntro => 'आपल्या खात्याशी जोडलेला मोबाइल नंबर टाका. आम्ही त्यावर 6 अंकी कोड पाठवू.';
+  String get resetIntro =>
+      'आपल्या खात्याशी जोडलेला मोबाइल नंबर टाका. आम्ही त्यावर 6 अंकी कोड पाठवू.';
 
   @override
   String resetCodeSent(String mobile) {
@@ -1343,7 +1407,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get currentPasswordLabel => 'सध्याचा पासवर्ड';
 
   @override
-  String get passwordRules => 'किमान 8 अक्षरे. काही असंबंधित शब्द चांगले असतात. आपले नाव, मोबाइल नंबर किंवा सामान्य पासवर्ड वापरू नका.';
+  String get passwordRules =>
+      'किमान 8 अक्षरे. काही असंबंधित शब्द चांगले असतात. आपले नाव, मोबाइल नंबर किंवा सामान्य पासवर्ड वापरू नका.';
 
   @override
   String get passwordTooShort => 'किमान 8 अक्षरे वापरा.';
@@ -1358,13 +1423,16 @@ class AppLocalizationsMr extends AppLocalizations {
   String get changePasswordButton => 'पासवर्ड बदला';
 
   @override
-  String get passwordChanged => 'पासवर्ड बदलला. इतर उपकरणांवरून साइन आउट केले आहे.';
+  String get passwordChanged =>
+      'पासवर्ड बदलला. इतर उपकरणांवरून साइन आउट केले आहे.';
 
   @override
-  String get passwordChangeSignsOut => 'बदलल्यावर आपण इतर सर्व उपकरणांवरून साइन आउट व्हाल.';
+  String get passwordChangeSignsOut =>
+      'बदलल्यावर आपण इतर सर्व उपकरणांवरून साइन आउट व्हाल.';
 
   @override
-  String get passwordChangeFailed => 'पासवर्ड बदलता आला नाही. कृपया पुन्हा प्रयत्न करा.';
+  String get passwordChangeFailed =>
+      'पासवर्ड बदलता आला नाही. कृपया पुन्हा प्रयत्न करा.';
 
   @override
   String get officialComplaintsTitle => 'नागरिकांच्या तक्रारी';
@@ -1379,19 +1447,22 @@ class AppLocalizationsMr extends AppLocalizations {
   String get complaintUpdateTitle => 'ही तक्रार अपडेट करा';
 
   @override
-  String get complaintChooseReviewHint => 'तुम्ही याची तपासणी करत आहात. नागरिकाला कळवले जाईल.';
+  String get complaintChooseReviewHint =>
+      'तुम्ही याची तपासणी करत आहात. नागरिकाला कळवले जाईल.';
 
   @override
   String get complaintChooseResolvedHint => 'समस्या दूर केली आहे.';
 
   @override
-  String get complaintChooseRejectedHint => 'कोणतीही कारवाई करता येत नाही. उत्तरात कारण लिहा.';
+  String get complaintChooseRejectedHint =>
+      'कोणतीही कारवाई करता येत नाही. उत्तरात कारण लिहा.';
 
   @override
   String get complaintReplyLabel => 'नागरिकाला उत्तर (ऐच्छिक)';
 
   @override
-  String get complaintReplyHint => 'नागरिकाला हे उत्तर दिसेल. आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका.';
+  String get complaintReplyHint =>
+      'नागरिकाला हे उत्तर दिसेल. आधार क्रमांक, OTP किंवा पासवर्ड लिहू नका.';
 
   @override
   String get complaintUpdated => 'तक्रार अपडेट झाली';
@@ -1504,7 +1575,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get usersSearchHint => 'नावाने शोधा';
 
   @override
-  String get usersContactHidden => 'फोनवर संपर्क तपशील अंशतः लपवले आहेत. पूर्ण तपशील वेबसाइटवर पाहा.';
+  String get usersContactHidden =>
+      'फोनवर संपर्क तपशील अंशतः लपवले आहेत. पूर्ण तपशील वेबसाइटवर पाहा.';
 
   @override
   String get noUsersHere => 'येथे कोणी नाही.';
@@ -1513,7 +1585,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get aiCenterTitle => 'AI माहिती';
 
   @override
-  String get aiCenterNotice => 'फक्त निर्णयासाठी मदत. येथील काहीही रेशन नाकारत नाही, कार्ड रद्द करत नाही किंवा फसवणूक सिद्ध करत नाही. कारवाईपूर्वी एखाद्या व्यक्तीने तपासणी केली पाहिजे.';
+  String get aiCenterNotice =>
+      'फक्त निर्णयासाठी मदत. येथील काहीही रेशन नाकारत नाही, कार्ड रद्द करत नाही किंवा फसवणूक सिद्ध करत नाही. कारवाईपूर्वी एखाद्या व्यक्तीने तपासणी केली पाहिजे.';
 
   @override
   String get aiDemoData => 'डेमो डेटावरून मोजले.';
@@ -1544,7 +1617,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get aiDemandExpected => 'अंदाज';
 
   @override
-  String get aiNoDemand => 'मागणीचा अंदाज लावण्यासाठी अजून पुरेसे वितरण झालेले नाही.';
+  String get aiNoDemand =>
+      'मागणीचा अंदाज लावण्यासाठी अजून पुरेसे वितरण झालेले नाही.';
 
   @override
   String get aiStockRiskTitle => 'संपत चाललेला साठा';
@@ -1578,7 +1652,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get correctStock => 'मोजणी दुरुस्त करा';
 
   @override
-  String get correctStockHint => 'फक्त मोजणीतील चूक दुरुस्त करण्यासाठी. पुरवठा आणि खराब साठ्यासाठी वेगळी बटणे आहेत. प्रत्येक दुरुस्ती नोंदवली जाते.';
+  String get correctStockHint =>
+      'फक्त मोजणीतील चूक दुरुस्त करण्यासाठी. पुरवठा आणि खराब साठ्यासाठी वेगळी बटणे आहेत. प्रत्येक दुरुस्ती नोंदवली जाते.';
 
   @override
   String correctInStock(String unit) {
@@ -1596,7 +1671,8 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get correctConfirmBody => 'हे तुमच्या नावाने हाताने केलेली दुरुस्ती म्हणून नोंदवले जाईल. अधिकारी ते पाहू शकतात.';
+  String get correctConfirmBody =>
+      'हे तुमच्या नावाने हाताने केलेली दुरुस्ती म्हणून नोंदवले जाईल. अधिकारी ते पाहू शकतात.';
 
   @override
   String get correctNoChange => 'काहीही बदलले नाही.';
@@ -1619,7 +1695,8 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get helpNoResults => 'काहीही सापडले नाही. दुसरे शब्द वापरून पाहा किंवा सहाय्यकाला विचारा.';
+  String get helpNoResults =>
+      'काहीही सापडले नाही. दुसरे शब्द वापरून पाहा किंवा सहाय्यकाला विचारा.';
 
   @override
   String get helpAskAssistant => 'सहाय्यकाला विचारा';
@@ -1642,7 +1719,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get closeAccountTitle => 'माझे खाते बंद करा';
 
   @override
-  String get closeAccountIntro => 'तुमचे खाते लगेच बंद होईल आणि तुम्ही साइन आउट व्हाल. गोपनीयता धोरणानुसार तुमच्या नोंदी एका वर्षात पुसल्या जातात. तुमच्या रेशन कार्डवर याचा कोणताही परिणाम होत नाही.';
+  String get closeAccountIntro =>
+      'तुमचे खाते लगेच बंद होईल आणि तुम्ही साइन आउट व्हाल. गोपनीयता धोरणानुसार तुमच्या नोंदी एका वर्षात पुसल्या जातात. तुमच्या रेशन कार्डवर याचा कोणताही परिणाम होत नाही.';
 
   @override
   String get closeAccountConfirm => 'माझे खाते कायमचे बंद करा';
@@ -1657,7 +1735,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get exportTitle => 'माझा डेटा डाउनलोड करा';
 
   @override
-  String get exportIntro => 'ही सेवा आपल्याबद्दल जे काही ठेवते त्याची प्रत घ्या: आपले खाते, रेशन कार्ड आणि कुटुंब, बुकिंग, वितरण, तक्रारी, सूचना आणि खात्यातील हालचाली. पासवर्ड आणि सुरक्षा की कधीही समाविष्ट नसतात. फाइल खाजगी ठेवा.';
+  String get exportIntro =>
+      'ही सेवा आपल्याबद्दल जे काही ठेवते त्याची प्रत घ्या: आपले खाते, रेशन कार्ड आणि कुटुंब, बुकिंग, वितरण, तक्रारी, सूचना आणि खात्यातील हालचाली. पासवर्ड आणि सुरक्षा की कधीही समाविष्ट नसतात. फाइल खाजगी ठेवा.';
 
   @override
   String get exportDownload => 'माझा डेटा डाउनलोड करा (JSON)';
@@ -1669,13 +1748,15 @@ class AppLocalizationsMr extends AppLocalizations {
   String get exportDone => 'आपला डेटा जतन झाला.';
 
   @override
-  String get exportFailed => 'आपला डेटा तयार करता आला नाही. कृपया पुन्हा प्रयत्न करा.';
+  String get exportFailed =>
+      'आपला डेटा तयार करता आला नाही. कृपया पुन्हा प्रयत्न करा.';
 
   @override
   String get profileTitle => 'माझी प्रोफाइल';
 
   @override
-  String get profileEmailNote => 'ईमेल हे तुमचे लॉगिन नाव आहे आणि ते येथून बदलता येत नाही.';
+  String get profileEmailNote =>
+      'ईमेल हे तुमचे लॉगिन नाव आहे आणि ते येथून बदलता येत नाही.';
 
   @override
   String get profileNameLabel => 'पूर्ण नाव';
@@ -1717,19 +1798,22 @@ class AppLocalizationsMr extends AppLocalizations {
   String get verificationExpired => 'मुदत संपली';
 
   @override
-  String get verificationHelp => 'येथे काही चुकीचे असल्यास, आपली कागदपत्रे घेऊन रेशन कार्यालयात जा.';
+  String get verificationHelp =>
+      'येथे काही चुकीचे असल्यास, आपली कागदपत्रे घेऊन रेशन कार्यालयात जा.';
 
   @override
   String get mfaTitle => 'दोन-टप्पी साइन इन';
 
   @override
-  String get mfaIntro => 'हे कर्मचारी खाते दुसऱ्या टप्प्याने सुरक्षित करा: पासवर्डनंतर ऑथेंटिकेटर अॅपमधील (Google Authenticator, Microsoft Authenticator इ.) 6 अंकी कोड टाका.';
+  String get mfaIntro =>
+      'हे कर्मचारी खाते दुसऱ्या टप्प्याने सुरक्षित करा: पासवर्डनंतर ऑथेंटिकेटर अॅपमधील (Google Authenticator, Microsoft Authenticator इ.) 6 अंकी कोड टाका.';
 
   @override
   String get mfaStart => 'दोन-टप्पी साइन इन सेट करा';
 
   @override
-  String get mfaScan => 'हा QR कोड आपल्या ऑथेंटिकेटर अॅपने स्कॅन करा, नंतर त्यात दिसणारा 6 अंकी कोड टाका.';
+  String get mfaScan =>
+      'हा QR कोड आपल्या ऑथेंटिकेटर अॅपने स्कॅन करा, नंतर त्यात दिसणारा 6 अंकी कोड टाका.';
 
   @override
   String get mfaQrLabel => 'ऑथेंटिकेटर अॅपसाठी QR कोड';
@@ -1762,7 +1846,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get mfaWrongPassword => 'पासवर्ड चुकीचा आहे.';
 
   @override
-  String get mfaWrongCode => 'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. आपल्या ऑथेंटिकेटर अॅपमधील सध्याचा कोड टाका.';
+  String get mfaWrongCode =>
+      'कोड चुकीचा आहे किंवा त्याची मुदत संपली आहे. आपल्या ऑथेंटिकेटर अॅपमधील सध्याचा कोड टाका.';
 
   @override
   String get registerTitle => 'खाते तयार करा';
@@ -1771,7 +1856,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get registerLink => 'नवीन आहात? खाते तयार करा';
 
   @override
-  String get registerIntro => 'रेशन कार्डधारकांसाठी. दुकानदार आणि अधिकाऱ्यांची खाती कार्यालयाकडून तयार होतात.';
+  String get registerIntro =>
+      'रेशन कार्डधारकांसाठी. दुकानदार आणि अधिकाऱ्यांची खाती कार्यालयाकडून तयार होतात.';
 
   @override
   String get fullNameLabel => 'पूर्ण नाव';
@@ -1783,10 +1869,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get confirmPasswordPlain => 'पासवर्डची पुष्टी करा';
 
   @override
-  String get consentText => 'मी गोपनीयता धोरण वाचले आहे आणि त्यात सांगितल्याप्रमाणे माझे रेशन देण्यासाठी माझे तपशील वापरण्यास संमती देतो/देते.';
+  String get consentText =>
+      'मी गोपनीयता धोरण वाचले आहे आणि त्यात सांगितल्याप्रमाणे माझे रेशन देण्यासाठी माझे तपशील वापरण्यास संमती देतो/देते.';
 
   @override
-  String get consentRequired => 'पुढे जाण्यासाठी गोपनीयता धोरण वाचा आणि चौकटीत खूण करा.';
+  String get consentRequired =>
+      'पुढे जाण्यासाठी गोपनीयता धोरण वाचा आणि चौकटीत खूण करा.';
 
   @override
   String get readPrivacyPolicy => 'गोपनीयता धोरण वाचा';
@@ -1795,17 +1883,21 @@ class AppLocalizationsMr extends AppLocalizations {
   String get registerButton => 'खाते तयार करा';
 
   @override
-  String get registerFailed => 'खाते तयार करता आले नाही. कृपया पुन्हा प्रयत्न करा.';
+  String get registerFailed =>
+      'खाते तयार करता आले नाही. कृपया पुन्हा प्रयत्न करा.';
 
   @override
-  String get registerAlreadyExists => 'या ईमेल किंवा मोबाइल क्रमांकाचे खाते आधीच आहे. साइन इन करा किंवा पासवर्ड रीसेट करा.';
+  String get registerAlreadyExists =>
+      'या ईमेल किंवा मोबाइल क्रमांकाचे खाते आधीच आहे. साइन इन करा किंवा पासवर्ड रीसेट करा.';
 
   @override
   String get registered => 'स्वागत आहे! तुमचे खाते तयार आहे.';
 
   @override
-  String get profileMobilePasswordNote => 'साइन-इन कोड आणि पासवर्ड रीसेट याच नंबरवर येतात, म्हणून तो बदलण्यासाठी पासवर्ड लागतो.';
+  String get profileMobilePasswordNote =>
+      'साइन-इन कोड आणि पासवर्ड रीसेट याच नंबरवर येतात, म्हणून तो बदलण्यासाठी पासवर्ड लागतो.';
 
   @override
-  String get verificationMobileHint => 'मोबाइल क्रमांक बदलला आहे? नवीन क्रमांकावर पाठवलेल्या कोडने एकदा साइन इन करा, किंवा तुमच्या रेशन दुकानात कोडने पडताळणी करून घ्या.';
+  String get verificationMobileHint =>
+      'मोबाइल क्रमांक बदलला आहे? नवीन क्रमांकावर पाठवलेल्या कोडने एकदा साइन इन करा, किंवा तुमच्या रेशन दुकानात कोडने पडताळणी करून घ्या.';
 }
