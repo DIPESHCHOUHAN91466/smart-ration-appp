@@ -29,12 +29,11 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database.enums import EligibilityStatus, RationType, UserRole
-from app.database.models import (Family, FamilyMember, Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem,
-                                 TimeSlot, User)
-from app.services.provisioning_service import DEMO_HOUSEHOLD_SIZE, household_members
-from app.services.provisioning_service import SOURCE as SYNTHETIC_SOURCE
+from app.database.models import Family, FamilyMember, Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
 from app.security.passwords import hash_password
 from app.services.data_provider import SyntheticDataProvider
+from app.services.provisioning_service import DEMO_HOUSEHOLD_SIZE, household_members
+from app.services.provisioning_service import SOURCE as SYNTHETIC_SOURCE
 from app.utils.time import utc_now
 
 # The synthetic reference data lives in <repo>/database/seeds/synthetic/*.json (clearly labelled
