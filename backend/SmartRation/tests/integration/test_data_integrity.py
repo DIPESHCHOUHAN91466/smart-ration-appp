@@ -73,6 +73,26 @@ def test_the_query_files_are_valid_and_uniquely_named():
     assert {c.severity for c in checks} <= {"error", "warning"}
 
 
+def test_only_numbered_files_are_checks_and_each_must_be_valid(tmp_path):
+    check = "-- check: {}\n-- severity: error\n-- why: test\nSELECT 1 AS id\n"
+    (tmp_path / "01_first.sql").write_text(check.format("first"), encoding="utf-8")
+    (tmp_path / "02_second.sql").write_text(check.format("second"), encoding="utf-8")
+    (tmp_path / "workbench_project_starter.sql").write_text("USE `smartration`;\nSELECT COUNT(*) FROM users;\n", encoding="utf-8")
+    assert [c.source for c in load_checks(tmp_path)] == ["01_first.sql", "02_second.sql"]
+
+    (tmp_path / "03_broken.sql").write_text("SELECT 1 AS id\n", encoding="utf-8")  # numbered but no header
+    with pytest.raises(InvalidCheck, match="03_broken.sql"):
+        load_checks(tmp_path)
+
+
+def test_a_folder_without_numbered_checks_is_refused(tmp_path):
+    (tmp_path / "workbench_project_starter.sql").write_text("SELECT 1;\n", encoding="utf-8")
+    with pytest.raises(InvalidCheck, match="no NN_<name>.sql checks"):
+        load_checks(tmp_path)
+    with pytest.raises(InvalidCheck, match="no NN_<name>.sql checks"):  # a wrong INTEGRITY_QUERIES_DIR
+        load_checks(tmp_path / "missing")
+
+
 def test_a_consistent_database_passes_every_check(engine):
     assert failures(engine) == {}
 

@@ -1,6 +1,7 @@
 """Data-integrity checks: the read-only SQL files in <repo>/database/queries, run against a database.
 
-Each file holds one SELECT that returns the rows breaking one rule (first column `id`), with a header:
+Checks are the numbered files (NN_<name>.sql); other .sql files in the folder are ignored. Each check
+holds one SELECT that returns the rows breaking one rule (first column `id`), with a header:
 
     -- check: overbooked_time_slots
     -- severity: error | warning
@@ -24,6 +25,7 @@ from sqlalchemy.engine import Engine
 QUERIES_DIR = Path(os.environ.get("INTEGRITY_QUERIES_DIR") or Path(__file__).resolve().parents[4] / "database" / "queries")
 SEVERITIES = ("error", "warning")
 _HEADER = re.compile(r"^--\s*(check|severity|why):\s*(.*)$")
+_CHECK_FILE = re.compile(r"^\d+_[^.]+\.sql$")
 
 
 class InvalidCheck(ValueError):
@@ -72,9 +74,11 @@ def parse_check(path: Path) -> Check:
 
 
 def load_checks(directory: Path = QUERIES_DIR) -> list[Check]:
-    files = sorted(directory.glob("*.sql"))
+    # Checks are the numbered files (01_overbooked_time_slots.sql ...); other .sql files kept there, such as a
+    # Workbench starter script, are not checks. Every numbered file must parse: a malformed check is an error.
+    files = sorted(p for p in directory.glob("*.sql") if _CHECK_FILE.match(p.name))
     if not files:
-        raise InvalidCheck(f"no *.sql checks in {directory}")
+        raise InvalidCheck(f"no NN_<name>.sql checks in {directory}")
     checks = [parse_check(p) for p in files]
     names = [c.name for c in checks]
     if len(names) != len(set(names)):

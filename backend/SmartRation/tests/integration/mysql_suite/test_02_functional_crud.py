@@ -69,7 +69,7 @@ def test_register_100_people_through_the_api(api, db):
     ("email", "not-an-email", "The Email field is not a valid e-mail address."),
     ("email", long_email(201), "The field Email must be a string with a maximum length of 200."),
     ("mobileNumber", "abc", "The MobileNumber field is not a valid phone number."),
-    ("password", "short", "The field Password must be a string with a minimum length of 12 and a maximum length of 100."),
+    ("password", "short", "The field Password must be a string with a minimum length of 8 and a maximum length of 100."),
 ])
 def test_api_rejects_invalid_input_without_touching_the_database(api, db, field, value, message):
     body = {"fullName": "Valid Name", "email": "valid@example.test", "mobileNumber": "7999999999", "password": "Kite-River-Lamp-42"}

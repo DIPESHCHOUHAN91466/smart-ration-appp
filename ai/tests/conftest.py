@@ -90,7 +90,9 @@ class Db:
 
 @pytest.fixture
 def db(tmp_path):
-    return Db(str(tmp_path / "test.db"))
+    d = Db(str(tmp_path / "test.db"))
+    yield d
+    d.conn.close()
 
 
 @pytest.fixture
@@ -111,5 +113,7 @@ def settings(tmp_path) -> Settings:
 
 
 @pytest.fixture
-def repo(db, settings) -> Repository:
-    return Repository(create_engine(settings.db_url))
+def repo(db, settings):
+    r = Repository(create_engine(settings.db_url))
+    yield r
+    r.engine.dispose()
