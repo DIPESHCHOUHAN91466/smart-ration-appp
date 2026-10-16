@@ -144,13 +144,13 @@ class Generator:
         self.ids = {t: db.next_id(conn, t) for t in ["Users", "Families", "FamilyMembers", "Beneficiaries", "TimeSlots",
                                                     "Tokens", "TokenItems", "RationCollections", "RationCollectionItems",
                                                     "InventoryMovements", "VerificationAuditLogs"]}
-        self.counter = defaultdict(int)
+        self.counter: defaultdict[str, int] = defaultdict(int)
         self.rejected = 0
 
         t = db.t
         self.shops = [r._mapping for r in conn.execute(select(t["RationShops"]).where(t["RationShops"].c.IsActive == True))]  # noqa: E712
         self.visit_cap = {r.RationType: D(r.StandardQuotaPerBooking) for r in conn.execute(select(t["RationItems"]).where(t["RationItems"].c.IsActive == True))}  # noqa: E712
-        self.quotas = defaultdict(dict)
+        self.quotas: defaultdict[int, dict[int, Decimal]] = defaultdict(dict)
         for r in conn.execute(select(t["SchemeEntitlementItems"])):
             self.quotas[r.RationSchemeId][r.RationType] = D(r.QuotaPerEligibleMemberPerMonth)
         self.schemes = [r.Id for r in conn.execute(select(t["RationSchemes"].c.Id).order_by(t["RationSchemes"].c.Id))]
@@ -184,7 +184,7 @@ class Generator:
 
     def households(self) -> list[Household]:
         t = self.db.t
-        eligible = defaultdict(int)
+        eligible: defaultdict[int, int] = defaultdict(int)
         for r in self.conn.execute(select(t["FamilyMembers"].c.FamilyId).where(t["FamilyMembers"].c.Eligibility == 1)):
             eligible[r.FamilyId] += 1
         result = []
@@ -505,10 +505,10 @@ def remove_history(db: Db, conn: Connection) -> None:
 def verify(db: Db, conn: Connection) -> list[str]:
     """Independent re-check of the generated data's invariants."""
     t, problems = db.t, []
-    eligible = defaultdict(int)
+    eligible: defaultdict[int, int] = defaultdict(int)
     for r in conn.execute(select(t["FamilyMembers"].c.FamilyId).where(t["FamilyMembers"].c.Eligibility == 1)):
         eligible[r.FamilyId] += 1
-    quotas = defaultdict(dict)
+    quotas: defaultdict[int, dict[int, Decimal]] = defaultdict(dict)
     for r in conn.execute(select(t["SchemeEntitlementItems"])):
         quotas[r.RationSchemeId][r.RationType] = D(r.QuotaPerEligibleMemberPerMonth)
     caps = {r.RationType: D(r.StandardQuotaPerBooking) for r in conn.execute(select(t["RationItems"]))}
@@ -516,7 +516,7 @@ def verify(db: Db, conn: Connection) -> list[str]:
     ben_family = {r.Id: r.FamilyId for r in conn.execute(select(t["Beneficiaries"].c.Id, t["Beneficiaries"].c.FamilyId))}
 
     c, ci = t["RationCollections"], t["RationCollectionItems"]
-    monthly = defaultdict(Decimal)
+    monthly: defaultdict[tuple[int, int, int, int], Decimal] = defaultdict(Decimal)
     for r in conn.execute(select(c.c.BeneficiaryId, c.c.CollectedAt, ci.c.RationType, ci.c.Quantity)
                           .select_from(ci.join(c, ci.c.RationCollectionId == c.c.Id)).where(c.c.CollectionCode.like("COL-HIST-%"))):
         qty = D(r.Quantity)
@@ -531,7 +531,7 @@ def verify(db: Db, conn: Connection) -> list[str]:
             problems.append(f"entitlement exceeded: family {fid} type {rt} {qty} > {allowed}")
 
     m = t["InventoryMovements"]
-    last = {}
+    last: dict[tuple[int, int], Decimal] = {}
     for r in conn.execute(select(m).order_by(m.c.CreatedAt, m.c.Id)):
         key = (r.RationShopId, r.RationType)
         bal = D(r.BalanceAfter)

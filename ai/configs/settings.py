@@ -18,12 +18,12 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 def _int(name: str, default: int) -> int:
     raw = os.getenv(name)
-    return int(raw) if raw not in (None, "") else default
+    return int(raw) if raw else default
 
 
 def _float(name: str, default: float) -> float:
     raw = os.getenv(name)
-    return float(raw) if raw not in (None, "") else default
+    return float(raw) if raw else default
 
 
 @dataclass(frozen=True)

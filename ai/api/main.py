@@ -42,17 +42,19 @@ class OcrTextRequest(BaseModel):
 
 def create_app(settings: Settings | None = None, repo: Repository | None = None, service: AnalyticsService | None = None,
                ocr_engine: ocr.OcrEngine | None = None) -> FastAPI:
-    settings = settings or load_settings()
-    logging.basicConfig(level=settings.log_level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
-    repo = repo or Repository(create_db_engine(settings.db_url))
-    service = service or AnalyticsService(repo, settings)
+    # A separate, non-Optional name so the nested route functions see `Settings`
+    # (a reassigned Optional parameter is not narrowed inside them).
+    cfg: Settings = settings or load_settings()
+    logging.basicConfig(level=cfg.log_level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    repo = repo or Repository(create_db_engine(cfg.db_url))
+    service = service or AnalyticsService(repo, cfg)
     ocr_engine = ocr_engine or ocr.default_engine()
 
     app = FastAPI(title="Smart Ration AI", version=__version__, docs_url="/docs", redoc_url=None)
 
     def require_api_key(x_api_key: str = Header(default="")) -> None:
         # Constant-time compare; never log the provided key.
-        if not hmac.compare_digest(x_api_key.encode(), settings.api_key.encode()):
+        if not hmac.compare_digest(x_api_key.encode(), cfg.api_key.encode()):
             raise AIServiceError("UNAUTHORIZED", "Missing or invalid API key.", 401)
 
     def ok(data, message: str = "OK") -> dict:
@@ -96,7 +98,7 @@ def create_app(settings: Settings | None = None, repo: Repository | None = None,
     ShopId = Query(default=None, ge=1)
 
     @app.get("/v1/forecast", dependencies=auth)
-    def forecast(shop_id: int | None = ShopId, horizon_days: int = Query(default=settings.forecast_default_horizon_days, ge=1, le=90), lang: str = Lang):
+    def forecast(shop_id: int | None = ShopId, horizon_days: int = Query(default=cfg.forecast_default_horizon_days, ge=1, le=90), lang: str = Lang):
         return ok(service.forecast(shop_id, horizon_days, normalize_lang(lang)))
 
     @app.get("/v1/inventory", dependencies=auth)

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, datetime, timedelta
+from typing import Any
 
 from sqlalchemy import MetaData, Table, and_, create_engine, func, select, text
 from sqlalchemy.engine import Engine
@@ -30,7 +31,7 @@ OPTIONAL_TABLES = ["InventoryMovements"]
 
 
 def create_db_engine(db_url: str) -> Engine:
-    kwargs = {"pool_pre_ping": True, "future": True}
+    kwargs: dict[str, Any] = {"pool_pre_ping": True, "future": True}
     if not db_url.startswith("sqlite"):
         kwargs.update(pool_recycle=1800, pool_size=5, max_overflow=5, connect_args={"connect_timeout": 5})
     return create_engine(db_url, **kwargs)

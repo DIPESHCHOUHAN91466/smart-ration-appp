@@ -112,3 +112,19 @@ def test_unexpected_error_does_not_leak_stack_trace(settings, repo):
     r = c.get("/v1/forecast", headers=H)
     assert r.status_code == 500
     assert "secret" not in r.text and r.json()["error_code"] == "AI_INTERNAL_ERROR"
+
+
+def test_forecast_uses_configured_default_horizon(db, settings, repo):
+    shop, _, _ = seed(db)
+    configured = replace(settings, forecast_default_horizon_days=3)
+    data = client(configured, repo).get(f"/v1/forecast?shop_id={shop}", headers=H).json()["data"]
+    rice = next(i for i in data["items"] if i["ration_type"] == "Rice")
+    assert rice["horizon_days"] == 3 and rice["forecast_total"] == 15.0
+
+
+def test_forecast_horizon_bounds_are_enforced(settings, repo):
+    c = client(settings, repo)
+    for bad in ["91", "-1", "seven"]:
+        r = c.get(f"/v1/forecast?horizon_days={bad}", headers=H)
+        assert r.status_code == 422 and r.json()["error_code"] == "INVALID_INPUT"
+    assert c.get("/v1/forecast?horizon_days=90", headers=H).status_code == 200
