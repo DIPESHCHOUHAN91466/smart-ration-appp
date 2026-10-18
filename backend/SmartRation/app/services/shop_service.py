@@ -19,8 +19,7 @@ from app.services import collection_service, verification_service
 from app.services.mappers import inventory_dto, token_dto
 from app.services.qr_service import QrScanStatus
 from app.services.verification_service import READY
-from app.utils.dotnet import midnight
-from app.utils.time import utc_now
+from app.utils.time import business_today
 
 
 def _require_shop(actor: Actor) -> int:
@@ -36,7 +35,7 @@ def dashboard(db: Session, actor: Actor) -> dict:
     shop = db.get(RationShop, shop_id)
     if shop is None:
         raise NotFound("Ration shop not found.")
-    today = midnight(utc_now())
+    today = business_today()
     statuses = db.scalars(select(Token.Status).join(TimeSlot, TimeSlot.Id == Token.TimeSlotId)
                           .where(Token.RationShopId == shop_id, TimeSlot.SlotDate >= today,
                                  TimeSlot.SlotDate < today + timedelta(days=1))).all()
@@ -78,7 +77,7 @@ def scan(db: Session, secret: str, actor: Actor, qr_data: str | None) -> dict:
         status = QrScanStatus.ALREADY_COLLECTED
     elif booking["status"] == TokenStatus.Cancelled.name:
         status = QrScanStatus.BOOKING_CANCELLED
-    elif datetime.strptime(booking["collectionDate"], "%Y-%m-%d") < midnight(utc_now()):
+    elif datetime.strptime(booking["collectionDate"], "%Y-%m-%d") < business_today():
         status = QrScanStatus.EXPIRED
     else:
         status = QrScanStatus.NOT_ELIGIBLE

@@ -26,7 +26,7 @@ from app.database.models import (
     VerificationAuditLog,
 )
 from app.security.tokens import TokenUser, create_access_token
-from app.utils.time import utc_now
+from app.utils.time import business_today, utc_now
 
 # ---------------------------------------------------------------- catalog, slots, booking
 
@@ -38,7 +38,7 @@ def test_items_show_stock_and_remaining_entitlement(env):
 
 
 def test_slots_list_and_status(env):
-    r = env["client"].get("/api/slots", params={"shopId": 1, "date": f"{utc_now():%Y-%m-%d}"}, headers=env["citizen"])
+    r = env["client"].get("/api/slots", params={"shopId": 1, "date": f"{business_today():%Y-%m-%d}"}, headers=env["citizen"])   # the Indian date
     assert r.status_code == 200
     assert [s["id"] for s in r.json()["data"]] == [1]
     assert r.json()["data"][0]["startTime"] == "09:00:00"

@@ -47,7 +47,7 @@ from app.services.mappers import (
 from app.services.verification_service import aadhaar_record, mobile_number_changed, mobile_record, passbook_record
 from app.utils.dotnet import enum_name, hhmm, month_year, ymd
 from app.utils.masking import mask_mobile
-from app.utils.time import utc_now
+from app.utils.time import business_today, utc_now
 
 DOTNET_MIN_DATE = datetime(1, 1, 1)
 SEARCH_MAX_PER_TYPE = 5
@@ -248,7 +248,7 @@ def full_profile(db: Session, actor: Actor, beneficiary_id: int) -> dict:
     insight = ai_rules_service.beneficiary_insight(db, beneficiary.Id) if staff_view else None
     history = _collections(db, beneficiary.Id)
 
-    today = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = business_today()
     upcoming_row = db.execute(
         select(Token, TimeSlot, RationShop.ShopName).join(TimeSlot, TimeSlot.Id == Token.TimeSlotId)
         .join(RationShop, RationShop.Id == Token.RationShopId)

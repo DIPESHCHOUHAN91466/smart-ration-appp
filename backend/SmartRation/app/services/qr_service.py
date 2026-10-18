@@ -30,7 +30,7 @@ from app.database.enums import TokenStatus, UserRole
 from app.database.models import TimeSlot, Token
 from app.services._db import require
 from app.services.mappers import token_dto
-from app.utils.time import utc_now
+from app.utils.time import business_to_utc, utc_now
 
 VERSION, PROJECT, TYPE = "1.0", "SMART_RATION_HSD2C", "RATION_TOKEN"
 REQUIRED_FIELDS = ["version", "project", "type", "reference", "token", "issuedAt", "expiresAt", "signature"]
@@ -84,7 +84,7 @@ def build_signed_payload(secret: str, token: Token, slot: TimeSlot) -> str:
     reference = stored if stored.startswith("SRQR-DEMO-") else compute_reference(secret, token.Id, token.TokenNumber)
     day = slot.SlotDate.replace(hour=0, minute=0, second=0, microsecond=0)
     envelope = {"version": VERSION, "project": PROJECT, "type": TYPE, "reference": reference, "token": token.TokenNumber,
-                "issuedAt": _utc_text(token.CreatedAt), "expiresAt": _utc_text(day + timedelta(days=1))}
+                "issuedAt": _utc_text(token.CreatedAt), "expiresAt": _utc_text(business_to_utc(day + timedelta(days=1)))}   # end of the booked Asia/Kolkata day
     envelope["signature"] = _sign_envelope(secret, envelope)
     # Same text as System.Text.Json: compact, keys in this order.
     return json.dumps(envelope, separators=(",", ":"), ensure_ascii=False)

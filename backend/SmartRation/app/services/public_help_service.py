@@ -13,7 +13,7 @@ from collections.abc import Callable
 from sqlalchemy.orm import Session
 
 from app.repositories import bookings, catalog
-from app.utils.time import utc_now
+from app.utils.time import business_today
 
 CACHE_SECONDS = 300
 _cache: dict[str, tuple[float, list[dict]]] = {}
@@ -78,7 +78,7 @@ class UserBookings:
         self.user_id = user_id
 
     def upcoming_bookings(self, limit: int = 3) -> list[dict]:
-        today = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today = business_today()
         rows = bookings.upcoming_for_user(self.db, self.user_id, today, UPCOMING_STATUSES, limit)
         return [{"id": r.Id, "token": r.TokenNumber, "status": UPCOMING_STATUSES[r.Status], "shop": r.ShopName,
                  "date": r.SlotDate.strftime("%d-%m-%Y"), "start": r.StartTime.strftime("%H:%M"), "end": r.EndTime.strftime("%H:%M")}

@@ -17,7 +17,7 @@ from app.database.enums import UserRole
 from app.database.models import RationShop, TimeSlot
 from app.services.mappers import slot_dto
 from app.utils.dotnet import midnight
-from app.utils.time import utc_now
+from app.utils.time import business_today
 
 # The shops' opening hours used when slots are generated (09:00-17:00, 5 minutes each).
 OPEN, CLOSE, MINUTES, DEFAULT_CAPACITY = 9 * 60, 17 * 60, 5, 2
@@ -72,7 +72,7 @@ def update_capacity(db: Session, actor: Actor, slot_id: int, capacity: int) -> d
 def ensure_upcoming(db: Session, days: int, capacity: int = DEFAULT_CAPACITY) -> int:
     """Synthetic (demo) mode: make sure every active shop has 5-minute slots from today for `days` days.
     Only days with no slots at all are filled, so shop-edited days are never touched. Returns slots added."""
-    today = midnight(utc_now())
+    today = business_today()   # the shops' date (Asia/Kolkata), not the UTC date, which lags until 05:30
     added = 0
     for shop_id in db.scalars(select(RationShop.Id).where(RationShop.IsActive.is_(True))).all():
         for offset in range(days):

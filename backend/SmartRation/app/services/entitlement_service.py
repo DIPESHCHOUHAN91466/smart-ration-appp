@@ -1,14 +1,15 @@
 """What a family may collect this month, and today.
 
 Monthly entitlement per item = the scheme's quota per eligible member x the number of eligible members.
-Remaining = entitlement - what the family's beneficiaries already collected this calendar month (UTC).
+Remaining = entitlement - what the family's beneficiaries already collected this calendar month, Asia/Kolkata
+(until 2026-10-17 the UTC month, which moved collections made between 00:00 and 05:30 IST on the 1st into the
+previous month).
 Today's allocation = remaining, capped at the item's standard quota per visit.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable
-from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import select
@@ -27,7 +28,7 @@ from app.database.models import (
     SchemeEntitlementItem,
 )
 from app.utils.dotnet import num
-from app.utils.time import utc_now
+from app.utils.time import business_month_utc
 
 
 def get_entitlement(db: Session, family_id: int) -> dict:
@@ -39,9 +40,7 @@ def get_entitlement(db: Session, family_id: int) -> dict:
     eligible = sum(1 for m in members if m.Eligibility == EligibilityStatus.Eligible)
     beneficiary_ids = db.scalars(select(Beneficiary.Id).where(Beneficiary.FamilyId == family_id)).all()
 
-    now = utc_now()
-    month_start = datetime(now.year, now.month, 1)
-    month_end = datetime(now.year + (now.month == 12), now.month % 12 + 1, 1)
+    month_start, month_end = business_month_utc()   # the Asia/Kolkata calendar month, as UTC bounds for CollectedAt
     collected: dict[int, Decimal] = {}
     if beneficiary_ids:
         rows = db.execute(

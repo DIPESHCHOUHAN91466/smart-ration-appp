@@ -14,11 +14,11 @@ from decimal import Decimal
 
 import pytest
 
+import app.utils.time as clock
 from app.database.base import Base
 from app.database.connection import get_engine, get_session_factory
 from app.database.models import Inventory, RationItem, RationScheme, RationShop, SchemeEntitlementItem, TimeSlot, User
 from app.security.tokens import TokenUser, create_access_token
-from app.utils.dotnet import midnight
 from app.utils.time import utc_now
 
 QR_SECRET = "unit-test-qr-secret-0123456789abcdef"
@@ -30,13 +30,19 @@ def session():
 
 
 @pytest.fixture
-def env(make_client, request):
-    """Parametrize indirectly with {"ai_handler": fn} to fake the AI analytics service."""
+def env(make_client, request, monkeypatch):
+    """Parametrize indirectly with {"ai_handler": fn} to fake the AI analytics service.
+
+    The shops' clock (app.utils.time.business_now) is pinned to 08:00 Asia/Kolkata on `today`, before slot 1 opens at
+    09:00, so "today's slot" is bookable whatever time the suite runs. Stored timestamps keep the real clock, so `today`
+    is the real *Indian* date: real timestamps then fall on the same Asia/Kolkata day as the pinned clock (a UTC date
+    would be the previous Indian day from 00:00 to 05:30 IST, and QR expiry and "today" counts would disagree)."""
     options = getattr(request, "param", None) or {}
     client = make_client(lambda r: None, qr_secret=QR_SECRET, **options)
     settings = client.app.state.settings
     Base.metadata.create_all(get_engine())
-    today = midnight(utc_now())
+    today = clock.business_today()   # the real clock: not patched yet
+    monkeypatch.setattr(clock, "utc_now", lambda: today + timedelta(hours=2, minutes=30))   # 08:00 IST on `today`
     with session() as db:
         now = utc_now()
         db.add_all([

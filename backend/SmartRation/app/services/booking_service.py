@@ -1,7 +1,8 @@
 """Bookings (= ration tokens): create, list, view, reschedule, cancel, and a shop's queue for today.
 
 Rules:
-  * one active booking per citizen per slot; never a slot in the past; never more bookings than the
+  * one active booking per citizen per slot; never a slot that has started (its date + start time in
+    Asia/Kolkata, app.utils.time.slot_has_started); never more bookings than the
     slot's capacity — the slot row is locked while it is checked and counted (SELECT ... FOR UPDATE), so
     two citizens can't take the last place at the same moment;
   * every item must be an active catalog item, within its per-visit quota and in stock at the shop;
@@ -24,8 +25,8 @@ from app.database.models import Inventory, RationItem, RationShop, TimeSlot, Tok
 from app.services import audit_service, notification_service
 from app.services.mappers import token_dto, token_dtos
 from app.services.qr_service import compute_reference
-from app.utils.dotnet import hhmm, midnight, qty_text
-from app.utils.time import utc_now
+from app.utils.dotnet import hhmm, qty_text
+from app.utils.time import business_today, slot_has_started, utc_now
 
 ACTIVE = (int(TokenStatus.Pending), int(TokenStatus.Confirmed))
 
@@ -74,7 +75,7 @@ def create(db: Session, secret: str, actor: Actor, shop_id: int, slot_id: int, i
     slot = db.scalar(select(TimeSlot).where(TimeSlot.Id == slot_id, TimeSlot.RationShopId == shop_id).with_for_update())
     if slot is None:
         raise NotFound("Time slot not found for this shop.")
-    if midnight(slot.SlotDate) < midnight(utc_now()):
+    if slot_has_started(slot.SlotDate, slot.StartTime):
         raise BadRequest("Cannot book a time slot in the past.")
     duplicate = db.scalar(select(Token.Id).where(Token.UserId == actor.user_id, Token.TimeSlotId == slot.Id, Token.Status.in_(ACTIVE)))
     if duplicate:
@@ -122,7 +123,7 @@ def reschedule(db: Session, actor: Actor, token_id: int, new_slot_id: int) -> di
         raise NotFound("Time slot not found for this shop.")
     if new_slot.Id == token.TimeSlotId:
         return token_dto(db, token)
-    if midnight(new_slot.SlotDate) < midnight(utc_now()):
+    if slot_has_started(new_slot.SlotDate, new_slot.StartTime):
         raise BadRequest("Cannot reschedule to a time slot in the past.")
     if new_slot.BookedCount >= new_slot.Capacity:
         raise Conflict("The selected time slot is full.")
@@ -153,7 +154,7 @@ def cancel(db: Session, actor: Actor, token_id: int) -> None:
 def today_queue(db: Session, actor: Actor) -> list[dict]:
     if actor.ration_shop_id is None:
         raise BadRequest("Your account is not linked to a ration shop.")
-    today = midnight(utc_now())
+    today = business_today()
     rows = db.execute(
         select(Token, TimeSlot.StartTime).join(TimeSlot, TimeSlot.Id == Token.TimeSlotId)
         .where(Token.RationShopId == actor.ration_shop_id, TimeSlot.SlotDate >= today, TimeSlot.SlotDate < today + timedelta(days=1))

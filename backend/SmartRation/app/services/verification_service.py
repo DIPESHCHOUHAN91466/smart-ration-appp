@@ -49,7 +49,7 @@ from app.services.mappers import (
 )
 from app.utils.dotnet import enum_name, hhmm, midnight
 from app.utils.masking import mask_mobile
-from app.utils.time import utc_now
+from app.utils.time import business_today, utc_now
 
 SOURCE = "SYNTHETIC_DEMO"
 READY, BLOCKED = "READY_FOR_RATION_COLLECTION", "COLLECTION_BLOCKED"
@@ -165,7 +165,7 @@ def _summary(beneficiary: Beneficiary, token: Token, slot: TimeSlot, aadhaar: Aa
     aadhaar_ok = aadhaar.Status == AadhaarVerificationStatus.Verified
     passbook_ok = passbook.VerificationStatus == PassbookVerificationStatus.Verified
     mobile_ok = mobile.Status == MobileVerificationStatus.Verified
-    past = midnight(slot.SlotDate) < midnight(utc_now())
+    past = midnight(slot.SlotDate) < business_today()   # the booked day (Asia/Kolkata) has ended
     token_valid = token.Status == TokenStatus.Confirmed and not past
     family_eligible = entitlement["eligibleMemberCount"] > 0
     entitlement_available = any(i["todayAllocation"] > 0 for i in entitlement["items"])
@@ -270,7 +270,7 @@ def verify_beneficiary_at_shop(db: Session, actor: Actor, beneficiary_id: int, s
     user_id = db.scalar(select(Beneficiary.UserId).where(Beneficiary.Id == beneficiary_id))
     if not user_id:
         raise NotFound("Beneficiary not found.")
-    today = midnight(utc_now())
+    today = business_today()
     candidates = db.execute(
         select(Token, TimeSlot.SlotDate).join(TimeSlot, TimeSlot.Id == Token.TimeSlotId)
         .where(Token.UserId == user_id, Token.RationShopId == shop_id, Token.Status == int(TokenStatus.Confirmed))

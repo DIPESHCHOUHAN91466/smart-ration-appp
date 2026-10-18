@@ -39,7 +39,7 @@ from app.database.models import (
     VerificationAuditLog,
 )
 from app.utils.dotnet import dt, num, one_decimal, qty_text, ymd_hm
-from app.utils.time import utc_now
+from app.utils.time import business_today, utc_now
 
 AVERAGE_MINUTES_PER_COLLECTION = 4   # documented stand-in for a measured per-collection counter time
 
@@ -98,7 +98,7 @@ def inventory_risks(db: Session, shop_id: int | None = None) -> list[dict]:
 
 
 def queue_predictions(db: Session, shop_id: int | None = None) -> list[dict]:
-    today = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = business_today()
     q = select(RationShop).where(RationShop.IsActive.is_(True))
     if shop_id is not None:
         q = q.where(RationShop.Id == shop_id)

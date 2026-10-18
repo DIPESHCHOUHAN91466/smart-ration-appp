@@ -49,13 +49,13 @@ from app.database.models import (
 from app.services import verification_audit_service
 from app.services.mappers import inventory_dto
 from app.utils.dotnet import dt, enum_name, num, ymd, ymd_hm
-from app.utils.time import utc_now
+from app.utils.time import business_day_utc, business_to_utc, business_today
 
 PENDING = (int(TokenStatus.Pending), int(TokenStatus.Confirmed))
 
 
 def _today() -> datetime:
-    return utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
+    return business_today()   # the shops' date (Asia/Kolkata), the form TimeSlot.SlotDate is stored in
 
 
 def _day_range(q: Select, column, start: datetime, end_inclusive: datetime) -> Select:
@@ -67,8 +67,10 @@ def _day_range(q: Select, column, start: datetime, end_inclusive: datetime) -> S
 def dashboard(db: Session) -> dict:
     today = _today()
     statuses = db.scalars(_day_range(select(Token.Status).join(TimeSlot, TimeSlot.Id == Token.TimeSlotId), TimeSlot.SlotDate, today, today)).all()
-    distributed = db.scalars(_day_range(select(TokenItem.Quantity).join(Token, Token.Id == TokenItem.TokenId)
-                                        .where(Token.Status == int(TokenStatus.Completed)), Token.CollectedAt, today, today)).all()
+    day_start, day_end = business_day_utc(today)   # CollectedAt is UTC: today's Asia/Kolkata bounds in UTC
+    distributed = db.scalars(select(TokenItem.Quantity).join(Token, Token.Id == TokenItem.TokenId)
+                             .where(Token.Status == int(TokenStatus.Completed), Token.CollectedAt >= day_start,
+                                    Token.CollectedAt < day_end)).all()
     return {
         "totalBeneficiaries": db.scalar(select(func.count()).select_from(User).where(User.Role == int(UserRole.RuralUser), User.IsActive.is_(True))) or 0,
         "totalShops": db.scalar(select(func.count()).select_from(RationShop).where(RationShop.IsActive.is_(True))) or 0,
@@ -81,9 +83,17 @@ def dashboard(db: Session) -> dict:
 
 
 def normalize_range(from_date: datetime | None, to_date: datetime | None) -> tuple[datetime, datetime]:
-    to = (to_date or utc_now()).replace(hour=0, minute=0, second=0, microsecond=0)
+    """Report ranges are Indian calendar days (Asia/Kolkata), both ends included; the default is the last 30 days up to
+    today in India. Only the date of each value counts (parse_date drops any time and offset)."""
+    to = (to_date or business_today()).replace(hour=0, minute=0, second=0, microsecond=0)
     start = (from_date or to - timedelta(days=29)).replace(hour=0, minute=0, second=0, microsecond=0)
     return (start, to) if start <= to else (to, start)
+
+
+def _timestamp_range(q: Select, column, start: datetime, end_inclusive: datetime) -> Select:
+    """Timestamps (stored in UTC) that fall on the Indian calendar days start..end_inclusive: [00:00 IST on `start`,
+    00:00 IST on the day after `end_inclusive`), converted to UTC. Half-open, so adjacent ranges never share an event."""
+    return q.where(column >= business_to_utc(start), column < business_to_utc(end_inclusive + timedelta(days=1)))
 
 
 def _percent(part: int, whole: int) -> float:
@@ -92,7 +102,7 @@ def _percent(part: int, whole: int) -> float:
 
 def statistics(db: Session, from_date: datetime | None, to_date: datetime | None) -> dict:
     start, end = normalize_range(from_date, to_date)
-    rows = db.execute(_day_range(select(Token.RationShopId, Token.Status, RationShop.ShopName)
+    rows = db.execute(_timestamp_range(select(Token.RationShopId, Token.Status, RationShop.ShopName)
                                  .join(RationShop, RationShop.Id == Token.RationShopId), Token.CreatedAt, start, end).order_by(Token.Id)).all()
     completed = sum(1 for _, s, _ in rows if s == TokenStatus.Completed)
     shops: dict[int, dict] = {}
@@ -109,8 +119,8 @@ def statistics(db: Session, from_date: datetime | None, to_date: datetime | None
 
 def reports(db: Session, from_date: datetime | None, to_date: datetime | None) -> list[dict]:
     start, end = normalize_range(from_date, to_date)
-    statuses = db.scalars(_day_range(select(Token.Status), Token.CreatedAt, start, end)).all()
-    verifications = db.scalar(_day_range(select(func.count()).select_from(AuditLog).where(AuditLog.Action == "COLLECTION_COMPLETED"),
+    statuses = db.scalars(_timestamp_range(select(Token.Status), Token.CreatedAt, start, end)).all()
+    verifications = db.scalar(_timestamp_range(select(func.count()).select_from(AuditLog).where(AuditLog.Action == "COLLECTION_COMPLETED"),
                                          AuditLog.CreatedAt, start, end)) or 0
 
     def report(name: str, description: str, count: int) -> dict:
