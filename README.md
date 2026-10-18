@@ -167,7 +167,7 @@ smart-ration-appp/
 ├── backend/
 │   ├── SmartRation/           # Production Python FastAPI backend (:8000)
 │   │   ├── app/               # API routes, auth, database models, services, security, workers
-│   │   ├── migrations/        # Alembic database migrations (0001 to 0004)
+│   │   ├── migrations/        # Alembic database migrations (0001 to 0007)
 │   │   ├── scripts/           # DB setup, schema verification, seeding, integrity checks
 │   │   ├── tests/             # Pytest unit, API, integration, and security suites
 │   │   └── Dockerfile         # Multi-stage production Dockerfile (React + FastAPI)
@@ -255,13 +255,14 @@ Access the services in your browser:
 
 ## Default Demo Credentials
 
-In synthetic data mode (`DATA_MODE=synthetic`), the following pre-seeded test accounts are available:
+In synthetic data mode (`DATA_MODE=synthetic`), `scripts/seed_database.py` creates these accounts when you set
+`SEED_DEMO_PASSWORD` locally (never commit it; there is no default password):
 
 | Persona | Email | Password | Role | Primary Capabilities |
 |---|---|---|---|---|
-| **Citizen (Rural User)** | `rural@example.com` | `demo123` | `RuralUser` | Book slots, view family entitlements, view signed QR token |
-| **FPS Dealer / Shop Owner** | `shop@example.com` | `demo123` | `ShopOwner` | Camera QR scanning, OTP verification, stock ledger |
-| **Government Official** | `officer@example.com` | `demo123` | `GovernmentOfficial` | GIS district map, stockout alerts, grievance redressal |
+| **Citizen (Rural User)** | `rural@example.com` | your `SEED_DEMO_PASSWORD` | `RuralUser` | Book slots, view family entitlements, view signed QR token |
+| **FPS Dealer / Shop Owner** | `shop@example.com` | your `SEED_DEMO_PASSWORD` | `ShopOwner` | Camera QR scanning, OTP verification, stock ledger |
+| **Government Official** | `officer@example.com` | your `SEED_DEMO_PASSWORD` | `GovernmentOfficial` | GIS district map, stockout alerts, grievance redressal |
 
 ---
 

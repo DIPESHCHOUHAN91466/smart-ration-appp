@@ -5,6 +5,7 @@ ration-card profile) with **no pause between requests**. Read-only; it signs in 
 Never run it against production.
 
 ```powershell
+$env:E2E_DEMO_PASSWORD = '<the SEED_DEMO_PASSWORD you seeded locally>'   # required; never the old public default
 backend\SmartRation\.venv\Scripts\python tests\load\load_test.py --base-url http://127.0.0.1:8000 --users 10 50 100 250 500
 ```
 

@@ -2,7 +2,7 @@
 
     backend/SmartRation/.venv/Scripts/python tests/load/load_test.py --base-url http://127.0.0.1:8000 --users 10 50 100
 
-Signs in once as the demo citizen (password from E2E_DEMO_PASSWORD, or the README row when run locally) and reuses
+Signs in once as the demo citizen (password from E2E_DEMO_PASSWORD, required) and reuses
 that access token, so the sign-in rate limit is not what gets measured. Read-only: it creates no data.
 Only for local or staging servers; never point it at production.
 """
@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import os
-import re
 import statistics
 import time
 from pathlib import Path
@@ -27,10 +26,11 @@ PATHS = ["/api/notifications", "/api/ration/bookings", "/api/beneficiaries/me"]
 
 
 def demo_password() -> str:
-    if os.environ.get("E2E_DEMO_PASSWORD"):
-        return os.environ["E2E_DEMO_PASSWORD"]
-    row = next(line for line in (ROOT / "README.md").read_text(encoding="utf-8").splitlines() if f"`{CITIZEN}`" in line)
-    return re.findall(r"`([^`]+)`", row)[1]
+    # Only from the environment: the old default demo password is public and must not be used anywhere.
+    value = os.environ.get("E2E_DEMO_PASSWORD")
+    if not value:
+        raise SystemExit("Set E2E_DEMO_PASSWORD to the demo citizen's password (the SEED_DEMO_PASSWORD you seeded with).")
+    return value
 
 
 async def user(client: httpx.AsyncClient, token: str, until: float, times: list[float], errors: list[str]) -> None:

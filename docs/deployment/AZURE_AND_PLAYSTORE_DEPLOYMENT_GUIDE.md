@@ -261,8 +261,8 @@ Upload required visual assets:
    - Security: Data is encrypted in transit over HTTPS/TLS; users can request data export and deletion.
    - Third-Party Sharing: None. No advertising or commercial tracking.
 3. **App Access**: Provide demo credentials for Google reviewers:
-   - Rural Citizen: `rural@example.com` / `demo123`
-   - Shop Owner: `shop@example.com` / `demo123`
+   - Rural Citizen: `rural@example.com` / the `SEED_DEMO_PASSWORD` you set
+   - Shop Owner: `shop@example.com` / the `SEED_DEMO_PASSWORD` you set
 
 ### Step 5.5: Testing & Production Rollout
 1. **Internal Testing**: Upload `app-release.aab` to the Internal Testing track and test on your physical Android devices.
