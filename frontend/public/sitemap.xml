@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Public pages only (see robots.txt). If the site moves to another address, update these URLs. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://smartration-api-prod.azurewebsites.net/</loc></url>
+  <url><loc>https://smartration-api-prod.azurewebsites.net/help</loc></url>
+  <url><loc>https://smartration-api-prod.azurewebsites.net/privacy</loc></url>
+  <url><loc>https://smartration-api-prod.azurewebsites.net/terms</loc></url>
+  <url><loc>https://smartration-api-prod.azurewebsites.net/accessibility</loc></url>
+</urlset>

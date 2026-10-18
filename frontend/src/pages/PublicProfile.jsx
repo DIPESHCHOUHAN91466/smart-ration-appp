@@ -21,6 +21,15 @@ export default function PublicProfile() {
 
   useEffect(load, [publicReference]);
 
+  // A beneficiary's badge is reachable by its link only: never in search results (robots.txt also disallows /profile/).
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+    return () => meta.remove();
+  }, []);
+
   return (
     <div className="login-page" style={{ gridTemplateColumns: "1fr" }}>
       <div className="login-card-wrap">

@@ -1,0 +1,15 @@
+# Ration Mitra (Smart Ration HSD2C): the public pages may be indexed. Signed-in areas, the API and personal pages may
+# not. If the site moves to another address, update the Sitemap line and sitemap.xml.
+User-agent: *
+Disallow: /api/
+Disallow: /profile/
+Disallow: /beneficiary/
+Disallow: /rural
+Disallow: /shop
+Disallow: /gov
+Disallow: /settings
+Disallow: /status
+Disallow: /forgot-password
+Allow: /
+
+Sitemap: https://smartration-api-prod.azurewebsites.net/sitemap.xml
