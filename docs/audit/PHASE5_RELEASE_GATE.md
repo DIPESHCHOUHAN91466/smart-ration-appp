@@ -1070,3 +1070,140 @@ and **staging** (the option is still to be chosen).
   server (no extra MySQL cost), with its own account and only synthetic data.
 
 Prices: the Azure pricing calculator for Central India (not quoted here).
+
+
+## V. Round 12 — 2026-10-18: commit 16, push, staging option B
+
+### Commit 16: PASS — VERIFIED
+
+- `32e242e feat(staff): apply to work as a shop owner or official; Admin approves with a reason (migration 0009)`.
+- Exactly the 25 planned files; the scan found no secret-like lines and no artifacts.
+- Made through a temporary index; afterwards only the 5 owner files differ from HEAD. The owner's staged
+  `session.spec.js` is unchanged (fingerprint `1394c27cd316dd2a`).
+
+### Push: PASS — VERIFIED
+
+- `git push origin audit-and-deploy`: `dd56f43..32e242e`, a fast-forward (no force).
+- GitHub `audit-and-deploy` = `32e242e`; the local branch is in sync.
+- The live production commit `8d7f2a5` is now on GitHub.
+
+### Staging (owner chose option B): resources created, deploy waiting for the database account
+
+**Created** (billable; approved):
+- App Service plan `ASP-SmartRation-staging` (B1 Linux, India South Central, the same region as production);
+- web app `smartration-api-staging` → https://smartration-api-staging.azurewebsites.net (Python 3.13; empty until
+  deployed);
+- database `smartration_staging` (utf8mb4 / utf8mb4_0900_ai_ci) on the existing server `smartration-ai`, so no extra
+  MySQL cost.
+
+**Database firewall:**
+- The staging app's 31 possible outbound addresses are **identical to production's** (same Azure scale unit), so they
+  are already allowed. No firewall change was needed.
+- Isolation comes from the separate database and separate accounts.
+
+**Accounts:**
+- `database/schema/azure-staging-accounts.sql` creates `smartration_stg_migrator` (all rights on
+  `smartration_staging` only) and `smartration_stg_app` (rows only on `smartration_staging`), both `REQUIRE SSL`.
+- **The owner runs it** as the server admin, because the admin password is the owner's.
+
+**Package:**
+- `build/azure/smartration-app.zip` built from commit **`32e242e`** (232 files; contains 0009, robots.txt and
+  sitemap.xml; no `.env` or account files). SHA-256 `4cebb9db38b1d261088733e29dd7c0cdbe06ddc468c400551d741843d2906b6f`.
+- **Production rollback artifact** kept: `build/azure/smartration-app.8d7f2a5.zip` (the package production runs),
+  SHA-256 `7a2d58aa9bf8730fccb952a41e69e01f97e2e0eae53ae98ed24b8b2878e0e00d`.
+
+### Defect fixed: DEPLOY-01 (Low)
+
+- **Cause:** `scripts/azure/deploy.ps1` always wrote the generated demo password to
+  `build/azure/demo-accounts.txt`, whatever `-AppName` was. A staging deploy would have overwritten the owner's record
+  of the **production** demo password.
+- **Fix:** production keeps that file; any other app writes `build/azure/demo-accounts.<AppName>.txt`. The script
+  parses cleanly. Found before any staging deploy ran.
+
+### Uncommitted (commit 17 proposal; AWAITING APPROVAL)
+
+- `scripts/azure/deploy.ps1` (DEPLOY-01);
+- `database/schema/azure-staging-accounts.sql`;
+- `docs/audit/PHASE5_RELEASE_GATE.md` (this section).
+
+### Notes
+
+- **Search engines:** the staging URL is public, and its `robots.txt` is the production one (it allows public pages).
+  Do not link to staging anywhere. A future option is a per-environment robots answer (`Disallow: /` outside
+  production).
+- **Cost:** the staging plan bills while it exists, even when idle. Deleting `ASP-SmartRation-staging` and
+  `smartration-api-staging` stops it; the empty database costs nothing extra on the shared server.
+
+
+## W. Round 13 — 2026-10-18: staging tooling audit (Phase 1–4 of the staging prompt)
+
+**State:**
+- HEAD `32e242e`, in sync with GitHub.
+- Staged: only the owner's `tests/e2e/session.spec.js` (fingerprint `1394c27cd316dd2a`).
+- `backend/SmartRation/.env.azure-staging` does **not** exist yet; it is git-ignored by `.env.*`.
+- No `.env` file is tracked by Git (checked: `git ls-files`).
+
+### DEPLOY-02 (High for staging safety): FIXED before any staging deploy
+
+`scripts/azure/deploy.ps1` had three defects for a second app:
+1. `-DatabaseUrlFile` **defaulted to production's database file**, so `-AppName smartration-api-staging` without
+   `-DatabaseUrlFile` would have pointed staging at the **production database**.
+2. It always set `ENVIRONMENT=production`.
+3. It passed one database URL only, so staging would have run day-to-day on the account that may change tables.
+
+**Fix:**
+- Per-app default files (production `.env.azure-local-copy`, staging `.env.azure-staging`); any other app must name
+  its file.
+- The app name decides `ENVIRONMENT` (`smartration-api-prod` = production, anything else = staging).
+- Every URL in the file must point at that app's own database (`smartration` / `smartration_staging`), or the script
+  stops **before any setting is changed**. URLs are never printed.
+- Optional `MIGRATION_DATABASE_URL`, **required for staging** and with a different account from `DATABASE_URL`.
+  The app already uses it for migrations only (`Settings.schema_database_url`).
+- Production behaviour is unchanged (one URL still allowed; production can never use `smartration_staging`).
+
+**Test:** `tests/integration/test_deploy_script.py` (5) runs the real script with a fake `az` stub on PATH, from a
+copy in a temporary folder:
+- staging on the production database is refused with no settings call;
+- a missing or same migration account is refused;
+- an unknown app without a file is refused;
+- staging gets `ENVIRONMENT=staging` and both URLs on `smartration_staging`;
+- production is unchanged;
+- no URL appears in the output;
+- the real `build/azure/demo-accounts.txt` is untouched (asserted).
+
+### Incident during testing (own mistake; recovered and verified)
+
+- The first version of that test ran the script from the repository, so the script's own demo-password step wrote
+  `build/azure/demo-accounts.txt` with a fake password (15:02:56).
+- **Restored** at 15:03:31 from production's Azure app setting `SEED_DEMO_PASSWORD`, which was never changed. The
+  value was not displayed.
+- **Verified:** the restored password is exactly the one the live website shows (found in the live bundle).
+- The test now runs from a temporary copy and asserts the real file's timestamp is unchanged.
+- **Production was not affected at any time.**
+
+### Staging accounts script, hardened
+
+`database/schema/azure-staging-accounts.sql`:
+- The passwords are typed once at the top.
+- A guard **stops the script with error 1242 before creating anything** if a password is still `CHANGE_ME`, shorter
+  than 16 characters, contains anything but letters, digits, `-` and `_` (so it is URL-safe), or both are the same.
+  Tested on local MySQL: 5 bad cases stopped, valid passwords accepted.
+- `CREATE USER` runs through `PREPARE` with `QUOTE()` (tested to round-trip).
+- `smartration_stg_migrator` gets ALL on `smartration_staging.*`; `smartration_stg_app` gets
+  SELECT/INSERT/UPDATE/DELETE on `smartration_staging.*`. Both `REQUIRE SSL`; no access to `smartration`.
+- The session variables are cleared after use, and `SHOW GRANTS` checks follow.
+- `CREATE USER` and `GRANT` themselves need the Azure admin and are **not yet run**.
+
+### Staging environment behaviour
+
+- `ENVIRONMENT=staging` gets every production start-up rule (`production_problems`).
+- Its session cookie is still `Secure`: the edge middleware takes the scheme from Azure's `X-Forwarded-Proto`, and
+  App Service is HTTPS-only.
+- The only intended difference: the app adds no HSTS header outside `production` (an existing, tested design choice).
+
+### Proposed commit 17: AWAITING APPROVAL
+
+- `scripts/azure/deploy.ps1` (DEPLOY-01 + DEPLOY-02);
+- `database/schema/azure-staging-accounts.sql`;
+- `backend/SmartRation/tests/integration/test_deploy_script.py`;
+- `docs/audit/PHASE5_RELEASE_GATE.md` (sections V and W).
