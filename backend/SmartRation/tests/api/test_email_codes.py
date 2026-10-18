@@ -101,3 +101,42 @@ def test_with_a_real_sms_gateway_a_failed_email_still_counts_as_sent(monkeypatch
     monkeypatch.setattr(otp_service, "send_sms", lambda settings, phone, text: otp_service.SmsResult(True, "Http"))
     api = client(make_client, sms_provider="http", **SMTP)
     assert ask(api).status_code == 200
+
+
+# ---------------------------------------------------------------- the live demo's configuration (2026-10-17, DEF-04)
+# production + synthetic data + mock SMS (SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true). Before the fix the mock counted as
+# "sent" without SMTP: the API answered 200, the code stayed valid, and nobody ever received it.
+
+LIVE_DEMO = {"environment": "production", "data_mode": "synthetic", "sms_allow_mock_outside_development": True}
+
+
+def test_live_demo_without_smtp_refuses_code_requests_the_same_way_for_every_number(make_client):
+    api = client(make_client, **LIVE_DEMO)
+    answers = []
+    for path in ("/api/auth/password/reset/request", "/api/auth/otp/request"):
+        for mobile in ("9000000001", "9000000099"):                      # a real account and an unknown number
+            r = api.post(path, json={"mobileNumber": mobile})
+            answers.append((r.status_code, r.json()["errorCode"], r.json()["message"]))
+    assert set(answers) == {(503, "SMS_UNAVAILABLE", otp_service.NO_DELIVERY)}   # identical: nothing to enumerate
+    with get_session_factory()() as db:
+        assert db.scalars(select(PasswordResetCode)).all() == []          # no code created that nobody could receive
+    assert FakeSmtp.calls == []
+
+
+def test_live_demo_with_smtp_sends_the_code_by_email(make_client):
+    api = client(make_client, **LIVE_DEMO, **SMTP)
+    assert ask(api).status_code == 200
+    (mail,) = FakeSmtp.sent
+    assert mail["To"] == "rural@example.com"
+
+
+def test_live_demo_with_smtp_but_no_email_on_the_account_cancels_the_code(make_client):
+    api = client(make_client, **LIVE_DEMO, **SMTP)
+    with get_session_factory()() as db:
+        db.get(User, 1).Email = ""
+        db.commit()
+    r = ask(api)
+    assert r.status_code == 503 and r.json()["errorCode"] == "SMS_UNAVAILABLE"
+    with get_session_factory()() as db:
+        assert db.scalars(select(PasswordResetCode.Status)).all() == [int(OtpStatus.Failed)]   # never usable
+    assert FakeSmtp.sent == []

@@ -88,6 +88,7 @@ def _pending(db: Session, user_id: int, *, lock: bool = False) -> list[PasswordR
 
 def request_reset(db: Session, settings: Settings, ctx: RequestContext, raw_mobile: str) -> dict:
     mobile = normalize_mobile(raw_mobile)
+    otp_service.ensure_delivery_available(settings)   # same refusal for every number, before any lookup
     answer = {
         "mobileMasked": mask_mobile(mobile),
         "expiresInSeconds": settings.otp_expiry_minutes * 60,

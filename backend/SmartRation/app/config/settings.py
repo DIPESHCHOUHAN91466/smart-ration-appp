@@ -213,6 +213,12 @@ class Settings(BaseSettings):
         return (not self.is_development and self.sms_provider.lower() != "http"
                 and self.sms_allow_mock_outside_development and self.data_mode.lower() == "synthetic")
 
+    @property
+    def code_delivery_available(self) -> bool:
+        """Can a one-time code reach a person? In development the mock SMS (and the demo OTP) stand in; elsewhere it
+        takes a real SMS gateway or SMTP e-mail. The synthetic public demo without SMTP has neither."""
+        return self.is_development or self.sms_provider.lower() == "http" or bool(self.smtp_host.strip())
+
     def production_problems(self) -> list[str]:
         """Start-up refusals outside development: no fixed demo OTP, no silent mock SMS provider
         (a synthetic-data public demo may opt in to the mock with SMS_ALLOW_MOCK_OUTSIDE_DEVELOPMENT=true)."""

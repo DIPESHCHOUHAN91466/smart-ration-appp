@@ -78,12 +78,25 @@ def send_email(settings: Settings, to: str, subject: str, text: str) -> SmsResul
     return SmsResult(True, "Email")
 
 
+NO_DELIVERY = "One-time codes cannot be sent on this site yet. Please sign in with your password."
+
+
+def ensure_delivery_available(settings: Settings) -> None:
+    """Refuse a code request up front when nothing could deliver it (no SMS gateway, no SMTP, not development).
+    Checked before any account lookup, so the answer is the same for every number (no account enumeration)."""
+    if not settings.code_delivery_available:
+        raise ServiceUnavailable(NO_DELIVERY, "SMS_UNAVAILABLE")
+
+
 def deliver_code(settings: Settings, user: User, subject: str, text: str) -> SmsResult:
     """Sends a one-time code by SMS and, when SMTP is configured, also to the account's e-mail.
     With a real SMS gateway either channel is enough. With the mock SMS (no gateway: the synthetic demo) the
-    e-mail is the only real delivery, so the code counts as sent only if the e-mail went out."""
+    e-mail is the only real delivery, so the code counts as sent only if the e-mail went out. Outside development
+    the mock alone never counts as sent: nobody would receive the code."""
     sms = send_sms(settings, user.MobileNumber, text)
     if not settings.smtp_host.strip() or not (user.Email or "").strip():
+        if sms.provider == "Mock" and not settings.is_development:
+            return SmsResult(False, "Mock", "No SMS gateway or e-mail for this account.")
         return sms
     mail = send_email(settings, user.Email, subject, text)
     if settings.sms_provider.lower() == "http":
@@ -104,6 +117,7 @@ def request_for_mobile(db: Session, settings: Settings, mobile: str, requested_b
 
 
 def request(db: Session, settings: Settings, beneficiary_id: int, requested_by: int) -> OtpVerification:
+    ensure_delivery_available(settings)
     beneficiary = db.get(Beneficiary, beneficiary_id)
     if beneficiary is None:
         raise NotFound("Beneficiary not found.")
