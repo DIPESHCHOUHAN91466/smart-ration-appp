@@ -8,8 +8,9 @@ export function createBooking(payload) {
   return unwrap(apiClient.post("/ration/bookings", payload));
 }
 
-export function getBookings() {
-  return unwrap(apiClient.get("/ration/bookings"));
+/** My / my shop's / all bookings, newest first. Optional `{ status, q, limit, offset }` filter and page on the server. */
+export function getBookings(params) {
+  return unwrap(apiClient.get("/ration/bookings", params ? { params } : undefined));
 }
 
 export function getBooking(id) {

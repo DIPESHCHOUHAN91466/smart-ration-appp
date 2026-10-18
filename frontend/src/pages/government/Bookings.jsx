@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import StatusBadge from "../../components/StatusBadge";
@@ -6,30 +6,37 @@ import { EmptyState, ErrorState, LoadingState } from "../../components/EmptyStat
 import { getBookings } from "../../services/rationService";
 
 const STATUS_FILTERS = ["All", "Pending", "Confirmed", "Completed", "Cancelled"];
+// The newest bookings matching the filters, filtered and searched on the server: an official's full list grows with
+// every booking ever made, so it is never downloaded whole.
+export const PAGE_LIMIT = 500;
 
 export default function Bookings() {
   const [bookings, setBookings] = useState(null);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
+  const [query, setQuery] = useState("");
 
-  const load = () => {
+  useEffect(() => {
+    const timer = setTimeout(() => setQuery(search.trim()), 300);   // search after a pause in typing
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const load = useCallback(() => {
     setError("");
     setBookings(null);
-    getBookings()
-      .then((data) => data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+    const params = { limit: PAGE_LIMIT };
+    if (status !== "All") params.status = status;
+    if (query) params.q = query;
+    getBookings(params)
       .then(setBookings)
       .catch((err) => setError(err.message));
-  };
+  }, [status, query]);
 
-  useEffect(load, []);
+  useEffect(load, [load]);
 
-  const filtered = (bookings || []).filter((b) => {
-    const matchesStatus = status === "All" || b.status === status;
-    const q = search.toLowerCase();
-    const matchesSearch = !q || b.tokenNumber.toLowerCase().includes(q) || b.userName.toLowerCase().includes(q) || b.rationShopName.toLowerCase().includes(q);
-    return matchesStatus && matchesSearch;
-  });
+  const filtered = bookings || [];
+  const filtering = status !== "All" || query !== "";
 
   return (
     <>
@@ -37,7 +44,14 @@ export default function Bookings() {
       <section className="panel">
         <div className="table-toolbar">
           <div>
-            <b>{filtered.length} booking(s)</b>
+            <b>
+              {filtered.length === PAGE_LIMIT ? `Newest ${PAGE_LIMIT}` : filtered.length} booking(s)
+            </b>
+            {filtered.length === PAGE_LIMIT && (
+              <p className="muted" role="note">
+                Showing the newest {PAGE_LIMIT}. Search or choose a status to find older bookings.
+              </p>
+            )}
           </div>
           <div style={{ display: "flex", gap: 10 }}>
             <select className="small-select" value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -56,7 +70,8 @@ export default function Bookings() {
 
         {error && <ErrorState text={error} onRetry={load} />}
         {!error && bookings === null && <LoadingState text="Loading bookings..." />}
-        {!error && bookings?.length === 0 && <EmptyState title="No bookings yet" text="No ration bookings have been made yet." />}
+        {!error && bookings?.length === 0 && !filtering && <EmptyState title="No bookings yet" text="No ration bookings have been made yet." />}
+        {!error && bookings?.length === 0 && filtering && <EmptyState title="No matching bookings" text="Try another search or status." />}
 
         {filtered.length > 0 && (
           <div className="table-wrap">

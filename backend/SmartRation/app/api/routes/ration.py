@@ -70,8 +70,11 @@ def generate_token(request: Request, body: Body = Depends(json_body), who: Actor
 
 
 @router.get("/ration/bookings", summary="My bookings / my shop's bookings / all bookings (by role)")
-def list_bookings(who: Actor = Depends(any_user), db: Session = Depends(get_db)):
-    return ok(booking_service.list_for(db, who))
+def list_bookings(status: str | None = None, q: str | None = None, limit: int | None = None, offset: int = 0,
+                  who: Actor = Depends(any_user), db: Session = Depends(get_db)):
+    """Optional: `status` (Pending/Confirmed/Completed/Cancelled), `q` (token number, person or shop name), and
+    `limit` (1-2000) with `offset` for paging, newest first. Without them, every booking in the caller's scope."""
+    return ok(booking_service.list_for(db, who, status, q, limit, offset))
 
 
 @router.get("/ration/bookings/{booking_id}", summary="One booking")

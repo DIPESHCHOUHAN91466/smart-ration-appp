@@ -15,13 +15,13 @@ from __future__ import annotations
 from datetime import timedelta
 from decimal import Decimal
 
-from sqlalchemy import select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.auth import Actor
 from app.core.errors import BadRequest, Conflict, Forbidden, NotFound
 from app.database.enums import NotificationType, RationType, TokenStatus, UserRole, parse_enum
-from app.database.models import Inventory, RationItem, RationShop, TimeSlot, Token, TokenItem
+from app.database.models import Inventory, RationItem, RationShop, TimeSlot, Token, TokenItem, User
 from app.services import audit_service, notification_service
 from app.services.mappers import token_dto, token_dtos
 from app.services.qr_service import compute_reference
@@ -101,13 +101,34 @@ def create(db: Session, secret: str, actor: Actor, shop_id: int, slot_id: int, i
     return token_dto(db, token)
 
 
-def list_for(db: Session, actor: Actor) -> list[dict]:
+LIST_MAX = 2000   # the most rows one page may ask for
+
+
+def list_for(db: Session, actor: Actor, status: str | None = None, search: str | None = None,
+             limit: int | None = None, offset: int = 0) -> list[dict]:
+    """Newest first, scoped by role. Without filters or `limit` it returns every row in scope (unchanged contract);
+    staff screens pass `limit` and filter/search here instead of downloading everything (an official's full list
+    grows with every booking ever made)."""
     q = select(Token)
     if actor.role == UserRole.RuralUser:
         q = q.where(Token.UserId == actor.user_id)
     elif actor.role == UserRole.ShopOwner:
         q = q.where(Token.RationShopId == actor.ration_shop_id)
-    return token_dtos(db, db.scalars(q.order_by(Token.CreatedAt.desc(), Token.Id.desc())).all())
+    if status and status.strip() and status.strip().lower() != "all":
+        parsed = parse_enum(TokenStatus, status.strip())
+        if parsed is None:
+            raise BadRequest("Unknown booking status filter.", "INVALID_STATUS")
+        q = q.where(Token.Status == int(parsed))
+    if search and search.strip():
+        text = search.strip().lower().replace("!", "!!").replace("%", "!%").replace("_", "!_")
+        term = f"%{text}%"   # a literal "contains": % and _ typed by the user are not wildcards
+        q = q.where(or_(func.lower(Token.TokenNumber).like(term, escape="!"),
+                        Token.UserId.in_(select(User.Id).where(func.lower(User.FullName).like(term, escape="!"))),
+                        Token.RationShopId.in_(select(RationShop.Id).where(func.lower(RationShop.ShopName).like(term, escape="!")))))
+    q = q.order_by(Token.CreatedAt.desc(), Token.Id.desc())
+    if limit is not None:
+        q = q.offset(max(offset, 0)).limit(min(max(limit, 1), LIST_MAX))
+    return token_dtos(db, db.scalars(q).all())
 
 
 def get(db: Session, actor: Actor, token_id: int) -> dict:
