@@ -99,7 +99,9 @@ def shop_insight(shop_id: int, who: Actor = Depends(staff), db: Session = Depend
 
 
 @router.get("/ai/beneficiaries/{beneficiary_id}/insight", summary="One beneficiary's risk summary")
-def beneficiary_insight(beneficiary_id: int, who: Actor = Depends(actor()), db: Session = Depends(get_db)):
+def beneficiary_insight(beneficiary_id: int, who: Actor = Depends(staff), db: Session = Depends(get_db)):
+    # Staff only, like the full profile's aiInsight (c44e2f8): telling citizens what was flagged about them helps them
+    # avoid detection. Shop owners still see only beneficiaries of their shop (ensure_can_see).
     profile_service.ensure_can_see(db, who, beneficiary_id)
     return ok(ai_rules_service.beneficiary_insight(db, beneficiary_id))
 

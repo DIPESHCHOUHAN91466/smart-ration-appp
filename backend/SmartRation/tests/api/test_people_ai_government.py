@@ -181,6 +181,18 @@ def test_family_members_include_gender_when_recorded(env):
     assert member["gender"] in (None, "Male", "Female", "Other")
 
 
+def test_the_ai_insight_route_is_staff_only_like_the_profile(env):
+    """2026-10-17 (SEC-12): /ai/beneficiaries/{id}/insight gave citizens their own risk level and reasons, the same
+    signals c44e2f8 removed from their full profile."""
+    collect(env)
+    ben = my_beneficiary_id(env)
+    url = f"/api/ai/beneficiaries/{ben}/insight"
+    assert env["client"].get(url, headers=env["citizen"]).status_code == 403
+    assert env["client"].get(url, headers=env["other_shop"]).status_code == 403          # not this shop's beneficiary
+    assert env["client"].get(url, headers=env["shop"]).json()["data"]["riskLevel"] == "Low"
+    assert env["client"].get(url, headers=env["official"]).status_code == 200
+
+
 def test_full_profile_after_booking_and_collection(env):
     token = collect(env)
     book(env, slot_id=2)   # an upcoming booking tomorrow
