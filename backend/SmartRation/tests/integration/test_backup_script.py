@@ -24,6 +24,8 @@ STUB = """#!/bin/sh
 # stub mysqldump: records its arguments and the option file, writes a small dump
 printf '%s\\n' "$@" > "$STUB_LOG/args"
 for a in "$@"; do case "$a" in --defaults-extra-file=*) cp "${a#--defaults-extra-file=}" "$STUB_LOG/options" ;; --result-file=*) out="${a#--result-file=}" ;; esac; done
+ca="$(sed -n 's/^ssl-ca=//p' "$STUB_LOG/options")"
+[ -z "$ca" ] || cp "$ca" "$STUB_LOG/ca"
 printf 'CREATE TABLE t (id int);\\n' > "$out"
 [ "${STUB_PARTIAL:-}" = 1 ] || printf -- '-- Dump completed on 2026-09-28\\n' >> "$out"
 """
@@ -91,3 +93,71 @@ def test_retention_removes_only_old_backups_of_this_database(run):
 
 def test_the_script_uses_lf_line_endings():
     assert b"\r\n" not in Path(SCRIPT).read_bytes()
+
+
+# ---------------------------------------------------------------- TLS CA certificate (2026-10-17, DEF-11)
+# The application's MYSQL_SSL_CA holds the PEM *text*; this script historically took a *path* under the same name.
+# Both forms work now, MYSQL_SSL_CA_FILE (a path) is preferred and wins, and bad input stops the backup.
+
+PEM = "-----BEGIN CERTIFICATE-----\nTUlJQi1ub3QtYS1yZWFsLWNlcnRpZmljYXRl\n-----END CERTIFICATE-----"   # a dummy, not a certificate
+
+
+def _ca_line(run) -> str | None:
+    return next((line[len("ssl-ca="):] for line in (run.log / "options").read_text().splitlines() if line.startswith("ssl-ca=")), None)
+
+
+@pytest.fixture
+def ca_file(tmp_path):
+    path = tmp_path / "provider-ca.pem"
+    path.write_text(PEM + "\n", encoding="utf-8", newline="\n")
+    return path
+
+
+def test_without_a_ca_no_ssl_ca_line_is_written(run):
+    assert run().returncode == 0
+    assert _ca_line(run) is None
+
+
+def test_mysql_ssl_ca_file_is_passed_as_the_ca_path(run, ca_file):
+    result = run(MYSQL_SSL_CA_FILE=str(ca_file))
+    assert result.returncode == 0, result.stderr
+    assert _ca_line(run) == str(ca_file)
+
+
+def test_a_path_in_mysql_ssl_ca_still_works_as_before(run, ca_file):
+    result = run(MYSQL_SSL_CA=str(ca_file))
+    assert result.returncode == 0, result.stderr
+    assert _ca_line(run) == str(ca_file)
+
+
+def test_pem_text_in_mysql_ssl_ca_goes_to_a_private_temporary_file_that_is_removed(run):
+    result = run(MYSQL_SSL_CA=PEM)
+    assert result.returncode == 0, result.stderr
+    used = _ca_line(run)
+    assert used and not Path(used).exists()                                     # deleted when the script ended
+    assert (run.log / "ca").read_text().strip() == PEM                          # mysqldump got the whole certificate
+    assert "BEGIN CERTIFICATE" not in result.stdout + result.stderr             # never printed
+
+
+def test_mysql_ssl_ca_file_wins_when_both_are_set(run, ca_file):
+    assert run(MYSQL_SSL_CA_FILE=str(ca_file), MYSQL_SSL_CA=PEM).returncode == 0
+    assert _ca_line(run) == str(ca_file)
+
+
+@pytest.mark.parametrize("settings", [
+    {"MYSQL_SSL_CA_FILE": "/nonexistent/provider-ca.pem"},                      # missing file
+    {"MYSQL_SSL_CA": "/nonexistent/provider-ca.pem"},                           # missing file, old variable
+    {"MYSQL_SSL_CA": "-----BEGIN CERTIFICATE-----\ntruncated"},                 # incomplete PEM text
+])
+def test_a_missing_or_incomplete_ca_stops_the_backup(run, settings):
+    result = run(**settings)
+    assert result.returncode == 2 and not (run.log / "args").exists()           # mysqldump never ran
+    assert not list(run.backups.glob("*.gz"))
+    assert "truncated" not in result.stderr and "nonexistent" not in result.stderr   # values are not echoed
+
+
+def test_a_file_without_a_certificate_stops_the_backup(run, tmp_path):
+    junk = tmp_path / "not-a-cert.pem"
+    junk.write_text("hello\n", encoding="utf-8")
+    result = run(MYSQL_SSL_CA_FILE=str(junk))
+    assert result.returncode == 2 and not (run.log / "args").exists()

@@ -33,7 +33,7 @@ with the live one, and empties `smartration_test` again. The live database is on
 | Where | How | Schedule / retention |
 |---|---|---|
 | Local / Windows server | `scripts\database\backup.ps1` (credentials from `SMARTRATION_DB_USER` / `SMARTRATION_DB_PASSWORD`) | Before every migration, restore or manual SQL; copy files off the machine |
-| Linux server, cron or CI | `deployment/scripts/backup-mysql.sh` (`DB_*` variables, optional `MYSQL_SSL_CA`) | `KEEP_DAYS` (default 14) |
+| Linux server, cron or CI | `deployment/scripts/backup-mysql.sh` (`DB_*` variables; TLS CA optional: `MYSQL_SSL_CA_FILE` = path, preferred; `MYSQL_SSL_CA` = path or the PEM text the application uses; `_FILE` wins; a missing or incomplete certificate stops the backup) | `KEEP_DAYS` (default 14) |
 | Aiven (cloud) | The provider's automatic backups, plus `backup-mysql.sh` from a scheduled job for a copy outside Aiven | Daily; check the retention of the chosen plan in the Aiven console |
 
 All dumps: `mysqldump --single-transaction` (consistent, no locks), routines, triggers, events, utf8mb4, a

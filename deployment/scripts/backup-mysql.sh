@@ -7,7 +7,11 @@
 # Environment (nothing is read from files in the repository):
 #   DB_HOST (default 127.0.0.1)  DB_PORT (3306)  DB_NAME (smartration)  DB_USER  DB_PASSWORD
 #   BACKUP_DIR (default ./backups)   KEEP_DAYS (default 14; older backups of this database are deleted)
-#   MYSQL_SSL_CA   optional path to the provider's CA certificate (managed MySQL with TLS)
+#   MYSQL_SSL_CA_FILE  optional path to the provider's CA certificate (managed MySQL with TLS); preferred
+#   MYSQL_SSL_CA       also accepted: that path (as before), or the certificate's PEM text itself — the form the
+#                      application's MYSQL_SSL_CA setting uses, so one environment can serve both. When both are set,
+#                      MYSQL_SSL_CA_FILE wins. A missing/unreadable file or an incomplete certificate stops the backup
+#                      (exit 2); the certificate is never printed.
 #
 # Writes BACKUP_DIR/<db>_<yyyyMMdd_HHmmss>.sql.gz and a .sha256 file. The password goes into a temporary
 # option file readable only by this user (never on the command line, so `ps` can't show it) and is
@@ -34,14 +38,38 @@ gz="$sql.gz"
 
 umask 077
 options="$(mktemp)"
-trap 'rm -f "$options" "$sql"' EXIT INT TERM
+ca_copy=""
+trap 'rm -f "$options" "$sql" ${ca_copy:+"$ca_copy"}' EXIT INT TERM
+
+# The CA certificate the server's certificate is checked against (see MYSQL_SSL_CA_FILE / MYSQL_SSL_CA above).
+ca=""
+if [ -n "${MYSQL_SSL_CA_FILE:-}" ]; then
+  ca="$MYSQL_SSL_CA_FILE"
+elif [ -n "${MYSQL_SSL_CA:-}" ]; then
+  case "$MYSQL_SSL_CA" in
+    "-----BEGIN CERTIFICATE-----"*)
+      case "$MYSQL_SSL_CA" in
+        *"-----END CERTIFICATE-----"*) ;;
+        *) echo "MYSQL_SSL_CA starts like a PEM certificate but has no END line" >&2; exit 2 ;;
+      esac
+      ca_copy="$(mktemp)"                       # private (umask 077), removed on exit
+      printf '%s\n' "$MYSQL_SSL_CA" > "$ca_copy"
+      ca="$ca_copy" ;;
+    *) ca="$MYSQL_SSL_CA" ;;
+  esac
+fi
+if [ -n "$ca" ]; then
+  [ -f "$ca" ] && [ -r "$ca" ] || { echo "The CA certificate file (MYSQL_SSL_CA_FILE / MYSQL_SSL_CA) is missing or unreadable" >&2; exit 2; }
+  grep -q -- "-----BEGIN CERTIFICATE-----" "$ca" || { echo "The CA certificate file holds no PEM certificate" >&2; exit 2; }
+fi
+
 {
   echo "[client]"
   echo "user=$DB_USER"
   echo "password=\"$DB_PASSWORD\""
   echo "host=$DB_HOST"
   echo "port=$DB_PORT"
-  [ -n "${MYSQL_SSL_CA:-}" ] && echo "ssl-ca=$MYSQL_SSL_CA"
+  if [ -n "$ca" ]; then echo "ssl-ca=$ca"; fi
 } > "$options"
 
 # --single-transaction: a consistent InnoDB snapshot without locking tables.
