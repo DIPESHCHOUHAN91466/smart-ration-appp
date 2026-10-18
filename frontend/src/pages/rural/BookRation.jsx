@@ -10,15 +10,16 @@ import { getRationItems, createBooking } from "../../services/rationService";
 import { useToast } from "../../state/toast";
 import { useTranslation } from "../../i18n/useTranslation";
 import { usePreferencesStore } from "../../state/preferencesStore";
+import { businessNextMonthStart, businessToday, slotHasStarted } from "../../utils/businessTime";
 
+// The shops' date (Asia/Kolkata), not the UTC date that toISOString() gives (a day behind until 05:30 IST).
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  return businessToday();
 }
 
-// Monthly entitlements renew on the 1st (the server counts calendar months).
+// Monthly entitlements renew on the 1st (the server counts Asia/Kolkata calendar months).
 function nextMonthStart() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth() + 1, 1).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
+  return businessNextMonthStart().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
 }
 
 // What can still be booked of an item: the remaining entitlement, limited by the shop's stock.
@@ -60,7 +61,7 @@ export default function BookRation() {
     setSlots(null);
     setSlotsError("");
     getSlots(shopId, date)
-      .then(setSlots)
+      .then((all) => setSlots(all.filter((slot) => !slotHasStarted(slot))))   // started slots can't be booked (the server refuses them too)
       .catch((err) => setSlotsError(err.message));
   }, [shopId, date, step]);
 

@@ -3,12 +3,12 @@ import { useTranslation } from "../../i18n/useTranslation";
 import { Download, FileText } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import { ErrorState, LoadingState } from "../../components/EmptyState";
+import { businessDaysAgo } from "../../utils/businessTime";
 import { getReports } from "../../services/adminService";
 
+// Report ranges are Indian calendar days (the server counts them in Asia/Kolkata), not UTC days.
 function daysAgo(n) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
+  return businessDaysAgo(n);
 }
 
 export default function Reports() {
