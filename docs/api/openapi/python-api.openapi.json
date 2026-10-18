@@ -916,6 +916,154 @@
         ]
       }
     },
+    "/api/admin/staff-applications": {
+      "get": {
+        "operationId": "review_queue_api_admin_staff_applications_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "Pending",
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Staff applications to review (Admin), newest first",
+        "tags": [
+          "staff onboarding"
+        ]
+      }
+    },
+    "/api/admin/staff-applications/{application_id}/approve": {
+      "post": {
+        "operationId": "approve_api_admin_staff_applications__application_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "title": "Application Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve: grant the requested role (Admin)",
+        "tags": [
+          "staff onboarding"
+        ]
+      }
+    },
+    "/api/admin/staff-applications/{application_id}/reject": {
+      "post": {
+        "operationId": "reject_api_admin_staff_applications__application_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "title": "Application Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject: the role stays citizen (Admin)",
+        "tags": [
+          "staff onboarding"
+        ]
+      }
+    },
     "/api/admin/statistics": {
       "get": {
         "operationId": "statistics_api_admin_statistics_get",
@@ -1138,6 +1286,46 @@
         "summary": "User accounts (optionally one role)",
         "tags": [
           "government"
+        ]
+      }
+    },
+    "/api/admin/users/{user_id}/revoke-staff": {
+      "post": {
+        "operationId": "revoke_staff_api_admin_users__user_id__revoke_staff_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Return a shop owner or official to a citizen account (Admin)",
+        "tags": [
+          "staff onboarding"
         ]
       }
     },
@@ -4768,6 +4956,84 @@
         "summary": "Change a slot's capacity",
         "tags": [
           "ration"
+        ]
+      }
+    },
+    "/api/staff-applications": {
+      "post": {
+        "operationId": "apply_api_staff_applications_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Apply to work as a shop owner or an official (grants nothing until an Admin approves)",
+        "tags": [
+          "staff onboarding"
+        ]
+      }
+    },
+    "/api/staff-applications/mine": {
+      "get": {
+        "operationId": "mine_api_staff_applications_mine_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My staff applications, newest first",
+        "tags": [
+          "staff onboarding"
+        ]
+      }
+    },
+    "/api/staff-applications/{application_id}/withdraw": {
+      "post": {
+        "operationId": "withdraw_api_staff_applications__application_id__withdraw_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "title": "Application Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Withdraw my waiting application",
+        "tags": [
+          "staff onboarding"
         ]
       }
     },

@@ -95,6 +95,7 @@ class Settings(BaseSettings):
     chatbot_rate_limit_per_minute: int = 30
     public_help_rate_limit_per_minute: int = 120
     grievance_rate_limit_per_minute: int = 5   # complaints filed per client IP (stops scripted flooding)
+    staff_application_rate_limit_per_minute: int = 5   # staff applications filed per client IP
     public_badge_rate_limit_per_minute: int = 30   # public verification badges per client IP (stops enumeration)
 
     # ---- QR codes ----

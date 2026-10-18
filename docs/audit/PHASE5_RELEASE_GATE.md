@@ -946,3 +946,127 @@ curl.exe -s https://smartration-api-prod.azurewebsites.net/ready
 - **Migrations:** not applied.
 - **Deletions:** none.
 - **Emulator app:** untouched.
+
+
+## U. Round 11 — 2026-10-18: owner approvals executed
+
+The owner approved: **commit**, **push**, **apply the firewall fix**, **the onboarding design and migration 0009**,
+and **staging** (the option is still to be chosen).
+
+### Commits: PASS — VERIFIED
+
+- 16 commits `241b757` … `e28944f` on top of `f591cb0`, made through a temporary index file. The owner's index was
+  never used for them.
+- Each commit's staged list equalled the plan before committing.
+- All 7 intermediate file versions are byte-identical to the replayed ones.
+- **Afterwards:**
+  - only the 5 owner files differ from HEAD;
+  - the owner's staged `tests/e2e/session.spec.js` is unchanged (fingerprint `1394c27cd316dd2a`, still the only
+    staged file);
+  - the temporary index was removed.
+- Author: the owner's Git identity, with a `Co-Authored-By` trailer.
+
+### Push: BLOCKED
+
+- The fast-forward push to `origin/audit-and-deploy` was **refused by Claude Code's permission system** (auto-mode
+  classifier), not by Git.
+- GitHub is still at `dd56f43`; the local branch is 26 commits ahead (16 new plus the 10 earlier unpushed, including
+  live `8d7f2a5`).
+- The owner can push with `git push origin audit-and-deploy` (a normal fast-forward; never `--force`).
+
+### Database firewall: PASS — VERIFIED (production change, approved)
+
+1. Added `webapp-out-1 … 31`. All 31 possible outbound addresses of `smartration-api-prod` are covered, checked by
+   address.
+2. Deleted the stale `ClientIPAddress_2026-10-7_13-29-25` and `ClientIPAddress_2026-10-8_15-14-49`.
+3. Deleted both `0.0.0.0` rules (`AllowAllAzureServicesAndAgents`,
+   `AllowAllAzureServicesAndResourcesWithinAzureIps_2026-10-7_14-18-1`). Exactly the 31 web-app rules remain.
+4. Restarted the web app at 13:46:00 IST.
+5. `/ready` answered `ready: true` (database ok, migrations ok) at 13:46:18, 13:46:28 and 13:46:38: **3 in a row**.
+   - `/health/db` is healthy over TLSv1.3.
+   - `/api/health` reports the database CONNECTED.
+   - The homepage answers 200.
+   - No rollback was needed. **Rollback, if ever needed:** re-create `AllowAllAzureServicesAndAgents` 0.0.0.0–0.0.0.0
+     and restart.
+
+**Consequences:**
+- The owner's PC can no longer reach the live database. For Workbench, add the current address in the portal
+  (*Networking → + Add current client IP address*) and delete it afterwards.
+- If the App Service plan changes tier, its outbound addresses can change: re-run step 1 first.
+
+### Staff onboarding: BUILT and tested (approved)
+
+**Built:**
+- Migration `0009_staff_applications` (follows 0007), with CHECK constraints.
+- `StaffApplication` model and `StaffApplicationStatus` enum.
+- `staff_application_service.py` and `routes/staff.py`.
+- The website's Settings card for citizens, and the Admin page *Staff applications* (`/gov/staff-applications`, in
+  the Admin menu only).
+- Translations of the menu label (en/hi/mr), and the API documentation.
+
+**Security properties, each tested:**
+- applying grants nothing;
+- smuggled role, user or status fields are ignored;
+- only citizens apply, one open application at a time;
+- only an Admin reviews and decides, always with a reason, never on their own application;
+- a shop that already has an owner cannot get a second one;
+- approval and revocation end the person's sessions;
+- every step is audited, without the proof number.
+
+**Tests:**
+- `test_staff_onboarding.py`: **16 passed**.
+- `mysql_suite/test_12_staff_onboarding.py`: **3 passed in 3 of 3 runs**:
+  - the database refuses `RequestedRole=4`;
+  - 8 simultaneous approvals over two instances grant the role once, with one audit row;
+  - 8 simultaneous applications leave one open application.
+  - The concurrency tests widen the race window with a slow clock. **Mutation-checked:** removing the user-row lock
+    or the application-row lock makes them fail.
+- Website `staffOnboarding.test.jsx`: **3 passed**.
+
+**Local database:**
+- `scripts/setup_database.py` applied 0009 to the local `smartration`: verification passed, drift 0.
+- **Correction to earlier notes:** the API itself only *checks* migrations (it reports not-ready while one is
+  pending).
+  - Locally, `setup_database.py` applies them.
+  - On Azure, `docker-entrypoint.sh` applies them at start because the live app has **`RUN_DB_SETUP=true`**. **The
+    next production deploy will apply 0009 automatically.**
+
+**Not built (separate decisions):**
+- MFA required before an official's first page: it would lock out existing officials without MFA.
+- Android screens for onboarding.
+
+### Test results (current working tree)
+
+| Suite | Result |
+|---|---|
+| Python, full, with MySQL | first run 943 passed, **4 failed**, 5 skipped. Causes: the local development database was not yet at 0009 (3 schema-compatibility tests), and the new enum was not on the Python-only list of the C#-parity test (1). **Both fixed**: the 3 schema tests pass, and the parity test passes 30/30 |
+| ruff / mypy / OpenAPI / schema snapshot | clean / clean (111 files) / up to date (106 paths) / up to date (29 tables, 0009 SQL generated) |
+| Website | **130 passed** (22 files); lint clean; build OK |
+
+### Proposed commit 16: AWAITING APPROVAL (new work; not covered by the earlier "commit")
+
+`feat(staff): apply to work as a shop owner or official; Admin approves with a reason (migration 0009)`
+
+**Files:**
+- `backend/SmartRation/migrations/versions/0009_staff_applications.py`;
+- `backend/SmartRation/app/database/models.py`, `.../enums.py`, `.../config/settings.py`, `.../main.py`;
+- `backend/SmartRation/app/services/staff_application_service.py`, `backend/SmartRation/app/api/routes/staff.py`;
+- `backend/SmartRation/tests/api/test_staff_onboarding.py`,
+  `backend/SmartRation/tests/integration/mysql_suite/test_12_staff_onboarding.py`;
+- `tests/regression/test_cross_component_contracts.py`;
+- `database/schema/smartration_schema.sql`, `database/migrations/0009_staff_applications.{upgrade,downgrade}.sql`;
+- `docs/api/openapi/python-api.openapi.json`, `docs/api/API.md`, `docs/architecture/STAFF_ONBOARDING_DESIGN.md`,
+  `docs/audit/PHASE5_RELEASE_GATE.md`;
+- `frontend/src/services/staffService.js`, `frontend/src/pages/shared/StaffApplicationSection.jsx`,
+  `frontend/src/pages/shared/Settings.jsx`, `frontend/src/pages/government/StaffApplications.jsx`,
+  `frontend/src/App.jsx`, `frontend/src/layouts/DashboardLayout.jsx`, `frontend/src/i18n/translations.js`,
+  `frontend/tests/unit/staffOnboarding.test.jsx`.
+
+### Staging: AWAITING the owner's choice (cost)
+
+- **Option 1:** a deployment slot on the existing plan. It needs the plan scaled from B1 to Standard S1, which
+  raises the monthly price of the production plan.
+- **Option 2:** a separate B1 plan and web app, plus a separate `smartration_staging` database on the existing MySQL
+  server (no extra MySQL cost), with its own account and only synthetic data.
+
+Prices: the Azure pricing calculator for Central India (not quoted here).

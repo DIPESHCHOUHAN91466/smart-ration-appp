@@ -127,3 +127,25 @@ their shop's, an official all.
 **Without parameters the answer is unchanged:** every booking in scope. The official "All Bookings" page now asks
 for `limit=500` and filters on the server. Locally, 9,660 rows (4.9 MB, about 2.1 s) became 500 rows (249 KB, about
 0.1 s).
+
+## Staff onboarding (2026-10-18, migration 0009)
+
+**Citizens (RuralUser only):**
+- `POST /api/staff-applications`: body `requestedRole` (`ShopOwner` / `GovernmentOfficial`); `rationShopId` (shop
+  owners); `office` (officials); `designation`; `proofReference` (the licence or employee ID number, never Aadhaar).
+  - Applying **grants nothing**. Other fields in the body are ignored.
+  - Errors: 409 `APPLICATION_PENDING` if one is already waiting; 400 `INVALID_ROLE`, `SHOP_REQUIRED` or
+    `OFFICE_REQUIRED`.
+  - Rate limited per address (`STAFF_APPLICATION_RATE_LIMIT_PER_MINUTE`, default 5).
+- `GET /api/staff-applications/mine`.
+- `POST /api/staff-applications/{id}/withdraw`: own and waiting only; someone else's gives 404.
+
+**Admins only** (everyone else gets 403):
+- `GET /api/admin/staff-applications?status=Pending&limit=&offset=`.
+- `POST /api/admin/staff-applications/{id}/approve` and `/reject`, body `reason` (at least 5 characters).
+  - Approve sets the role (and the shop for a shop owner) under row locks and ends the person's sessions.
+  - Errors: 409 `NOT_PENDING`, `SHOP_HAS_OWNER` or `ALREADY_STAFF`; 403 when deciding your own application.
+- `POST /api/admin/users/{id}/revoke-staff`, body `reason`: back to a citizen account, sessions ended.
+
+Every step is audited (`STAFF_APPLIED`, `STAFF_APPROVED`, `STAFF_REJECTED`, `STAFF_WITHDRAWN`, `STAFF_REVOKED`). The
+proof number is never written to the audit trail.

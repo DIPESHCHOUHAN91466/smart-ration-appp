@@ -13,7 +13,7 @@ from __future__ import annotations
 from datetime import datetime, time
 from decimal import Decimal
 
-from sqlalchemy import Boolean, Double, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, Double, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -452,6 +452,31 @@ class Grievance(Base):
         Index("IX_Grievances_UserId_CreatedAt", "UserId", "CreatedAt"),
         Index("IX_Grievances_Status_CreatedAt", "Status", "CreatedAt"),
         Index("IX_Grievances_RationShopId_Status", "RationShopId", "Status"),
+    )
+
+
+class StaffApplication(Base):
+    """A citizen's request to work as a shop owner or an official. Applying grants nothing; only an Admin's approval
+    changes Users.Role (staff_application_service). Migration 0009; design: docs/architecture/STAFF_ONBOARDING_DESIGN.md."""
+    __tablename__ = "StaffApplications"
+    Id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    UserId: Mapped[int] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="CASCADE"), nullable=False)
+    RequestedRole: Mapped[int] = mapped_column(Integer, nullable=False)        # UserRole.ShopOwner / GovernmentOfficial only
+    RationShopId: Mapped[int | None] = mapped_column(Integer, ForeignKey("RationShops.Id", ondelete="RESTRICT"), nullable=True)
+    Office: Mapped[str | None] = mapped_column(String(200), nullable=True)    # district / office (officials)
+    Designation: Mapped[str] = mapped_column(String(120), nullable=False)
+    ProofReference: Mapped[str] = mapped_column(String(120), nullable=False)   # the ID / licence number checked; no image
+    Status: Mapped[int] = mapped_column(Integer, nullable=False)               # StaffApplicationStatus
+    DecidedByUserId: Mapped[int | None] = mapped_column(Integer, ForeignKey("Users.Id", ondelete="SET NULL"), nullable=True)
+    DecisionReason: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    CreatedAt: Mapped[datetime] = mapped_column(DateTime6, nullable=False)
+    DecidedAt: Mapped[datetime | None] = mapped_column(DateTime6, nullable=True)
+
+    __table_args__ = (
+        CheckConstraint("RequestedRole IN (2, 3)", name="CK_StaffApplications_RequestedRole"),
+        CheckConstraint("Status IN (1, 2, 3, 4)", name="CK_StaffApplications_Status"),
+        Index("IX_StaffApplications_UserId_Status", "UserId", "Status"),
+        Index("IX_StaffApplications_Status_CreatedAt", "Status", "CreatedAt"),
     )
 
 

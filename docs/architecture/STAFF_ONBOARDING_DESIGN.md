@@ -1,4 +1,15 @@
-# Staff onboarding: apply, verify, approve (design, 2026-10-18 — not built)
+# Staff onboarding: apply, verify, approve (design approved and built 2026-10-18)
+
+**Status:**
+- Built: migration `0009_staff_applications` (it follows 0007, because the 0008 OTP-index draft is a separate
+  decision), `app/services/staff_application_service.py`, `app/api/routes/staff.py`, the website's Settings card
+  (citizens) and *Staff applications* page (Admins).
+- Tests: `tests/api/test_staff_onboarding.py` (16), `mysql_suite/test_12_staff_onboarding.py` (3; two instances,
+  mutation-checked), `frontend/tests/unit/staffOnboarding.test.jsx` (3).
+- **Not built yet:**
+  - requirement 6 (MFA required before an official's first page): it would lock out existing officials
+    without MFA, so it is a separate owner decision;
+  - the Android app screens (the website covers applying and reviewing).
 
 **Today:**
 - Self-registration always creates a citizen (`RuralUser`). The server ignores any role or shop in the request; this

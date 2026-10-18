@@ -4,7 +4,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Bell, Globe2, Home, LogOut, Menu, Package, QrCode, Search, ClipboardList,
   Ticket, Users, Store, FileText, TrendingUp, ChevronDown, ShieldCheck, MapPin, History,
-  Sparkles, Database, Settings as SettingsIcon, User as UserIcon, MessageSquareWarning,
+  Sparkles, Database, Settings as SettingsIcon, User as UserIcon, MessageSquareWarning, BadgeCheck,
 } from "lucide-react";
 import { useAuthStore } from "../state/authStore";
 import { getNotifications } from "../services/notificationsService";
@@ -55,7 +55,12 @@ const NAV_BY_ROLE = {
     ["/settings", "nav_settings", SettingsIcon],
   ],
 };
-NAV_BY_ROLE.Admin = NAV_BY_ROLE.GovernmentOfficial;
+// Admins see the officials' menu plus the staff-application queue (only an Admin may approve; the API enforces it).
+NAV_BY_ROLE.Admin = [
+  ...NAV_BY_ROLE.GovernmentOfficial.slice(0, -1),
+  ["/gov/staff-applications", "nav_staff_applications", BadgeCheck],
+  NAV_BY_ROLE.GovernmentOfficial[NAV_BY_ROLE.GovernmentOfficial.length - 1],
+];
 
 const ROLE_LABEL_KEY = {
   RuralUser: "role_rural_user",

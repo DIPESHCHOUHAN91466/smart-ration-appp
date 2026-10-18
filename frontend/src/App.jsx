@@ -43,6 +43,7 @@ const GovernmentDashboard = lazy(() => import("./pages/government/GovernmentDash
 const GovUsers = lazy(() => import("./pages/government/Users"));
 const GovShops = lazy(() => import("./pages/government/Shops"));
 const GovBookings = lazy(() => import("./pages/government/Bookings"));
+const GovStaffApplications = lazy(() => import("./pages/government/StaffApplications"));
 const GovInventory = lazy(() => import("./pages/government/Inventory"));
 const Statistics = lazy(() => import("./pages/government/Statistics"));
 const Reports = lazy(() => import("./pages/government/Reports"));
@@ -140,6 +141,7 @@ export default function App() {
               <Route path="/gov/reports" element={<Reports />} />
               <Route path="/gov/audit" element={<Audit />} />
               <Route path="/gov/complaints" element={<GovComplaints />} />
+              <Route path="/gov/staff-applications" element={<GovStaffApplications />} />
               <Route path="/gov/ai" element={<AIIntelligenceCenter />} />
               <Route path="/gov/synthetic-data" element={<SyntheticData />} />
               <Route path="/gov/database" element={<AdminDatabase />} />

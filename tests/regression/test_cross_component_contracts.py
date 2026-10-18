@@ -62,7 +62,7 @@ PY_ENUMS = [cls for cls in vars(py_enums).values() if isinstance(cls, type) and 
 
 # Added in the Python backend after the C# API stopped serving traffic (it is legacy and kept only for reference).
 # Listed by name so nothing is added silently: whole enums the C# API never had, and members added to shared ones.
-PYTHON_ONLY_ENUMS = {"GrievanceCategory", "GrievanceStatus"}
+PYTHON_ONLY_ENUMS = {"GrievanceCategory", "GrievanceStatus", "StaffApplicationStatus"}
 PYTHON_ONLY_MEMBERS = {"NotificationType": {"GrievanceUpdate"}}
 
 

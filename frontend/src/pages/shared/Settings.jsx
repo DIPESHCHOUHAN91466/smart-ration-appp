@@ -13,6 +13,7 @@ import PasswordSection from "./PasswordSection";
 import MfaSection from "./MfaSection";
 import DataExportSection from "./DataExportSection";
 import CloseAccountSection from "./CloseAccountSection";
+import StaffApplicationSection from "./StaffApplicationSection";
 
 const ROLE_LABEL_KEY = {
   RuralUser: "role_rural_user",
@@ -117,6 +118,7 @@ export default function Settings() {
         <PasswordSection />
         {user && user.role !== "RuralUser" && <MfaSection />}
         <DataExportSection />
+        {user?.role === "RuralUser" && <StaffApplicationSection />}
         {user?.role === "RuralUser" && <CloseAccountSection />}
 
         {/* Language */}
