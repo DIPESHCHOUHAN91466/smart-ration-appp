@@ -14,21 +14,24 @@ import secrets
 import smtplib
 import ssl
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import timedelta
 from email.message import EmailMessage
 
 import httpx
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.config.settings import Settings
 from app.core.errors import BadRequest, Forbidden, NotFound, ServiceUnavailable
 from app.database.enums import OtpStatus
 from app.database.models import Beneficiary, OtpVerification, User
+from app.security.rate_limit import TooManyRequests
+from app.services import audit_service
 from app.services._db import require
 from app.utils.masking import mask_mobile
-from app.utils.time import utc_now
+from app.utils.time import business_day_utc, business_today, utc_now
 
 log = logging.getLogger("smartration.otp")
 
@@ -108,17 +111,39 @@ def _hash(code: str) -> str:
     return hashlib.sha256(code.encode("utf-8")).hexdigest().upper()
 
 
-def request_for_mobile(db: Session, settings: Settings, mobile: str, requested_by: int) -> OtpVerification:
+NOT_SERVED = "No beneficiary with this mobile number can be served at your shop."
+
+
+def request_for_mobile(db: Session, settings: Settings, mobile: str, requested_by: int,
+                       can_serve: Callable[[int], bool] | None = None) -> OtpVerification:
+    """A counter code for the beneficiary with this mobile. `can_serve` (the shop's visibility rule) limits it to
+    beneficiaries the shop may serve; an unknown number and someone else's beneficiary get the same answer, so a shop
+    account can neither text every citizen in the country nor learn which numbers are registered."""
     beneficiary_id = db.scalar(select(Beneficiary.Id).join(User, User.Id == Beneficiary.UserId)
                                .where(User.MobileNumber == mobile).limit(1))
-    if beneficiary_id is None:
-        raise NotFound("No beneficiary is registered with this mobile number.")
+    if beneficiary_id is None or (can_serve is not None and not can_serve(beneficiary_id)):
+        raise NotFound(NOT_SERVED)
     return request(db, settings, beneficiary_id, requested_by)
 
 
+CITIZEN_DAILY_LIMIT = "Too many one-time codes were requested for this beneficiary today. Please use QR verification or try again tomorrow."
+SHOP_DAILY_LIMIT = "This shop has reached today's limit for one-time codes. Please use QR verification or try again tomorrow."
+
+
+def _counter_codes_today(db: Session, *conditions) -> int:
+    start, end = business_day_utc(business_today())   # the Indian calendar day, as UTC bounds
+    return db.scalar(select(func.count()).select_from(OtpVerification).where(
+        OtpVerification.CreatedAt >= start, OtpVerification.CreatedAt < end, *conditions)) or 0
+
+
 def request(db: Session, settings: Settings, beneficiary_id: int, requested_by: int) -> OtpVerification:
+    """A shop-counter code. Daily limits per Indian calendar day: OTP_COUNTER_DAILY_LIMIT per citizen (all shops
+    together, so another shop can't add more) and OTP_COUNTER_SHOP_DAILY_LIMIT per shop account. The counts come from
+    the codes stored in the database, with the shop's and the citizen's rows locked (always in that order) while they are
+    checked and the new code is saved, so they hold across application instances and concurrent requests."""
     ensure_delivery_available(settings)
-    beneficiary = db.get(Beneficiary, beneficiary_id)
+    db.scalar(select(User.Id).where(User.Id == requested_by).with_for_update())
+    beneficiary = db.scalar(select(Beneficiary).where(Beneficiary.Id == beneficiary_id).with_for_update())
     if beneficiary is None:
         raise NotFound("Beneficiary not found.")
     if not beneficiary.IsActive or beneficiary.IsBlocked:
@@ -131,6 +156,18 @@ def request(db: Session, settings: Settings, beneficiary_id: int, requested_by: 
         wait = settings.otp_resend_cooldown_seconds - int((now - newest.CreatedAt).total_seconds())
         if wait > 0:
             raise BadRequest(f"Please wait {wait} seconds before requesting another OTP.", "OTP_COOLDOWN")
+    # The citizen's own sign-in codes (requested by themselves) have their own limit and are not counted here.
+    blocked = None
+    if _counter_codes_today(db, OtpVerification.RequestedByUserId == requested_by) >= settings.otp_counter_shop_daily_limit:
+        blocked = (SHOP_DAILY_LIMIT, "OTP_SHOP_DAILY_LIMIT")
+    elif _counter_codes_today(db, OtpVerification.BeneficiaryId == beneficiary_id,
+                              OtpVerification.RequestedByUserId != beneficiary.UserId) >= settings.otp_counter_daily_limit:
+        blocked = (CITIZEN_DAILY_LIMIT, "OTP_DAILY_LIMIT")
+    if blocked is not None:
+        # Audited without the number; the commit also releases the row locks.
+        audit_service.record(db, requested_by, "COUNTER_OTP_LIMIT", "Beneficiary", str(beneficiary_id), details=blocked[1], result="BLOCKED")
+        db.commit()
+        raise TooManyRequests(*blocked)
     for old in pending:
         old.Status = int(OtpStatus.Expired)    # only the newest code is ever valid
 
@@ -151,9 +188,11 @@ def request(db: Session, settings: Settings, beneficiary_id: int, requested_by: 
     return record
 
 
-def verify(db: Session, otp_id: int, code: str) -> OtpVerification:
+def verify(db: Session, otp_id: int, code: str, requested_by: int | None = None) -> OtpVerification:
+    """`requested_by`: only the account that asked for this code may use it (ids are sequential); anyone else gets the
+    same answer as for a missing id, and no attempt is counted."""
     record = db.scalar(select(OtpVerification).where(OtpVerification.Id == otp_id).with_for_update())
-    if record is None:
+    if record is None or (requested_by is not None and record.RequestedByUserId != requested_by):
         raise NotFound("OTP request not found.")
     if record.Status != OtpStatus.Pending:
         raise BadRequest(f"This OTP request is already {OtpStatus(record.Status).name}.")

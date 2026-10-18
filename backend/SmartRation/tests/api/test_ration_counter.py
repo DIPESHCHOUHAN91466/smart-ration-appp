@@ -207,6 +207,23 @@ def test_otp_fallback_verifies_the_beneficiary(env):
         assert "123456" not in db.scalar(select(OtpVerification.OtpHash))
 
 
+def test_counter_codes_are_limited_to_the_shops_own_beneficiaries_and_to_the_shop_that_asked(env):
+    """2026-10-17 (SEC-13): any shop account could text a code to any registered citizen (and learn which numbers are
+    registered from the answer), and could submit codes for another shop's code request (ids are sequential)."""
+    book(env)                                                                     # the citizen booked at shop 1
+    c = env["client"]
+    ask = lambda headers, mobile: c.post("/api/verification/otp/request", headers=headers, json={"mobileNumber": mobile})  # noqa: E731
+    elsewhere, unknown = ask(env["other_shop"], "9000000001"), ask(env["other_shop"], "9000000099")
+    assert (elsewhere.status_code, elsewhere.json()["message"]) == (unknown.status_code, unknown.json()["message"]) == (
+        404, "No beneficiary with this mobile number can be served at your shop.")   # indistinguishable
+    otp = ask(env["shop"], "9000000001").json()["data"]                           # the shop where they booked: fine
+    stolen = c.post("/api/verification/otp/verify", headers=env["other_shop"],
+                    json={"otpVerificationId": otp["otpVerificationId"], "code": "123456"})
+    assert stolen.status_code == 404 and stolen.json()["message"] == "OTP request not found."
+    r = c.post("/api/verification/otp/verify", headers=env["shop"], json={"otpVerificationId": otp["otpVerificationId"], "code": "123456"})
+    assert r.status_code == 200                                                   # untouched by the other shop's try
+
+
 def test_queue_complete_uses_the_same_pipeline(env):
     token = book(env).json()["data"]
     queue = env["client"].get("/api/shop/queue", headers=env["shop"]).json()["data"]

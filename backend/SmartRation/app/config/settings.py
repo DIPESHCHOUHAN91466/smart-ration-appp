@@ -132,6 +132,11 @@ class Settings(BaseSettings):
     otp_rate_limit_per_minute: int = 6
     otp_daily_send_limit: int = Field(default=10, ge=1)   # sign-in codes per citizen per 24 h (SMS cost, guessing)
     password_reset_daily_limit: int = Field(default=5, ge=1)   # password-reset codes per account per 24 h
+    # Shop-counter codes (the OTP fallback at the counter), per Indian calendar day (Asia/Kolkata):
+    # per citizen, all shops together (a citizen collects once or twice a month; 5 leaves room for retries), and per shop
+    # account (generous for a busy fair-price shop; stops one account texting citizens in bulk).
+    otp_counter_daily_limit: int = Field(default=5, ge=1)
+    otp_counter_shop_daily_limit: int = Field(default=200, ge=1)
 
     # ---- SMS delivery of OTP codes ----
     # "mock" sends nothing (development); "http" posts to a DLT-registered gateway (SMS_BASE_URL + SMS_API_KEY).

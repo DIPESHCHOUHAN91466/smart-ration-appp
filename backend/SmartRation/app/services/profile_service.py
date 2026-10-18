@@ -178,6 +178,12 @@ def ensure_can_see(db: Session, actor: Actor, beneficiary_id: int) -> None:
     _load(db, actor, beneficiary_id)
 
 
+def can_see(db: Session, actor: Actor, beneficiary_id: int) -> bool:
+    """The same rule as ensure_can_see, as a yes/no (False for a missing id too)."""
+    beneficiary = db.get(Beneficiary, beneficiary_id)
+    return beneficiary is not None and _can_see(db, actor, [beneficiary.UserId], beneficiary.FamilyId)
+
+
 def my_beneficiary_id(db: Session, actor: Actor) -> int:
     found = db.scalar(select(Beneficiary.Id).where(Beneficiary.UserId == actor.user_id).order_by(Beneficiary.Id).limit(1))
     if found is None:

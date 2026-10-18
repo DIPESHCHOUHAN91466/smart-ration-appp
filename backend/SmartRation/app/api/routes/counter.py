@@ -27,6 +27,7 @@ from app.services import (
     inventory_service,
     notification_service,
     otp_service,
+    profile_service,
     shop_service,
     verification_audit_service,
     verification_service,
@@ -93,7 +94,9 @@ def otp_request(request: Request, body: Body = Depends(json_body), who: Actor = 
     mobile = body.string("MobileNumber", required=True, is_phone=True)
     body.raise_if_invalid()
     settings = settings_of(request)
-    otp = otp_service.request_for_mobile(db, settings, mobile, who.user_id)
+    # Only beneficiaries this shop may serve (registered here, or booked here); others answer like an unknown number.
+    otp = otp_service.request_for_mobile(db, settings, mobile, who.user_id,
+                                         can_serve=lambda beneficiary_id: profile_service.can_see(db, who, beneficiary_id))
     return ok({"otpVerificationId": otp.Id, "mobileMasked": mask_mobile(mobile),
                "expiresInMinutes": math.ceil((otp.ExpiresAt - utc_now()).total_seconds() / 60),
                # The demo code is shown only in synthetic development mode (refused at startup in production).
@@ -105,7 +108,7 @@ def otp_verify(body: Body = Depends(json_body), who: Actor = Depends(shop_owner)
     otp_id = body.integer("OtpVerificationId", required=True)
     code = body.string("Code", required=True, max_length=6, min_length=6)
     body.raise_if_invalid()
-    otp = otp_service.verify(db, otp_id, code)
+    otp = otp_service.verify(db, otp_id, code, requested_by=who.user_id)   # only the shop that asked for the code
     if who.ration_shop_id is None:
         raise BadRequest("Your account is not linked to a ration shop.")
     # The code went to the citizen's current number, so that number works (e.g. after they changed it). Committed
