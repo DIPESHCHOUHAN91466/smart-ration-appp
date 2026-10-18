@@ -3,6 +3,8 @@
 * Dedup: while an alert with the same DedupKey is Open/UnderReview, re-detection only refreshes it
   (LastSeenAt, score, text), so refreshing the dashboard never adds rows.
 * Throttled: automatic syncs run at most once per 5 minutes (per API process); `force` skips that.
+* One writer at a time across all API processes (a named database lock), held only for the database work, never
+  during the call to the AI service.
 * Scoped: shop owners only ever see their own shop's alerts; citizens none.
 * Alerts are review prompts, never proof of fraud — nothing here acts on them.
 """
@@ -10,7 +12,6 @@
 from __future__ import annotations
 
 import json
-import threading
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -20,6 +21,7 @@ from sqlalchemy.orm import Session
 from app.api.dependencies.auth import Actor
 from app.core.errors import BadRequest, Forbidden, NotFound
 from app.database.enums import AIAlertSeverity, AIAlertStatus, RationType, UserRole, parse_enum
+from app.database.locks import AI_ALERT_SYNC, named_lock
 from app.database.models import AIAlert, RationShop
 from app.services import audit_service
 from app.services.ai_client import AiClient
@@ -31,7 +33,6 @@ SYNC_INTERVAL = timedelta(minutes=5)
 ACTIVE = (int(AIAlertStatus.Open), int(AIAlertStatus.UnderReview))
 NOTICE = "Decision support only — not proof of fraud. Review before acting."
 
-_sync_lock = threading.Lock()
 _last_sync: datetime | None = None
 
 
@@ -74,12 +75,15 @@ def sync_from_ai(db: Session, client: AiClient, actor: Actor, force: bool) -> di
     global _last_sync
     if not force and _last_sync is not None and utc_now() - _last_sync < SYNC_INTERVAL:
         return _sync_result(skipped=True, lastAnalysisAt=dt(_last_sync), message="Recently analysed.")
-    with _sync_lock:   # two concurrent refreshes must not both insert the same alert
-        result = client.get("/v1/alerts", {"lang": "en"})
-        items = result.data.get("items") if result.available and isinstance(result.data, dict) else None
-        if not isinstance(items, list):
-            return _sync_result(lastAnalysisAt=dt(_last_sync), errorCode=result.error_code or "AI_MALFORMED_RESPONSE",
-                                message=result.message or "The AI service returned no alert data.")
+    result = client.get("/v1/alerts", {"lang": "en"})   # outside the lock: never hold it across a network call
+    items = result.data.get("items") if result.available and isinstance(result.data, dict) else None
+    if not isinstance(items, list):
+        return _sync_result(lastAnalysisAt=dt(_last_sync), errorCode=result.error_code or "AI_MALFORMED_RESPONSE",
+                            message=result.message or "The AI service returned no alert data.")
+    with named_lock(db, AI_ALERT_SYNC) as held:   # two concurrent refreshes must not both insert the same alert
+        if not held:
+            return _sync_result(skipped=True, lastAnalysisAt=dt(_last_sync), message="Another refresh is in progress.")
+        db.commit()   # end any earlier read snapshot (REPEATABLE READ) so the checks see the previous refresh's alerts
         now = utc_now()
         created = updated = rejected = 0
         for item in items:

@@ -25,6 +25,7 @@ from app.database.enums import (
     TokenStatus,
     VerificationAction,
 )
+from app.database.locks import RULE_ALERTS, named_lock
 from app.database.models import (
     AIAlert,
     AIInsight,
@@ -118,6 +119,8 @@ def queue_predictions(db: Session, shop_id: int | None = None) -> list[dict]:
 def _upsert_alert(db: Session, created: list[AIAlert], alert_type: str, severity: AIAlertSeverity, *,
                   shop_id: int | None = None, beneficiary_id: int | None = None, description: str = "") -> None:
     """Never duplicates an already-open alert for the same subject within the 24-hour window."""
+    if any(a.AlertType == alert_type and a.ShopId == shop_id and a.BeneficiaryId == beneficiary_id for a in created):
+        return   # already raised earlier in this scan (not flushed yet, so the query below can't see it)
     window = utc_now() - timedelta(hours=24)
     exists = db.scalar(select(AIAlert.Id).where(
         AIAlert.AlertType == alert_type,
@@ -145,6 +148,16 @@ def _groups(logs: list[VerificationAuditLog], key) -> dict:
 
 
 def scan_and_detect(db: Session) -> list[AIAlert]:
+    """Raises new rule alerts. One scan at a time across all API processes (a named database lock), otherwise two
+    officials opening the intelligence centre together would both find "no open alert" and both insert one."""
+    with named_lock(db, RULE_ALERTS) as held:
+        if not held:
+            return []   # another scan is running right now and raises the same alerts
+        db.commit()     # end any earlier read snapshot (REPEATABLE READ) so the checks see the previous scan's alerts
+        return _detect(db)
+
+
+def _detect(db: Session) -> list[AIAlert]:
     now = utc_now()
     window = now - timedelta(hours=24)
     recent = list(db.scalars(select(VerificationAuditLog).where(VerificationAuditLog.Timestamp >= window).order_by(VerificationAuditLog.Id)))
