@@ -93,3 +93,37 @@ curl -s -X POST http://localhost:8000/api/auth/login -H "Content-Type: applicati
 # → {"success":true,"message":"Login successful","data":{"accessToken":"…","refreshToken":"…",
 #    "accessTokenExpiresAt":"2026-09-24T08:30:00.0000000Z","user":{…}},"errors":null}
 ```
+
+## Dates and time zone (2026-10-17)
+
+- Timestamps in responses (`createdAt`, `collectedAt`, `expiresAt`, …) are UTC. Slot dates and opening hours
+  (`slotDate`, `startTime`, `endTime`) are Indian wall-clock values (Asia/Kolkata).
+- "Today", "this month", "has the slot started" and "has the booked day ended" are decided on the Asia/Kolkata clock
+  (`app/utils/time.py`). A slot starting at or before the current Indian time cannot be booked.
+- `GET /api/admin/statistics` and `GET /api/admin/reports`: `fromDate` and `toDate` are **Indian calendar dates, both
+  included** (an event at 01:30 IST on the 16th counts on the 16th). Internally the range is
+  `[00:00 IST on fromDate, 00:00 IST on the day after toDate)`, so adjacent ranges never count an event twice. Any time
+  or offset in the parameters is ignored; without parameters the range is the last 30 days up to today in India.
+  Reversed ends are swapped. The response echoes the two dates as before.
+- Shop-counter codes (`POST /api/verification/otp/request`): only for beneficiaries the shop may serve (registered
+  there, or booked there); unknown and not-served numbers get the same 404. At most `OTP_COUNTER_DAILY_LIMIT` (default
+  5) codes per citizen per Indian day from all shops together, and `OTP_COUNTER_SHOP_DAILY_LIMIT` (default 200) per shop
+  account: then 429 `OTP_DAILY_LIMIT` / `OTP_SHOP_DAILY_LIMIT`. `otp/verify` accepts a code only from the account that
+  requested it.
+- `GET /api/ai/beneficiaries/{id}/insight` is for staff only (shop owners for their own beneficiaries, officials).
+
+## Booking lists: optional filter, search and paging (2026-10-18)
+
+`GET /api/ration/bookings` accepts optional query parameters:
+- `status`: `Pending`, `Confirmed`, `Completed` or `Cancelled` (any case; `All` means no filter; anything else gets
+  400 `INVALID_STATUS`).
+- `q`: part of a token number, person name or shop name. It is a literal match, so `%` and `_` are not wildcards.
+- `limit`: 1 to 2000 (larger values are capped, smaller values become 1).
+- `offset`: for paging.
+
+Results come newest first and stay limited to the caller's scope: a citizen sees their own bookings, a shop owner
+their shop's, an official all.
+
+**Without parameters the answer is unchanged:** every booking in scope. The official "All Bookings" page now asks
+for `limit=500` and filters on the server. Locally, 9,660 rows (4.9 MB, about 2.1 s) became 500 rows (249 KB, about
+0.1 s).
