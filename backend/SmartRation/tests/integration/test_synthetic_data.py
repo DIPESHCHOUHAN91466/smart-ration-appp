@@ -143,7 +143,9 @@ def test_insert_validates_first_and_writes_nothing_when_invalid(sqlite_db):
 
 
 def _cli(*args, **env):
-    full_env = {**os.environ, "JWT_SECRET_KEY": "unit-test-signing-key-0123456789abcdef-0123456789", "PYTHONIOENCODING": "utf-8", **env}
+    # Test-only settings, so the CLI never depends on (or reaches) a developer's .env; a test's own values win.
+    full_env = {**os.environ, "JWT_SECRET_KEY": "unit-test-signing-key-0123456789abcdef-0123456789", "PYTHONIOENCODING": "utf-8",
+                "DATABASE_URL": "sqlite:///not-used-by-the-cli-tests.db", **env}
     return subprocess.run([sys.executable, str(ROOT / "scripts" / "generate_test_data.py"), *args], cwd=ROOT, env=full_env,
                           capture_output=True, text=True, encoding="utf-8", timeout=180)
 

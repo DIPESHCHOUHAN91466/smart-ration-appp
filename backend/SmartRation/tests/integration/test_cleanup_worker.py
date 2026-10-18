@@ -8,6 +8,7 @@ import pytest
 from sqlalchemy import select
 
 import app.database.models  # noqa: F401  (register tables)
+from app.config.settings import get_settings
 from app.database import connection as database
 from app.database.base import Base
 from app.database.models import AuditLog, RefreshToken, User
@@ -16,8 +17,12 @@ from app.workers import cleanup
 
 
 @pytest.fixture
-def seeded(tmp_path):
-    database.configure_database(f"sqlite:///{(tmp_path / 'worker.db').as_posix()}")
+def seeded(tmp_path, monkeypatch):
+    url = f"sqlite:///{(tmp_path / 'worker.db').as_posix()}"
+    # The worker reads the app settings (log level); give them this test's database, not a developer's .env.
+    monkeypatch.setenv("DATABASE_URL", url)
+    get_settings.cache_clear()
+    database.configure_database(url)
     Base.metadata.create_all(database.get_engine())
     now = utc_now()
     with database.get_session_factory()() as db:
@@ -33,6 +38,7 @@ def seeded(tmp_path):
         db.commit()
     yield
     database.get_engine().dispose()
+    get_settings.cache_clear()   # later tests read their own settings again
 
 
 def hashes() -> list[str]:
@@ -68,11 +74,15 @@ def test_negative_retention_is_rejected(seeded):
         cleanup.main(["--retention-days", "-1"])
 
 
-def test_unreachable_database_exits_1_without_details(tmp_path, capsys):
-    database.configure_database(f"sqlite:///{(tmp_path / 'missing-dir' / 'nope.db').as_posix()}")
+def test_unreachable_database_exits_1_without_details(tmp_path, capsys, monkeypatch):
+    url = f"sqlite:///{(tmp_path / 'missing-dir' / 'nope.db').as_posix()}"
+    monkeypatch.setenv("DATABASE_URL", url)
+    get_settings.cache_clear()
+    database.configure_database(url)
     try:
         assert cleanup.main([]) == 1
         err = capsys.readouterr().err
         assert "database error" in err and "missing-dir" not in err
     finally:
         database.get_engine().dispose()
+        get_settings.cache_clear()
